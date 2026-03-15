@@ -45865,7 +45865,6 @@ break
 case 1:o.push(a6)
 s=p}for(;;)switch(s){case 0:a1=A.aHL("POST",A.fJ(m.a,0,null))
 a1.r.n(0,"Content-Type","application/json")
-a1.r.n(0,"Authorization","Bearer sb_publishable_xLssnUVCmhAEOwYmr6tP5w_u0Oinhff")
 d=t.K
 a1.sY2(B.c5.BA(A.ar(["model","claude-opus-4-20250514","max_tokens",1024,"system",a4,"messages",a3,"stream",!0],t.N,d),null))
 A.aLM()
