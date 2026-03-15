@@ -45955,14 +45955,14 @@ r=A.a0(new A.Z(r,new A.aqz(),q),q.h("ai.E"))
 o.push(A.aFJ(a,r,new A.aqA(this),B.ap,s,t.N))
 return A.jm(o,B.ao,B.ai,B.bv,0,p)},
 aa9(){return this.PJ(!1)},
-PK(a){var s,r,q,p,o=null,n=A.b([],t.p)
-if(!a)n.push(A.cI("Q: ",o,o,o,o,A.f1(o,o,B.c9,o,o,o,o,o,o,o,o,13,o,o,o,o,o,!0,o,o,o,o,o,o,o,o),o,o))
+PK(a){var s,r,q,p,o,n=null,m=A.b([],t.p)
+if(!a)m.push(A.cI("Q: ",n,n,n,n,A.f1(n,n,B.c9,n,n,n,n,n,n,n,n,13,n,n,n,n,n,!0,n,n,n,n,n,n,n,n),n,n))
 s=this.y
 r=t.kZ
 q=J.Bb(3,r)
-for(p=0;p<3;++p)q[p]=new A.jZ(p,A.cI(B.hM[p].f,o,o,o,o,B.Ao,o,o),B.dp,o,r)
-n.push(A.aFJ(a,q,new A.aqC(this),B.ap,s,t.S))
-return A.jm(n,B.ao,B.ai,B.bv,0,o)},
+for(p=0;p<3;p=o){o=p+1
+q[p]=new A.jZ(p,A.cI("Q"+o+": "+B.hN[p].f,n,n,n,n,B.Ao,n,n),B.dp,n,r)}m.push(A.aFJ(a,q,new A.aqC(this),B.ap,s,t.S))
+return A.jm(m,B.ao,B.ai,B.bv,0,n)},
 aaa(){return this.PK(!1)},
 aI(){var s,r=this
 r.aS()
@@ -45980,7 +45980,7 @@ if(s.w==null||s.x)return
 s.al(new A.aqF(s))},
 aj8(){this.al(new A.aqD(this))
 this.gwT().pQ($.Ko().gLB(),t.i0).sey(B.jc)},
-anv(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f=this,e=null,d=B.hM[f.y],c=f.gwT().pQ($.Ko(),t.cp),b=f.c
+anv(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f=this,e=null,d=B.hN[f.y],c=f.gwT().pQ($.Ko(),t.cp),b=f.c
 b.toString
 s=A.by(b,B.cK,t.w).w.a.a<600
 b=f.x?f.w:e
@@ -46014,8 +46014,8 @@ PL(){var s,r=this,q=r.c
 q.toString
 q=A.by(q,B.cK,t.w).w.a.a<600?12:24
 s=r.y
-return A.aI1(new A.PJ(B.hM[s],s,3,r.w,r.x,r.gajE(),r.gajO(),r.gaj7(),null),null,B.ar,new A.au(q,q,q,q),null,B.b1)},
-PF(){var s=this,r=B.hM[s.y],q=s.x?s.w:null
+return A.aI1(new A.PJ(B.hN[s],s,3,r.w,r.x,r.gajE(),r.gajO(),r.gaj7(),null),null,B.ar,new A.au(q,q,q,q),null,B.b1)},
+PF(){var s=this,r=B.hN[s.y],q=s.x?s.w:null
 return new A.zk(r,q,s.z,null)},
 I(a){return A.aGE(new A.aqI(this))}}
 A.aqz.prototype={
@@ -82449,7 +82449,7 @@ if(a)c.y=A.n(t.N,t.UX)
 s=t.jl
 r=A.b([],s)
 q=c.y.i(0,b)
-if(q==null)q=B.hN
+if(q==null)q=B.hM
 p=A.n(t.ob,t.UX)
 o=c.y.gce()
 n=o.hU(o)
@@ -82468,8 +82468,8 @@ if(j){r=A.b([],s)
 i=c.y
 i.toString
 q=i.i(0,h.geu())
-if(q==null)q=B.hN}else{r=B.hN
-q=B.hN}l=h
+if(q==null)q=B.hM}else{r=B.hM
+q=B.hM}l=h
 continue}if(j){i=h.b
 i=i==null?b:i.ga0q()
 j=i===!0}else j=!1
@@ -100719,13 +100719,6 @@ B.Jt=s([6.43023796,2.98020421],t.n)
 B.oB=s([B.Js,B.Is,B.Kt,B.Kv,B.Jh,B.Jn,B.JT,B.Jw,B.JL,B.Jk,B.Jt],t.zg)
 B.Jg=s([B.j4,B.j5],A.am("x<yX>"))
 B.Jj=s([18,15,10,12,15,18,15,12,12],t.n)
-B.J4=s(["A) To reduce computational complexity from O(n\xb2d) to O(n\xb2)","B) To ensure the attention weights are properly normalized and sum to 1","C) To prevent dot products from growing large in magnitude, which pushes softmax into regions with extremely small gradients","D) To make the attention mechanism equivariant to the choice of embedding dimension d_k","E) To convert the dot products from the key dimension scale to a probability scale"],t.s)
-B.P3=new A.lP("In the Transformer architecture, the scaled dot-product attention divides Q\xb7K\u1d40 by \u221ad_k before applying softmax. What is the primary reason for this scaling factor?",B.J4,2,"When d_k is large, the dot products q\xb7k grow in magnitude. Specifically, if q and k have entries with mean 0 and variance 1, then q\xb7k has mean 0 and variance d_k.\n\nLarge dot products push the softmax function into saturation: one element dominates and the gradient for all other elements becomes vanishingly small. Learning stalls because the attention pattern can't update.\n\nDividing by \u221ad_k normalizes the variance of the dot products to approximately 1 regardless of d_k, keeping softmax in a regime where gradients flow healthily.\n\nWhy other options are wrong:\n- A: Scaling doesn't change computational complexity \u2014 it's still O(n\xb2d_k) for the dot products.\n- B: Softmax already guarantees outputs sum to 1 regardless of input scale. Scaling affects gradient health, not normalization.\n- D: \"Equivariant\" is the wrong concept \u2014 scaling provides gradient stability, not equivariance to dimension choice.\n- E: Scaling doesn't convert to probabilities \u2014 softmax does that. The scaling just controls the variance of the inputs to softmax.","Attention Mechanisms")
-B.KP=s(["A) To reduce computational cost \u2014 each head processes fewer dimensions, so the total computation is h times cheaper","B) To allow different heads to attend to different types of relationships (e.g., syntactic, semantic, positional) in different subspaces","C) To increase the total number of learnable parameters in the attention layer compared to single-head attention","D) To enable parallel computation across GPU cores, since each head is independent during the forward pass","E) To prevent the attention weights from becoming too concentrated on a single position in the sequence"],t.s)
-B.P1=new A.lP("The Transformer uses multi-head attention with h heads, each operating on d_k = d_model/h dimensions, rather than a single attention operation on the full d_model. Why?",B.KP,1,'Multi-head attention lets the model jointly attend to information from different representation subspaces. Each head learns a different "type" of attention \u2014 one might focus on syntactic relationships, another on semantic similarity, another on positional proximity.\n\nKey insight: the total computation and parameter count is approximately the SAME as single-head attention (each head uses d_k = d_model/h, and there are h heads). The benefit is representational diversity, not efficiency.\n\nWhy other options are wrong:\n- A: Total computation is the same. Each head does O(n\xb2 \xb7 d_model/h) and there are h heads, so total is O(n\xb2 \xb7 d_model).\n- C: Parameter count is roughly equivalent. Single-head has W_Q, W_K, W_V of size d_model\xd7d_model. Multi-head has h sets of d_model\xd7d_k matrices, which totals the same.\n- D: While parallelization is a practical benefit, it\'s not the design motivation. The paper emphasizes "jointly attend to information from different representation subspaces."\n- E: Attention concentration is addressed by the \u221ad_k scaling, not by using multiple heads.',"Attention Mechanisms")
-B.Jv=s(["A) The distribution becomes uniform \u2014 all tokens become equally likely","B) The distribution becomes increasingly peaked, approaching a one-hot vector on the highest-logit token (equivalent to argmax)","C) The model produces increasingly random outputs because dividing by a small number amplifies numerical noise","D) The softmax function becomes numerically undefined, requiring a special-case implementation","E) Temperature only affects training loss, not inference-time behavior"],t.s)
-B.P2=new A.lP("When generating text, a language model applies temperature T to the logits before softmax: p_i = softmax(z_i / T). What happens to the output distribution as T approaches 0?",B.Jv,1,'As T \u2192 0, dividing logits by T amplifies the differences between them. If z_1 > z_2, then z_1/T - z_2/T = (z_1 - z_2)/T \u2192 \u221e. After softmax, this means the probability concentrates entirely on the highest-logit token.\n\nAt T = 1, softmax operates normally. As T \u2192 \u221e, all logits become equal (z_i/T \u2192 0), giving a uniform distribution (all tokens equally likely).\n\nThink of temperature as a "confidence knob": low T = overconfident (always picks the top token), high T = underconfident (picks nearly randomly).\n\nWhy other options are wrong:\n- A: Uniform distribution happens at T \u2192 \u221e, not T \u2192 0. This is the exact opposite.\n- C: While numerical issues can arise in practice, the mathematical behavior is well-defined \u2014 the distribution sharpens, it doesn\'t become random.\n- D: Numerically, implementations use the log-sum-exp trick to handle large values. The function is well-defined in the limit.\n- E: Temperature is specifically an inference-time technique. During training, T = 1 is standard (or used in knowledge distillation).',"Language Model Inference")
-B.hM=s([B.P3,B.P1,B.P2],A.am("x<lP>"))
 B.bn=new A.kJ(0,"label")
 B.aY=new A.kJ(1,"avatar")
 B.c1=new A.kJ(2,"deleteIcon")
@@ -100810,7 +100803,7 @@ B.Kp=s([],t.ER)
 B.a_n=s([],t.ss)
 B.Kc=s([],t.tc)
 B.Ka=s([],t.c)
-B.hN=s([],t.jl)
+B.hM=s([],t.jl)
 B.Kf=s([],t.wi)
 B.kA=s([],A.am("x<kh>"))
 B.Ke=s([],A.am("x<aHb<@>>"))
@@ -100828,6 +100821,13 @@ B.K5=s([],t.t)
 B.oG=s([],t.ee)
 B.K6=s([],t.iG)
 B.Kl=s([],t._m)
+B.J4=s(["A) To reduce computational complexity from O(n\xb2d) to O(n\xb2)","B) To ensure the attention weights are properly normalized and sum to 1","C) To prevent dot products from growing large in magnitude, which pushes softmax into regions with extremely small gradients","D) To make the attention mechanism equivariant to the choice of embedding dimension d_k","E) To convert the dot products from the key dimension scale to a probability scale"],t.s)
+B.P3=new A.lP("In the Transformer architecture, the scaled dot-product attention divides Q\xb7K\u1d40 by \u221ad_k before applying softmax. What is the primary reason for this scaling factor?",B.J4,2,"When d_k is large, the dot products q\xb7k grow in magnitude. Specifically, if q and k have entries with mean 0 and variance 1, then q\xb7k has mean 0 and variance d_k.\n\nLarge dot products push the softmax function into saturation: one element dominates and the gradient for all other elements becomes vanishingly small. Learning stalls because the attention pattern can't update.\n\nDividing by \u221ad_k normalizes the variance of the dot products to approximately 1 regardless of d_k, keeping softmax in a regime where gradients flow healthily.\n\nWhy other options are wrong:\n- A: Scaling doesn't change computational complexity \u2014 it's still O(n\xb2d_k) for the dot products.\n- B: Softmax already guarantees outputs sum to 1 regardless of input scale. Scaling affects gradient health, not normalization.\n- D: \"Equivariant\" is the wrong concept \u2014 scaling provides gradient stability, not equivariance to dimension choice.\n- E: Scaling doesn't convert to probabilities \u2014 softmax does that. The scaling just controls the variance of the inputs to softmax.","Attention Scaling")
+B.KP=s(["A) To reduce computational cost \u2014 each head processes fewer dimensions, so the total computation is h times cheaper","B) To allow different heads to attend to different types of relationships (e.g., syntactic, semantic, positional) in different subspaces","C) To increase the total number of learnable parameters in the attention layer compared to single-head attention","D) To enable parallel computation across GPU cores, since each head is independent during the forward pass","E) To prevent the attention weights from becoming too concentrated on a single position in the sequence"],t.s)
+B.P2=new A.lP("The Transformer uses multi-head attention with h heads, each operating on d_k = d_model/h dimensions, rather than a single attention operation on the full d_model. Why?",B.KP,1,'Multi-head attention lets the model jointly attend to information from different representation subspaces. Each head learns a different "type" of attention \u2014 one might focus on syntactic relationships, another on semantic similarity, another on positional proximity.\n\nKey insight: the total computation and parameter count is approximately the SAME as single-head attention (each head uses d_k = d_model/h, and there are h heads). The benefit is representational diversity, not efficiency.\n\nWhy other options are wrong:\n- A: Total computation is the same. Each head does O(n\xb2 \xb7 d_model/h) and there are h heads, so total is O(n\xb2 \xb7 d_model).\n- C: Parameter count is roughly equivalent. Single-head has W_Q, W_K, W_V of size d_model\xd7d_model. Multi-head has h sets of d_model\xd7d_k matrices, which totals the same.\n- D: While parallelization is a practical benefit, it\'s not the design motivation. The paper emphasizes "jointly attend to information from different representation subspaces."\n- E: Attention concentration is addressed by the \u221ad_k scaling, not by using multiple heads.',"Multi-Head Attention")
+B.Jv=s(["A) The distribution becomes uniform \u2014 all tokens become equally likely","B) The distribution becomes increasingly peaked, approaching a one-hot vector on the highest-logit token (equivalent to argmax)","C) The model produces increasingly random outputs because dividing by a small number amplifies numerical noise","D) The softmax function becomes numerically undefined, requiring a special-case implementation","E) Temperature only affects training loss, not inference-time behavior"],t.s)
+B.P1=new A.lP("When generating text, a language model applies temperature T to the logits before softmax: p_i = softmax(z_i / T). What happens to the output distribution as T approaches 0?",B.Jv,1,'As T \u2192 0, dividing logits by T amplifies the differences between them. If z_1 > z_2, then z_1/T - z_2/T = (z_1 - z_2)/T \u2192 \u221e. After softmax, this means the probability concentrates entirely on the highest-logit token.\n\nAt T = 1, softmax operates normally. As T \u2192 \u221e, all logits become equal (z_i/T \u2192 0), giving a uniform distribution (all tokens equally likely).\n\nThink of temperature as a "confidence knob": low T = overconfident (always picks the top token), high T = underconfident (picks nearly randomly).\n\nWhy other options are wrong:\n- A: Uniform distribution happens at T \u2192 \u221e, not T \u2192 0. This is the exact opposite.\n- C: While numerical issues can arise in practice, the mathematical behavior is well-defined \u2014 the distribution sharpens, it doesn\'t become random.\n- D: Numerically, implementations use the log-sum-exp trick to handle large values. The function is well-defined in the limit.\n- E: Temperature is specifically an inference-time technique. During training, T = 1 is standard (or used in knowledge distillation).',"Temperature")
+B.hN=s([B.P3,B.P2,B.P1],A.am("x<lP>"))
 B.Ks=s(["ul","ol","li","p","br"],t.s)
 B.hZ=new A.f(0,2)
 B.BZ=new A.bw(0.75,B.P,B.ne,B.hZ,1.5)
