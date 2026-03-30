@@ -2102,6 +2102,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-11-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma regra de trânsito estabelece que a velocidade $V$ de um veículo em uma via deve satisfazer $30 \\leq V \\leq 60$. Para converter para uma nova unidade, soma-se 10 a cada valor. Assim, $30 + 10 \\leq V + 10 \\leq 60 + 10$, ou seja, $40 \\leq V + 10 \\leq 70$.\n\nUma outra via tem limite $50 \\leq V \\leq 80$. Subtraindo 15 de todos os termos, o intervalo de $V - 15$ é",
+    "options": {
+      "A": "$35 \\leq V - 15 \\leq 50$",
+      "B": "$35 \\leq V - 15 \\leq 65$",
+      "C": "$50 \\leq V - 15 \\leq 80$",
+      "D": "$65 \\leq V - 15 \\leq 95$",
+      "E": "$35 \\leq V - 15 \\leq 95$"
+    },
+    "correctAnswer": "B",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H21",
+    "competencia": 5,
+    "tier": 4,
+    "parent": "enem-2020-mt-11-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Subtrair 15 de todos os termos: $50 - 15 \\leq V - 15 \\leq 80 - 15$, ou seja, $35 \\leq V - 15 \\leq 65$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.1.05"
+    ],
+    "paw": {
+      "b": -1.64,
+      "a": 3.29625,
+      "c": 0.25529,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-11-t3-02",
     "year": null,
     "position": null,
@@ -2141,6 +2178,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-11-t3-02-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma balança digital aceita objetos cujo peso $P$ (em gramas) satisfaça $|P - 500| \\leq 50$. Isso significa que $P$ pode estar a no máximo 50 gramas de distância de 500. Portanto: $500 - 50 \\leq P \\leq 500 + 50$, ou seja, $450 \\leq P \\leq 550$.\n\nUm sensor de temperatura aceita leituras $T$ (em °C) que satisfaçam $|T - 25| \\leq 3$. O intervalo de temperaturas aceitas é",
+    "options": {
+      "A": "$22 \\leq T \\leq 25$",
+      "B": "$22 \\leq T \\leq 28$",
+      "C": "$25 \\leq T \\leq 28$",
+      "D": "$22 \\leq T \\leq 31$",
+      "E": "$19 \\leq T \\leq 28$"
+    },
+    "correctAnswer": "B",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H21",
+    "competencia": 5,
+    "tier": 4,
+    "parent": "enem-2020-mt-11-t3-02",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: $|T - 25| \\leq 3$ significa que $T$ pode estar a no máximo 3 de distância de 25: $25 - 3 \\leq T \\leq 25 + 3$, ou seja, $22 \\leq T \\leq 28$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.1.05"
+    ],
+    "paw": {
+      "b": -1.64,
+      "a": 3.29625,
+      "c": 0.25529,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-11-t3-03",
     "year": null,
     "position": null,
@@ -2176,80 +2250,6 @@
       "a": 3.29625,
       "c": 0.25529,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-11-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Uma regra de trânsito estabelece que a velocidade $V$ de um veículo em uma via deve satisfazer $30 \\leq V \\leq 60$. Para converter para uma nova unidade, soma-se 10 a cada valor. Assim, $30 + 10 \\leq V + 10 \\leq 60 + 10$, ou seja, $40 \\leq V + 10 \\leq 70$.\n\nUma outra via tem limite $50 \\leq V \\leq 80$. Subtraindo 15 de todos os termos, o intervalo de $V - 15$ é",
-    "options": {
-      "A": "$35 \\leq V - 15 \\leq 50$",
-      "B": "$35 \\leq V - 15 \\leq 65$",
-      "C": "$50 \\leq V - 15 \\leq 80$",
-      "D": "$65 \\leq V - 15 \\leq 95$",
-      "E": "$35 \\leq V - 15 \\leq 95$"
-    },
-    "correctAnswer": "B",
-    "topic": "Algebra e Funcoes",
-    "habilidade": "H21",
-    "competencia": 5,
-    "tier": 4,
-    "parent": "enem-2020-mt-11-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Subtrair 15 de todos os termos: $50 - 15 \\leq V - 15 \\leq 80 - 15$, ou seja, $35 \\leq V - 15 \\leq 65$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D2.1.05"
-    ],
-    "paw": {
-      "b": -1.64,
-      "a": 3.29625,
-      "c": 0.25529,
-      "n": 0,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-11-t3-02-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Uma balança digital aceita objetos cujo peso $P$ (em gramas) satisfaça $|P - 500| \\leq 50$. Isso significa que $P$ pode estar a no máximo 50 gramas de distância de 500. Portanto: $500 - 50 \\leq P \\leq 500 + 50$, ou seja, $450 \\leq P \\leq 550$.\n\nUm sensor de temperatura aceita leituras $T$ (em °C) que satisfaçam $|T - 25| \\leq 3$. O intervalo de temperaturas aceitas é",
-    "options": {
-      "A": "$22 \\leq T \\leq 25$",
-      "B": "$22 \\leq T \\leq 28$",
-      "C": "$25 \\leq T \\leq 28$",
-      "D": "$22 \\leq T \\leq 31$",
-      "E": "$19 \\leq T \\leq 28$"
-    },
-    "correctAnswer": "B",
-    "topic": "Algebra e Funcoes",
-    "habilidade": "H21",
-    "competencia": 5,
-    "tier": 4,
-    "parent": "enem-2020-mt-11-t3-02",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: $|T - 25| \\leq 3$ significa que $T$ pode estar a no máximo 3 de distância de 25: $25 - 3 \\leq T \\leq 25 + 3$, ou seja, $22 \\leq T \\leq 28$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D2.1.05"
-    ],
-    "paw": {
-      "b": -1.64,
-      "a": 3.29625,
-      "c": 0.25529,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -2645,6 +2645,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-13-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma escola com 200 alunos, 30% praticam natação. Para calcular quantos alunos praticam natação, multiplicamos a porcentagem (em forma decimal) pelo total: $0{,}30 \\times 200 = 60$ alunos.\n\nEm uma cidade com 250 000 habitantes, 12% utilizam bicicleta como principal meio de transporte. Quantos habitantes utilizam bicicleta?",
+    "options": {
+      "A": "12 000",
+      "B": "25 000",
+      "C": "30 000",
+      "D": "238 000",
+      "E": "3 000 000"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-13-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Converter 12% para decimal: 0,12.\nPasso 2: Multiplicar pelo total: $0{,}12 \\times 250\\;000 = 30\\;000$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.2.01"
+    ],
+    "paw": {
+      "b": -1.8,
+      "a": 2.96092,
+      "c": 0.18532,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-13-t3-02",
     "year": null,
     "position": null,
@@ -2680,43 +2717,6 @@
       "a": 2.96092,
       "c": 0.18532,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-13-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Em uma escola com 200 alunos, 30% praticam natação. Para calcular quantos alunos praticam natação, multiplicamos a porcentagem (em forma decimal) pelo total: $0{,}30 \\times 200 = 60$ alunos.\n\nEm uma cidade com 250 000 habitantes, 12% utilizam bicicleta como principal meio de transporte. Quantos habitantes utilizam bicicleta?",
-    "options": {
-      "A": "12 000",
-      "B": "25 000",
-      "C": "30 000",
-      "D": "238 000",
-      "E": "3 000 000"
-    },
-    "correctAnswer": "C",
-    "topic": "Numeros e Operacoes",
-    "habilidade": "H3",
-    "competencia": 1,
-    "tier": 4,
-    "parent": "enem-2020-mt-13-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Converter 12% para decimal: 0,12.\nPasso 2: Multiplicar pelo total: $0{,}12 \\times 250\\;000 = 30\\;000$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D1.2.01"
-    ],
-    "paw": {
-      "b": -1.8,
-      "a": 2.96092,
-      "c": 0.18532,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -2877,6 +2877,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-14-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma das propriedades do logaritmo é a do expoente: $\\log(a^n) = n \\cdot \\log(a)$. Por exemplo, $\\log(2^5) = 5 \\cdot \\log(2)$.\n\nSabendo que $\\log(3) = 0{,}477$, o valor de $\\log(3^4)$ é",
+    "options": {
+      "A": "0,477",
+      "B": "1,431",
+      "C": "1,908",
+      "D": "4,477",
+      "E": "12"
+    },
+    "correctAnswer": "C",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H19",
+    "competencia": 5,
+    "tier": 4,
+    "parent": "enem-2020-mt-14-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Aplicar a propriedade do expoente: $\\log(3^4) = 4 \\cdot \\log(3) = 4 \\cdot 0{,}477 = 1{,}908$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.5.01"
+    ],
+    "paw": {
+      "b": -0.18,
+      "a": 2.88702,
+      "c": 0.13958,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-14-t3-02",
     "year": null,
     "position": null,
@@ -2916,6 +2953,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-14-t3-02-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "O logaritmo de uma divisão pode ser escrito como a diferença dos logaritmos: $\\log\\left(\\frac{a}{b}\\right) = \\log(a) - \\log(b)$. Por exemplo, $\\log\\left(\\frac{1\\,000}{10}\\right) = \\log(1\\,000) - \\log(10) = 3 - 1 = 2$.\n\nO valor de $\\log\\left(\\frac{10\\,000}{100}\\right)$ é",
+    "options": {
+      "A": "1",
+      "B": "2",
+      "C": "3",
+      "D": "4",
+      "E": "100"
+    },
+    "correctAnswer": "B",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H19",
+    "competencia": 5,
+    "tier": 4,
+    "parent": "enem-2020-mt-14-t3-02",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Aplicar a propriedade do quociente: $\\log\\left(\\frac{10\\,000}{100}\\right) = \\log(10\\,000) - \\log(100) = 4 - 2 = 2$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.5.01"
+    ],
+    "paw": {
+      "b": -0.18,
+      "a": 2.88702,
+      "c": 0.13958,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-14-t3-03",
     "year": null,
     "position": null,
@@ -2951,80 +3025,6 @@
       "a": 2.88702,
       "c": 0.13958,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-14-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Uma das propriedades do logaritmo é a do expoente: $\\log(a^n) = n \\cdot \\log(a)$. Por exemplo, $\\log(2^5) = 5 \\cdot \\log(2)$.\n\nSabendo que $\\log(3) = 0{,}477$, o valor de $\\log(3^4)$ é",
-    "options": {
-      "A": "0,477",
-      "B": "1,431",
-      "C": "1,908",
-      "D": "4,477",
-      "E": "12"
-    },
-    "correctAnswer": "C",
-    "topic": "Algebra e Funcoes",
-    "habilidade": "H19",
-    "competencia": 5,
-    "tier": 4,
-    "parent": "enem-2020-mt-14-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Aplicar a propriedade do expoente: $\\log(3^4) = 4 \\cdot \\log(3) = 4 \\cdot 0{,}477 = 1{,}908$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D2.5.01"
-    ],
-    "paw": {
-      "b": -0.18,
-      "a": 2.88702,
-      "c": 0.13958,
-      "n": 0,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-14-t3-02-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "O logaritmo de uma divisão pode ser escrito como a diferença dos logaritmos: $\\log\\left(\\frac{a}{b}\\right) = \\log(a) - \\log(b)$. Por exemplo, $\\log\\left(\\frac{1\\,000}{10}\\right) = \\log(1\\,000) - \\log(10) = 3 - 1 = 2$.\n\nO valor de $\\log\\left(\\frac{10\\,000}{100}\\right)$ é",
-    "options": {
-      "A": "1",
-      "B": "2",
-      "C": "3",
-      "D": "4",
-      "E": "100"
-    },
-    "correctAnswer": "B",
-    "topic": "Algebra e Funcoes",
-    "habilidade": "H19",
-    "competencia": 5,
-    "tier": 4,
-    "parent": "enem-2020-mt-14-t3-02",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Aplicar a propriedade do quociente: $\\log\\left(\\frac{10\\,000}{100}\\right) = \\log(10\\,000) - \\log(100) = 4 - 2 = 2$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D2.5.01"
-    ],
-    "paw": {
-      "b": -0.18,
-      "a": 2.88702,
-      "c": 0.13958,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -3223,6 +3223,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-16-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Quando uma pirâmide é cortada por um plano paralelo à sua base, a seção obtida tem o mesmo formato da base, apenas menor. Por exemplo, se a base é um quadrado, o corte paralelo também será um quadrado.\n\nUma pirâmide reta tem base em formato de hexágono regular. Ao cortá-la com um plano paralelo à base, a figura formada pelo corte é",
+    "options": {
+      "A": "um hexágono irregular.",
+      "B": "um círculo.",
+      "C": "um hexágono regular.",
+      "D": "um triângulo equilátero.",
+      "E": "um retângulo."
+    },
+    "correctAnswer": "C",
+    "topic": "Geometria",
+    "habilidade": "H7",
+    "competencia": 2,
+    "tier": 4,
+    "parent": "enem-2020-mt-16-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: O corte paralelo à base produz uma figura semelhante à base. Como a base é um hexágono regular, o corte também é um hexágono regular.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D3.4.01"
+    ],
+    "paw": {
+      "b": -1.11,
+      "a": 2.99017,
+      "c": 0.15884,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-16-t3-02",
     "year": null,
     "position": null,
@@ -3258,43 +3295,6 @@
       "a": 2.99017,
       "c": 0.15884,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-16-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Quando uma pirâmide é cortada por um plano paralelo à sua base, a seção obtida tem o mesmo formato da base, apenas menor. Por exemplo, se a base é um quadrado, o corte paralelo também será um quadrado.\n\nUma pirâmide reta tem base em formato de hexágono regular. Ao cortá-la com um plano paralelo à base, a figura formada pelo corte é",
-    "options": {
-      "A": "um hexágono irregular.",
-      "B": "um círculo.",
-      "C": "um hexágono regular.",
-      "D": "um triângulo equilátero.",
-      "E": "um retângulo."
-    },
-    "correctAnswer": "C",
-    "topic": "Geometria",
-    "habilidade": "H7",
-    "competencia": 2,
-    "tier": 4,
-    "parent": "enem-2020-mt-16-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: O corte paralelo à base produz uma figura semelhante à base. Como a base é um hexágono regular, o corte também é um hexágono regular.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D3.4.01"
-    ],
-    "paw": {
-      "b": -1.11,
-      "a": 2.99017,
-      "c": 0.15884,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -3535,6 +3535,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-18-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "A relação entre distância, velocidade e tempo é $t = \\frac{d}{v}$. Por exemplo, um carro que percorre 60 km a 40 km/h gasta $\\frac{60}{40} = 1{,}5$ h, ou seja, 1 hora e 30 minutos.\n\nUm ônibus percorre 15 km a uma velocidade média de 20 km/h. O tempo gasto nesse trajeto, em minutos, é de",
+    "options": {
+      "A": "35",
+      "B": "40",
+      "C": "45",
+      "D": "50",
+      "E": "75"
+    },
+    "correctAnswer": "C",
+    "topic": "Proporcionalidade",
+    "habilidade": "H17",
+    "competencia": 4,
+    "tier": 4,
+    "parent": "enem-2020-mt-18-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: $t = \\frac{15}{20} = \\frac{3}{4}$ h. Converter: $\\frac{3}{4} \\times 60 = 45$ minutos.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.2.04"
+    ],
+    "paw": {
+      "b": -2.16,
+      "a": 1.08432,
+      "c": 0.01494,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-18-t3-02",
     "year": null,
     "position": null,
@@ -3574,48 +3611,11 @@
     }
   },
   {
-    "id": "enem-2020-mt-18-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "A relação entre distância, velocidade e tempo é $t = \\frac{d}{v}$. Por exemplo, um carro que percorre 60 km a 40 km/h gasta $\\frac{60}{40} = 1{,}5$ h, ou seja, 1 hora e 30 minutos.\n\nUm ônibus percorre 15 km a uma velocidade média de 20 km/h. O tempo gasto nesse trajeto, em minutos, é de",
-    "options": {
-      "A": "35",
-      "B": "40",
-      "C": "45",
-      "D": "50",
-      "E": "75"
-    },
-    "correctAnswer": "C",
-    "topic": "Proporcionalidade",
-    "habilidade": "H17",
-    "competencia": 4,
-    "tier": 4,
-    "parent": "enem-2020-mt-18-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: $t = \\frac{15}{20} = \\frac{3}{4}$ h. Converter: $\\frac{3}{4} \\times 60 = 45$ minutos.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D1.2.04"
-    ],
-    "paw": {
-      "b": -2.16,
-      "a": 1.08432,
-      "c": 0.01494,
-      "n": 0,
-      "d": 300.0
-    }
-  },
-  {
     "id": "enem-2020-mt-18-t3-02-t4",
     "year": null,
     "position": null,
     "mathPosition": null,
-    "text": "Para comparar duas frações sem calcular a divisão, pode-se multiplicar em cruz. Por exemplo, para comparar $\\frac{3}{5}$ e $\\frac{2}{4}$: calculamos $3 \\times 4 = 12$ e $2 \\times 5 = 10$. Como $12 > 10$, concluímos que $\\frac{3}{5} > \\frac{2}{4}$.\n\nUsando essa técnica, a maior entre as frações $\\frac{5}{8}$ e $\\frac{4}{7}$ é",
+    "text": "Para descobrir qual de duas frações é maior sem fazer a divisão, pode-se multiplicar em cruz. A ideia é que, ao multiplicar em cruz, estamos transformando as duas frações para que tenham o mesmo número embaixo (denominador) — assim fica fácil comparar só olhando o número de cima. Por exemplo, para comparar $\\frac{3}{5}$ e $\\frac{2}{4}$: transformamos $\\frac{3}{5}$ em $\\frac{3 \\times 4}{5 \\times 4} = \\frac{12}{20}$ e $\\frac{2}{4}$ em $\\frac{2 \\times 5}{4 \\times 5} = \\frac{10}{20}$. Agora as duas têm o mesmo número embaixo (20), então basta comparar o de cima: como $12 > 10$, concluímos que $\\frac{3}{5} > \\frac{2}{4}$.\n\nUsando essa técnica, a maior entre as frações $\\frac{5}{8}$ e $\\frac{4}{7}$ é",
     "options": {
       "A": "$\\frac{4}{7}$, pois $4 \\times 8 > 5 \\times 7$.",
       "B": "$\\frac{5}{8}$, pois $5 \\times 7 > 4 \\times 8$.",
@@ -3806,6 +3806,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-19-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Na notação científica, escrevemos um número como um valor entre 1 e 10 multiplicado por uma potência de 10. Por exemplo, $3\\,500 = 3{,}5 \\times 1\\,000 = 3{,}5 \\times 10^{3}$.\n\nUsando notação científica, o número $720\\,000$ é escrito como",
+    "options": {
+      "A": "$72 \\times 10^{4}$",
+      "B": "$7{,}2 \\times 10^{4}$",
+      "C": "$7{,}2 \\times 10^{5}$",
+      "D": "$0{,}72 \\times 10^{6}$",
+      "E": "$7{,}2 \\times 10^{6}$"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H1",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-19-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Escrever 720 000 como um número entre 1 e 10 multiplicado por uma potência de 10: $720\\,000 = 7{,}2 \\times 100\\,000 = 7{,}2 \\times 10^{5}$.",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.1.04"
+    ],
+    "paw": {
+      "b": -0.69,
+      "a": 2.18282,
+      "c": 0.14885,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-19-t3-02",
     "year": null,
     "position": null,
@@ -3841,43 +3878,6 @@
       "a": 2.18282,
       "c": 0.14885,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-19-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Na notação científica, escrevemos um número como um valor entre 1 e 10 multiplicado por uma potência de 10. Por exemplo, $3\\,500 = 3{,}5 \\times 1\\,000 = 3{,}5 \\times 10^{3}$.\n\nUsando notação científica, o número $720\\,000$ é escrito como",
-    "options": {
-      "A": "$72 \\times 10^{4}$",
-      "B": "$7{,}2 \\times 10^{4}$",
-      "C": "$7{,}2 \\times 10^{5}$",
-      "D": "$0{,}72 \\times 10^{6}$",
-      "E": "$7{,}2 \\times 10^{6}$"
-    },
-    "correctAnswer": "C",
-    "topic": "Numeros e Operacoes",
-    "habilidade": "H1",
-    "competencia": 1,
-    "tier": 4,
-    "parent": "enem-2020-mt-19-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Escrever 720 000 como um número entre 1 e 10 multiplicado por uma potência de 10: $720\\,000 = 7{,}2 \\times 100\\,000 = 7{,}2 \\times 10^{5}$.",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D1.1.04"
-    ],
-    "paw": {
-      "b": -0.69,
-      "a": 2.18282,
-      "c": 0.14885,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -4037,6 +4037,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-20-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma progressão geométrica (PG), cada termo é obtido multiplicando o anterior por um valor fixo chamado razão ($q$). Para encontrar qualquer termo sem precisar calcular todos os anteriores, usa-se a fórmula $a_n = a_1 \\cdot q^{n-1}$. Por exemplo, na PG de primeiro termo $a_1 = 3$ e razão $q = 4$, o quarto termo é $a_4 = 3 \\cdot 4^{3} = 3 \\cdot 64 = 192$.\n\nUma progressão geométrica tem primeiro termo $a_1 = 2$ e razão $q = 5$. O valor do quinto termo dessa progressão é",
+    "options": {
+      "A": "250",
+      "B": "1 250",
+      "C": "2 500",
+      "D": "50",
+      "E": "625"
+    },
+    "correctAnswer": "B",
+    "topic": "Números e Operações",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-20-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: $a_5 = 2 \\cdot 5^{4} = 2 \\cdot 625 = 1\\,250$, alternativa (B).",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.7.03"
+    ],
+    "paw": {
+      "b": -1.66,
+      "a": 2.59667,
+      "c": 0.15449,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-20-t3-02",
     "year": null,
     "position": null,
@@ -4072,43 +4109,6 @@
       "a": 2.59667,
       "c": 0.15449,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-20-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Em uma progressão geométrica (PG), cada termo é obtido multiplicando o anterior por um valor fixo chamado razão ($q$). Para encontrar qualquer termo sem precisar calcular todos os anteriores, usa-se a fórmula $a_n = a_1 \\cdot q^{n-1}$. Por exemplo, na PG de primeiro termo $a_1 = 3$ e razão $q = 4$, o quarto termo é $a_4 = 3 \\cdot 4^{3} = 3 \\cdot 64 = 192$.\n\nUma progressão geométrica tem primeiro termo $a_1 = 2$ e razão $q = 5$. O valor do quinto termo dessa progressão é",
-    "options": {
-      "A": "250",
-      "B": "1 250",
-      "C": "2 500",
-      "D": "50",
-      "E": "625"
-    },
-    "correctAnswer": "B",
-    "topic": "Números e Operações",
-    "habilidade": "H2",
-    "competencia": 1,
-    "tier": 4,
-    "parent": "enem-2020-mt-20-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: $a_5 = 2 \\cdot 5^{4} = 2 \\cdot 625 = 1\\,250$, alternativa (B).",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D2.7.03"
-    ],
-    "paw": {
-      "b": -1.66,
-      "a": 2.59667,
-      "c": 0.15449,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -4309,6 +4309,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-23-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em um tabuleiro quadriculado, para ir de um canto ao outro usando apenas movimentos → e ↑, o número de caminhos possíveis é dado pela combinação $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$, onde $n$ é o total de passos e $k$ é a quantidade de passos em uma das direções. Por exemplo, em um tabuleiro 2×1 (2 passos → e 1 passo ↑, total 3 passos), o número de caminhos é $\\binom{3}{1} = \\frac{3!}{1! \\cdot (3-1)!} = \\frac{6}{1 \\cdot 2} = 3$.\n\n```\n    0   1   2\n1   ·───·───B       Caminhos: →→↑, →↑→, ↑→→ = 3\n    │   │   │\n0   A───·───·\n```\n\nEm um tabuleiro onde são necessários 2 passos → e 2 passos ↑ para ir de A até B, o número de caminhos diferentes é",
+    "options": {
+      "A": "4",
+      "B": "8",
+      "C": "6",
+      "D": "2",
+      "E": "10"
+    },
+    "correctAnswer": "C",
+    "topic": "Números e Operações",
+    "habilidade": "H3",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-23-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Total de passos = 4 (2→ e 2↑). O número de caminhos é $\\binom{4}{2} = \\frac{4!}{2! \\cdot (4-2)!} = \\frac{24}{2 \\cdot 2} = 6$, alternativa (C).",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.03"
+    ],
+    "paw": {
+      "b": 0.3,
+      "a": 1.78193,
+      "c": 0.18914,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-23-t3-02",
     "year": null,
     "position": null,
@@ -4344,43 +4381,6 @@
       "a": 1.78193,
       "c": 0.18914,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-23-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Em um tabuleiro quadriculado, para ir de um canto ao outro usando apenas movimentos → e ↑, o número de caminhos possíveis é dado pela combinação $\\binom{n}{k} = \\frac{n!}{k!(n-k)!}$, onde $n$ é o total de passos e $k$ é a quantidade de passos em uma das direções. Por exemplo, em um tabuleiro 2×1 (2 passos → e 1 passo ↑, total 3 passos), o número de caminhos é $\\binom{3}{1} = \\frac{3!}{1! \\cdot (3-1)!} = \\frac{6}{1 \\cdot 2} = 3$.\n\n```\n    0   1   2\n1   ·───·───B       Caminhos: →→↑, →↑→, ↑→→ = 3\n    │   │   │\n0   A───·───·\n```\n\nEm um tabuleiro onde são necessários 2 passos → e 2 passos ↑ para ir de A até B, o número de caminhos diferentes é",
-    "options": {
-      "A": "4",
-      "B": "8",
-      "C": "6",
-      "D": "2",
-      "E": "10"
-    },
-    "correctAnswer": "C",
-    "topic": "Números e Operações",
-    "habilidade": "H3",
-    "competencia": 1,
-    "tier": 4,
-    "parent": "enem-2020-mt-23-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Total de passos = 4 (2→ e 2↑). O número de caminhos é $\\binom{4}{2} = \\frac{4!}{2! \\cdot (4-2)!} = \\frac{24}{2 \\cdot 2} = 6$, alternativa (C).",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D5.1.03"
-    ],
-    "paw": {
-      "b": 0.3,
-      "a": 1.78193,
-      "c": 0.18914,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -4581,6 +4581,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-24-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Para multiplicar um número decimal por um número inteiro, podemos multiplicar como se não houvesse vírgula e depois recolocar a vírgula no resultado. Por exemplo, $6 \\times 12{,}50$: primeiro calculamos $6 \\times 1250 = 7500$, e como 12,50 tem duas casas decimais, o resultado é $75{,}00$.\n\nUm mercado vende garrafas de suco a R$ 7,50 cada. Uma cliente comprou 9 garrafas. O valor total da compra é",
+    "options": {
+      "A": "R$ 63,50",
+      "B": "R$ 67,50",
+      "C": "R$ 70,50",
+      "D": "R$ 65,00",
+      "E": "R$ 72,00"
+    },
+    "correctAnswer": "B",
+    "topic": "Números e Operações",
+    "habilidade": "H4",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-24-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Seguindo o método ensinado, calcular $9 \\times 750 = 6750$. Como 7,50 tem duas casas decimais, o resultado é $67{,}50$. O valor total é R$ 67,50, alternativa (B).",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.1.02"
+    ],
+    "paw": {
+      "b": -0.49,
+      "a": 0.96583,
+      "c": 0.2049,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-24-t3-02",
     "year": null,
     "position": null,
@@ -4616,43 +4653,6 @@
       "a": 0.96583,
       "c": 0.2049,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-24-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Para multiplicar um número decimal por um número inteiro, podemos multiplicar como se não houvesse vírgula e depois recolocar a vírgula no resultado. Por exemplo, $6 \\times 12{,}50$: primeiro calculamos $6 \\times 1250 = 7500$, e como 12,50 tem duas casas decimais, o resultado é $75{,}00$.\n\nUm mercado vende garrafas de suco a R$ 7,50 cada. Uma cliente comprou 9 garrafas. O valor total da compra é",
-    "options": {
-      "A": "R$ 63,50",
-      "B": "R$ 67,50",
-      "C": "R$ 70,50",
-      "D": "R$ 65,00",
-      "E": "R$ 72,00"
-    },
-    "correctAnswer": "B",
-    "topic": "Números e Operações",
-    "habilidade": "H4",
-    "competencia": 1,
-    "tier": 4,
-    "parent": "enem-2020-mt-24-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Seguindo o método ensinado, calcular $9 \\times 750 = 6750$. Como 7,50 tem duas casas decimais, o resultado é $67{,}50$. O valor total é R$ 67,50, alternativa (B).",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D1.1.02"
-    ],
-    "paw": {
-      "b": -0.49,
-      "a": 0.96583,
-      "c": 0.2049,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -4853,6 +4853,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-25-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Grandezas proporcionais mantêm uma relação fixa entre si. Por exemplo, se uma torneira enche 3 baldes em 15 minutos, podemos descobrir quantos baldes enche em 45 minutos montando a proporção: $\\frac{3}{15} = \\frac{x}{45}$, logo $x = \\frac{3 \\times 45}{15} = 9$ baldes.\n\nUma impressora imprime 12 páginas a cada 4 minutos. A quantidade de páginas que essa impressora imprime em 15 minutos é",
+    "options": {
+      "A": "36",
+      "B": "45",
+      "C": "48",
+      "D": "27",
+      "E": "60"
+    },
+    "correctAnswer": "B",
+    "topic": "Números e Operações",
+    "habilidade": "H18",
+    "competencia": 4,
+    "tier": 4,
+    "parent": "enem-2020-mt-25-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Montar a proporção: $\\frac{12}{4} = \\frac{x}{15}$, logo $x = \\frac{12 \\times 15}{4} = \\frac{180}{4} = 45$ páginas, alternativa (B).",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.2.04"
+    ],
+    "paw": {
+      "b": -0.59,
+      "a": 1.75839,
+      "c": 0.16633,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-25-t3-02",
     "year": null,
     "position": null,
@@ -4888,43 +4925,6 @@
       "a": 1.75839,
       "c": 0.16633,
       "n": 5,
-      "d": 300.0
-    }
-  },
-  {
-    "id": "enem-2020-mt-25-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "Grandezas proporcionais mantêm uma relação fixa entre si. Por exemplo, se uma torneira enche 3 baldes em 15 minutos, podemos descobrir quantos baldes enche em 45 minutos montando a proporção: $\\frac{3}{15} = \\frac{x}{45}$, logo $x = \\frac{3 \\times 45}{15} = 9$ baldes.\n\nUma impressora imprime 12 páginas a cada 4 minutos. A quantidade de páginas que essa impressora imprime em 15 minutos é",
-    "options": {
-      "A": "36",
-      "B": "45",
-      "C": "48",
-      "D": "27",
-      "E": "60"
-    },
-    "correctAnswer": "B",
-    "topic": "Números e Operações",
-    "habilidade": "H18",
-    "competencia": 4,
-    "tier": 4,
-    "parent": "enem-2020-mt-25-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Montar a proporção: $\\frac{12}{4} = \\frac{x}{15}$, logo $x = \\frac{12 \\times 15}{4} = \\frac{180}{4} = 45$ páginas, alternativa (B).",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D1.2.04"
-    ],
-    "paw": {
-      "b": -0.59,
-      "a": 1.75839,
-      "c": 0.16633,
-      "n": 0,
       "d": 300.0
     }
   },
@@ -5125,6 +5125,43 @@
     }
   },
   {
+    "id": "enem-2020-mt-26-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "O volume de um cilindro é calculado multiplicando a área da base circular pela altura. A área da base é $\\pi r^2$, onde $r$ é o raio. Assim, o volume é $V = \\pi r^2 h$. Por exemplo, um cilindro com raio 2 cm e altura 10 cm tem volume $\\pi \\cdot 2^2 \\cdot 10 = 40\\pi$ cm³.\n\nUm copo cilíndrico tem raio de 4 cm e altura de 6 cm. O volume desse copo, em cm³, é",
+    "options": {
+      "A": "$24\\pi$",
+      "B": "$48\\pi$",
+      "C": "$64\\pi$",
+      "D": "$96\\pi$",
+      "E": "$16\\pi$"
+    },
+    "correctAnswer": "D",
+    "topic": "Geometria",
+    "habilidade": "H8",
+    "competencia": 2,
+    "tier": 4,
+    "parent": "enem-2020-mt-26-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: Aplicar a fórmula ensinada: $V = \\pi r^2 h = \\pi \\cdot 4^2 \\cdot 6 = \\pi \\cdot 16 \\cdot 6 = 96\\pi$ cm³, alternativa (D).",
+    "source": "Caramelo (baseado em ENEM 2020)",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D3.4.02"
+    ],
+    "paw": {
+      "b": -0.82,
+      "a": 4.06335,
+      "c": 0.2161,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
     "id": "enem-2020-mt-26-t3-02",
     "year": null,
     "position": null,
@@ -5164,43 +5201,6 @@
     }
   },
   {
-    "id": "enem-2020-mt-26-t3-01-t4",
-    "year": null,
-    "position": null,
-    "mathPosition": null,
-    "text": "O volume de um cilindro é calculado multiplicando a área da base circular pela altura. A área da base é $\\pi r^2$, onde $r$ é o raio. Assim, o volume é $V = \\pi r^2 h$. Por exemplo, um cilindro com raio 2 cm e altura 10 cm tem volume $\\pi \\cdot 2^2 \\cdot 10 = 40\\pi$ cm³.\n\nUm copo cilíndrico tem raio de 4 cm e altura de 6 cm. O volume desse copo, em cm³, é",
-    "options": {
-      "A": "$24\\pi$",
-      "B": "$48\\pi$",
-      "C": "$64\\pi$",
-      "D": "$96\\pi$",
-      "E": "$16\\pi$"
-    },
-    "correctAnswer": "D",
-    "topic": "Geometria",
-    "habilidade": "H8",
-    "competencia": 2,
-    "tier": 4,
-    "parent": "enem-2020-mt-26-t3-01",
-    "children": null,
-    "status": "approved",
-    "explanation": "Passo 1: Aplicar a fórmula ensinada: $V = \\pi r^2 h = \\pi \\cdot 4^2 \\cdot 6 = \\pi \\cdot 16 \\cdot 6 = 96\\pi$ cm³, alternativa (D).",
-    "source": "Caramelo (baseado em ENEM 2020)",
-    "hasImages": false,
-    "imageUrls": [],
-    "notes": null,
-    "subSkills": [
-      "D3.4.02"
-    ],
-    "paw": {
-      "b": -0.82,
-      "a": 4.06335,
-      "c": 0.2161,
-      "n": 0,
-      "d": 300.0
-    }
-  },
-  {
     "id": "enem-2020-mt-26-t3-02-t4",
     "year": null,
     "position": null,
@@ -5236,5 +5236,2098 @@
       "n": 0,
       "d": 300.0
     }
+  },
+  {
+    "id": "enem-2020-mt-28",
+    "year": 2020,
+    "position": 163,
+    "mathPosition": 28,
+    "text": "Nos livros _Harry Potter_, um anagrama do nome do personagem \"TOM MARVOLO RIDDLE\" gerou a frase \"I AM LORD VOLDEMORT\".\n\nSuponha que Harry quisesse formar todos os anagramas da frase \"I AM POTTER\", de tal forma que as vogais e consoantes aparecessem sempre intercaladas, e sem considerar o espaçamento entre as letras.\n\nNessas condições, o número de anagramas formados é dado por",
+    "options": {
+      "A": "9!",
+      "B": "4! 5!",
+      "C": "2 × 4! 5!",
+      "D": "9!/2",
+      "E": "4! 5!/2"
+    },
+    "correctAnswer": "E",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-28-t1-01"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Identificar vogais e consoantes de \"IAMPOTTER\". Vogais: I, A, O, E → 4 (todas distintas). Consoantes: M, P, T, T, R → 5 (T repete 2×).\nPasso 2: Com 5 consoantes e 4 vogais, o único padrão de alternância possível é C V C V C V C V C (consoante nas posições ímpares, vogal nas pares).\nPasso 3: Permutar as 4 vogais nas 4 posições: 4! = 24.\nPasso 4: Permutar as 5 consoantes nas 5 posições: 5!/2! = 60 (T aparece 2×).\nPasso 5: Total = 4! × 5!/2! = 4! × 5!/2 = 1440, alternativa (E).",
+    "source": "ENEM 2020",
+    "hasImages": true,
+    "imageUrls": [],
+    "notes": "Opções recuperadas manualmente. Imagens originais continham expressões matemáticas.",
+    "subSkills": [
+      "D5.1.01",
+      "D5.1.04"
+    ],
+    "paw": {
+      "b": 2.18,
+      "a": 1.57033,
+      "c": 0.11432,
+      "n": 2000000,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t1-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em um concurso de palavras inventadas, os participantes devem criar códigos usando todas as letras da expressão \"EU COMPITO\", ignorando espaços, de tal forma que vogais e consoantes apareçam sempre intercaladas.\n\nO número de códigos diferentes que podem ser formados nessas condições é",
+    "options": {
+      "A": "9!",
+      "B": "5! × 4!",
+      "C": "2 × 5! × 4!",
+      "D": "9!/2",
+      "E": "5! × 4!/2"
+    },
+    "correctAnswer": "E",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 1,
+    "parent": "enem-2020-mt-28",
+    "children": [
+      "enem-2020-mt-28-t2-01",
+      "enem-2020-mt-28-t2-02"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Identificar vogais e consoantes de \"EUCOMPITO\". Vogais: E, U, O, I, O → 5 (O repete 2×). Consoantes: C, M, P, T → 4 (todas distintas).\nPasso 2: Com 5 vogais e 4 consoantes, o único padrão de alternância possível é V C V C V C V C V (vogal nas posições ímpares, consoante nas pares).\nPasso 3: Permutar as 5 vogais nas 5 posições: 5!/2! = 60 (O aparece 2×).\nPasso 4: Permutar as 4 consoantes nas 4 posições: 4! = 24.\nPasso 5: Total = 5!/2! × 4! = 5! × 4!/2 = 1440, alternativa (E).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.01",
+      "D5.1.04"
+    ],
+    "paw": {
+      "b": 2.18,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t2-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma feira de ciências, cada aluno deve montar um painel com 5 letras magnéticas enfileiradas para formar um código de identificação do seu projeto. Maria recebeu as letras A, B, A, C e D. Ela percebeu que, como tem duas letras A, nem todas as ordens possíveis geram códigos visualmente diferentes.\n\nO número de códigos diferentes que Maria pode formar usando todas as suas letras é",
+    "options": {
+      "A": "120",
+      "B": "60",
+      "C": "30",
+      "D": "24",
+      "E": "10"
+    },
+    "correctAnswer": "B",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 2,
+    "parent": "enem-2020-mt-28-t1-01",
+    "children": [
+      "enem-2020-mt-28-t3-02"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: São 5 letras com A repetido 2×. O número de permutações é 5!/2! = 120/2 = 60, alternativa (B).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.04"
+    ],
+    "paw": {
+      "b": 1.2,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t2-02",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Para montar um lanche, Pedro deve escolher a ordem dos ingredientes em seu sanduíche. Ele tem 3 tipos de pão (integral, francês, sírio) e 2 tipos de recheio (frango, queijo). Primeiro escolhe o pão, depois o recheio.\n\nO número total de lanches diferentes que Pedro pode montar é",
+    "options": {
+      "A": "2",
+      "B": "3",
+      "C": "5",
+      "D": "6",
+      "E": "12"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 2,
+    "parent": "enem-2020-mt-28-t1-01",
+    "children": [
+      "enem-2020-mt-28-t3-01"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: As escolhas são independentes: 3 opções de pão e 2 opções de recheio. Pelo princípio multiplicativo, o total é 3 × 2 = 6, alternativa (D).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.01"
+    ],
+    "paw": {
+      "b": 0.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t3-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Para criar a senha do seu celular, Lucas deve escolher uma cor (azul, verde ou vermelho) e um número (7 ou 8). A senha é formada pela combinação de uma cor com um número.\n\nO total de senhas diferentes que Lucas pode criar é",
+    "options": {
+      "A": "2",
+      "B": "3",
+      "C": "5",
+      "D": "6",
+      "E": "8"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 3,
+    "parent": "enem-2020-mt-28-t2-02",
+    "children": [
+      "enem-2020-mt-28-t3-01-t4"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: São duas escolhas independentes: 3 opções de cor e 2 opções de número. Pelo princípio multiplicativo, o total é 3 × 2 = 6, alternativa (D).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.01"
+    ],
+    "paw": {
+      "b": -0.5,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma sorveteria oferece casquinha ou copinho, e os sabores chocolate, morango ou limão. Para cada recipiente, existem 3 sabores possíveis. Assim, casquinha gera 3 pedidos (casquinha-chocolate, casquinha-morango, casquinha-limão) e copinho gera outros 3. Como as escolhas são independentes, basta multiplicar: 2 × 3 = 6 pedidos no total.\n\nEm outra sorveteria, o cliente escolhe entre 3 tamanhos de copo (pequeno, médio ou grande) e 4 coberturas (granulado, calda, chantilly ou farofa). O total de pedidos diferentes que um cliente pode fazer é",
+    "options": {
+      "A": "4",
+      "B": "7",
+      "C": "12",
+      "D": "24",
+      "E": "64"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-28-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: O exemplo mostra que, quando duas escolhas são independentes, multiplicamos as opções. Aqui: 3 tamanhos × 4 coberturas = 12, alternativa (C).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.01"
+    ],
+    "paw": {
+      "b": -3.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t3-02",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Ana quer organizar em fila os 4 livros da sua estante: dois livros de Matemática idênticos e dois livros de Português idênticos.\n\nO número de maneiras diferentes de organizar esses livros é",
+    "options": {
+      "A": "2",
+      "B": "4",
+      "C": "6",
+      "D": "12",
+      "E": "24"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 3,
+    "parent": "enem-2020-mt-28-t2-01",
+    "children": [
+      "enem-2020-mt-28-t3-02-t4"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: São 4 livros, com Matemática repetido 2× e Português repetido 2×. O número de permutações é 4!/(2! × 2!) = 24/4 = 6, alternativa (C).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.04"
+    ],
+    "paw": {
+      "b": -0.3,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-28-t3-02-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Carolina quer enfileirar 3 bolas: duas vermelhas (V) e uma azul (A). Se as bolas fossem todas diferentes, haveria 3! = 6 formas. Mas como as duas vermelhas são idênticas, trocar V₁ e V₂ de lugar não muda a fila. Cada fila foi contada 2! = 2 vezes a mais. Dividimos para corrigir: 3!/2! = 6/2 = 3 filas diferentes (VVA, VAV, AVV).\n\nAgora, Marcos tem 5 bolas para enfileirar: três vermelhas idênticas e duas azuis idênticas. Usando o mesmo raciocínio, o número de filas diferentes que Marcos pode formar é",
+    "options": {
+      "A": "5",
+      "B": "10",
+      "C": "12",
+      "D": "20",
+      "E": "60"
+    },
+    "correctAnswer": "B",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H2",
+    "competencia": 1,
+    "tier": 4,
+    "parent": "enem-2020-mt-28-t3-02",
+    "children": null,
+    "status": "approved",
+    "explanation": "Passo 1: O exemplo mostra que dividimos o fatorial total pelo fatorial de cada grupo de elementos repetidos, pois trocas entre idênticos não geram filas novas.\nPasso 2: 5 bolas, com V repetido 3× e A repetido 2×: 5!/(3! × 2!) = 120/(6 × 2) = 10, alternativa (B).",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D5.1.04"
+    ],
+    "paw": {
+      "b": -3.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30",
+    "year": 2020,
+    "position": 165,
+    "mathPosition": 30,
+    "text": "O técnico de um time de basquete pretende aumentar a estatura média de sua equipe de 1,93 m para, no mínimo, 1,99 m. Para tanto, dentre os 15 jogadores que fazem parte de sua equipe, irá substituir os quatro mais baixos, de estaturas: 1,78 m, 1,82 m, 1,84 m e 1,86 m. Para isso, o técnico contratou um novo jogador de 2,02 m. Os outros três jogadores que ele ainda precisa contratar devem satisfazer à sua necessidade de aumentar a média das estaturas da equipe. Ele fixará a média das estaturas para os três jogadores que ainda precisa contratar dentro do critério inicialmente estabelecido.\n\nQual deverá ser a média mínima das estaturas, em metro, que ele deverá fixar para o grupo de três novos jogadores que ainda irá contratar?",
+    "options": {
+      "A": "1,96",
+      "B": "1,98",
+      "C": "2,05",
+      "D": "2,06",
+      "E": "2,08"
+    },
+    "correctAnswer": "D",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-30-t1-01"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Soma atual = 15 × 1,93 = 28,95 m. [D4.2.01]\nPasso 2: Soma dos que saem = 1,78 + 1,82 + 1,84 + 1,86 = 7,30 m. Restam 11 jogadores: 28,95 − 7,30 = 21,65 m. [D1.1.02]\nPasso 3: Nova soma necessária = 15 × 1,99 = 29,85 m. [D4.2.01]\nPasso 4: Soma dos 4 novos = 29,85 − 21,65 = 8,20 m. Já contratou um de 2,02 m. Soma dos 3 restantes = 8,20 − 2,02 = 6,18 m. [D2.1.03]\nPasso 5: Média dos 3 restantes = 6,18 / 3 = 2,06 m. [D4.2.01]",
+    "source": "ENEM 2020",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01",
+      "D1.1.02",
+      "D2.1.03"
+    ],
+    "paw": {
+      "b": 2.83,
+      "a": 2.5968,
+      "c": 0.09691,
+      "n": 2000000,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t1-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "O gerente de uma transportadora pretende aumentar a eficiência média de combustível da sua frota de 15 veículos de 9,40 km/L para, no mínimo, 10,60 km/L. Para isso, vai substituir os quatro veículos menos eficientes, que fazem 6,80 km/L, 7,20 km/L, 7,60 km/L e 8,00 km/L. Ele já adquiriu um veículo novo que faz 13,40 km/L. Os outros três veículos que ainda precisa adquirir devem garantir que a nova eficiência média mínima seja atingida. Ele fixará a média de eficiência de combustível para os três veículos que ainda precisa adquirir dentro do critério inicialmente estabelecido.\n\nQual deverá ser a média mínima de eficiência de combustível, em km/L, dos três veículos que o gerente ainda precisa adquirir?",
+    "options": {
+      "A": "10,60",
+      "B": "10,80",
+      "C": "11,40",
+      "D": "11,90",
+      "E": "12,20"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 1,
+    "parent": "enem-2020-mt-30",
+    "children": [
+      "enem-2020-mt-30-t2-01",
+      "enem-2020-mt-30-t2-02"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Soma atual = 15 × 9,40 = 141,00 km/L. [D4.2.01]\nPasso 2: Soma dos que saem = 6,80 + 7,20 + 7,60 + 8,00 = 29,60. Restam 11: 141,00 − 29,60 = 111,40. [D1.1.02]\nPasso 3: Nova soma necessária = 15 × 10,60 = 159,00. [D4.2.01]\nPasso 4: Soma dos 4 novos = 159,00 − 111,40 = 47,60. Já adquiriu um de 13,40. Soma dos 3 restantes = 47,60 − 13,40 = 34,20. [D2.1.03]\nPasso 5: Média dos 3 = 34,20 / 3 = 11,40 km/L. [D4.2.01]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01",
+      "D1.1.02",
+      "D2.1.03"
+    ],
+    "paw": {
+      "b": 2.83,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t2-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma transportadora registrou os tempos de entrega, em hora, de cinco entregas realizadas em um dia: 2,30; 1,85; 3,10; 2,45 e 2,70.\n\nQual foi o tempo médio de entrega, em hora, nesse dia?",
+    "options": {
+      "A": "2,30",
+      "B": "2,45",
+      "C": "2,48",
+      "D": "2,52",
+      "E": "2,70"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 2,
+    "parent": "enem-2020-mt-30-t1-01",
+    "children": [
+      "enem-2020-mt-30-t3-01",
+      "enem-2020-mt-30-t3-02"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Soma = 2,30 + 1,85 + 3,10 + 2,45 + 2,70 = 12,40. [D1.1.02]\nPasso 2: Média = 12,40 / 5 = 2,48. [D4.2.01]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01",
+      "D1.1.02"
+    ],
+    "paw": {
+      "b": 1.83,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t2-02",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma empresa com 10 funcionários tem idade média de 32 anos. Para renovar a equipe, o gerente vai substituir os dois mais jovens, com idades de 22 e 24 anos, por dois novos contratados. Ele quer que a idade média da equipe passe a ser de, no mínimo, 34 anos. Já contratou um funcionário de 38 anos.\n\nQual deverá ser a idade mínima, em ano, do outro funcionário que o gerente ainda precisa contratar?",
+    "options": {
+      "A": "26",
+      "B": "28",
+      "C": "32",
+      "D": "34",
+      "E": "38"
+    },
+    "correctAnswer": "B",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 2,
+    "parent": "enem-2020-mt-30-t1-01",
+    "children": [
+      "enem-2020-mt-30-t3-03"
+    ],
+    "status": "approved",
+    "explanation": "Passo 1: Soma atual = 10 × 32 = 320. [D4.2.01]\nPasso 2: Soma dos que saem = 22 + 24 = 46. Restam 8: 320 − 46 = 274.\nPasso 3: Nova soma necessária = 10 × 34 = 340. [D4.2.01]\nPasso 4: Soma dos 2 novos = 340 − 274 = 66. Já contratou um de 38. Outro = 66 − 38 = 28. [D2.1.03]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01",
+      "D2.1.03"
+    ],
+    "paw": {
+      "b": 2.33,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-01",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma turma de reforço, cinco alunos obtiveram as seguintes notas em uma prova: 72, 85, 90, 68 e 95.\n\nQual é a média aritmética das notas desses alunos?",
+    "options": {
+      "A": "78",
+      "B": "80",
+      "C": "82",
+      "D": "85",
+      "E": "90"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 3,
+    "parent": "enem-2020-mt-30-t2-01",
+    "children": [
+      "enem-2020-mt-30-t3-01-t4"
+    ],
+    "status": "approved",
+    "explanation": "Soma = 72 + 85 + 90 + 68 + 95 = 410. Média = 410 / 5 = 82. [D4.2.01]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01"
+    ],
+    "paw": {
+      "b": 0.5,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-01-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Lucas registrou quanto gastou no almoço durante três dias: R$ 18,00 na segunda, R$ 22,00 na terça e R$ 20,00 na quarta. Para encontrar o gasto médio, ele somou os três valores (18 + 22 + 20 = 60) e dividiu pela quantidade de dias (60 ÷ 3 = 20). Assim, o gasto médio foi R$ 20,00.\n\nAna registrou quanto gastou no lanche durante quatro dias: R$ 8,00, R$ 12,00, R$ 6,00 e R$ 10,00.\n\nQual é o gasto médio de Ana, em real?",
+    "options": {
+      "A": "7,00",
+      "B": "8,00",
+      "C": "9,00",
+      "D": "10,00",
+      "E": "12,00"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 4,
+    "parent": "enem-2020-mt-30-t3-01",
+    "children": null,
+    "status": "approved",
+    "explanation": "8 + 12 + 6 + 10 = 36. Média = 36 / 4 = 9,00. [D4.2.01]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D4.2.01"
+    ],
+    "paw": {
+      "b": -2.5,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-02",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Um corredor completou quatro voltas em uma pista, com os seguintes tempos, em minuto: 1,45; 2,30; 1,85 e 2,10.\n\nQual foi o tempo total, em minuto, das quatro voltas?",
+    "options": {
+      "A": "7,50",
+      "B": "7,60",
+      "C": "7,70",
+      "D": "7,80",
+      "E": "8,00"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 3,
+    "parent": "enem-2020-mt-30-t2-01",
+    "children": [
+      "enem-2020-mt-30-t3-02-t4"
+    ],
+    "status": "approved",
+    "explanation": "1,45 + 2,30 + 1,85 + 2,10 = 7,70. [D1.1.02]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.1.02"
+    ],
+    "paw": {
+      "b": 0.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-02-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Pedro comprou dois itens no supermercado: um suco por R$ 4,75 e um pão por R$ 3,50. Para saber o total, ele somou as partes inteiras (4 + 3 = 7) e as partes decimais (0,75 + 0,50 = 1,25), obtendo 7 + 1,25 = R$ 8,25.\n\nMaria comprou três itens: uma maçã por R$ 2,40, um iogurte por R$ 3,85 e uma barra de cereal por R$ 1,90.\n\nQual é o total gasto por Maria, em real?",
+    "options": {
+      "A": "7,15",
+      "B": "7,85",
+      "C": "8,15",
+      "D": "8,25",
+      "E": "8,55"
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 4,
+    "parent": "enem-2020-mt-30-t3-02",
+    "children": null,
+    "status": "approved",
+    "explanation": "2,40 + 3,85 + 1,90 = 8,15. [D1.1.02]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D1.1.02"
+    ],
+    "paw": {
+      "b": -3.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-03",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em um depósito, três caixas têm, juntas, 84 kg. Duas delas pesam 25 kg e 31 kg.\n\nQual é a massa, em quilograma, da terceira caixa?",
+    "options": {
+      "A": "26",
+      "B": "28",
+      "C": "30",
+      "D": "32",
+      "E": "56"
+    },
+    "correctAnswer": "B",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 3,
+    "parent": "enem-2020-mt-30-t2-02",
+    "children": [
+      "enem-2020-mt-30-t3-03-t4"
+    ],
+    "status": "approved",
+    "explanation": "84 − 25 − 31 = 28. [D2.1.03]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.1.03"
+    ],
+    "paw": {
+      "b": -0.5,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-30-t3-03-t4",
+    "year": null,
+    "position": null,
+    "mathPosition": null,
+    "text": "Carlos tem três livros na mochila, que pesa ao todo 2,4 kg (sem contar a mochila vazia). Ele sabe que o livro de matemática pesa 0,9 kg e o de português pesa 0,7 kg. Para descobrir quanto pesa o livro de ciências, ele subtraiu os pesos conhecidos do total: 2,4 − 0,9 − 0,7 = 0,8 kg.\n\nSofia tem quatro cadernos na bolsa, que pesam juntos 3,6 kg. Três deles pesam 1,2 kg, 0,8 kg e 0,9 kg.\n\nQual é a massa, em quilograma, do quarto caderno?",
+    "options": {
+      "A": "0,5",
+      "B": "0,7",
+      "C": "0,9",
+      "D": "1,0",
+      "E": "1,2"
+    },
+    "correctAnswer": "B",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H30",
+    "competencia": 7,
+    "tier": 4,
+    "parent": "enem-2020-mt-30-t3-03",
+    "children": null,
+    "status": "approved",
+    "explanation": "3,6 − 1,2 − 0,8 − 0,9 = 0,7. [D2.1.03]",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null,
+    "subSkills": [
+      "D2.1.03"
+    ],
+    "paw": {
+      "b": -3.0,
+      "a": null,
+      "c": null,
+      "n": 0,
+      "d": 300.0
+    }
+  },
+  {
+    "id": "enem-2020-mt-32-t1-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma pequena padaria tem três despesas fixas mensais, conforme a tabela a seguir.\n\n| Despesa | Valor mensal (R$) |\n|---|---|\n| Farinha | 150 |\n| Energia elétrica | 600 |\n| Aluguel | 500 |\n\nNo início do semestre, o preço da farinha subiu 20% e a conta de energia elétrica subiu 10%. Para manter o mesmo gasto mensal total, a dona da padaria negociou um desconto no aluguel.\n\nQual será a porcentagem de redução do aluguel?",
+    "options": {
+      "A": "10,0",
+      "B": "14,0",
+      "C": "18,0",
+      "D": "24,0",
+      "E": "30,0"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.02",
+      "secondary": [
+        "D1.2.01"
+      ],
+      "transversal": [
+        "T.01",
+        "T.05"
+      ]
+    },
+    "tier": 1,
+    "parent": "enem-2020-mt-32",
+    "children": [
+      "enem-2020-mt-32-t2-01",
+      "enem-2020-mt-32-t2-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.15,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular o total original: $150 + 600 + 500 = 1\\,250$ reais.\nPasso 2: Calcular o novo preço da farinha com acréscimo de 20%: $150 \\times 1{,}20 = 180$ reais.\nPasso 3: Calcular a nova conta de energia com acréscimo de 10%: $600 \\times 1{,}10 = 660$ reais.\nPasso 4: Calcular o novo valor do aluguel para manter o total: $1\\,250 - 180 - 660 = 410$ reais.\nPasso 5: Calcular a porcentagem de redução do aluguel: $\\frac{500 - 410}{500} = \\frac{90}{500} = 0{,}18 = 18\\%$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t2-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Três amigas dividem o aluguel de um apartamento. Atualmente, Ana paga R$ 720, Beatriz paga R$ 630 e Carla paga R$ 450. Carla conseguiu um novo emprego e propôs aumentar sua parte para R$ 600, mantendo o valor total do aluguel. A diferença será descontada igualmente das partes de Ana e de Beatriz.\n\nQual será a porcentagem de redução na parte de Ana?",
+    "options": {
+      "A": "5,2",
+      "B": "8,0",
+      "C": "10,4",
+      "D": "12,5",
+      "E": "15,0"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.01",
+      "secondary": [],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-32-t1-01",
+    "children": [
+      "enem-2020-mt-32-t3-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.55,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 20,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular o aumento de Carla: $600 - 450 = 150$ reais.\nPasso 2: Dividir igualmente entre Ana e Beatriz: $150 \\div 2 = 75$ reais de desconto para cada.\nPasso 3: Calcular a porcentagem de redução na parte de Ana: $\\frac{75}{720} \\approx 0{,}1042 \\approx 10{,}4\\%$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t2-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma academia cobra três tipos de mensalidade: musculação (R$ 120), natação (R$ 200) e dança (R$ 80). A partir de março, a musculação terá um aumento de 25% e a natação, de 10%.\n\nQual será o novo valor da mensalidade de musculação e o novo valor da mensalidade de natação, respectivamente?",
+    "options": {
+      "A": "R$ 140 e R$ 210",
+      "B": "R$ 145 e R$ 220",
+      "C": "R$ 150 e R$ 210",
+      "D": "R$ 150 e R$ 220",
+      "E": "R$ 156 e R$ 215"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-32-t1-01",
+    "children": [
+      "enem-2020-mt-32-t3-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.45,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 20,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular o novo valor da musculação com acréscimo de 25%: $120 \\times 1{,}25 = 150$ reais.\nPasso 2: Calcular o novo valor da natação com acréscimo de 10%: $200 \\times 1{,}10 = 220$ reais.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t3-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma livraria, um livro que custava R$ 80 está sendo vendido por R$ 62.\n\nQual é a porcentagem de desconto oferecida?",
+    "options": {
+      "A": "12,5",
+      "B": "18,0",
+      "C": "22,5",
+      "D": "25,0",
+      "E": "29,0"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-32-t2-01",
+    "children": [
+      "enem-2020-mt-32-t3-01-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.85,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 5,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular o valor do desconto: $80 - 62 = 18$ reais.\nPasso 2: Calcular a porcentagem de desconto: $\\frac{18}{80} = 0{,}225 = 22{,}5\\%$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t3-01-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma barra de chocolate tinha 250 g e passou a ter 200 g. Para descobrir a porcentagem de redução, calculamos a diferença entre os dois valores ($250 - 200 = 50$ g) e dividimos pelo valor original: $\\frac{50}{250} = 0{,}20 = 20\\%$. Ou seja, a barra teve uma redução de 20%.\n\nUm pacote de café tinha 500 g e passou a ter 420 g. Qual é a porcentagem de redução do pacote de café?",
+    "options": {
+      "A": "8,0",
+      "B": "12,0",
+      "C": "16,0",
+      "D": "19,0",
+      "E": "20,0"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-32-t3-01",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 0,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular a diferença: $500 - 420 = 80$ g.\nPasso 2: Dividir pelo valor original: $\\frac{80}{500} = 0{,}16 = 16\\%$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t3-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "A mensalidade de um serviço de streaming custa R$ 45. A empresa anunciou um reajuste de 20%.\n\nQual será o novo valor da mensalidade?",
+    "options": {
+      "A": "R$ 47,00",
+      "B": "R$ 50,00",
+      "C": "R$ 54,00",
+      "D": "R$ 56,00",
+      "E": "R$ 65,00"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-32-t2-02",
+    "children": [
+      "enem-2020-mt-32-t3-02-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -1.05,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 5,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular o acréscimo de 20%: $45 \\times 0{,}20 = 9$ reais.\nPasso 2: Somar ao valor original: $45 + 9 = 54$ reais.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-32-t3-02-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "A passagem de ônibus em uma cidade custava R$ 4,00 e teve um aumento de 15%. Para calcular o novo valor, multiplicamos o preço original por $1{,}15$: $4{,}00 \\times 1{,}15 = 4{,}60$. A nova passagem custa R$ 4,60.\n\nEm outra cidade, a passagem custa R$ 3,50 e terá um aumento de 20%. Qual será o novo valor da passagem?",
+    "options": {
+      "A": "R$ 3,70",
+      "B": "R$ 3,85",
+      "C": "R$ 4,00",
+      "D": "R$ 4,20",
+      "E": "R$ 4,50"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H5",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-32-t3-02",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 2.01,
+      "c": 0.14,
+      "n": 0,
+      "d": 300
+    },
+    "explanation": "Passo 1: Multiplicar o valor original pelo fator de aumento: $3{,}50 \\times 1{,}20 = 4{,}20$ reais.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-34",
+    "year": 2020,
+    "position": 169,
+    "mathPosition": 34,
+    "text": "Um grupo sanguíneo, ou tipo sanguíneo, baseia-se na presença ou ausência de dois antígenos, A e B, na superfície das células vermelhas do sangue. Como dois antígenos estão envolvidos, os quatro tipos sanguíneos distintos são:\n\n*   Tipo A: apenas o antígeno A está presente;\n*   Tipo B: apenas o antígeno B está presente;\n*   Tipo AB: ambos os antígenos estão presentes;\n*   Tipo O: nenhum dos antígenos está presente.\n\nForam coletadas amostras de sangue de 200 pessoas e, após análise laboratorial, foi identificado que em 100 amostras está presente o antígeno A, em 110 amostras há presença do antígeno B e em 20 amostras nenhum dos antígenos está presente.\n\nDessas pessoas que foram submetidas à coleta de sangue, o número das que possuem o tipo sanguíneo A é igual a",
+    "options": {
+      "A": "30.",
+      "B": "60.",
+      "C": "70.",
+      "D": "90.",
+      "E": "100."
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": [
+        "T.01",
+        "T.05"
+      ]
+    },
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-34-t1-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.65,
+      "a": 1.89,
+      "c": 0.28,
+      "n": 2000000,
+      "d": 300
+    },
+    "explanation": "Passo 1: Identificar os dados. Total = 200 pessoas. Amostras com antígeno A = 100 (inclui tipo A e tipo AB). Amostras com antígeno B = 110 (inclui tipo B e tipo AB). Sem nenhum antígeno (tipo O) = 20.\nPasso 2: Calcular quantas pessoas têm pelo menos um antígeno: $200 - 20 = 180$.\nPasso 3: Aplicar o princípio da inclusão-exclusão para encontrar quantas têm ambos os antígenos (tipo AB): $180 = 100 + 110 - |A \\cap B|$, logo $|A \\cap B| = 30$.\nPasso 4: Calcular o número de pessoas com tipo sanguíneo A (apenas antígeno A): $100 - 30 = 70$.",
+    "source": "ENEM 2020",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-34-t1-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma escola, todos os alunos do ensino médio responderam a uma pesquisa sobre atividades extracurriculares. As atividades oferecidas pela escola são divididas em duas categorias:\n\n- Artísticas: teatro, música e artes visuais;\n- Esportivas: vôlei, futsal e natação.\n\nCada aluno pode participar de atividades artísticas, de atividades esportivas, de ambas as categorias ou de nenhuma delas. A pesquisa revelou que, dos 150 alunos consultados, 85 participam de pelo menos uma atividade artística, 70 participam de pelo menos uma atividade esportiva e 15 não participam de nenhuma atividade extracurricular.\n\nO número de alunos que participam apenas de atividades esportivas é igual a",
+    "options": {
+      "A": "20",
+      "B": "35",
+      "C": "45",
+      "D": "50",
+      "E": "65"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": [
+        "T.01",
+        "T.05"
+      ]
+    },
+    "tier": 1,
+    "parent": "enem-2020-mt-34",
+    "children": [
+      "enem-2020-mt-34-t2-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.65,
+      "a": 1.89,
+      "c": 0.28,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular quantos alunos participam de pelo menos uma atividade: $150 - 15 = 135$.\nPasso 2: Aplicar o princípio da inclusão-exclusão para encontrar quantos participam de ambas as categorias: $135 = 85 + 70 - |A \\cap E|$, logo $|A \\cap E| = 20$.\nPasso 3: Calcular quantos participam apenas de atividades esportivas: $70 - 20 = 50$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-34-t2-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma pet shop entrevistou 80 clientes sobre os animais de estimação que possuem. A pesquisa mostrou que 45 clientes têm cachorro, 30 têm gato e 10 têm ambos.\n\nQuantos clientes têm pelo menos um dos dois animais?",
+    "options": {
+      "A": "55",
+      "B": "60",
+      "C": "65",
+      "D": "70",
+      "E": "75"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-34-t1-01",
+    "children": [
+      "enem-2020-mt-34-t3-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.65,
+      "a": 1.89,
+      "c": 0.28,
+      "n": 20,
+      "d": 300
+    },
+    "explanation": "Passo 1: Aplicar o princípio da inclusão-exclusão: $|C \\cup G| = 45 + 30 - 10 = 65$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-34-t3-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma turma de 40 alunos, 25 possuem carteirinha da biblioteca municipal. Desses 25, sabe-se que 8 também possuem carteirinha da biblioteca da escola.\n\nQuantos alunos possuem apenas a carteirinha da biblioteca municipal?",
+    "options": {
+      "A": "7",
+      "B": "12",
+      "C": "15",
+      "D": "17",
+      "E": "22"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-34-t2-01",
+    "children": [
+      "enem-2020-mt-34-t3-01-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.55,
+      "a": 1.89,
+      "c": 0.28,
+      "n": 5,
+      "d": 300
+    },
+    "explanation": "Passo 1: Subtrair os que possuem ambas do total que possui a municipal: $25 - 8 = 17$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-34-t3-01-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma praça de alimentação, 60 pessoas foram entrevistadas sobre suas preferências. O resultado mostrou que 35 pessoas gostam de pizza, 28 gostam de hambúrguer e 12 gostam de ambos. Quantas pessoas gostam de pelo menos uma das duas opções?\n\nSe somarmos diretamente $35 + 28 = 63$, estaremos contando as 12 pessoas que gostam de ambos duas vezes: uma vez no grupo da pizza e outra no grupo do hambúrguer. Para corrigir essa contagem duplicada, subtraímos essas 12 pessoas: $35 + 28 - 12 = 51$. Portanto, 51 pessoas gostam de pelo menos uma das opções.\n\nEm outra pesquisa, 90 moradores de um bairro foram consultados. O resultado mostrou que 50 moradores usam o transporte público, 40 usam bicicleta e 15 usam ambos. Quantos moradores usam pelo menos um dos dois meios de transporte?",
+    "options": {
+      "A": "55",
+      "B": "65",
+      "C": "75",
+      "D": "85",
+      "E": "90"
+    },
+    "correctAnswer": "C",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H3",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-34-t3-01",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 1.89,
+      "c": 0.28,
+      "n": 0,
+      "d": 300
+    },
+    "explanation": "Passo 1: Aplicar o princípio da inclusão-exclusão: $50 + 40 - 15 = 75$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35",
+    "year": 2020,
+    "position": 170,
+    "mathPosition": 35,
+    "text": "Antônio, Joaquim e José são sócios de uma empresa cujo capital é dividido, entre os três, em partes proporcionais a: 4, 6 e 6, respectivamente. Com a intenção de igualar a participação dos três sócios no capital da empresa, Antônio pretende adquirir uma fração do capital de cada um dos outros dois sócios.\n\nA fração do capital de cada sócio que Antônio deverá adquirir é",
+    "options": {
+      "A": "$\\frac{1}{2}$",
+      "B": "$\\frac{1}{3}$",
+      "C": "$\\frac{1}{9}$",
+      "D": "$\\frac{2}{3}$",
+      "E": "$\\frac{4}{3}$"
+    },
+    "correctAnswer": "C",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [
+        "D1.1.01"
+      ],
+      "transversal": [
+        "T.01"
+      ]
+    },
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-35-t1-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 2.11,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 2000000,
+      "d": 300
+    },
+    "explanation": "Passo 1: O capital total é dividido em partes proporcionais a 4, 6 e 6. Total = 4 + 6 + 6 = 16 partes.\nPasso 2: Para igualar, cada sócio deve ter $\\frac{16}{3}$ partes.\nPasso 3: Antônio tem 4 partes e precisa de $\\frac{16}{3} - 4 = \\frac{16}{3} - \\frac{12}{3} = \\frac{4}{3}$ partes a mais.\nPasso 4: Joaquim e José têm 6 partes cada. Cada um precisa ceder $6 - \\frac{16}{3} = \\frac{18}{3} - \\frac{16}{3} = \\frac{2}{3}$ de uma parte.\nPasso 5: A fração do capital de Joaquim que Antônio adquire: $\\frac{2/3}{6} = \\frac{2}{18} = \\frac{1}{9}$. O mesmo vale para José.",
+    "source": "ENEM 2020",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t1-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Três amigas, Bia, Carla e Diana, dividem o aluguel de um apartamento em partes proporcionais a 3, 6 e 6, respectivamente. Elas decidem que, a partir do próximo mês, o aluguel será dividido igualmente entre as três.\n\nA fração do valor atualmente pago por cada uma das outras duas que Bia passará a assumir é",
+    "options": {
+      "A": "$\\frac{1}{15}$",
+      "B": "$\\frac{1}{6}$",
+      "C": "$\\frac{1}{5}$",
+      "D": "$\\frac{1}{3}$",
+      "E": "$\\frac{2}{5}$"
+    },
+    "correctAnswer": "B",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [
+        "D1.1.01"
+      ],
+      "transversal": [
+        "T.01"
+      ]
+    },
+    "tier": 1,
+    "parent": "enem-2020-mt-35",
+    "children": [
+      "enem-2020-mt-35-t2-01",
+      "enem-2020-mt-35-t2-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 2.11,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: O total de partes é 3 + 6 + 6 = 15.\nPasso 2: Dividindo igualmente, cada uma paga $\\frac{15}{3} = 5$ partes.\nPasso 3: Bia paga 3 partes e passará a pagar 5. Precisa assumir 2 partes a mais.\nPasso 4: Carla e Diana pagam 6 partes cada e passarão a pagar 5. Cada uma reduz 1 parte.\nPasso 5: A fração do valor de Carla que Bia assume: $\\frac{1}{6}$. O mesmo vale para Diana.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t2-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma república estudantil, Lucas, Pedro e Rafael dividem as despesas mensais. Lucas contribui com R$ 400, Pedro com R$ 600 e Rafael com R$ 600, totalizando R$ 1.600 por mês. Eles decidem que, a partir do próximo mês, cada um pagará o mesmo valor.\n\nA fração do valor atualmente pago por Pedro que Lucas passará a assumir é",
+    "options": {
+      "A": "$\\frac{1}{18}$",
+      "B": "$\\frac{1}{6}$",
+      "C": "$\\frac{1}{9}$",
+      "D": "$\\frac{2}{9}$",
+      "E": "$\\frac{1}{3}$"
+    },
+    "correctAnswer": "C",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [
+        "D1.1.01"
+      ],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-35-t1-01",
+    "children": [
+      "enem-2020-mt-35-t3-01",
+      "enem-2020-mt-35-t3-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.31,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 20,
+      "d": 300
+    },
+    "explanation": "Passo 1: Dividindo igualmente, cada um paga $\\frac{1600}{3} \\approx 533{,}33$ reais.\nPasso 2: Pedro paga R$ 600 e passará a pagar $\\frac{1600}{3}$. A redução é $600 - \\frac{1600}{3} = \\frac{1800}{3} - \\frac{1600}{3} = \\frac{200}{3}$.\nPasso 3: A fração do valor de Pedro: $\\frac{200/3}{600} = \\frac{200}{1800} = \\frac{1}{9}$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t2-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Dois irmãos, Mateus e Felipe, são donos de um terreno dividido em partes proporcionais a 2 e 5, respectivamente. Eles decidem igualar suas participações na propriedade.\n\nA fração da parte de Felipe que Mateus deverá adquirir é",
+    "options": {
+      "A": "$\\frac{2}{7}$",
+      "B": "$\\frac{3}{10}$",
+      "C": "$\\frac{3}{7}$",
+      "D": "$\\frac{3}{5}$",
+      "E": "$\\frac{5}{7}$"
+    },
+    "correctAnswer": "B",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [
+        "D1.1.01"
+      ],
+      "transversal": [
+        "T.01"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-35-t1-01",
+    "children": [],
+    "status": "approved",
+    "paw": {
+      "b": 1.71,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 20,
+      "d": 300
+    },
+    "explanation": "Passo 1: O total de partes é 2 + 5 = 7.\nPasso 2: Dividindo igualmente, cada um fica com $\\frac{7}{2}$ partes.\nPasso 3: Felipe tem 5 partes e ficará com $\\frac{7}{2}$. Ele cede $5 - \\frac{7}{2} = \\frac{10}{2} - \\frac{7}{2} = \\frac{3}{2}$.\nPasso 4: A fração da parte de Felipe: $\\frac{3/2}{5} = \\frac{3}{10}$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t3-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma pizza foi dividida entre Ana e Bruno em partes proporcionais a 3 e 5, respectivamente. Que fração da pizza Ana recebeu?",
+    "options": {
+      "A": "$\\frac{3}{5}$",
+      "B": "$\\frac{5}{8}$",
+      "C": "$\\frac{3}{8}$",
+      "D": "$\\frac{1}{3}$",
+      "E": "$\\frac{5}{3}$"
+    },
+    "correctAnswer": "C",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-35-t2-01",
+    "children": [
+      "enem-2020-mt-35-t3-01-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.11,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 5,
+      "d": 300
+    },
+    "explanation": "Passo 1: O total de partes é 3 + 5 = 8.\nPasso 2: Ana recebeu 3 partes de 8, ou seja, $\\frac{3}{8}$ da pizza.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t3-01-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma turma de 20 alunos, 8 preferem futebol e 12 preferem vôlei. Para descobrir a fração que prefere futebol, dividimos a quantidade que prefere futebol pelo total de alunos: $\\frac{8}{20}$. Simplificando, dividimos 8 e 20 por 4, e obtemos $\\frac{2}{5}$. Outra forma de pensar: as preferências estão na proporção 8 para 12, ou seja, 2 para 3. O total de partes é 2 + 3 = 5, e futebol corresponde a 2 dessas 5 partes: $\\frac{2}{5}$.\n\nEm outra turma, as preferências estão na proporção de 3 para 7 entre basquete e natação, respectivamente. A fração dos alunos dessa turma que preferem basquete é",
+    "options": {
+      "A": "$\\frac{3}{7}$",
+      "B": "$\\frac{7}{10}$",
+      "C": "$\\frac{3}{10}$",
+      "D": "$\\frac{1}{3}$",
+      "E": "$\\frac{7}{3}$"
+    },
+    "correctAnswer": "C",
+    "topic": "Algebra e Funcoes",
+    "habilidade": "H23",
+    "competencia": 5,
+    "subSkills": {
+      "primary": "D1.2.06",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-35-t3-01",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -0.89,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 0,
+      "d": 300
+    },
+    "explanation": "Passo 1: A proporção é 3 para 7, então o total de partes é 3 + 7 = 10.\nPasso 2: Basquete corresponde a 3 dessas 10 partes. A fração é $\\frac{3}{10}$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t3-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Um reservatório contém $\\frac{5}{6}$ de sua capacidade em água. Após o consumo de $\\frac{1}{3}$ da capacidade total, a fração da capacidade que restou ocupada é",
+    "options": {
+      "A": "$\\frac{4}{6}$",
+      "B": "$\\frac{1}{2}$",
+      "C": "$\\frac{2}{3}$",
+      "D": "$\\frac{1}{6}$",
+      "E": "$\\frac{4}{3}$"
+    },
+    "correctAnswer": "B",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H1",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.1.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-35-t2-01",
+    "children": [
+      "enem-2020-mt-35-t3-02-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.39,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 5,
+      "d": 300
+    },
+    "explanation": "Passo 1: O reservatório tem $\\frac{5}{6}$ de água.\nPasso 2: Consumo de $\\frac{1}{3} = \\frac{2}{6}$.\nPasso 3: Restou $\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-35-t3-02-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma fração como $\\frac{1}{4}$, o número de baixo (4) é chamado de denominador, e indica em quantas partes iguais o todo foi dividido. O número de cima (1) é o numerador, e indica quantas dessas partes estamos considerando. Para somar frações com denominadores diferentes, precisamos reescrever as frações para que tenham o mesmo denominador. Por exemplo: $\\frac{1}{4} + \\frac{1}{6}$. Precisamos de um número que 4 e 6 dividam sem resto. O menor número assim é 12: $4 \\times 3 = 12$ e $6 \\times 2 = 12$. Para manter o valor da fração, multiplicamos em cima e embaixo pelo mesmo número: $\\frac{1}{4} = \\frac{1 \\times 3}{4 \\times 3} = \\frac{3}{12}$ e $\\frac{1}{6} = \\frac{1 \\times 2}{6 \\times 2} = \\frac{2}{12}$. Agora sim podemos somar: $\\frac{3}{12} + \\frac{2}{12} = \\frac{5}{12}$.\n\nUsando o mesmo raciocínio, o valor de $\\frac{1}{3} + \\frac{1}{5}$ é",
+    "options": {
+      "A": "$\\frac{2}{15}$",
+      "B": "$\\frac{2}{8}$",
+      "C": "$\\frac{7}{15}$",
+      "D": "$\\frac{8}{15}$",
+      "E": "$\\frac{1}{4}$"
+    },
+    "correctAnswer": "D",
+    "topic": "Numeros e Operacoes",
+    "habilidade": "H1",
+    "competencia": 1,
+    "subSkills": {
+      "primary": "D1.1.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-35-t3-02",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -0.89,
+      "a": 1.22,
+      "c": 0.09,
+      "n": 0,
+      "d": 300
+    },
+    "explanation": "Passo 1: O menor número que 3 e 5 dividem sem resto é 15: $3 \\times 5 = 15$ e $5 \\times 3 = 15$.\nPasso 2: $\\frac{1}{3} = \\frac{1 \\times 5}{3 \\times 5} = \\frac{5}{15}$ e $\\frac{1}{5} = \\frac{1 \\times 3}{5 \\times 3} = \\frac{3}{15}$.\nPasso 3: $\\frac{5}{15} + \\frac{3}{15} = \\frac{8}{15}$.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43",
+    "year": 2020,
+    "position": 178,
+    "mathPosition": 43,
+    "text": "Suponha que uma equipe de corrida de automóveis disponha de cinco tipos de pneu (I, II, III, IV, V), em que o fator de eficiência climática EC (índice que fornece o comportamento do pneu em uso, dependendo do clima) é apresentado:\n\n*   EC do pneu I: com chuva 6, sem chuva 3;\n*   EC do pneu II: com chuva 7, sem chuva –4;\n*   EC do pneu III: com chuva –2, sem chuva 10;\n*   EC do pneu IV: com chuva 2, sem chuva 8;\n*   EC do pneu V: com chuva –6, sem chuva 7.\n\nO coeficiente de rendimento climático (CRC) de um pneu é calculado como a soma dos produtos dos fatores de EC, com ou sem chuva, pelas correspondentes probabilidades de se ter tais condições climáticas: ele é utilizado para determinar qual pneu deve ser selecionado para uma dada corrida, escolhendo-se o pneu que apresentar o maior CRC naquele dia. No dia de certa corrida, a probabilidade de chover era de 70% e o chefe da equipe calculou o CRC de cada um dos cinco tipos de pneu.\n\nO pneu escolhido foi",
+    "options": {
+      "A": "I.",
+      "B": "II.",
+      "C": "III.",
+      "D": "IV.",
+      "E": "V."
+    },
+    "correctAnswer": "A",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.06",
+      "secondary": [
+        "D4.2.01"
+      ],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-43-t1-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.11,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 2000000,
+      "d": 300
+    },
+    "explanation": "Passo 1: Identificar as probabilidades. P(chuva) = 0,70 e P(sem chuva) = 1 − 0,70 = 0,30.\nPasso 2: Calcular o CRC de cada pneu:\n- I: 6 × 0,7 + 3 × 0,3 = 4,2 + 0,9 = 5,1\n- II: 7 × 0,7 + (−4) × 0,3 = 4,9 − 1,2 = 3,7\n- III: (−2) × 0,7 + 10 × 0,3 = −1,4 + 3,0 = 1,6\n- IV: 2 × 0,7 + 8 × 0,3 = 1,4 + 2,4 = 3,8\n- V: (−6) × 0,7 + 7 × 0,3 = −4,2 + 2,1 = −2,1\nPasso 3: O maior CRC é 5,1, correspondente ao pneu I.",
+    "source": "ENEM 2020",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t1-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Um dono de food truck analisa dados de vendas passadas para decidir onde estacionar a cada dia. Ele registrou, para cinco locais da cidade (I, II, III, IV, V), um índice de desempenho (ID) que resume o volume de vendas em cada condição climática. Valores positivos indicam lucro e valores negativos indicam prejuízo.\n\n| Local | Com chuva | Sem chuva |\n|-------|-----------|----------|\n| I     | −3        | 9         |\n| II    | 5         | 2         |\n| III   | 8         | 4         |\n| IV    | 3         | 7         |\n| V     | −1        | 6         |\n\nPara tomar sua decisão, ele calcula o índice de desempenho ponderado (IDP) de cada local, definido como a soma dos produtos dos valores de ID pelas respectivas probabilidades de cada condição climática. O local escolhido é aquele que apresenta o maior IDP.\n\nEm certo dia, a previsão meteorológica indicava probabilidade de 60% de chuva.\n\nO local escolhido foi",
+    "options": {
+      "A": "I.",
+      "B": "II.",
+      "C": "III.",
+      "D": "IV.",
+      "E": "V."
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.06",
+      "secondary": [
+        "D4.2.01"
+      ],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 1,
+    "parent": "enem-2020-mt-43",
+    "children": [
+      "enem-2020-mt-43-t2-01",
+      "enem-2020-mt-43-t2-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.11,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Identificar as probabilidades. P(chuva) = 0,60 e P(sem chuva) = 1 − 0,60 = 0,40.\nPasso 2: Calcular o IDP de cada local:\n- I: (−3) × 0,6 + 9 × 0,4 = −1,8 + 3,6 = 1,8\n- II: 5 × 0,6 + 2 × 0,4 = 3,0 + 0,8 = 3,8\n- III: 8 × 0,6 + 4 × 0,4 = 4,8 + 1,6 = 6,4\n- IV: 3 × 0,6 + 7 × 0,4 = 1,8 + 2,8 = 4,6\n- V: (−1) × 0,6 + 6 × 0,4 = −0,6 + 2,4 = 1,8\nPasso 3: O maior IDP é 6,4, correspondente ao local III.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t2-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma agrônoma utiliza um índice de aptidão climática (IAC) para avaliar o desempenho de uma variedade de soja em determinada região. O IAC é calculado como a soma dos produtos do rendimento esperado, em cada condição climática, pela respectiva probabilidade dessa condição ocorrer.\n\nPara a variedade \"Conquista\", os rendimentos esperados são:\n\n- Em ano chuvoso: 12 sacas por hectare\n- Em ano seco: 5 sacas por hectare\n\nEm certa safra, estudos meteorológicos indicam que a probabilidade de um ano chuvoso é de 40%.\n\nO IAC da variedade \"Conquista\" para essa safra é de",
+    "options": {
+      "A": "4,2.",
+      "B": "5,0.",
+      "C": "7,8.",
+      "D": "8,5.",
+      "E": "12,0."
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-43-t1-01",
+    "children": [
+      "enem-2020-mt-43-t3-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.6,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Identificar as probabilidades. P(chuvoso) = 0,40 e P(seco) = 1 − 0,40 = 0,60.\nPasso 2: Calcular o IAC:\nIAC = 12 × 0,40 + 5 × 0,60 = 4,8 + 3,0 = 7,8.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t2-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma empresa de entregas opera com dois tipos de veículo: motos e vans. O gerente de logística utiliza um índice de eficiência operacional (IEO) para decidir qual veículo priorizar a cada dia. O IEO é calculado como a soma dos produtos do desempenho de cada veículo, em cada condição de trânsito, pela respectiva probabilidade dessa condição ocorrer.\n\nOs desempenhos registrados são:\n\n| Veículo | Trânsito intenso | Trânsito leve |\n|---------|------------------|---------------|\n| Moto    | 9                | 2             |\n| Van     | 3                | 8             |\n\nEm certo dia, aplicativos de navegação indicavam probabilidade de 55% de trânsito intenso.\n\nNesse dia, o veículo priorizado e o valor do seu IEO são",
+    "options": {
+      "A": "Moto, com IEO igual a 5,85.",
+      "B": "Moto, com IEO igual a 4,95.",
+      "C": "Van, com IEO igual a 5,25.",
+      "D": "Van, com IEO igual a 5,85.",
+      "E": "Van, com IEO igual a 6,25."
+    },
+    "correctAnswer": "A",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.06",
+      "secondary": [
+        "D4.2.01"
+      ],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-43-t1-01",
+    "children": [
+      "enem-2020-mt-43-t3-02"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.85,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Identificar as probabilidades. P(intenso) = 0,55 e P(leve) = 1 − 0,55 = 0,45.\nPasso 2: Calcular o IEO de cada veículo:\n- Moto: 9 × 0,55 + 2 × 0,45 = 4,95 + 0,90 = 5,85\n- Van: 3 × 0,55 + 8 × 0,45 = 1,65 + 3,60 = 5,25\nPasso 3: 5,85 > 5,25, portanto o veículo priorizado é a Moto.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t3-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma cidade, registros meteorológicos indicam que a probabilidade de chover em um dia de inverno é de 0,65. Uma professora perguntou aos alunos qual é a probabilidade de não chover em um dia de inverno nessa cidade.\n\nA probabilidade pedida pela professora é de",
+    "options": {
+      "A": "0,15.",
+      "B": "0,25.",
+      "C": "0,35.",
+      "D": "0,50.",
+      "E": "0,65."
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-43-t2-01",
+    "children": [
+      "enem-2020-mt-43-t3-01-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.5,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: A probabilidade de um evento ocorrer somada à probabilidade de ele não ocorrer é sempre 1.\nP(não chover) = 1 − P(chover) = 1 − 0,65 = 0,35.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t3-01-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma fábrica verificou que 8% das peças produzidas em uma máquina apresentam defeito. Isso significa que a probabilidade de uma peça ter defeito é 0,08. Como a peça ou tem defeito ou não tem, a soma dessas duas probabilidades é sempre 1. Então a probabilidade de uma peça não ter defeito é:\n\nP(sem defeito) = 1 − 0,08 = 0,92\n\nOutra máquina da mesma fábrica produz peças com probabilidade de 0,15 de apresentar defeito. A probabilidade de uma peça dessa máquina não apresentar defeito é de",
+    "options": {
+      "A": "0,15.",
+      "B": "0,50.",
+      "C": "0,75.",
+      "D": "0,85.",
+      "E": "0,95."
+    },
+    "correctAnswer": "D",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.02",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-43-t3-01",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Aplicar o mesmo raciocínio do exemplo:\nP(sem defeito) = 1 − 0,15 = 0,85.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t3-02",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Um agricultor pode plantar uma de duas culturas em seu terreno. A cultura A tem rendimento garantido de R$ 5 000, independentemente das condições climáticas. A cultura B rende R$ 12 000 se não houver geada, mas a produção é totalmente perdida se houver geada. Estudos indicam que a probabilidade de geada naquela região é de 60%.\n\nPara maximizar o retorno esperado, o agricultor deve escolher a cultura",
+    "options": {
+      "A": "A, pois seu retorno esperado é R$ 200 maior.",
+      "B": "A, pois seu retorno esperado é R$ 5 000 maior.",
+      "C": "B, pois seu retorno esperado é R$ 200 maior.",
+      "D": "B, pois seu retorno esperado é R$ 4 800 maior.",
+      "E": "B, pois seu retorno esperado é R$ 7 000 maior."
+    },
+    "correctAnswer": "A",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.06",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-43-t2-02",
+    "children": [
+      "enem-2020-mt-43-t3-02-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.2,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Cultura A: retorno garantido = R$ 5 000.\nCultura B: 12 000 × 0,40 + 0 × 0,60 = R$ 4 800.\nPasso 2: 5 000 > 4 800, diferença de R$ 200. Escolher cultura A.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-43-t3-02-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em um jogo, um participante pode escolher entre duas portas. Atrás da porta 1, há um prêmio certo de R$ 300. Atrás da porta 2, há 50% de chance de ganhar R$ 800 e 50% de chance de não ganhar nada. Para comparar as opções, calcula-se o valor esperado: multiplica-se cada resultado pela sua probabilidade e soma-se. A porta 1 tem valor esperado de R$ 300 (certo). A porta 2 tem valor esperado de 800 × 0,50 + 0 × 0,50 = R$ 400. Nesse caso, a porta 2 é a melhor escolha.\n\nEm outra rodada, a porta 1 oferece um prêmio certo de R$ 500. A porta 2 oferece 30% de chance de ganhar R$ 1 200 e 70% de chance de não ganhar nada. Para maximizar o valor esperado, o participante deve escolher a porta",
+    "options": {
+      "A": "1, pois seu valor esperado é R$ 140 maior.",
+      "B": "1, pois seu valor esperado é R$ 500 maior.",
+      "C": "2, pois seu valor esperado é R$ 140 maior.",
+      "D": "2, pois seu valor esperado é R$ 360 maior.",
+      "E": "2, pois seu valor esperado é R$ 700 maior."
+    },
+    "correctAnswer": "A",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H29",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D5.2.06",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-43-t3-02",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 0.93,
+      "c": 0.07,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Porta 1: valor esperado = R$ 500 (certo).\nPorta 2: 1 200 × 0,30 + 0 × 0,70 = R$ 360.\nPasso 2: 500 > 360, diferença de R$ 140. Escolher porta 1.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-45",
+    "year": 2020,
+    "position": 180,
+    "mathPosition": 45,
+    "text": "Com o objetivo de contratar uma empresa responsável pelo serviço de atendimento ao público, os executivos de uma agência bancária realizaram uma pesquisa de satisfação envolvendo cinco empresas especializadas nesse segmento. Os procedimentos analisados (com pesos que medem sua importância para a agência) e as respectivas notas que cada empresa recebeu estão organizados no quadro.\n\n| Procedimento | Peso | X | Y | Z | W | T |\n|---|---|---|---|---|---|---|\n| Rapidez no atendimento | 3 | 5 | 1 | 4 | 3 | 4 |\n| Clareza nas informações passadas aos clientes | 5 | 1 | 4 | 3 | 3 | 2 |\n| Cortesia no atendimento | 2 | 2 | 2 | 2 | 3 | 4 |\n\nA agência bancária contratará a empresa com a maior média ponderada das notas obtidas nos procedimentos analisados.\n\nApós a análise dos resultados da pesquisa de satisfação, os executivos da agência bancária contrataram a empresa",
+    "options": {
+      "A": "X.",
+      "B": "Y.",
+      "C": "Z.",
+      "D": "W.",
+      "E": "T."
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H27",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 0,
+    "parent": null,
+    "children": [
+      "enem-2020-mt-45-t1-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.33,
+      "a": 3.02,
+      "c": 0.11,
+      "n": 2000000,
+      "d": 300
+    },
+    "explanation": "Passo 1: Soma dos pesos: 3 + 5 + 2 = 10.\nPasso 2: Calcular a média ponderada de cada empresa:\n- X: (5×3 + 1×5 + 2×2) / 10 = (15 + 5 + 4) / 10 = 24/10 = 2,4\n- Y: (1×3 + 4×5 + 2×2) / 10 = (3 + 20 + 4) / 10 = 27/10 = 2,7\n- Z: (4×3 + 3×5 + 2×2) / 10 = (12 + 15 + 4) / 10 = 31/10 = 3,1\n- W: (3×3 + 3×5 + 3×2) / 10 = (9 + 15 + 6) / 10 = 30/10 = 3,0\n- T: (4×3 + 2×5 + 4×2) / 10 = (12 + 10 + 8) / 10 = 30/10 = 3,0\nPasso 3: A maior média ponderada é 3,1, correspondente à empresa Z.",
+    "source": "ENEM 2020",
+    "hasImages": true,
+    "imageUrls": [
+      "https://enem.dev/2020/questions/180/8948b408-24e2-478b-85df-5607625e26e8.png"
+    ],
+    "notes": "Original image is a data table; rewritten as text table in Tier 0 and all variations."
+  },
+  {
+    "id": "enem-2020-mt-45-t1-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Uma escola está selecionando um aplicativo educacional para uso em sala de aula. A equipe pedagógica avaliou cinco aplicativos (I, II, III, IV, V) em três critérios, cada um com um peso que reflete sua importância para a escola. As notas atribuídas, de 1 a 5, estão apresentadas no quadro.\n\n| Critério | Peso | I | II | III | IV | V |\n|----------|------|---|----|----|-----|---|\n| Facilidade de uso | 4 | 3 | 5 | 4 | 2 | 4 |\n| Qualidade do conteúdo | 6 | 5 | 2 | 4 | 3 | 3 |\n| Custo-benefício | 2 | 2 | 4 | 1 | 5 | 2 |\n\nA escola adotará o aplicativo que obtiver a maior média ponderada das notas nos critérios avaliados.\n\nO aplicativo adotado pela escola foi o",
+    "options": {
+      "A": "I.",
+      "B": "II.",
+      "C": "III.",
+      "D": "IV.",
+      "E": "V."
+    },
+    "correctAnswer": "A",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H27",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 1,
+    "parent": "enem-2020-mt-45",
+    "children": [
+      "enem-2020-mt-45-t2-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 1.33,
+      "a": 3.02,
+      "c": 0.11,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Soma dos pesos: 4 + 6 + 2 = 12.\nPasso 2: Calcular a média ponderada de cada aplicativo:\n- I: (3×4 + 5×6 + 2×2) / 12 = (12 + 30 + 4) / 12 = 46/12 ≈ 3,83\n- II: (5×4 + 2×6 + 4×2) / 12 = (20 + 12 + 8) / 12 = 40/12 ≈ 3,33\n- III: (4×4 + 4×6 + 1×2) / 12 = (16 + 24 + 2) / 12 = 42/12 = 3,50\n- IV: (2×4 + 3×6 + 5×2) / 12 = (8 + 18 + 10) / 12 = 36/12 = 3,00\n- V: (4×4 + 3×6 + 2×2) / 12 = (16 + 18 + 4) / 12 = 38/12 ≈ 3,17\nPasso 3: A maior média ponderada é 46/12 ≈ 3,83, correspondente ao aplicativo I.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-45-t2-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Um restaurante avalia dois fornecedores de ingredientes (A e B) usando três critérios com pesos diferentes, atribuindo notas de 1 a 5 a cada um. O fornecedor com a maior média ponderada será contratado.\n\n| Critério | Peso | A | B |\n|----------|------|---|---|\n| Qualidade dos produtos | 5 | 4 | 3 |\n| Prazo de entrega | 3 | 2 | 5 |\n| Preço | 2 | 3 | 4 |\n\nO fornecedor contratado e sua média ponderada são",
+    "options": {
+      "A": "A, com média ponderada 3,0.",
+      "B": "A, com média ponderada 3,2.",
+      "C": "B, com média ponderada 3,2.",
+      "D": "B, com média ponderada 3,8.",
+      "E": "B, com média ponderada 4,0."
+    },
+    "correctAnswer": "D",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H27",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": [
+        "T.05"
+      ]
+    },
+    "tier": 2,
+    "parent": "enem-2020-mt-45-t1-01",
+    "children": [
+      "enem-2020-mt-45-t3-01"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": 0.5,
+      "a": 3.02,
+      "c": 0.11,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Soma dos pesos: 5 + 3 + 2 = 10.\nPasso 2: Calcular a média ponderada de cada fornecedor:\n- A: (4×5 + 2×3 + 3×2) / 10 = (20 + 6 + 6) / 10 = 32/10 = 3,2\n- B: (3×5 + 5×3 + 4×2) / 10 = (15 + 15 + 8) / 10 = 38/10 = 3,8\nPasso 3: 3,8 > 3,2. Fornecedor B é contratado.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-45-t3-01",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Para calcular a nota de um candidato em um concurso, a banca examinadora usa a seguinte regra: a prova objetiva tem peso 4, a prova dissertativa tem peso 3 e a prova de títulos tem peso 1. Um candidato obteve nota 6,0 na prova objetiva, 8,0 na dissertativa e 5,0 na prova de títulos.\n\nA nota final desse candidato é",
+    "options": {
+      "A": "6,000.",
+      "B": "6,333.",
+      "C": "6,500.",
+      "D": "6,625.",
+      "E": "7,000."
+    },
+    "correctAnswer": "D",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H27",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 3,
+    "parent": "enem-2020-mt-45-t2-01",
+    "children": [
+      "enem-2020-mt-45-t3-01-t4"
+    ],
+    "status": "approved",
+    "paw": {
+      "b": -0.3,
+      "a": 3.02,
+      "c": 0.11,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Calcular a média ponderada:\nNF = (6,0 × 4 + 8,0 × 3 + 5,0 × 1) / (4 + 3 + 1)\nNF = (24,0 + 24,0 + 5,0) / 8\nNF = 53,0 / 8 = 6,625.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
+  },
+  {
+    "id": "enem-2020-mt-45-t3-01-t4",
+    "year": 2020,
+    "position": null,
+    "mathPosition": null,
+    "text": "Em uma competição de dança, cada jurado avalia os participantes com uma nota de 0 a 10. As notas dos três jurados têm pesos diferentes: o jurado principal tem peso 5, e os outros dois têm peso 2 e peso 3. Uma participante recebeu nota 9 do jurado principal (peso 5), nota 6 do segundo jurado (peso 2) e nota 8 do terceiro jurado (peso 3). Sua nota final foi calculada assim:\n\nNota final = (9 × 5 + 6 × 2 + 8 × 3) / (5 + 2 + 3) = (45 + 12 + 24) / 10 = 81 / 10 = 8,1\n\nO próximo participante recebeu nota 7 do jurado principal (peso 5), nota 10 do segundo jurado (peso 2) e nota 6 do terceiro jurado (peso 3). Usando o mesmo cálculo, a nota final desse participante é",
+    "options": {
+      "A": "7,0.",
+      "B": "7,2.",
+      "C": "7,3.",
+      "D": "7,5.",
+      "E": "7,7."
+    },
+    "correctAnswer": "C",
+    "topic": "Estatistica e Probabilidade",
+    "habilidade": "H27",
+    "competencia": 7,
+    "subSkills": {
+      "primary": "D4.2.01",
+      "secondary": [],
+      "transversal": []
+    },
+    "tier": 4,
+    "parent": "enem-2020-mt-45-t3-01",
+    "children": null,
+    "status": "approved",
+    "paw": {
+      "b": -3.0,
+      "a": 3.02,
+      "c": 0.11,
+      "n": 100,
+      "d": 300
+    },
+    "explanation": "Passo 1: Aplicar o mesmo método do exemplo:\nNF = (7 × 5 + 10 × 2 + 6 × 3) / (5 + 2 + 3) = (35 + 20 + 18) / 10 = 73 / 10 = 7,3.",
+    "source": "Caramelo",
+    "hasImages": false,
+    "imageUrls": [],
+    "notes": null
   }
 ]
