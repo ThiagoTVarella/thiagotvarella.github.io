@@ -49,7 +49,13 @@
             margin-bottom: 0;
         }
         .portfolio-card ul li {
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .item-desc {
+            display: block;
+            color: #999;
+            font-size: 12px;
+            margin-top: 2px;
         }
         .category-label {
             display: block;
@@ -70,7 +76,7 @@
         }
         .portfolio-sections {
             padding-top: 16px;
-            padding-bottom: 32px;
+            padding-bottom: 64px;
         }
     </style>
 
@@ -88,21 +94,39 @@
             <h3>Portfolio</h3>
             <p style="color:#666; margin-bottom: 24px;">Published materials about coding, scientific outreach, music, and podcast.</p>
 
+            <!-- Coding -->
             <div class="portfolio-card">
                 <div class="row">
                     <div class="col-sm-4">
                         <h3>Coding</h3>
-                        <p>Software and data analysis tools I've developed outside of my research.</p>
+                        <p>Software and tools I've built for fun.</p>
                     </div>
                     <div class="col-sm-8">
-                        <span class="category-label">Projects</span>
                         <ul>
-                            <li><a href="https://CarameloAI.github.io">CarameloAI</a></li>
-                            <li><a href="https://thiagotvarella.github.io/bear.html">Bear game</a></li>
-                            <li><a href="https://thiagotvarella.github.io/scheduler/manualinput.html">Interview scheduler</a></li>
-                            <li><a href="https://colab.research.google.com/drive/1-6NiTYRRlaqJXWUs0OqN9G_bTff29DOd?usp=sharing">Interview scheduler — Google Colab version (most reliable)</a></li>
+                            <li>
+                                <a href="https://CarameloAI.github.io">CarameloAI</a>
+                            </li>
+                            <li>
+                                <a href="https://thiagotvarella.github.io/bear.html">Bear game</a>
+                                <span class="item-desc">A two-player hex-grid game where bears collect honeypots by sliding tiles.</span>
+                            </li>
+                            <li>
+                                <a href="https://thiagotvarella.github.io/scheduler/manualinput.html">Interview scheduler</a>
+                                <span class="item-desc">A tool to find common availability across applicants and interviewers. Also available as a <a href="https://colab.research.google.com/drive/1-6NiTYRRlaqJXWUs0OqN9G_bTff29DOd?usp=sharing">Google Colab notebook</a> (most reliable).</span>
+                            </li>
                         </ul>
-                        <span class="category-label">Research</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research -->
+            <div class="portfolio-card">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Research tools</h3>
+                        <p>Data analysis and tutorials developed for my research.</p>
+                    </div>
+                    <div class="col-sm-8">
                         <ul>
                             <li><a href="https://colab.research.google.com/drive/1LKORyRVfG0Lj3avfiT8SFaZ5xVNsq4S9?usp=sharing">Tutorial on Bayesian inference and active sensing (KSCB 2023)</a></li>
                             <li><a href="https://github.com/ThiagoTVarella/Active-Sampling-in-Primate-Vocal-Interactions">Active Sampling via Bayesian Inference</a></li>
@@ -112,11 +136,12 @@
                 </div>
             </div>
 
+            <!-- Science outreach + Podcast -->
             <div class="portfolio-card">
                 <div class="row">
                     <div class="col-sm-4">
                         <h3>Science outreach</h3>
-                        <p>Articles I've published and talks I've given.</p>
+                        <p>Articles, talks, and podcast episodes.</p>
                     </div>
                     <div class="col-sm-8">
                         <span class="category-label">In English</span>
@@ -131,24 +156,13 @@
                             <li><a href="https://pp.nexojornal.com.br/opiniao/2022/Repara%C3%A7%C3%A3o-hist%C3%B3rica-de-Lamarck-um-novo-olhar-para-a-evolu%C3%A7%C3%A3o">Reparação histórica de Lamarck: um novo olhar para a evolução</a></li>
                             <li><a href="docs/NeuroMatematica.pdf">Entendendo o cérebro com matemática (PDF, em português)</a></li>
                         </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="portfolio-card">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <h3>Podcast</h3>
-                        <p>Episodes with Princeton Insights: The Highlights and Brains, Black Holes, and Beyond.</p>
-                    </div>
-                    <div class="col-sm-8">
-                        <span class="category-label">As the host</span>
+                        <span class="category-label">Podcast — as the host</span>
                         <ul>
                             <li><a href="https://insights.princeton.edu/2023/01/jupiters-auroras/">Jupiter's Auroras with Dr. Jamey R. Szalay</a></li>
                             <li><a href="https://insights.princeton.edu/2021/12/futuristic-nostalgia/">Futuristic nostalgia with Yeon Soon Shin and Rolando Masís-Obando</a></li>
                             <li><a href="https://insights.princeton.edu/2021/11/talking-toddlers-with-mira-nencheva/">Talking toddlers with Mira Nencheva</a></li>
                         </ul>
-                        <span class="category-label">As the interviewee</span>
+                        <span class="category-label">Podcast — as the interviewee</span>
                         <ul>
                             <li><a href="https://insights.princeton.edu/2022/04/marmosets-learning/">What can vocal marmosets tell us about human development?</a></li>
                         </ul>
@@ -156,6 +170,7 @@
                 </div>
             </div>
 
+            <!-- Piano -->
             <div class="portfolio-card">
                 <div class="row">
                     <div class="col-sm-4">
