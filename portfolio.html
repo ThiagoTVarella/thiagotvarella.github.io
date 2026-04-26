@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
-<head> 	
-    
+<head>
+
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139921552-1"></script>
     <script>
@@ -10,197 +10,197 @@
         gtag('js', new Date());
         gtag('config', 'UA-139921552-1');
     </script>
-    
-    <!-- Mobile Meta -->
+
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Icon -->
     <link rel="shortcut icon" href="img/icone.ico">
-    <!-- Meta Author -->
     <meta name="author" content="ThiagoTVarella">
-    <!-- Meta Description -->
     <meta name="description" content="Personal webpage for Thiago Tarraf Varella">
-    <!-- Meta Keyword -->
     <meta name="keywords" content="Thiago Tarraf Varella, thiagotvarella, tvarella, Tarraf Varella, Computational, Neuroscience, Theoretic, Cognitive, Psychology, Animal, Behavior, Behaviour">
-    <!-- meta character set -->
     <meta charset="UTF-8">
-    <!-- Site Title -->
     <title>Thiago Tarraf Varella</title>
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
-    <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- CSS -->
     <link rel="stylesheet" href="css/main.css">
-    <!-- JS -->
     <script src="js/main.js"></script>
-    
+
+    <style>
+        .portfolio-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+        }
+        .portfolio-card h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        .portfolio-card p {
+            color: #666;
+            margin-bottom: 0;
+        }
+        .portfolio-card ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .portfolio-card ul li {
+            margin-bottom: 8px;
+        }
+        .item-desc {
+            display: block;
+            color: #999;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .category-label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #888;
+            margin-top: 16px;
+            margin-bottom: 6px;
+        }
+        .portfolio-card a {
+            color: #222;
+        }
+        .portfolio-card a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+        .portfolio-sections {
+            padding-top: 16px;
+            padding-bottom: 64px;
+        }
+    </style>
+
 </head>
 
 <body>
-    
+
     <div class="container">
-        
-        <div id="header"></div>		
-        
-        <section>
-            <div class="col-lg-2 col-md-2" >
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <h3>Portfolio</h3><br>
-                    Here I'll post some of my published materials about scientific outreach, music, and podcast.
-					<br><br><br>
+
+        <div id="header"></div>
+
+        <div class="col-lg-2 col-md-1"></div>
+        <div class="col-lg-8 col-md-10 portfolio-sections">
+
+            <h3>Portfolio</h3>
+            <p style="color:#666; margin-bottom: 24px;">Published materials about coding, scientific outreach, music, and podcast.</p>
+
+            <!-- Coding -->
+            <div class="portfolio-card">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Coding</h3>
+                        <p>Software and tools I've built for fun.</p>
+                    </div>
+                    <div class="col-sm-8">
+                        <ul>
+                            <li>
+                                <a href="https://carameloai.github.io/">CarameloAI</a>
+                                <span class="item-desc">Adaptive prep app for Brazil's university entrance exam (ENEM). Uses spaced repetition and an LLM explanation agent to guide students through 180+ skill-targeted practice problems.</span>
+                            </li>
+                            <li>
+                                <a href="https://thiagotvarella.github.io/bear.html">Bear game</a>
+                                <span class="item-desc">A two-player hex-grid game where bears collect honeypots by sliding tiles.</span>
+                            </li>
+                            <li>
+                                <a href="https://thiagotvarella.github.io/scheduler/manualinput.html">Interview scheduler</a>
+                                <span class="item-desc">A tool to find common availability across applicants and interviewers. Also available as a <a href="https://colab.research.google.com/drive/1-6NiTYRRlaqJXWUs0OqN9G_bTff29DOd?usp=sharing">Google Colab notebook</a> (most reliable).</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            <div class="col-lg-1 col-md-0">
             </div>
 
-            <div class="col-lg-4 col-md-4">
-                <br>
-
-				 
-					
-				<br><br><br><br><br><br><br><br><br>
-            </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-            </section>
-
-        <section>
-            <div class="col-lg-2 col-md-2" >
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <h3>Coding</h3><br>
-                    These are some of software or data analysis tools I have developed outside of my research.
-					<br><br><br>
+            <!-- Research -->
+            <div class="portfolio-card">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Research tools</h3>
+                        <p>Data analysis and tutorials developed for my research.</p>
+                    </div>
+                    <div class="col-sm-8">
+                        <ul>
+                            <li><a href="https://colab.research.google.com/drive/1LKORyRVfG0Lj3avfiT8SFaZ5xVNsq4S9?usp=sharing">Tutorial on Bayesian inference and active sensing (KSCB 2023)</a></li>
+                            <li><a href="https://github.com/ThiagoTVarella/Active-Sampling-in-Primate-Vocal-Interactions">Active Sampling via Bayesian Inference</a></li>
+                            <li><a href="https://github.com/ThiagoTVarella/Explore-exploit-trade-off-in-vocal-learning">Explore-exploit in vocal development (unfinished)</a></li>
+                        </ul>
+                    </div>
                 </div>
-            <div class="col-lg-1 col-md-0">
             </div>
 
-            <div class="col-lg-4 col-md-4">
-                <br>
-
-				Fun:
-		    		<li><a href= "https://thiagotvarella.github.io/bear.html"> Bear game</a>
-		    
-		    		<br>Interview scheduler:
-				<li><a href="https://thiagotvarella.github.io/scheduler/manualinput.html"> Manual input</a>
-				<li><a href="https://thiagotvarella.github.io/scheduler/automaticinput.html"> Automatic input (broken as of 2024)</a>
-				<li><a href="https://colab.research.google.com/drive/1-6NiTYRRlaqJXWUs0OqN9G_bTff29DOd?usp=sharing">Version in Google Colab (most reliable)</a>
-
-				<br>Research:					
-				<li><a href="https://colab.research.google.com/drive/1LKORyRVfG0Lj3avfiT8SFaZ5xVNsq4S9?usp=sharing">Tutorial on Bayesian inference and active sensing for KSCB 2023</a>
-				<li><a href="https://github.com/ThiagoTVarella/Active-Sampling-in-Primate-Vocal-Interactions">Active Sampling via Bayesian Inference</a>
-				<li><a href="https://github.com/ThiagoTVarella/Explore-exploit-trade-off-in-vocal-learning">Explore-exploit in vocal development (unfinished)</a>
-					
-				<br><br><br><br><br><br>
-            </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-            </section>
-
-	    
-        <section>
-            <div class="col-lg-2 col-md-2" >
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <h3>Science outreach</h3><br>
-                    These are some of science outreach articles I published or talks I've given.
-					<br><br><br>
+            <!-- Science outreach + Podcast -->
+            <div class="portfolio-card">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Science outreach</h3>
+                        <p>Articles, talks, and podcast episodes.</p>
+                    </div>
+                    <div class="col-sm-8">
+                        <span class="category-label">In English</span>
+                        <ul>
+                            <li><a href="https://docs.google.com/presentation/d/1ugxNaa7z_hnf4LXk2Jy-dqNxeApmwu0HrBQfb4PHB8o/edit?usp=sharing">Animal Behavior (Princeton Splash 2019, slides)</a></li>
+                            <li><a href="https://insights.princeton.edu/2020/05/what-can-amoebae-teach-us-about-loners/">What can amoebae teach us about "loners"? (Princeton Insights, with Gabriel T. Vercelli)</a></li>
+                            <li><a href="docs/HodgkinHuxley.pdf">Summary of the Hodgkin-Huxley papers (with Gabriel T. Vercelli, PDF)</a></li>
+                        </ul>
+                        <span class="category-label">Em português</span>
+                        <ul>
+                            <li><a href="https://pp.nexojornal.com.br/perguntas-que-a-ciencia-ja-respondeu/2024/06/28/grandes-modelos-de-linguagem-em-12-pontos">Grandes Modelos de Linguagem, em 12 pontos</a></li>
+                            <li><a href="https://pp.nexojornal.com.br/opiniao/2022/Repara%C3%A7%C3%A3o-hist%C3%B3rica-de-Lamarck-um-novo-olhar-para-a-evolu%C3%A7%C3%A3o">Reparação histórica de Lamarck: um novo olhar para a evolução</a></li>
+                            <li><a href="docs/NeuroMatematica.pdf">Entendendo o cérebro com matemática (PDF, em português)</a></li>
+                        </ul>
+                        <span class="category-label">Podcast — as the host</span>
+                        <ul>
+                            <li><a href="https://insights.princeton.edu/2023/01/jupiters-auroras/">Jupiter's Auroras with Dr. Jamey R. Szalay</a></li>
+                            <li><a href="https://insights.princeton.edu/2021/12/futuristic-nostalgia/">Futuristic nostalgia with Yeon Soon Shin and Rolando Masís-Obando</a></li>
+                            <li><a href="https://insights.princeton.edu/2021/11/talking-toddlers-with-mira-nencheva/">Talking toddlers with Mira Nencheva</a></li>
+                        </ul>
+                        <span class="category-label">Podcast — as the interviewee</span>
+                        <ul>
+                            <li><a href="https://insights.princeton.edu/2022/04/marmosets-learning/">What can vocal marmosets tell us about human development?</a></li>
+                        </ul>
+                    </div>
                 </div>
-            <div class="col-lg-1 col-md-0">
             </div>
 
-            <div class="col-lg-4 col-md-4">
-                <br>
-
-				In English:
-				<li><a href="https://docs.google.com/presentation/d/1ugxNaa7z_hnf4LXk2Jy-dqNxeApmwu0HrBQfb4PHB8o/edit?usp=sharing"> Animal Behavior (Princeton Splash 2019, slides)</a>
-				<li><a href="https://insights.princeton.edu/2020/05/what-can-amoebae-teach-us-about-loners/">What can amoebae teach us about “loners”? (Princeton Insights, with Gabriel T. Vercelli)</a>
-				<li><a href="docs/HodgkinHuxley.pdf">Summary of the Hodgkin-Huxley series of papers (with Gabriel T. Vercelli, PDF)</a>
-
-				<br>Em português:
-				<li><a href="https://pp.nexojornal.com.br/perguntas-que-a-ciencia-ja-respondeu/2024/06/28/grandes-modelos-de-linguagem-em-12-pontos">Grandes Modelos de Linguagem, em 12 pontos (12 questions about LLMs, in Portuguese)</a>
-				<li><a href="https://pp.nexojornal.com.br/opiniao/2022/Repara%C3%A7%C3%A3o-hist%C3%B3rica-de-Lamarck-um-novo-olhar-para-a-evolu%C3%A7%C3%A3o">Reparação histórica de Lamarck: um novo olhar para a evolução (A new perspective about Lamarck, in Portuguese)</a>
-				<li><a href="docs/NeuroMatematica.pdf">Entendendo o cérebro com matemática (Understanding the brain with math, PDF, in Portuguese)</a>
-					
-				<br><br><br><br><br><br>
-            </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-            </section>
-
-
-        <section>
-            <div class="col-lg-2 col-md-2" >
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <h3>Podcast</h3><br>
-                    Some of the episodes I've recorded with Princeton Insights: The Highlights and with Brains, Black Holes, and Beyond.
-					<br><br><br>
+            <!-- Piano -->
+            <div class="portfolio-card">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Piano</h3>
+                        <p>Recordings from me and friends making music.</p>
+                    </div>
+                    <div class="col-sm-8">
+                        <span class="category-label">Western classical music</span>
+                        <ul>
+                            <li><a href="https://www.youtube.com/watch?v=VM5AEkDatVg">Erlkönig, Op. 1, D 328 — F. Schubert</a></li>
+                            <li><a href="https://www.youtube.com/watch?v=-G_g0QuLw1k">Intermezzo from Cavalleria Rusticana — Mascagni</a></li>
+                            <li><a href="https://www.youtube.com/watch?v=ovQDXEqxhCA">Étude de Concert S. 144 no. 3 in D-flat major (Un Sospiro) — F. Liszt</a></li>
+                        </ul>
+                        <span class="category-label">Popular music covers</span>
+                        <ul>
+                            <li><a href="https://www.youtube.com/watch?v=GWijakjl8AY">Só um beijo — Luísa Sobral</a></li>
+                            <li><a href="https://www.youtube.com/watch?v=ZWY8Nd5Vku0">Elephant love medley — Moulin Rouge</a></li>
+                        </ul>
+                    </div>
                 </div>
-            <div class="col-lg-1 col-md-0">
             </div>
 
-            <div class="col-lg-4 col-md-4">
-                <br>
+        </div>
+        <div class="col-lg-2 col-md-1"></div>
 
-				As the host:
-				<li><a href="https://insights.princeton.edu/2023/01/jupiters-auroras/"> Jupiter's Auroras with Dr. Jamey R. Szalay</a>
-				<li><a href="https://insights.princeton.edu/2021/12/futuristic-nostalgia/">Futuristic nostalgia with Yeon Soon Shin and Rolando Masís-Obando</a>
-				<li><a href="https://insights.princeton.edu/2021/11/talking-toddlers-with-mira-nencheva/">Talking toddlers with Mira Nencheva</a>
-
-				<br>As the interviewee:
-				<li><a href="https://insights.princeton.edu/2022/04/marmosets-learning/">What can vocal marmosets tell us about human development? With Thiago Tarraf Varella</a>
-					
-				<br><br><br><br><br><br>
-            </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-            </section>
-
-
-
-        <section>
-            <div class="col-lg-2 col-md-2" >
-            </div>
-            <div class="col-lg-4 col-md-6">
-                <h3>Piano</h3><br>
-                    Recordings from me and friends making music
-					<br><br><br>
-                </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-
-            <div class="col-lg-4 col-md-4">
-                <br>
-
-				Western classical music:
-				<li><a href="https://www.youtube.com/watch?v=VM5AEkDatVg">Erlkönig, Op. 1, D 328 - F. Schubert</a>
-				<li><a href="https://www.youtube.com/watch?v=-G_g0QuLw1k">Intermezzo from Cavalleria Rusticana - Mascagni</a>
-				<li><a href="https://www.youtube.com/watch?v=ovQDXEqxhCA">Étude de Concert S. 144 no. 3 in D-flat major (Un Sospiro) - F. Liszt</a>
-
-				<br>Popular music covers:
-				<li><a href="https://www.youtube.com/watch?v=GWijakjl8AY">Só um beijo - Luísa Sobral</a>
-				<li><a href="https://www.youtube.com/watch?v=ZWY8Nd5Vku0">Elephant love medley - Moulin Rouge</a>
-					
-				<br><br><br><br><br><br>
-            </div>
-            <div class="col-lg-1 col-md-0">
-            </div>
-            </section>
-
-        
         <div id="footer"></div>
-        
+
     </div>
-    
-    
-    
-    
+
 </body>
 
 </html>
