@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Lot Puzzle — Research & Visualization</title>
+    <!-- MathJax for LaTeX Rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --size: clamp(35px, 9vw, 50px);
+            --gap: 2px;
+            --padding: 4px;
+            --bg: #f0f2f5;
+            --grid-border: #2c3e50;
+            --road: #ecf0f1;
+            --car: #ffffff;
+            --path: #f1c40f;
+            --accent: #e74c3c;
+            --node-road: #3498db;
+            --node-car: #7f8c8d;
+            --edge-road: #3498db;
+            --edge-dom: #bdc3c7;
+            --fail: #e74c3c;
+        }
+
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 0; padding: 0; background: var(--bg); color: #333; 
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* Tab Navigation */
+        nav {
+            width: 100%; background: #2c3e50; display: flex; justify-content: center;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .tab-link {
+            padding: 15px 25px; color: #bdc3c7; cursor: pointer; font-weight: 600;
+            font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.2s; border-bottom: 3px solid transparent;
+        }
+        .tab-link:hover { color: white; }
+        .tab-link.active { color: white; border-bottom-color: #3498db; background: rgba(255,255,255,0.05); }
+
+        .tab-content { display: none; width: 100%; max-width: 1200px; padding: 20px; box-sizing: border-box; }
+        .tab-content.active { display: flex; flex-direction: column; align-items: center; }
+
+        /* Shared Grid Styles */
+        .grid-container { position: relative; background: var(--grid-border); padding: var(--padding); border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(7, var(--size)); grid-template-rows: repeat(7, var(--size)); gap: var(--gap); position: relative; z-index: 1; }
+        .svg-layer { position: absolute; top: var(--padding); left: var(--padding); width: calc(7 * var(--size) + 6 * var(--gap)); height: calc(7 * var(--size) + 6 * var(--gap)); pointer-events: none; z-index: 2; }
+        .cell { display: flex; align-items: center; justify-content: center; font-size: calc(var(--size) * 0.5); cursor: pointer; position: relative; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        /* Sandbox Styles */
+        header { text-align: center; margin-bottom: 5px; }
+        header h1 { font-size: 1.4rem; margin: 10px 0 5px 0; }
+        header p { font-size: 0.9rem; margin: 0; color: #666; }
+        #workspace { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; margin-bottom: 40px; }
+        @media (min-width: 900px) { #workspace { flex-direction: row; justify-content: center; align-items: flex-start; gap: 40px; } }
+        .view-panel { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        #grid-parking .cell { background: var(--road); transition: background 0.1s; }
+        #grid-parking .cell.car { background: var(--car); }
+        #grid-parking .cell.exit { box-shadow: inset 0 0 0 3px var(--accent); }
+        #grid-parking .cell.exit::after { content: "EXIT"; position: absolute; top: -16px; color: var(--accent); font-size: 8px; font-weight: bold; }
+        #grid-parking .cell.path::before { content: ""; width: 8px; height: 8px; background: var(--path); border-radius: 50%; position: absolute; z-index: 5; }
+        #grid-parking .cell.selected { border: 2px solid #2ecc71; box-sizing: border-box; }
+        #grid-parking .cell.car.blocked { background: #fee; border: 1px solid var(--fail); }
+        #grid-graph .cell { background: #2c3e50 !important; border-color: transparent !important; }
+        #stats-bar { display: flex; gap: 20px; margin: 15px 0; background: white; padding: 10px 25px; border-radius: 40px; font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); justify-content: center; }
+        .stat-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .ok { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; }
+        .err { background: #e74c3c; box-shadow: 0 0 5px #e74c3c; }
+        .warn { background: #f1c40f; box-shadow: 0 0 5px #f1c40f; }
+        #controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; }
+        button { padding: 8px 16px; border: none; border-radius: 6px; background: var(--grid-border); color: white; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s; }
+        button:active { transform: scale(0.98); }
+        button.sec { background: #95a5a6; }
+
+        /* Heuristic Styles */
+        #heuristic-workspace { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
+        @media (min-width: 900px) { #heuristic-workspace { flex-direction: row; justify-content: center; align-items: center; gap: 60px; } }
+        .narrative-container { max-width: 580px; background: white; padding: 32px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); line-height: 1.75; font-size: 17px; }
+        .narrative-container h3 { font-size: 1.4rem; margin: 0 0 16px 0; color: #2c3e50; }
+        .step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .receipt { background: #f8f9fa; border-radius: 8px; padding: 15px 18px; margin: 18px 0; border-left: 4px solid var(--node-road); font-size: 15px; line-height: 1.8; }
+        .receipt b { color: #2c3e50; }
+        .receipt hr { border: none; border-top: 1px dashed #ccc; margin: 10px 0; }
+        .overlap-glow { position: absolute; width: 100%; height: 100%; background: rgba(241, 196, 15, 0.3); border-radius: 50%; box-shadow: 0 0 15px #f1c40f; z-index: 5; animation: pulse 2s infinite; pointer-events: none; }
+        @keyframes pulse { 0% { opacity: 0.3; transform: scale(0.85); } 50% { opacity: 0.7; transform: scale(1.1); } 100% { opacity: 0.3; transform: scale(0.85); } }
+
+        /* Whitepaper Styles (LaTeX-like) */
+        .paper-container {
+            background: white; width: 100%; max-width: 800px; padding: 60px 80px; margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); font-family: "Computer Modern", "Times New Roman", serif;
+            line-height: 1.6; color: #000; text-align: justify;
+        }
+        .paper-header { text-align: center; margin-bottom: 40px; }
+        .paper-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; }
+        .paper-author { font-size: 1.1rem; margin-bottom: 5px; }
+        .paper-date { font-size: 1rem; color: #666; }
+        .paper-abstract { margin: 30px 40px; font-style: italic; font-size: 0.95rem; }
+        .paper-abstract b { font-style: normal; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        .paper-section { font-size: 1.2rem; font-weight: bold; margin: 30px 0 15px 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .paper-math-block { background: #f9f9f9; padding: 15px; display: block; text-align: center; margin: 20px 0; border-radius: 4px; }
+        
+        @media (max-width: 600px) {
+            .paper-container { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="tab-link active" onclick="showTab('sandbox')">Explorer Workspace</div>
+    <div class="tab-link" onclick="showTab('heuristic')">Heuristic</div>
+    <div class="tab-link" onclick="showTab('paper')">Whitepaper</div>
+</nav>
+
+<!-- Tab 1: Sandbox -->
+<section id="sandbox" class="tab-content active">
+    <header>
+        <h1>7×7 Parking Puzzle Explorer</h1>
+        <p>Interactive playground for Connected Dominating Sets</p>
+    </header>
+
+    <div id="stats-bar">
+        <div class="stat-item">Cars: <b id="c-count">0</b></div>
+        <div class="stat-item" title="Red if any car is blocked.">Valid Solution: <i id="s-valid" class="dot ok"></i></div>
+        <div class="stat-item" title="Yellow if any road doesn't reach the exit.">Fully Optimized: <i id="s-opt" class="dot ok"></i></div>
+    </div>
+
+    <div id="controls">
+        <button onclick="loadSolution('A')">Solution A (U-Spine)</button>
+        <button onclick="loadSolution('B')">Solution B (Row-Base)</button>
+        <button onclick="resetGrid()" class="sec">Clear All</button>
+    </div>
+
+    <div id="workspace">
+        <div class="view-panel">
+            <h2>Physical Layout</h2>
+            <div class="grid-container">
+                <div id="grid-parking" class="grid"></div>
+            </div>
+        </div>
+
+        <div class="view-panel">
+            <h2>Connectivity Graph</h2>
+            <div class="grid-container">
+                <div id="grid-graph" class="grid"></div>
+                <svg id="svg-graph" class="svg-layer"></svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tab 2: Heuristic -->
+<section id="heuristic" class="tab-content">
+    <header>
+        <h1>Geometric Heuristic</h1>
+        <p>Step-by-step derivation of the 28-car bound.</p>
+    </header>
+
+    <div id="heuristic-workspace">
+        <div class="narrative-container">
+            <h3 id="h-title">1. Ideal Capacity</h3>
+            <div id="h-text">Loading heuristic...</div>
+
+            <div class="receipt" id="h-receipt" style="display:none;">
+                <b>Running Tally:</b><br>
+                Nodes in S (k): <span id="h-k">0</span><br>
+                Theoretical capacity: <span id="h-cap">0</span><br>
+                Deficit (Δ): <span id="h-def" style="color: var(--fail)">0</span><br>
+                <hr>
+                Effective coverage: <b id="h-eff">0</b><br>
+                Need to cover: <b>49</b>
+            </div>
+
+            <div class="step-nav">
+                <button onclick="changeHeuristicStep(-1)" id="h-prev" class="sec">Back</button>
+                <span id="h-step-indicator">Step 1 / 6</span>
+                <button onclick="changeHeuristicStep(1)" id="h-next">Next</button>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <div id="grid-heuristic" class="grid"></div>
+            <svg id="svg-heuristic" class="svg-layer"></svg>
+        </div>
+    </div>
+</section>
+
+<!-- Tab 3: Whitepaper -->
+<section id="paper" class="tab-content">
+    <div style="width: 100%; max-width: 900px; text-align: center;">
+        <h2 style="margin-bottom: 10px;">Technical Whitepaper</h2>
+        <p style="color: #666; margin-bottom: 20px;">Full mathematical treatment with rigorous proofs and citations</p>
+        <embed src="parkinglot.pdf" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 8px;">
+        <p style="margin-top: 15px; font-size: 14px; color: #666;">
+            <a href="parkinglot.pdf" download style="color: #3498db;">Download PDF</a>
+        </p>
+    </div>
+</section>
+
+<script>
+    const EXIT = 6;
+    const gridParkingEl = document.getElementById('grid-parking');
+    const gridGraphEl = document.getElementById('grid-graph');
+    const svgGraphEl = document.getElementById('svg-graph');
+    const gridHeuristicEl = document.getElementById('grid-heuristic');
+    const svgHeuristicEl = document.getElementById('svg-heuristic');
+    
+    let state = Array(49).fill('road');
+    let selected = null;
+    let heuristicStep = 0;
+
+    const SOLUTIONS = {
+        A: [[0,5],[0,6],[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[2,1],[2,3],[2,5],[3,1],[3,5],[4,1],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6],[6,1]],
+        B: [[0,1],[0,2],[0,5],[0,6],[1,1],[1,6],[2,1],[2,2],[2,3],[2,4],[2,5],[2,6],[3,1],[4,1],[5,0],[5,1],[5,2],[5,3],[5,4],[5,5],[5,6]]
+    };
+
+    const HEURISTIC_STEPS = [
+        {
+            title: "0. The Grid as a Graph",
+            text: `We model the 7×7 parking lot as a <b>graph</b>:<br><br>
+            <ul style="margin:10px 0;padding-left:20px;">
+                <li>Each cell is a <b>node</b> (49 total)</li>
+                <li>Adjacent cells are connected by <b>edges</b></li>
+                <li>Two nodes are <b>neighbors</b> if they share an edge</li>
+            </ul>
+            In the visualization: <span style="color:#3498db;font-weight:bold;">blue nodes</span> = empty cells, <span style="color:#7f8c8d;font-weight:bold;">gray nodes</span> = cars. Edges show which nodes are neighbors.`,
+            roads: [6, 13, 20, 27, 34, 41, 33, 32, 31, 30, 29, 28],
+            showCDS: true,
+            showCars: true
+        },
+        {
+            title: "1. What Must the Empty Nodes Do?",
+            text: `Let <b>S</b> = the set of empty nodes. For every car to exit independently, S must:<br><br>
+            <ul style="margin:10px 0;padding-left:20px;">
+                <li><b>Contain the exit</b> — the exit node must be in S</li>
+                <li><b>Be connected</b> — any node in S can reach any other node in S by walking through S</li>
+                <li><b>Dominate all cars</b> — every car node has at least one neighbor in S</li>
+            </ul>
+            A set with these properties is called a <b>Connected Dominating Set (CDS)</b>.<br><br>
+            <b>Our goal:</b> Find the minimum size of S — this tells us the maximum number of cars.`,
+            roads: [6, 13, 20, 27, 34, 41, 33, 32, 31, 30, 29, 28],
+            showCDS: true,
+            showCars: true
+        },
+        {
+            title: "2. Domination = Coverage",
+            text: `Each node in S <b>dominates</b> (covers) itself and all its neighbors. This set of nodes is called its <b>closed neighborhood</b>.<br><br>
+            For S to dominate the entire graph, the union of all closed neighborhoods must include all 49 nodes.<br><br>
+            <b>Key question:</b> If S has k nodes, how many nodes can it dominate?`,
+            roads: [24],
+            showCapacity: true
+        },
+        {
+            title: "3. Why Trees Maximize Coverage",
+            text: `If S contains a <b>cycle</b> (a loop), some nodes in S are neighbors unnecessarily — they already dominate each other, so that edge is "wasted."<br><br>
+            A <b>tree</b> is a connected graph with no cycles. Trees use the minimum edges needed to stay connected, maximizing coverage efficiency.<br><br>
+            <span style="color:#666;font-size:14px;">Below: the dashed red line shows a redundant edge that creates a cycle.</span>`,
+            roads: [24, 25, 32, 31, 23],
+            showCycle: true
+        },
+        {
+            title: "4. The 3k+2 Formula (Ideal Case)",
+            text: `Assume S is a tree with k nodes in an <b>infinite grid</b> (every node has 4 neighbors). Build it one node at a time:<br><br>
+            <b>First node:</b> dominates itself + 4 neighbors = <b>5</b> nodes<br><br>
+            <b>Each additional node:</b> connects via one edge. It dominates 5 nodes, but 2 are already counted (itself by its parent, and its parent by itself).<br>
+            Net new: <b>3</b> nodes<br><br>
+            Total: 5 + 3(k−1) = <span style="background:#e8f4e8;padding:2px 8px;border-radius:3px;font-weight:bold;">3k + 2</span>`,
+            roads: [24],
+            showCapacity: true
+        },
+        {
+            title: "5. The Running Tally (Explained)",
+            text: `From now on, the <b>Running Tally</b> box tracks our accounting:<br><br>
+            <ul style="margin:10px 0;padding-left:20px;">
+                <li><b>k</b> — number of nodes in S</li>
+                <li><b>Theoretical capacity</b> — the ideal 3k + 2</li>
+                <li><b>Δ (deficit)</b> — total penalties (explained next)</li>
+                <li><b>Effective coverage</b> — actual nodes dominated: 3k + 2 − Δ</li>
+            </ul>
+            We need effective coverage ≥ 49 to dominate all nodes.`,
+            roads: [24, 25, 26, 32],
+            showCapacity: true
+        },
+        {
+            title: "6. Penalty: Boundary Nodes",
+            text: `The 3k+2 formula assumed every node has 4 neighbors. But nodes on the grid boundary have fewer:<br><br>
+            <b>Corner node</b> (2 neighbors): dominates 3 instead of 5<br>
+            → Penalty: <span style="color:#e74c3c;font-weight:bold;">+2</span><br><br>
+            <b>Edge node</b> (3 neighbors): dominates 4 instead of 5<br>
+            → Penalty: <span style="color:#e74c3c;font-weight:bold;">+1</span><br><br>
+            These penalties add to Δ, reducing effective coverage.`,
+            roads: [0, 3, 6],
+            showBoundary: true
+        },
+        {
+            title: "7. Penalty: Bends (Double Coverage)",
+            text: `When the tree bends 90°, the node in the <b>inner corner</b> gets dominated by <b>both arms</b> of the bend.<br><br>
+            The 3k+2 formula assumed each node outside S is dominated exactly once. Double-domination is wasted coverage.<br><br>
+            <b>90° bend:</b> <span style="color:#f1c40f;font-weight:bold;">+1</span> to Δ<br>
+            <b>T-junction (3 arms):</b> <span style="color:#f1c40f;font-weight:bold;">+3</span> to Δ<br>
+            <b>Cross (4 arms):</b> <span style="color:#f1c40f;font-weight:bold;">+6</span> to Δ<br><br>
+            <span style="color:#666;font-size:14px;">(This assumes S is a tree.)</span>`,
+            roads: [24, 25, 32],
+            overlaps: [31]
+        },
+        {
+            title: "8. The Master Inequality",
+            text: `<b>Summary so far:</b><br>
+            • S has k nodes<br>
+            • Ideal coverage: 3k + 2<br>
+            • Penalties (Δ) reduce this<br>
+            • Effective coverage: 3k + 2 − Δ<br><br>
+            S must dominate all 49 nodes:
+            <div style="background:#f9f9f9;padding:15px;border-radius:4px;text-align:center;margin:10px 0;font-size:17px;">
+            3k + 2 − Δ ≥ 49 &nbsp;⟹&nbsp; <b>3k ≥ 47 + Δ</b>
+            </div>
+            To minimize k, we need to find the <b>minimum possible Δ</b>.`,
+            roads: [24, 25, 26, 32, 33, 18, 11, 4],
+            showMaster: true
+        },
+        {
+            title: "9. Minimum Δ: Corner Costs",
+            text: `The four grid corners force a minimum penalty:<br><br>
+            <b>Exit (top-right):</b> Must be in S. It's a corner node.<br>
+            → Adds <span style="color:#e74c3c;font-weight:bold;">+2</span> to Δ<br><br>
+            <b>Other 3 corners:</b> Each must have a neighbor in S. These corners are far apart (disjoint neighborhoods), so we need 3 distinct boundary nodes in S — each adds at least +1.<br><br>
+            <b>Minimum from corners:</b> 2 + 3 = <span style="background:#fdeaea;padding:2px 8px;border-radius:3px;font-weight:bold;">5</span>`,
+            roads: [6, 5, 4, 3, 2, 1, 0, 42, 43, 44, 48],
+            isSpanning: true
+        },
+        {
+            title: "10. Minimum Δ: Connectivity Costs",
+            text: `S must be connected and span the 7×7 grid to reach all corners. Two strategies:<br><br>
+            <b>Follow boundary:</b> Many edge nodes → boundary penalties<br>
+            <b>Cut through interior:</b> Many turns → bend penalties<br><br>
+            Either way, you pay. Analysis shows the minimum additional penalty is <span style="background:#fdeaea;padding:2px 8px;border-radius:3px;font-weight:bold;">9</span>.<br><br>
+            <span style="color:#666;font-size:14px;">(This is a geometric heuristic, not rigorous — see Whitepaper tab.)</span>`,
+            roads: [6, 5, 4, 3, 2, 1, 0, 7, 14, 21, 28, 35, 42, 43, 44, 45, 46, 47, 48],
+            showRouting: true
+        },
+        {
+            title: "11. The Final Answer",
+            text: `<div style="background:#e8f4e8;padding:15px;border-radius:6px;text-align:center;margin-bottom:15px;font-size:19px;">
+            <b>Maximum cars: 28</b>
+            </div>
+            <b>The math:</b><br>
+            • Minimum Δ = 5 (corners) + 9 (connectivity) = <b>14</b><br>
+            • From 3k ≥ 47 + Δ: we get 3k ≥ 61<br>
+            • So k ≥ 20.33... → <b>k ≥ 21</b> nodes in S<br>
+            • Maximum cars = 49 − 21 = <b>28</b><br><br>
+            <span style="color:#666;font-size:14px;">This bound is achievable — see Explorer tab. For formal treatment, see Whitepaper tab.</span>`,
+            roads: [0,5,6,7,8,9,10,11,12,13,15,17,19,22,26,36,37,38,39,40,41,43],
+            isFinal: true
+        }
+    ];
+
+    function showTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.querySelector(`.tab-link[onclick="showTab('${tabId}')"]`).classList.add('active');
+        
+        if(tabId === 'sandbox') update();
+        if(tabId === 'heuristic') updateHeuristic();
+        if(tabId === 'paper' && window.MathJax) MathJax.typesetPromise();
+    }
+
+    function init() {
+        gridParkingEl.innerHTML = '';
+        gridGraphEl.innerHTML = '';
+        gridHeuristicEl.innerHTML = '';
+        for(let i=0; i<49; i++) {
+            [gridParkingEl, gridGraphEl, gridHeuristicEl].forEach(grid => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (grid !== gridHeuristicEl) cell.onclick = () => toggle(i);
+                grid.appendChild(cell);
+            });
+        }
+        resetGrid();
+    }
+
+    function toggle(idx) {
+        if (idx === EXIT) return;
+        state[idx] = state[idx] === 'road' ? 'car' : 'road';
+        selected = state[idx] === 'car' ? idx : null;
+        update();
+    }
+
+    function getPath(startIdx) {
+        if (state[startIdx] !== 'car') return [];
+        const queue = [[startIdx]];
+        const visited = new Set([startIdx]);
+        while(queue.length) {
+            const path = queue.shift();
+            const curr = path[path.length - 1];
+            if (curr === EXIT) return path.slice(1);
+            const r = Math.floor(curr/7), c = curr%7;
+            for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+                const ni = (r+dr)*7 + (c+dc);
+                if (r+dr>=0 && r+dr<7 && c+dc>=0 && c+dc<7 && (state[ni] === 'road' || ni === startIdx) && !visited.has(ni)) {
+                    visited.add(ni);
+                    queue.push([...path, ni]);
+                }
+            }
+        }
+        return [];
+    }
+
+    function update() {
+        if (!document.getElementById('sandbox').classList.contains('active')) return;
+        const pCells = gridParkingEl.querySelectorAll('.cell');
+        if (!pCells.length) return;
+        
+        const path = selected !== null ? getPath(selected) : [];
+        let carsCount = 0;
+
+        const exitNetwork = new Set();
+        const q = [EXIT];
+        while(q.length) {
+            const curr = q.shift();
+            if (exitNetwork.has(curr)) continue;
+            exitNetwork.add(curr);
+            const r = Math.floor(curr/7), c = curr%7;
+            for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+                const ni = (r+dr)*7 + (c+dc);
+                if (r+dr>=0 && r+dr<7 && c+dc>=0 && c+dc<7 && state[ni] === 'road') q.push(ni);
+            }
+        }
+
+        const blockedCars = new Set();
+        state.forEach((s, i) => {
+            if (s !== 'car') return;
+            const r = Math.floor(i/7), c = i%7;
+            const canReachExit = [[-1,0],[1,0],[0,-1],[0,1]].some(([dr, dc]) => {
+                const ni = (r+dr)*7 + (c+dc);
+                return r+dr>=0 && r+dr<7 && c+dc>=0 && c+dc<7 && exitNetwork.has(ni);
+            });
+            if (!canReachExit) blockedCars.add(i);
+        });
+
+        const isOptimized = state.every((s, i) => s !== 'road' || exitNetwork.has(i));
+        const isValid = (blockedCars.size === 0);
+
+        svgGraphEl.innerHTML = '';
+        const size = pCells[0].offsetWidth;
+        const gap = 2;
+        const getCoords = (i) => {
+            const r = Math.floor(i/7), c = i%7;
+            return { x: c * (size + gap) + size/2, y: r * (size + gap) + size/2 };
+        };
+
+        state.forEach((s, i) => {
+            const pCell = pCells[i];
+            pCell.className = `cell ${s} ${i === EXIT ? 'exit' : ''}`;
+            if (i === selected) pCell.classList.add('selected');
+            if (path.includes(i)) pCell.classList.add('path');
+            if (blockedCars.has(i)) pCell.classList.add('blocked');
+            pCell.textContent = (s === 'car') ? '🚗' : '';
+            if (s === 'car') carsCount++;
+
+            const {x, y} = getCoords(i);
+            const r = Math.floor(i/7), c = i%7;
+            [[1,0], [0,1]].forEach(([dr, dc]) => {
+                const nr = r+dr, nc = c+dc, ni = nr*7+nc;
+                if (nr<7 && nc<7) {
+                    const s2 = state[ni];
+                    let type = null;
+                    if (s === 'road' && s2 === 'road') type = 'road';
+                    else if ((s === 'car' && s2 === 'road') || (s === 'road' && s2 === 'car')) type = 'dom';
+                    if (type) {
+                        const {x: x2, y: y2} = getCoords(ni);
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        line.setAttribute("x1", x); line.setAttribute("y1", y);
+                        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+                        let isActive = (type === 'road' && exitNetwork.has(i) && exitNetwork.has(ni));
+                        line.setAttribute("stroke", type === 'road' ? "var(--edge-road)" : "var(--edge-dom)");
+                        line.setAttribute("stroke-width", type === 'road' ? 4 : 1);
+                        line.setAttribute("stroke-opacity", isActive ? 1 : 0.2);
+                        svgGraphEl.insertBefore(line, svgGraphEl.firstChild);
+                    }
+                }
+            });
+
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+            circle.setAttribute("r", s === 'road' ? 6 : 4);
+            let nodeColor = s === 'road' ? "var(--node-road)" : "var(--node-car)";
+            if (blockedCars.has(i)) nodeColor = "var(--fail)";
+            circle.setAttribute("fill", nodeColor);
+            if (s === 'road') {
+                circle.setAttribute("fill-opacity", exitNetwork.has(i) ? 1 : 0.3);
+                if (exitNetwork.has(i)) circle.setAttribute("filter", `drop-shadow(0 0 6px ${nodeColor})`);
+            } else if (blockedCars.has(i)) {
+                circle.setAttribute("filter", `drop-shadow(0 0 6px ${nodeColor})`);
+            }
+            svgGraphEl.appendChild(circle);
+        });
+
+        document.getElementById('c-count').textContent = carsCount;
+        document.getElementById('s-valid').className = `dot ${isValid ? 'ok' : 'err'}`;
+        document.getElementById('s-opt').className = `dot ${isOptimized ? 'ok' : 'warn'}`;
+    }
+
+    function changeHeuristicStep(delta) {
+        if (heuristicStep === HEURISTIC_STEPS.length - 1 && delta === 1) {
+            showTab('sandbox');
+            loadSolution('A');
+            return;
+        }
+        heuristicStep = Math.max(0, Math.min(HEURISTIC_STEPS.length - 1, heuristicStep + delta));
+        updateHeuristic();
+    }
+
+    function updateHeuristic() {
+        const step = HEURISTIC_STEPS[heuristicStep];
+        document.getElementById('h-title').textContent = step.title;
+        document.getElementById('h-text').innerHTML = step.text;
+        document.getElementById('h-step-indicator').textContent = `Step ${heuristicStep + 1} / ${HEURISTIC_STEPS.length}`;
+        document.getElementById('h-prev').style.visibility = heuristicStep === 0 ? 'hidden' : 'visible';
+        document.getElementById('h-next').textContent = heuristicStep === HEURISTIC_STEPS.length - 1 ? 'Finish' : 'Next';
+        
+        const hCells = gridHeuristicEl.querySelectorAll('.cell');
+        svgHeuristicEl.innerHTML = '';
+        
+        const size = hCells[0].offsetWidth;
+        const gap = 2;
+        const getCoords = (i) => {
+            const r = Math.floor(i/7), c = i%7;
+            return { x: c * (size + gap) + size/2, y: r * (size + gap) + size/2 };
+        };
+
+        const roadSet = new Set(step.roads);
+
+        hCells.forEach((el, i) => {
+            el.className = 'cell ' + (roadSet.has(i) ? 'road' : 'car');
+            if (i === EXIT) el.classList.add('exit');
+            // Clear any previous glow elements
+            el.innerHTML = '';
+            // Show car emojis when showCars is true
+            if (step.showCars && !roadSet.has(i)) {
+                el.textContent = '🚗';
+                el.style.fontSize = 'calc(var(--size) * 0.45)';
+            } else {
+                el.style.fontSize = '';
+            }
+        });
+
+        // Draw edges between road cells
+        step.roads.forEach(i => {
+            const r = Math.floor(i/7), c = i%7;
+            const {x, y} = getCoords(i);
+            [[1,0],[0,1]].forEach(([dr, dc]) => {
+                const ni = (r+dr)*7 + (c+dc);
+                if (r+dr < 7 && c+dc < 7 && roadSet.has(ni)) {
+                    const {x: x2, y: y2} = getCoords(ni);
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", x); line.setAttribute("y1", y);
+                    line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+                    line.setAttribute("stroke", "#3498db");
+                    line.setAttribute("stroke-width", "4");
+                    svgHeuristicEl.appendChild(line);
+                }
+            });
+        });
+
+        // Draw nodes for road cells
+        step.roads.forEach(i => {
+            const {x, y} = getCoords(i);
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+            circle.setAttribute("r", 6);
+            circle.setAttribute("fill", "#3498db");
+            svgHeuristicEl.appendChild(circle);
+        });
+
+        // Show CDS: highlight dominated car cells
+        if (step.showCDS) {
+            for (let i = 0; i < 49; i++) {
+                if (roadSet.has(i)) continue;
+                const r = Math.floor(i/7), c = i%7;
+                const hasDominator = [[-1,0],[1,0],[0,-1],[0,1]].some(([dr, dc]) => {
+                    const ni = (r+dr)*7 + (c+dc);
+                    return r+dr>=0 && r+dr<7 && c+dc>=0 && c+dc<7 && roadSet.has(ni);
+                });
+                if (hasDominator) {
+                    const {x, y} = getCoords(i);
+                    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+                    circle.setAttribute("r", 4);
+                    circle.setAttribute("fill", "#2ecc71");
+                    circle.setAttribute("opacity", "0.7");
+                    svgHeuristicEl.appendChild(circle);
+                }
+            }
+        }
+
+        // Show cycle: highlight the cycle edge that wastes coverage
+        if (step.showCycle) {
+            // Highlight the "wasted" edge in the cycle
+            const {x: x1, y: y1} = getCoords(24);
+            const {x: x2, y: y2} = getCoords(31);
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+            line.setAttribute("stroke", "#e74c3c");
+            line.setAttribute("stroke-width", "3");
+            line.setAttribute("stroke-dasharray", "4,2");
+            svgHeuristicEl.appendChild(line);
+            // Add "wasted" label
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", (x1+x2)/2 - 30); text.setAttribute("y", (y1+y2)/2 - 8);
+            text.setAttribute("fill", "#e74c3c"); text.setAttribute("font-size", "16");
+            text.setAttribute("font-weight", "bold");
+            text.textContent = "wasted";
+            svgHeuristicEl.appendChild(text);
+        }
+
+        // Show capacity: coverage of center cell
+        if (step.showCapacity) {
+            step.roads.forEach(i => {
+                const r = Math.floor(i/7), c = i%7;
+                [[0,0],[-1,0],[1,0],[0,-1],[0,1]].forEach(([dr, dc]) => {
+                    const ni = (r+dr)*7 + (c+dc);
+                    if (r+dr>=0 && r+dr<7 && c+dc>=0 && c+dc<7) {
+                        const {x, y} = getCoords(ni);
+                        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+                        circle.setAttribute("r", 12);
+                        circle.setAttribute("fill", "none");
+                        circle.setAttribute("stroke", "#2ecc71");
+                        circle.setAttribute("stroke-width", "2");
+                        svgHeuristicEl.appendChild(circle);
+                    }
+                });
+            });
+        }
+
+        // Show boundary: label costs on boundary cells
+        if (step.showBoundary) {
+            step.roads.forEach(i => {
+                const r = Math.floor(i/7), c = i%7;
+                const isCorner = (r===0||r===6) && (c===0||c===6);
+                const isEdge = !isCorner && (r===0||r===6||c===0||c===6);
+                if (isCorner || isEdge) {
+                    const {x, y} = getCoords(i);
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", x - 10); text.setAttribute("y", y + 28);
+                    text.setAttribute("fill", "#e74c3c"); text.setAttribute("font-size", "18");
+                    text.setAttribute("font-weight", "bold");
+                    text.textContent = isCorner ? "−2" : "−1";
+                    svgHeuristicEl.appendChild(text);
+                }
+            });
+        }
+
+        // Draw Overlap Markers (Yellow Ring) for bend penalty
+        if (step.overlaps) {
+            step.overlaps.forEach(idx => {
+                const {x, y} = getCoords(idx);
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+                circle.setAttribute("r", 14);
+                circle.setAttribute("fill", "none");
+                circle.setAttribute("stroke", "#f1c40f");
+                circle.setAttribute("stroke-width", "3");
+                svgHeuristicEl.appendChild(circle);
+                // Add "×2" label
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", x + 16); text.setAttribute("y", y - 10);
+                text.setAttribute("fill", "#f1c40f"); text.setAttribute("font-size", "18");
+                text.setAttribute("font-weight", "bold");
+                text.textContent = "×2";
+                svgHeuristicEl.appendChild(text);
+            });
+        }
+
+        // Spanning targets (All 4 corners)
+        if (step.isSpanning) {
+            [0, 6, 42, 48].forEach(idx => {
+                const {x, y} = getCoords(idx);
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", x); circle.setAttribute("cy", y);
+                circle.setAttribute("r", 18);
+                circle.setAttribute("fill", "none");
+                circle.setAttribute("stroke", "#9b59b6");
+                circle.setAttribute("stroke-width", "2");
+                circle.setAttribute("stroke-dasharray", "5,3");
+                svgHeuristicEl.appendChild(circle);
+            });
+        }
+
+        // Show routing: highlight boundary path vs interior
+        if (step.showRouting) {
+            // Highlight perimeter cells
+            step.roads.forEach(i => {
+                const r = Math.floor(i/7), c = i%7;
+                if (r===0||r===6||c===0||c===6) {
+                    const {x, y} = getCoords(i);
+                    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    rect.setAttribute("x", x - size/2 + 2); rect.setAttribute("y", y - size/2 + 2);
+                    rect.setAttribute("width", size - 4); rect.setAttribute("height", size - 4);
+                    rect.setAttribute("fill", "none");
+                    rect.setAttribute("stroke", "#e67e22");
+                    rect.setAttribute("stroke-width", "2");
+                    rect.setAttribute("opacity", "0.6");
+                    svgHeuristicEl.insertBefore(rect, svgHeuristicEl.firstChild);
+                }
+            });
+        }
+
+        // Final solution: show car count
+        if (step.isFinal) {
+            let carCount = 0;
+            for (let i = 0; i < 49; i++) if (!roadSet.has(i)) carCount++;
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", 5); text.setAttribute("y", 7 * (size + gap) + 18);
+            text.setAttribute("fill", "#2c3e50"); text.setAttribute("font-size", "14");
+            text.setAttribute("font-weight", "bold");
+            text.textContent = `${carCount} cars, ${step.roads.length} empty`;
+            svgHeuristicEl.appendChild(text);
+        }
+
+        // === RECEIPT CALCULATION ===
+        const k = step.roads.length;
+        let boundaryPenalty = 0;
+        let overlapPenalty = 0;
+        const coverageCount = new Map();
+
+        // Calculate boundary penalty and coverage
+        step.roads.forEach(i => {
+            const r = Math.floor(i/7), c = i%7;
+            const isCorner = (r===0||r===6) && (c===0||c===6);
+            const isEdge = !isCorner && (r===0||r===6||c===0||c===6);
+            if (isCorner) boundaryPenalty += 2;
+            else if (isEdge) boundaryPenalty += 1;
+
+            // Count coverage for each cell (self + neighbors)
+            [[-1,0],[1,0],[0,-1],[0,1],[0,0]].forEach(([dr, dc]) => {
+                const nr = r+dr, nc = c+dc;
+                if (nr>=0 && nr<7 && nc>=0 && nc<7) {
+                    const ni = nr*7 + nc;
+                    coverageCount.set(ni, (coverageCount.get(ni) || 0) + 1);
+                }
+            });
+        });
+
+        // Calculate overlap penalty and add pulse animation
+        coverageCount.forEach((count, idx) => {
+            if (count > 1 && !roadSet.has(idx)) {
+                overlapPenalty += (count - 1);
+                // Add pulse glow to over-covered cells
+                const glow = document.createElement('div');
+                glow.className = 'overlap-glow';
+                hCells[idx].appendChild(glow);
+            }
+        });
+
+        // Tree internal edges reduce the "naive" 5k count by 2(k-1)
+        // So deficit = boundaryPenalty + overlapPenalty
+        const theoreticalCap = 3*k + 2;
+        const deficit = boundaryPenalty + overlapPenalty;
+        const effectiveCoverage = theoreticalCap - deficit;
+
+        // Show receipt only from step 5 onwards (when it's explained)
+        const receiptEl = document.getElementById('h-receipt');
+        if (heuristicStep >= 5) {
+            receiptEl.style.display = 'block';
+            document.getElementById('h-k').textContent = k;
+            document.getElementById('h-cap').textContent = `3×${k} + 2 = ${theoreticalCap}`;
+            document.getElementById('h-def').textContent = deficit;
+            document.getElementById('h-eff').textContent = `${theoreticalCap} − ${deficit} = ${effectiveCoverage}`;
+        } else {
+            receiptEl.style.display = 'none';
+        }
+
+        if (window.MathJax) MathJax.typesetPromise([document.getElementById('h-text')]);
+    }
+
+    function resetGrid() { state.fill('road'); selected = null; update(); }
+    function loadSolution(type) {
+        state.fill('car');
+        const list = type.length > 1 ? type : SOLUTIONS[type]; // Handle direct array or key
+        list.forEach(item => {
+            const idx = Array.isArray(item) ? item[0]*7 + item[1] : item;
+            state[idx] = 'road';
+        });
+        selected = null;
+        update();
+    }
+    window.addEventListener('resize', () => { update(); updateHeuristic(); });
+    init();
+</script>
+
+</body>
+</html>
