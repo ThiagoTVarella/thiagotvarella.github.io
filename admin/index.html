@@ -157,6 +157,14 @@ async function apiPut(path, content, sha, message) {
 
 // --- Blog helpers ---
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 // Decode base64 GitHub API response (handles UTF-8)
 function decodeContent(b64) {
   return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
@@ -179,7 +187,7 @@ function buildNewFooter(footerHtml, postNum, title) {
 function buildPostHtml(title, body) {
   // Split body into paragraphs on blank lines; fall back to single paragraph
   const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-  const pTags = paras.map(p => `\t\t\t<p>${p}</p>`).join('\n');
+  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
 
   return `<!DOCTYPE html>
 <html lang="en" class="no-js">
@@ -229,7 +237,7 @@ function buildPostHtml(title, body) {
 
 \t\t<section>
 \t\t\t
-\t\t\t<h3>${title}</h3>
+\t\t\t<h3>${escapeHtml(title)}</h3>
 ${pTags}
 \t\t\t
 \t\t</section>
