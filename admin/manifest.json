@@ -1,0 +1,17 @@
+{
+  "name": "Blog Publisher",
+  "short_name": "Blog",
+  "description": "Publish posts to ThiagoTVarella.github.io",
+  "start_url": "/admin/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#2c2c2c",
+  "icons": [
+    {
+      "src": "/admin/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
