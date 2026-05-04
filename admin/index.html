@@ -69,11 +69,7 @@
       cursor: pointer;
       text-decoration: underline;
     }
-    .tabs {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 20px;
-    }
+    .tabs { display: flex; gap: 6px; margin-bottom: 20px; }
     .tab {
       flex: 1;
       padding: 9px 4px;
@@ -114,6 +110,15 @@
   <!-- New Post tab -->
   <div id="tab-new" class="tab-panel">
     <p class="subtitle">Write and publish directly to your blog.</p>
+    <label for="tag-select">Type</label>
+    <select id="tag-select">
+      <option value="thoughts">Thoughts</option>
+      <option value="bookmarks">Bookmarks</option>
+    </select>
+    <div id="url-field" style="display:none">
+      <label for="url-input">External URL</label>
+      <input type="url" id="url-input" placeholder="https://...">
+    </div>
     <label for="title-input">Title</label>
     <input type="text" id="title-input" placeholder="Post title">
     <label for="body-input">Body</label>
@@ -128,6 +133,10 @@
     <label for="edit-select">Post</label>
     <select id="edit-select"><option value="">Select a post…</option></select>
     <div id="edit-form" style="display:none">
+      <div id="edit-url-field" style="display:none">
+        <label for="edit-url-input">External URL</label>
+        <input type="url" id="edit-url-input" placeholder="https://...">
+      </div>
       <label for="edit-title">Title</label>
       <input type="text" id="edit-title">
       <label for="edit-body">Body</label>
@@ -155,6 +164,8 @@
 <script>
 const REPO = 'ThiagoTVarella/ThiagoTVarella.github.io';
 const API  = 'https://api.github.com';
+
+let postsCache = null; // { data: [...], sha: '...' }
 
 const getToken   = () => localStorage.getItem('gh_token');
 const saveToken  = t  => localStorage.setItem('gh_token', t);
@@ -188,10 +199,7 @@ function setStatus(id, msg, type) {
 
 async function apiGet(path) {
   const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-      Accept: 'application/vnd.github+json'
-    }
+    headers: { Authorization: `Bearer ${getToken()}`, Accept: 'application/vnd.github+json' }
   });
   if (!res.ok) throw new Error(`Failed to read ${path} (${res.status})`);
   return res.json();
@@ -246,41 +254,24 @@ function decodeContent(b64) {
   return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
 }
 
-function getNextPostNum(footerHtml) {
-  const matches = [...footerHtml.matchAll(/href="\/blog\/(\d+)\.html"/g)];
-  if (matches.length === 0) return 1;
-  return Math.max(...matches.map(m => parseInt(m[1]))) + 1;
+// --- posts.json helpers ---
+
+async function readPostsJson() {
+  const res  = await apiGet('blog/posts.json');
+  const data = JSON.parse(decodeContent(res.content));
+  postsCache = { data, sha: res.sha };
+  return postsCache;
 }
 
-function buildNewFooter(footerHtml, postNum, title) {
-  const newLi = `\n            <li><a href="/blog/${postNum}.html">${title}</a></li>`;
-  return footerHtml.replace('</ul>', newLi + '\n        </ul>');
+async function writePostsJson(posts, sha, message) {
+  const result = await apiPut('blog/posts.json', JSON.stringify(posts, null, 2), sha, message);
+  postsCache = { data: posts, sha: result.content.sha };
+  return result;
 }
 
-function updateFooterTitle(footerHtml, postNum, newTitle) {
-  const safeTitle = newTitle.replace(/\$/g, '$$$$');
-  return footerHtml.replace(
-    new RegExp(`(href="/blog/${postNum}\\.html">)[^<]*(</a>)`),
-    `$1${safeTitle}$2`
-  );
-}
-
-function removeFromFooter(footerHtml, postNum) {
-  return footerHtml.replace(
-    new RegExp(`\\s*<li><a href="/blog/${postNum}\\.html">[^<]*</a></li>`),
-    ''
-  );
-}
-
-function parsePostHtml(html) {
-  const parser = new DOMParser();
-  const doc    = parser.parseFromString(html, 'text/html');
-  const h3     = doc.querySelector('section h3');
-  const ps     = doc.querySelectorAll('section p');
-  return {
-    title: h3 ? h3.textContent.trim() : '',
-    body:  [...ps].map(p => p.textContent.trim()).filter(Boolean).join('\n\n')
-  };
+function getNextPostNum(posts) {
+  if (posts.length === 0) return 1;
+  return Math.max(...posts.map(p => p.num)) + 1;
 }
 
 async function loadPostList(selectId, statusId) {
@@ -288,26 +279,36 @@ async function loadPostList(selectId, statusId) {
   select.innerHTML = '<option value="">Loading…</option>';
   select.disabled  = true;
   try {
-    const footerData = await apiGet('blog/footerblog.html');
-    const footerHtml = decodeContent(footerData.content);
-    const matches    = [...footerHtml.matchAll(/href="\/blog\/(\d+)\.html">([^<]+)<\/a>/g)];
+    const { data } = await readPostsJson();
+    const sorted = data.slice().sort((a, b) => b.num - a.num);
     select.innerHTML = '<option value="">Select a post…</option>' +
-      matches.map(m => `<option value="${m[1]}">${m[2]}</option>`).join('');
+      sorted.map(p => `<option value="${p.num}">[${p.tag}] ${p.title}</option>`).join('');
     select.disabled = false;
-    return { footerData, footerHtml };
   } catch (err) {
     setStatus(statusId, 'Error loading posts: ' + err.message, 'error');
     select.disabled = false;
   }
 }
 
-function buildPostHtml(title, body) {
-  const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+// --- HTML builders ---
+
+function parsePostHtml(html) {
+  const parser = new DOMParser();
+  const doc    = parser.parseFromString(html, 'text/html');
+  const h3     = doc.querySelector('section h3');
+  const urlEl  = doc.querySelector('section .bookmark-link a');
+  const ps     = [...doc.querySelectorAll('section p')].filter(p => !p.classList.contains('bookmark-link'));
+  return {
+    title: h3    ? h3.textContent.trim()        : '',
+    url:   urlEl ? urlEl.getAttribute('href')   : '',
+    body:  ps.map(p => p.textContent.trim()).filter(Boolean).join('\n\n')
+  };
+}
+
+function buildHead() {
   return `<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
-\t<!-- Global site tag (gtag.js) - Google Analytics -->
 \t<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139921552-1"><\/script>
 \t<script>
 \t\twindow.dataLayer = window.dataLayer || [];
@@ -332,42 +333,75 @@ function buildPostHtml(title, body) {
 </head>
 <body>
 \t<div class="container">
-\t\t<div id="header"></div>
-\t\t<section>
-\t\t\t<h3>${escapeHtml(title)}</h3>
-${pTags}
-\t\t</section>
-\t\t<div id="footerblog"></div>
+\t\t<div id="header"></div>`;
+}
+
+function buildFoot() {
+  return `\t\t<p style="margin-top:2em;"><a href="/blog/">← Back to blog</a></p>
 \t\t<div id="footer"></div>
 \t</div>
 </body>
 </html>`;
 }
 
+function buildPostHtml(title, body) {
+  const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+  return buildHead() + `
+\t\t<section>
+\t\t\t<h3>${escapeHtml(title)}</h3>
+${pTags}
+\t\t</section>
+` + buildFoot();
+}
+
+function buildBookmarkHtml(title, url, body) {
+  const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+  return buildHead() + `
+\t\t<section>
+\t\t\t<h3>${escapeHtml(title)}</h3>
+\t\t\t<p class="bookmark-link"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">→ Read the original</a></p>
+${pTags}
+\t\t</section>
+` + buildFoot();
+}
+
+// --- New Post ---
+
 async function publish() {
+  const tag   = document.getElementById('tag-select').value;
   const title = document.getElementById('title-input').value.trim();
   const body  = document.getElementById('body-input').value.trim();
+  const url   = tag === 'bookmarks' ? document.getElementById('url-input').value.trim() : '';
+
   if (!title) { setStatus('new-status', 'Title is required.', 'error'); return; }
   if (!body)  { setStatus('new-status', 'Body is required.',  'error'); return; }
+  if (tag === 'bookmarks' && !url) { setStatus('new-status', 'URL is required for bookmarks.', 'error'); return; }
 
   const btn = document.getElementById('publish-btn');
   btn.disabled = true;
-  setStatus('new-status', 'Reading archive…');
+  setStatus('new-status', 'Reading posts…');
   try {
-    const footerData    = await apiGet('blog/footerblog.html');
-    const footerContent = decodeContent(footerData.content);
-    const postNum       = getNextPostNum(footerContent);
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    const postNum = getNextPostNum(posts);
 
     setStatus('new-status', `Creating post ${postNum}…`);
-    await apiPut(`blog/${postNum}.html`, buildPostHtml(title, body), null, `Add blog post: ${title}`);
+    const html = tag === 'bookmarks'
+      ? buildBookmarkHtml(title, url, body)
+      : buildPostHtml(title, body);
+    await apiPut(`blog/${postNum}.html`, html, null, `Add blog post: ${title}`);
 
-    setStatus('new-status', 'Updating archive…');
-    await apiPut('blog/footerblog.html', buildNewFooter(footerContent, postNum, title),
-      footerData.sha, `Update blog archive: add post ${postNum}`);
+    setStatus('new-status', 'Updating posts.json…');
+    const date  = new Date().toISOString().split('T')[0];
+    const entry = { num: postNum, title, tag, date };
+    if (tag === 'bookmarks') entry.url = url;
+    await writePostsJson([...posts, entry], postsSha, `Update posts.json: add post ${postNum}`);
 
     setStatus('new-status', `Done! Post ${postNum} is live in ~30s.`, 'success');
     document.getElementById('title-input').value = '';
     document.getElementById('body-input').value  = '';
+    document.getElementById('url-input').value   = '';
   } catch (err) {
     setStatus('new-status', 'Error: ' + err.message, 'error');
   } finally {
@@ -375,22 +409,38 @@ async function publish() {
   }
 }
 
+// --- Edit ---
+
 async function onEditSelect() {
-  const postNum = document.getElementById('edit-select').value;
+  const postNum = parseInt(document.getElementById('edit-select').value, 10);
   const form    = document.getElementById('edit-form');
   setStatus('edit-status', '', '');
   form.style.display = 'none';
   if (!postNum) return;
 
+  const post = postsCache && postsCache.data.find(p => p.num === postNum);
+  const tag  = post ? post.tag : 'thoughts';
+
   setStatus('edit-status', 'Loading post…');
   try {
-    const postData = await apiGet(`blog/${postNum}.html`);
-    const postHtml = decodeContent(postData.content);
-    const { title, body } = parsePostHtml(postHtml);
+    const postData             = await apiGet(`blog/${postNum}.html`);
+    const { title, url, body } = parsePostHtml(decodeContent(postData.content));
+
     document.getElementById('edit-title').value = title;
     document.getElementById('edit-body').value  = body;
-    document.getElementById('save-btn').dataset.postNum = postNum;
-    document.getElementById('save-btn').dataset.sha     = postData.sha;
+
+    const urlField = document.getElementById('edit-url-field');
+    if (tag === 'bookmarks') {
+      document.getElementById('edit-url-input').value = url || '';
+      urlField.style.display = 'block';
+    } else {
+      urlField.style.display = 'none';
+    }
+
+    const btn = document.getElementById('save-btn');
+    btn.dataset.postNum = postNum;
+    btn.dataset.sha     = postData.sha;
+    btn.dataset.tag     = tag;
     form.style.display = 'block';
     setStatus('edit-status', '', '');
   } catch (err) {
@@ -399,28 +449,34 @@ async function onEditSelect() {
 }
 
 async function saveEdit() {
+  const btn     = document.getElementById('save-btn');
+  const postNum = parseInt(btn.dataset.postNum, 10);
+  const sha     = btn.dataset.sha;
+  const tag     = btn.dataset.tag;
   const title   = document.getElementById('edit-title').value.trim();
   const body    = document.getElementById('edit-body').value.trim();
-  const btn     = document.getElementById('save-btn');
-  const postNum = btn.dataset.postNum;
-  const sha     = btn.dataset.sha;
+  const url     = tag === 'bookmarks' ? document.getElementById('edit-url-input').value.trim() : '';
 
   if (!title) { setStatus('edit-status', 'Title is required.', 'error'); return; }
   if (!body)  { setStatus('edit-status', 'Body is required.',  'error'); return; }
+  if (tag === 'bookmarks' && !url) { setStatus('edit-status', 'URL is required.', 'error'); return; }
 
   btn.disabled = true;
   setStatus('edit-status', 'Saving post…');
   try {
-    const result = await apiPut(`blog/${postNum}.html`, buildPostHtml(title, body),
-      sha, `Edit blog post ${postNum}: ${title}`);
+    const html   = tag === 'bookmarks' ? buildBookmarkHtml(title, url, body) : buildPostHtml(title, body);
+    const result = await apiPut(`blog/${postNum}.html`, html, sha, `Edit blog post ${postNum}: ${title}`);
     btn.dataset.sha = result.content.sha;
 
-    setStatus('edit-status', 'Updating archive…');
-    const footerData = await apiGet('blog/footerblog.html');
-    const footerHtml = decodeContent(footerData.content);
-    const newFooter  = updateFooterTitle(footerHtml, postNum, title);
-    await apiPut('blog/footerblog.html', newFooter, footerData.sha,
-      `Update archive title for post ${postNum}`);
+    setStatus('edit-status', 'Updating posts.json…');
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    const updated = posts.map(p => {
+      if (p.num !== postNum) return p;
+      const e = { ...p, title };
+      if (tag === 'bookmarks') e.url = url;
+      return e;
+    });
+    await writePostsJson(updated, postsSha, `Update posts.json: edit post ${postNum}`);
 
     setStatus('edit-status', 'Saved! Changes live in ~30s.', 'success');
   } catch (err) {
@@ -430,15 +486,16 @@ async function saveEdit() {
   }
 }
 
+// --- Delete ---
+
 function onDeleteSelect() {
   const postNum = document.getElementById('delete-select').value;
-  const confirm = document.getElementById('delete-confirm');
   setStatus('delete-status', '', '');
-  confirm.style.display = postNum ? 'block' : 'none';
+  document.getElementById('delete-confirm').style.display = postNum ? 'block' : 'none';
 }
 
 async function executeDelete() {
-  const postNum = document.getElementById('delete-select').value;
+  const postNum = parseInt(document.getElementById('delete-select').value, 10);
   if (!postNum) return;
 
   const btn = document.getElementById('confirm-delete-btn');
@@ -448,12 +505,10 @@ async function executeDelete() {
     const postData = await apiGet(`blog/${postNum}.html`);
     await apiDelete(`blog/${postNum}.html`, postData.sha, `Delete blog post ${postNum}`);
 
-    setStatus('delete-status', 'Updating archive…');
-    const footerData = await apiGet('blog/footerblog.html');
-    const footerHtml = decodeContent(footerData.content);
-    const newFooter  = removeFromFooter(footerHtml, postNum);
-    await apiPut('blog/footerblog.html', newFooter, footerData.sha,
-      `Remove post ${postNum} from archive`);
+    setStatus('delete-status', 'Updating posts.json…');
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    await writePostsJson(posts.filter(p => p.num !== postNum), postsSha,
+      `Update posts.json: remove post ${postNum}`);
 
     setStatus('delete-status', 'Deleted! Changes live in ~30s.', 'success');
     document.getElementById('delete-confirm').style.display = 'none';
@@ -464,6 +519,8 @@ async function executeDelete() {
     btn.disabled = false;
   }
 }
+
+// --- Wire up ---
 
 document.getElementById('save-token-btn').addEventListener('click', () => {
   const t = document.getElementById('token-input').value.trim();
@@ -476,8 +533,13 @@ document.getElementById('token-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('save-token-btn').click();
 });
 
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+document.querySelectorAll('.tab').forEach(tab =>
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab))
+);
+
+document.getElementById('tag-select').addEventListener('change', () => {
+  document.getElementById('url-field').style.display =
+    document.getElementById('tag-select').value === 'bookmarks' ? 'block' : 'none';
 });
 
 document.getElementById('publish-btn').addEventListener('click', publish);
