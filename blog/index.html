@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139921552-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-139921552-1');
+	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" href="../img/icone.ico">
+	<meta name="author" content="ThiagoTVarella">
+	<meta name="description" content="Personal webpage for Thiago Tarraf Varella">
+	<meta name="keywords" content="Thiago Tarraf Varella, thiagotvarella, tvarella, Tarraf Varella, Computational, Neuroscience, Theoretic, Cognitive, Psychology, Animal, Behavior, Behaviour">
+	<meta charset="UTF-8">
+	<title>Thiago Tarraf Varella — Blog</title>
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/main.css">
+	<script src="../js/main.js"></script>
+	<style>
+		.blog-intro { margin-bottom: 2em; }
+		.blog-section h4 { margin-bottom: 0.75em; border-bottom: 1px solid #eee; padding-bottom: 0.4em; }
+		.blog-section ul { list-style: none; padding: 0; margin: 0; }
+		.blog-section li { margin-bottom: 0.5em; }
+		.blog-section li a { color: #111; }
+		.blog-section li a:hover { color: #555; }
+		.blog-empty { color: #aaa; font-style: italic; font-size: 0.9em; }
+		@media (max-width: 767px) {
+			.blog-section + .blog-section { margin-top: 2em; }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div id="header"></div>
+
+		<section>
+			<p class="blog-intro">A space for random thoughts.</p>
+
+			<div class="row">
+				<div class="col-md-6 blog-section">
+					<h4>Thoughts</h4>
+					<ul id="thoughts-list"><li class="blog-empty">Loading…</li></ul>
+				</div>
+				<div class="col-md-6 blog-section">
+					<h4>Bookmarks</h4>
+					<ul id="bookmarks-list"><li class="blog-empty">Loading…</li></ul>
+				</div>
+			</div>
+		</section>
+
+		<div id="footer"></div>
+	</div>
+
+	<script>
+	fetch('/blog/posts.json')
+		.then(function(r) { return r.json(); })
+		.then(function(posts) {
+			var sorted = posts.slice().sort(function(a, b) { return b.num - a.num; });
+			function render(tag, listId) {
+				var ul = document.getElementById(listId);
+				var items = sorted.filter(function(p) { return p.tag === tag; });
+				if (items.length === 0) {
+					ul.innerHTML = '<li class="blog-empty">Nothing here yet.</li>';
+				} else {
+					ul.innerHTML = items.map(function(p) {
+						return '<li><a href="/blog/' + p.num + '.html">' + p.title + '</a></li>';
+					}).join('');
+				}
+			}
+			render('thoughts', 'thoughts-list');
+			render('bookmarks', 'bookmarks-list');
+		})
+		.catch(function() {
+			document.getElementById('thoughts-list').innerHTML = '<li class="blog-empty">Failed to load.</li>';
+			document.getElementById('bookmarks-list').innerHTML = '<li class="blog-empty">Failed to load.</li>';
+		});
+	</script>
+</body>
+</html>
