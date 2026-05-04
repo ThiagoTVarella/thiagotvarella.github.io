@@ -1,0 +1,826 @@
+# Blog Redesign Implementation Plan
+
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+
+**Goal:** Add a proper blog landing page with Thoughts and Bookmarks columns backed by a `posts.json` manifest, and update the PWA publisher to use it.
+
+**Architecture:** `blog/posts.json` becomes the single source of truth for all posts. The landing page `blog/index.html` fetches it and renders two columns. The admin PWA reads/writes `posts.json` instead of `footerblog.html`. Existing post HTML files are untouched except for replacing the `footerblog` div with a back link.
+
+**Tech Stack:** Vanilla HTML/CSS/JS, Bootstrap 3 grid for two-column layout, GitHub REST API v3, `fetch()` for landing page data loading.
+
+---
+
+### Task 1: Create blog/posts.json
+
+**Files:**
+- Create: `blog/posts.json`
+
+**Step 1: Create the file**
+
+```json
+[
+  { "num": 1, "title": "How did language become a problem in computer science?", "tag": "thoughts", "date": "2024-01-01" },
+  { "num": 2, "title": "How do words become numbers?", "tag": "thoughts", "date": "2024-01-15" }
+]
+```
+
+Write to `/home/thiag/ThiagoTVarella.github.io/blog/posts.json`.
+
+**Step 2: Validate**
+
+```bash
+python3 -m json.tool blog/posts.json
+```
+Expected: prints JSON without errors.
+
+**Step 3: Commit**
+
+```bash
+git add blog/posts.json
+git commit -m "feat: add posts.json as blog source of truth"
+```
+
+---
+
+### Task 2: Create blog/index.html (landing page)
+
+**Files:**
+- Create: `blog/index.html`
+
+**Step 1: Create the file**
+
+```html
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139921552-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		gtag('config', 'UA-139921552-1');
+	</script>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="shortcut icon" href="../img/icone.ico">
+	<meta name="author" content="ThiagoTVarella">
+	<meta name="description" content="Personal webpage for Thiago Tarraf Varella">
+	<meta name="keywords" content="Thiago Tarraf Varella, thiagotvarella, tvarella, Tarraf Varella, Computational, Neuroscience, Theoretic, Cognitive, Psychology, Animal, Behavior, Behaviour">
+	<meta charset="UTF-8">
+	<title>Thiago Tarraf Varella — Blog</title>
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../css/main.css">
+	<script src="../js/main.js"></script>
+	<style>
+		.blog-intro { margin-bottom: 2em; }
+		.blog-section h4 { margin-bottom: 0.75em; border-bottom: 1px solid #eee; padding-bottom: 0.4em; }
+		.blog-section ul { list-style: none; padding: 0; margin: 0; }
+		.blog-section li { margin-bottom: 0.5em; }
+		.blog-section li a { color: #111; }
+		.blog-section li a:hover { color: #555; }
+		.blog-empty { color: #aaa; font-style: italic; font-size: 0.9em; }
+		@media (max-width: 767px) {
+			.blog-section + .blog-section { margin-top: 2em; }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div id="header"></div>
+
+		<section>
+			<p class="blog-intro">A space for random thoughts.</p>
+
+			<div class="row">
+				<div class="col-md-6 blog-section">
+					<h4>Thoughts</h4>
+					<ul id="thoughts-list"><li class="blog-empty">Loading…</li></ul>
+				</div>
+				<div class="col-md-6 blog-section">
+					<h4>Bookmarks</h4>
+					<ul id="bookmarks-list"><li class="blog-empty">Loading…</li></ul>
+				</div>
+			</div>
+		</section>
+
+		<div id="footer"></div>
+	</div>
+
+	<script>
+	fetch('/blog/posts.json')
+		.then(function(r) { return r.json(); })
+		.then(function(posts) {
+			var sorted = posts.slice().sort(function(a, b) { return b.num - a.num; });
+			function render(tag, listId) {
+				var ul = document.getElementById(listId);
+				var items = sorted.filter(function(p) { return p.tag === tag; });
+				if (items.length === 0) {
+					ul.innerHTML = '<li class="blog-empty">Nothing here yet.</li>';
+				} else {
+					ul.innerHTML = items.map(function(p) {
+						return '<li><a href="/blog/' + p.num + '.html">' + p.title + '</a></li>';
+					}).join('');
+				}
+			}
+			render('thoughts', 'thoughts-list');
+			render('bookmarks', 'bookmarks-list');
+		})
+		.catch(function() {
+			document.getElementById('thoughts-list').innerHTML = '<li class="blog-empty">Failed to load.</li>';
+			document.getElementById('bookmarks-list').innerHTML = '<li class="blog-empty">Failed to load.</li>';
+		});
+	</script>
+</body>
+</html>
+```
+
+**Step 2: Validate**
+
+```bash
+python3 -c "from html.parser import HTMLParser; p=HTMLParser(); p.feed(open('blog/index.html').read()); print('HTML OK')"
+```
+
+**Step 3: Commit**
+
+```bash
+git add blog/index.html
+git commit -m "feat: add blog landing page with Thoughts and Bookmarks columns"
+```
+
+---
+
+### Task 3: Update existing post pages (back link)
+
+**Files:**
+- Modify: `blog/1.html`
+- Modify: `blog/2.html`
+
+**Step 1: In both files, replace `<div id="footerblog"></div>` with a back link**
+
+In `blog/1.html`, find:
+```html
+		<div id="footerblog"></div>
+```
+Replace with:
+```html
+		<p style="margin-top:2em;"><a href="/blog/">← Back to blog</a></p>
+```
+
+Do the same in `blog/2.html`.
+
+**Step 2: Verify both files no longer contain `footerblog`**
+
+```bash
+grep -l "footerblog" blog/1.html blog/2.html
+```
+Expected: no output (neither file contains it anymore).
+
+**Step 3: Commit**
+
+```bash
+git add blog/1.html blog/2.html
+git commit -m "feat: replace footerblog archive with back link on post pages"
+```
+
+---
+
+### Task 4: Update nav link in header.html
+
+**Files:**
+- Modify: `header.html`
+
+**Step 1: Change the blog nav link**
+
+In `header.html`, find:
+```html
+            <li><a href="/blog/1.html">Blog.</a></li>
+```
+Replace with:
+```html
+            <li><a href="/blog/">Blog.</a></li>
+```
+
+**Step 2: Verify**
+
+```bash
+grep "blog" header.html
+```
+Expected: shows `/blog/` not `/blog/1.html`.
+
+**Step 3: Commit**
+
+```bash
+git add header.html
+git commit -m "feat: update nav to point to blog landing page"
+```
+
+---
+
+### Task 5: Rewrite admin/index.html with posts.json and tag support
+
+**Files:**
+- Modify: `admin/index.html` (complete rewrite)
+
+This is the largest task. The rewrite:
+- Replaces `footerblog.html` reads/writes with `posts.json` reads/writes
+- Adds tag selector (Thoughts / Bookmarks) to New Post tab
+- Adds URL field for Bookmarks
+- Updates Edit/Delete to use `posts.json`
+- Adds `buildBookmarkHtml()` template
+- Removes now-unused footer/footerblog functions
+
+**Step 1: Write the complete file**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Publisher</title>
+  <link rel="manifest" href="/admin/manifest.json">
+  <meta name="theme-color" content="#2c2c2c">
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Comfortaa', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .subtitle { font-size: 0.85rem; color: #999; margin-bottom: 20px; }
+    label { display: block; font-size: 0.85rem; color: #666; margin-bottom: 4px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      margin-bottom: 16px;
+      outline: none;
+      background: white;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #2c2c2c; }
+    textarea { height: 220px; resize: vertical; }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #2c2c2c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #444; }
+    button:disabled { background: #aaa; cursor: default; }
+    .btn-danger { background: #c0392b; }
+    .btn-danger:hover { background: #a93226; }
+    .status { margin-top: 12px; font-size: 0.9rem; text-align: center; min-height: 20px; }
+    .status.error { color: #c0392b; }
+    .status.success { color: #27ae60; }
+    .reset-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #bbb;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .tabs { display: flex; gap: 6px; margin-bottom: 20px; }
+    .tab {
+      flex: 1;
+      padding: 9px 4px;
+      background: #f0f0f0;
+      color: #666;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tab.active { background: #2c2c2c; color: white; }
+    .confirm-msg { font-size: 0.9rem; color: #666; margin-bottom: 12px; text-align: center; }
+    #setup, #app { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- Setup screen -->
+<div class="card" id="setup">
+  <h1 style="font-size:1.4rem;margin-bottom:8px;color:#2c2c2c;">Blog Publisher</h1>
+  <p class="subtitle">One-time setup — paste your GitHub token below.</p>
+  <label for="token-input">GitHub Personal Access Token</label>
+  <input type="password" id="token-input" placeholder="github_pat_...">
+  <button id="save-token-btn">Save & Continue</button>
+  <div class="status" id="setup-status"></div>
+</div>
+
+<!-- Main app -->
+<div class="card" id="app">
+  <nav class="tabs">
+    <button class="tab active" data-tab="new">New</button>
+    <button class="tab" data-tab="edit">Edit</button>
+    <button class="tab" data-tab="delete">Delete</button>
+  </nav>
+
+  <!-- New Post tab -->
+  <div id="tab-new" class="tab-panel">
+    <p class="subtitle">Write and publish directly to your blog.</p>
+    <label for="tag-select">Type</label>
+    <select id="tag-select">
+      <option value="thoughts">Thoughts</option>
+      <option value="bookmarks">Bookmarks</option>
+    </select>
+    <div id="url-field" style="display:none">
+      <label for="url-input">External URL</label>
+      <input type="url" id="url-input" placeholder="https://...">
+    </div>
+    <label for="title-input">Title</label>
+    <input type="text" id="title-input" placeholder="Post title">
+    <label for="body-input">Body</label>
+    <textarea id="body-input" placeholder="Write your post here...&#10;&#10;Separate paragraphs with a blank line."></textarea>
+    <button id="publish-btn">Publish</button>
+    <div class="status" id="new-status"></div>
+  </div>
+
+  <!-- Edit tab -->
+  <div id="tab-edit" class="tab-panel" style="display:none">
+    <p class="subtitle">Select a post to edit.</p>
+    <label for="edit-select">Post</label>
+    <select id="edit-select"><option value="">Select a post…</option></select>
+    <div id="edit-form" style="display:none">
+      <div id="edit-url-field" style="display:none">
+        <label for="edit-url-input">External URL</label>
+        <input type="url" id="edit-url-input" placeholder="https://...">
+      </div>
+      <label for="edit-title">Title</label>
+      <input type="text" id="edit-title">
+      <label for="edit-body">Body</label>
+      <textarea id="edit-body"></textarea>
+      <button id="save-btn">Save Changes</button>
+    </div>
+    <div class="status" id="edit-status"></div>
+  </div>
+
+  <!-- Delete tab -->
+  <div id="tab-delete" class="tab-panel" style="display:none">
+    <p class="subtitle">Select a post to delete.</p>
+    <label for="delete-select">Post</label>
+    <select id="delete-select"><option value="">Select a post…</option></select>
+    <div id="delete-confirm" style="display:none">
+      <p class="confirm-msg">This cannot be undone.</p>
+      <button id="confirm-delete-btn" class="btn-danger">Delete Post</button>
+    </div>
+    <div class="status" id="delete-status"></div>
+  </div>
+
+  <span class="reset-link" id="reset-link">Reset token</span>
+</div>
+
+<script>
+const REPO = 'ThiagoTVarella/ThiagoTVarella.github.io';
+const API  = 'https://api.github.com';
+
+let postsCache = null; // { data: [...], sha: '...' }
+
+const getToken   = () => localStorage.getItem('gh_token');
+const saveToken  = t  => localStorage.setItem('gh_token', t);
+const clearToken = ()  => localStorage.removeItem('gh_token');
+
+function showSetup() {
+  document.getElementById('setup').style.display = 'block';
+  document.getElementById('app').style.display   = 'none';
+}
+function showApp() {
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('app').style.display   = 'block';
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === name)
+  );
+  document.querySelectorAll('.tab-panel').forEach(p =>
+    p.style.display = (p.id === 'tab-' + name) ? 'block' : 'none'
+  );
+  if (name === 'edit')   loadPostList('edit-select',   'edit-status');
+  if (name === 'delete') loadPostList('delete-select', 'delete-status');
+}
+
+function setStatus(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'status ' + (type || '');
+}
+
+async function apiGet(path) {
+  const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
+    headers: { Authorization: `Bearer ${getToken()}`, Accept: 'application/vnd.github+json' }
+  });
+  if (!res.ok) throw new Error(`Failed to read ${path} (${res.status})`);
+  return res.json();
+}
+
+async function apiPut(path, content, sha, message) {
+  const b64  = btoa(unescape(encodeURIComponent(content)));
+  const body = { message, content: b64 };
+  if (sha) body.sha = sha;
+  const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Failed to write ${path} (${res.status})`);
+  }
+  return res.json();
+}
+
+async function apiDelete(path, sha, message) {
+  const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      Accept: 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ message, sha })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || `Failed to delete ${path} (${res.status})`);
+  }
+  return res.json();
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function decodeContent(b64) {
+  return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
+}
+
+// --- posts.json helpers ---
+
+async function readPostsJson() {
+  const res  = await apiGet('blog/posts.json');
+  const data = JSON.parse(decodeContent(res.content));
+  postsCache = { data, sha: res.sha };
+  return postsCache;
+}
+
+async function writePostsJson(posts, sha, message) {
+  const result = await apiPut('blog/posts.json', JSON.stringify(posts, null, 2), sha, message);
+  postsCache = { data: posts, sha: result.content.sha };
+  return result;
+}
+
+function getNextPostNum(posts) {
+  if (posts.length === 0) return 1;
+  return Math.max(...posts.map(p => p.num)) + 1;
+}
+
+async function loadPostList(selectId, statusId) {
+  const select = document.getElementById(selectId);
+  select.innerHTML = '<option value="">Loading…</option>';
+  select.disabled  = true;
+  try {
+    const { data } = await readPostsJson();
+    const sorted = data.slice().sort((a, b) => b.num - a.num);
+    select.innerHTML = '<option value="">Select a post…</option>' +
+      sorted.map(p => `<option value="${p.num}">[${p.tag}] ${p.title}</option>`).join('');
+    select.disabled = false;
+  } catch (err) {
+    setStatus(statusId, 'Error loading posts: ' + err.message, 'error');
+    select.disabled = false;
+  }
+}
+
+// --- HTML builders ---
+
+function parsePostHtml(html) {
+  const parser = new DOMParser();
+  const doc    = parser.parseFromString(html, 'text/html');
+  const h3     = doc.querySelector('section h3');
+  const urlEl  = doc.querySelector('section .bookmark-link a');
+  const ps     = [...doc.querySelectorAll('section p')].filter(p => !p.classList.contains('bookmark-link'));
+  return {
+    title: h3    ? h3.textContent.trim()        : '',
+    url:   urlEl ? urlEl.getAttribute('href')   : '',
+    body:  ps.map(p => p.textContent.trim()).filter(Boolean).join('\n\n')
+  };
+}
+
+function buildHead(relative) {
+  // relative = '../' for blog/N.html
+  return `<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+\t<script async src="https://www.googletagmanager.com/gtag/js?id=UA-139921552-1"><\/script>
+\t<script>
+\t\twindow.dataLayer = window.dataLayer || [];
+\t\tfunction gtag(){dataLayer.push(arguments);}
+\t\tgtag('js', new Date());
+\t\tgtag('config', 'UA-139921552-1');
+\t<\/script>
+\t<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+\t<link rel="shortcut icon" href="${relative}img/icone.ico">
+\t<meta name="author" content="ThiagoTVarella">
+\t<meta name="description" content="Personal webpage for Thiago Tarraf Varella">
+\t<meta name="keywords" content="Thiago Tarraf Varella, thiagotvarella, tvarella, Tarraf Varella, Computational, Neuroscience, Theoretic, Cognitive, Psychology, Animal, Behavior, Behaviour">
+\t<meta charset="UTF-8">
+\t<title>Thiago Tarraf Varella</title>
+\t<link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+\t<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"><\/script>
+\t<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+\t<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"><\/script>
+\t<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+\t<link rel="stylesheet" href="${relative}css/main.css">
+\t<script src="${relative}js/main.js"><\/script>
+</head>
+<body>
+\t<div class="container">
+\t\t<div id="header"></div>`;
+}
+
+function buildFoot() {
+  return `\t\t<p style="margin-top:2em;"><a href="/blog/">← Back to blog</a></p>
+\t\t<div id="footer"></div>
+\t</div>
+</body>
+</html>`;
+}
+
+function buildPostHtml(title, body) {
+  const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+  return buildHead('../') + `
+\t\t<section>
+\t\t\t<h3>${escapeHtml(title)}</h3>
+${pTags}
+\t\t</section>
+` + buildFoot();
+}
+
+function buildBookmarkHtml(title, url, body) {
+  const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+  return buildHead('../') + `
+\t\t<section>
+\t\t\t<h3>${escapeHtml(title)}</h3>
+\t\t\t<p class="bookmark-link"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">→ Read the original</a></p>
+${pTags}
+\t\t</section>
+` + buildFoot();
+}
+
+// --- New Post ---
+
+async function publish() {
+  const tag   = document.getElementById('tag-select').value;
+  const title = document.getElementById('title-input').value.trim();
+  const body  = document.getElementById('body-input').value.trim();
+  const url   = tag === 'bookmarks' ? document.getElementById('url-input').value.trim() : '';
+
+  if (!title) { setStatus('new-status', 'Title is required.', 'error'); return; }
+  if (!body)  { setStatus('new-status', 'Body is required.',  'error'); return; }
+  if (tag === 'bookmarks' && !url) { setStatus('new-status', 'URL is required for bookmarks.', 'error'); return; }
+
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = true;
+  setStatus('new-status', 'Reading posts…');
+  try {
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    const postNum = getNextPostNum(posts);
+
+    setStatus('new-status', `Creating post ${postNum}…`);
+    const html = tag === 'bookmarks'
+      ? buildBookmarkHtml(title, url, body)
+      : buildPostHtml(title, body);
+    await apiPut(`blog/${postNum}.html`, html, null, `Add blog post: ${title}`);
+
+    setStatus('new-status', 'Updating posts.json…');
+    const date    = new Date().toISOString().split('T')[0];
+    const entry   = { num: postNum, title, tag, date };
+    if (tag === 'bookmarks') entry.url = url;
+    await writePostsJson([...posts, entry], postsSha, `Update posts.json: add post ${postNum}`);
+
+    setStatus('new-status', `Done! Post ${postNum} is live in ~30s.`, 'success');
+    document.getElementById('title-input').value = '';
+    document.getElementById('body-input').value  = '';
+    document.getElementById('url-input').value   = '';
+  } catch (err) {
+    setStatus('new-status', 'Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// --- Edit ---
+
+async function onEditSelect() {
+  const postNum = parseInt(document.getElementById('edit-select').value, 10);
+  const form    = document.getElementById('edit-form');
+  setStatus('edit-status', '', '');
+  form.style.display = 'none';
+  if (!postNum) return;
+
+  const post = postsCache && postsCache.data.find(p => p.num === postNum);
+  const tag  = post ? post.tag : 'thoughts';
+
+  setStatus('edit-status', 'Loading post…');
+  try {
+    const postData            = await apiGet(`blog/${postNum}.html`);
+    const { title, url, body } = parsePostHtml(decodeContent(postData.content));
+
+    document.getElementById('edit-title').value = title;
+    document.getElementById('edit-body').value  = body;
+
+    const urlField = document.getElementById('edit-url-field');
+    if (tag === 'bookmarks') {
+      document.getElementById('edit-url-input').value = url || '';
+      urlField.style.display = 'block';
+    } else {
+      urlField.style.display = 'none';
+    }
+
+    const btn = document.getElementById('save-btn');
+    btn.dataset.postNum = postNum;
+    btn.dataset.sha     = postData.sha;
+    btn.dataset.tag     = tag;
+    form.style.display = 'block';
+    setStatus('edit-status', '', '');
+  } catch (err) {
+    setStatus('edit-status', 'Error loading post: ' + err.message, 'error');
+  }
+}
+
+async function saveEdit() {
+  const btn     = document.getElementById('save-btn');
+  const postNum = parseInt(btn.dataset.postNum, 10);
+  const sha     = btn.dataset.sha;
+  const tag     = btn.dataset.tag;
+  const title   = document.getElementById('edit-title').value.trim();
+  const body    = document.getElementById('edit-body').value.trim();
+  const url     = tag === 'bookmarks' ? document.getElementById('edit-url-input').value.trim() : '';
+
+  if (!title) { setStatus('edit-status', 'Title is required.', 'error'); return; }
+  if (!body)  { setStatus('edit-status', 'Body is required.',  'error'); return; }
+  if (tag === 'bookmarks' && !url) { setStatus('edit-status', 'URL is required.', 'error'); return; }
+
+  btn.disabled = true;
+  setStatus('edit-status', 'Saving post…');
+  try {
+    const html   = tag === 'bookmarks' ? buildBookmarkHtml(title, url, body) : buildPostHtml(title, body);
+    const result = await apiPut(`blog/${postNum}.html`, html, sha, `Edit blog post ${postNum}: ${title}`);
+    btn.dataset.sha = result.content.sha;
+
+    setStatus('edit-status', 'Updating posts.json…');
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    const updated = posts.map(p => {
+      if (p.num !== postNum) return p;
+      const e = { ...p, title };
+      if (tag === 'bookmarks') e.url = url;
+      return e;
+    });
+    await writePostsJson(updated, postsSha, `Update posts.json: edit post ${postNum}`);
+
+    setStatus('edit-status', 'Saved! Changes live in ~30s.', 'success');
+  } catch (err) {
+    setStatus('edit-status', 'Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// --- Delete ---
+
+function onDeleteSelect() {
+  const postNum = document.getElementById('delete-select').value;
+  setStatus('delete-status', '', '');
+  document.getElementById('delete-confirm').style.display = postNum ? 'block' : 'none';
+}
+
+async function executeDelete() {
+  const postNum = parseInt(document.getElementById('delete-select').value, 10);
+  if (!postNum) return;
+
+  const btn = document.getElementById('confirm-delete-btn');
+  btn.disabled = true;
+  setStatus('delete-status', 'Deleting post…');
+  try {
+    const postData = await apiGet(`blog/${postNum}.html`);
+    await apiDelete(`blog/${postNum}.html`, postData.sha, `Delete blog post ${postNum}`);
+
+    setStatus('delete-status', 'Updating posts.json…');
+    const { data: posts, sha: postsSha } = await readPostsJson();
+    await writePostsJson(posts.filter(p => p.num !== postNum), postsSha,
+      `Update posts.json: remove post ${postNum}`);
+
+    setStatus('delete-status', 'Deleted! Changes live in ~30s.', 'success');
+    document.getElementById('delete-confirm').style.display = 'none';
+    await loadPostList('delete-select', 'delete-status');
+  } catch (err) {
+    setStatus('delete-status', 'Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// --- Wire up ---
+
+document.getElementById('save-token-btn').addEventListener('click', () => {
+  const t = document.getElementById('token-input').value.trim();
+  if (!t) { setStatus('setup-status', 'Paste your token first.', 'error'); return; }
+  saveToken(t);
+  showApp();
+});
+
+document.getElementById('token-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('save-token-btn').click();
+});
+
+document.querySelectorAll('.tab').forEach(tab =>
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab))
+);
+
+document.getElementById('tag-select').addEventListener('change', () => {
+  document.getElementById('url-field').style.display =
+    document.getElementById('tag-select').value === 'bookmarks' ? 'block' : 'none';
+});
+
+document.getElementById('publish-btn').addEventListener('click', publish);
+document.getElementById('edit-select').addEventListener('change', onEditSelect);
+document.getElementById('save-btn').addEventListener('click', saveEdit);
+document.getElementById('delete-select').addEventListener('change', onDeleteSelect);
+document.getElementById('confirm-delete-btn').addEventListener('click', executeDelete);
+
+document.getElementById('reset-link').addEventListener('click', () => {
+  clearToken();
+  document.getElementById('token-input').value = '';
+  showSetup();
+});
+
+getToken() ? showApp() : showSetup();
+</script>
+
+</body>
+</html>
+```
+
+**Step 2: Validate**
+
+```bash
+python3 -c "from html.parser import HTMLParser; p=HTMLParser(); p.feed(open('admin/index.html').read()); print('HTML OK')"
+```
+
+**Step 3: Commit**
+
+```bash
+git add admin/index.html
+git commit -m "feat: update PWA publisher to use posts.json with tag support"
+```
+
+---
+
+### Task 6: Push to GitHub
+
+**Step 1: Push**
+
+```bash
+git -C /home/thiag/ThiagoTVarella.github.io push origin master
+```
+
+Expected: all 5 commits pushed, no errors.
