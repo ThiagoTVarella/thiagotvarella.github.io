@@ -258,9 +258,10 @@ function buildNewFooter(footerHtml, postNum, title) {
 }
 
 function updateFooterTitle(footerHtml, postNum, newTitle) {
+  const safeTitle = newTitle.replace(/\$/g, '$$$$');
   return footerHtml.replace(
     new RegExp(`(href="/blog/${postNum}\\.html">)[^<]*(</a>)`),
-    `$1${newTitle}$2`
+    `$1${safeTitle}$2`
   );
 }
 
