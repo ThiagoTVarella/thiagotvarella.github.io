@@ -228,6 +228,7 @@
             renderBoard(state);
             bridgeCostSpan.textContent = bridgeCost;
             updateStatus();
+            selectedHex = null;
         }
 
         function subscribeToRoom() {
@@ -242,7 +243,30 @@
             });
         }
 
+        function pushState() {
+            if (!isOnline) return;
+            const cells = [];
+            const hexes = document.querySelectorAll('#game-board .hex');
+            hexes.forEach(hex => {
+                cells.push({
+                    row: Number(hex.dataset.index1),
+                    col: Number(hex.dataset.index2),
+                    content: hex.textContent,
+                    removed: hex.classList.contains('removed'),
+                    rebuilt: hex.classList.contains('rebuilt'),
+                });
+            });
+            const state = {
+                currentPlayer, placementPhase,
+                scores: scores.slice(),
+                bridgeCost, bridgesBuilt,
+                cells,
+            };
+            setDoc(doc(db, 'rooms', roomId), { state }, { merge: true });
+        }
+
         function handleHexClick(event) {
+            if (isOnline && currentPlayer !== myPlayer) return;
             const hex = event.target;
             if (buildingBridge) {
                 if (hex.classList.contains('removed')) {
@@ -293,6 +317,7 @@
                 placementPhase = false;
                 updateStatus();
             }
+            pushState();
         }
 
         // Function that inputs from and checks every hex on the board to see if it would be valid to move there
@@ -329,6 +354,7 @@
                 bears2 = bears2.map(p => p === from.dataset.index2 ? to.dataset.index2 : p);
                 switchPlayer();
                 checkGameOver();
+                pushState();
             } else {
                 console.log('');
                 console.log('Invalid move:');
@@ -475,6 +501,7 @@
             hex.classList.add('rebuilt');
             switchPlayer();
             updateStatus();
+            pushState();
         }
 
         function updateBridgeCost() {
@@ -496,6 +523,7 @@
             
             switchPlayer();
             status.textContent = `Player ${currentPlayer} skipped their turn. It's now Player ${currentPlayer}'s turn.`;
+            pushState();
         }
 
 
