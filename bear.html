@@ -87,7 +87,33 @@
         <p> Before the game starts, each player has to place 3 bears on <br> the board. Then, move any tiles in one of the six directions <br> to collect the most honeypots (no jumping over other bears <br> or gaps). You can rebuild a gap by spending honeypots. </p>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import {
+            getFirestore, doc, setDoc, onSnapshot, Timestamp
+        } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhBsAT0IVyI0ME2Uy7-LpDI5OBfgC6TPI",
+            authDomain: "bear-game-28539.firebaseapp.com",
+            projectId: "bear-game-28539",
+            storageBucket: "bear-game-28539.firebasestorage.app",
+            messagingSenderId: "859169043790",
+            appId: "1:859169043790:web:377569c1793fc88303da1f"
+        };
+
+        const params   = new URLSearchParams(location.search);
+        const roomId   = params.get('room');
+        const isHost   = params.get('host') === '1';
+        const isOnline = !!roomId;
+        const myPlayer = isHost ? 1 : 2;
+
+        let app, db;
+        if (isOnline) {
+            app = initializeApp(firebaseConfig);
+            db  = getFirestore(app);
+        }
+
         const board = document.getElementById('game-board');
         const status = document.getElementById('status');
         const bridgeCostSpan = document.getElementById('bridge-cost');
@@ -412,6 +438,8 @@
         }
 
 
+        window.buildBridge = buildBridge;
+        window.skipTurn    = skipTurn;
         createBoard();
         updateStatus();
     </script>
