@@ -85,6 +85,13 @@
         <div id="status"></div>
         <button id="build-bridge" onclick="buildBridge()">Build Bridge (<span id="bridge-cost"></span> 🍯)</button><br>
         <button id="skip-turn" onclick="skipTurn()">Skip Turn</button>
+        <div id="online-create" style="margin-top: 12px;">
+            <button id="create-online-btn">Create online game</button>
+        </div>
+        <div id="online-share" style="margin-top: 12px; display: none;">
+            Share this link with your opponent:<br>
+            <a id="share-link" href="#"></a>
+        </div>
         <p> Before the game starts, each player has to place 3 bears on <br> the board. Then, move any tiles in one of the six directions <br> to collect the most honeypots (no jumping over other bears <br> or gaps). You can rebuild a gap by spending honeypots. </p>
     </div>
 
@@ -113,6 +120,28 @@
         if (isOnline) {
             app = initializeApp(firebaseConfig);
             db  = getFirestore(app);
+        }
+
+        function generateRoomCode() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let code = '';
+            for (let i = 0; i < 4; i++) code += letters[Math.floor(Math.random() * 26)];
+            return code;
+        }
+
+        async function createOnlineGame() {
+            const code = generateRoomCode();
+            const tempApp = initializeApp(firebaseConfig, 'creator');
+            const tempDb  = getFirestore(tempApp);
+            const initialState = generateInitialState();
+            const expiresAt = Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000);
+            await setDoc(doc(tempDb, 'rooms', code), {
+                createdAt: expiresAt,
+                hostJoined: true,
+                guestJoined: false,
+                state: initialState,
+            });
+            location.href = `bear.html?room=${code}&host=1`;
         }
 
         const board = document.getElementById('game-board');
@@ -441,6 +470,21 @@
 
         window.buildBridge = buildBridge;
         window.skipTurn    = skipTurn;
+
+        document.getElementById('create-online-btn').addEventListener('click', createOnlineGame);
+
+        if (isOnline) {
+            document.getElementById('online-create').style.display = 'none';
+            if (isHost) {
+                const shareUrl = `${location.origin}${location.pathname}?room=${roomId}`;
+                const shareEl = document.getElementById('online-share');
+                const linkEl  = document.getElementById('share-link');
+                linkEl.href = shareUrl;
+                linkEl.textContent = shareUrl;
+                shareEl.style.display = 'block';
+            }
+        }
+
         createBoard();
         updateStatus();
     </script>
