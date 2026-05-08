@@ -240,6 +240,9 @@
                 const data = snap.data();
                 if (!data.state) return;
                 applyState(data.state);
+                if (isHost && !data.guestJoined) {
+                    status.textContent = 'Waiting for opponent to join…';
+                }
             });
         }
 
@@ -536,10 +539,20 @@
             document.getElementById('online-create').style.display = 'none';
             if (isHost) {
                 const shareUrl = `${location.origin}${location.pathname}?room=${roomId}`;
-                const shareEl = document.getElementById('online-share');
-                const linkEl  = document.getElementById('share-link');
+                const shareEl  = document.getElementById('online-share');
+                const linkEl   = document.getElementById('share-link');
                 linkEl.href = shareUrl;
                 linkEl.textContent = shareUrl;
+                linkEl.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await navigator.clipboard.writeText(shareUrl);
+                        linkEl.textContent = 'Copied! Now paste it to your opponent.';
+                        setTimeout(() => { linkEl.textContent = shareUrl; }, 2500);
+                    } catch {
+                        window.open(shareUrl, '_blank');
+                    }
+                });
                 shareEl.style.display = 'block';
             }
             subscribeToRoom();
