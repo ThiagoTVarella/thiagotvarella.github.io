@@ -237,6 +237,7 @@
                     return;
                 }
                 const data = snap.data();
+                if (!data.state) return;
                 applyState(data.state);
             });
         }
@@ -513,10 +514,10 @@
                 linkEl.textContent = shareUrl;
                 shareEl.style.display = 'block';
             }
-            if (!isHost) {
-                await setDoc(doc(db, 'rooms', roomId), { guestJoined: true }, { merge: true });
-            }
             subscribeToRoom();
+            if (!isHost) {
+                setDoc(doc(db, 'rooms', roomId), { guestJoined: true }, { merge: true });
+            }
         } else {
             createBoard();
             updateStatus();
