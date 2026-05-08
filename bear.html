@@ -101,49 +101,58 @@
         let bridgeCost = 3;
         let bridgesBuilt = 0;
 
+        function generateInitialState() {
+            const cells = [];
+            const totalRows = 9;
+            const hexPerRow = 8;
+            for (let row = 0; row < totalRows; row++) {
+                for (let col = 0; col < hexPerRow; col++) {
+                    const honeypot = Math.floor(Math.random() * 6) + 1;
+                    let content;
+                    if (honeypot > 5)      content = '🍯🍯🍯';
+                    else if (honeypot > 2) content = '🍯🍯';
+                    else                   content = '🍯';
+                    cells.push({ row, col, content, removed: false, rebuilt: false });
+                }
+            }
+            return {
+                currentPlayer: 1,
+                placementPhase: true,
+                scores: [0, 0],
+                bridgeCost: 3,
+                bridgesBuilt: 0,
+                cells,
+            };
+        }
 
-        function createBoard() {
-            const board = document.getElementById('game-board');
-            const hexPerRow = 8; // Number of hexagons per row
-            const totalRows = 9; // Total number of rows
-
+        function renderBoard(state) {
+            const boardEl = document.getElementById('game-board');
+            boardEl.innerHTML = '';
+            const totalRows = 9;
+            const hexPerRow = 8;
             for (let row = 0; row < totalRows; row++) {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'row';
-
-                if (row % 2 !== 0) {
-                    rowDiv.classList.add('row-even'); // Add the staggered class for even rows
-                }
-
-                if (row % 2 !== 1) {
-                    rowDiv.classList.add('row-odd'); // Add the staggered class for even rows
-                }
-                
-
+                if (row % 2 !== 0) rowDiv.classList.add('row-even');
+                if (row % 2 !== 1) rowDiv.classList.add('row-odd');
                 for (let col = 0; col < hexPerRow; col++) {
-
+                    const cell = state.cells.find(c => c.row === row && c.col === col);
                     const hex = document.createElement('div');
                     hex.className = 'hex';
                     hex.dataset.index1 = row;
                     hex.dataset.index2 = col;
-                    const honeypot = Math.floor(Math.random() * 6) + 1;
-                    if (honeypot > 5) {
-                        hex.textContent = '🍯'.repeat(3);
-                    } else {
-                        if (honeypot > 2) {
-                            hex.textContent = '🍯'.repeat(2);
-                        } else {
-                            hex.textContent = '🍯'.repeat(1);
-                        }
-                    }
-                    // hex.textContent += row + ',' + col;
-
+                    hex.textContent = cell.content;
+                    if (cell.removed) hex.classList.add('removed');
+                    if (cell.rebuilt) hex.classList.add('rebuilt');
                     hex.addEventListener('click', handleHexClick);
                     rowDiv.appendChild(hex);
                 }
-
-                board.appendChild(rowDiv);
+                boardEl.appendChild(rowDiv);
             }
+        }
+
+        function createBoard() {
+            renderBoard(generateInitialState());
         }
 
         function handleHexClick(event) {
