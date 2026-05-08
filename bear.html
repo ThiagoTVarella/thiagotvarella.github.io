@@ -211,6 +211,36 @@
             renderBoard(generateInitialState());
         }
 
+        function applyState(state) {
+            currentPlayer  = state.currentPlayer;
+            placementPhase = state.placementPhase;
+            scores         = state.scores.slice();
+            bridgeCost     = state.bridgeCost;
+            bridgesBuilt   = state.bridgesBuilt;
+            bears1 = [];
+            bears2 = [];
+            for (const cell of state.cells) {
+                if (cell.content.includes('🐻')) {
+                    bears1.push(String(cell.row));
+                    bears2.push(String(cell.col));
+                }
+            }
+            renderBoard(state);
+            bridgeCostSpan.textContent = bridgeCost;
+            updateStatus();
+        }
+
+        function subscribeToRoom() {
+            onSnapshot(doc(db, 'rooms', roomId), (snap) => {
+                if (!snap.exists()) {
+                    status.textContent = 'Game not found. The link may be expired.';
+                    return;
+                }
+                const data = snap.data();
+                applyState(data.state);
+            });
+        }
+
         function handleHexClick(event) {
             const hex = event.target;
             if (buildingBridge) {
@@ -483,10 +513,14 @@
                 linkEl.textContent = shareUrl;
                 shareEl.style.display = 'block';
             }
+            if (!isHost) {
+                await setDoc(doc(db, 'rooms', roomId), { guestJoined: true }, { merge: true });
+            }
+            subscribeToRoom();
+        } else {
+            createBoard();
+            updateStatus();
         }
-
-        createBoard();
-        updateStatus();
     </script>
 </body>
 </html>
