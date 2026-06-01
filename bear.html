@@ -61,6 +61,8 @@
         .bear {
             font-size: 24px;
         }
+        .bear-1 { filter: hue-rotate(-15deg) saturate(1.2) brightness(1.05); }
+        .bear-2 { filter: hue-rotate(170deg) saturate(1.4) brightness(0.95); }
         #status {
             margin-top: 20px;
             font-weight: bold;
@@ -197,7 +199,7 @@
                     hex.className = 'hex';
                     hex.dataset.index1 = row;
                     hex.dataset.index2 = col;
-                    hex.textContent = cell.content;
+                    hex.innerHTML = cell.content.replace(/🐻([12])/g, '<span class="bear-$1">🐻$1</span>');
                     if (cell.removed) hex.classList.add('removed');
                     if (cell.rebuilt) hex.classList.add('rebuilt');
                     hex.addEventListener('click', handleHexClick);
@@ -312,7 +314,7 @@
         }
 
         function placebear(hex) {
-            hex.textContent += `🐻${currentPlayer}`;
+            hex.insertAdjacentHTML('beforeend', `<span class="bear-${currentPlayer}">🐻${currentPlayer}</span>`);
             bears1.push(hex.dataset.index1);
             bears2.push(hex.dataset.index2);
             switchPlayer();
@@ -345,8 +347,8 @@
             const dx = to.dataset.index1 - from.dataset.index1;
             const dy = to.dataset.index2 - from.dataset.index2;
             if (isPathValid(from,to) && !to.textContent.includes('🐻')) {
-                to.textContent += '🐻';
-                to.textContent += from.textContent.slice(-1);
+                const player = from.textContent.slice(-1);
+                to.insertAdjacentHTML('beforeend', `<span class="bear-${player}">🐻${player}</span>`);
                 const honeypot = from.textContent.split('🍯').length - 1;
                 scores[currentPlayer - 1] += honeypot;
                 from.textContent = '';
