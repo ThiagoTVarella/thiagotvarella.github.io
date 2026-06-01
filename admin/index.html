@@ -118,6 +118,8 @@
     <div id="url-field" style="display:none">
       <label for="url-input">External URL</label>
       <input type="url" id="url-input" placeholder="https://...">
+      <label for="source-title-input">Source title <span style="color:#bbb">(optional)</span></label>
+      <input type="text" id="source-title-input" placeholder="Title of the linked article">
     </div>
     <label for="title-input">Title</label>
     <input type="text" id="title-input" placeholder="Post title">
@@ -136,6 +138,8 @@
       <div id="edit-url-field" style="display:none">
         <label for="edit-url-input">External URL</label>
         <input type="url" id="edit-url-input" placeholder="https://...">
+        <label for="edit-source-title-input">Source title <span style="color:#bbb">(optional)</span></label>
+        <input type="text" id="edit-source-title-input" placeholder="Title of the linked article">
       </div>
       <label for="edit-title">Title</label>
       <input type="text" id="edit-title">
@@ -298,11 +302,22 @@ function parsePostHtml(html) {
   const h3     = doc.querySelector('section h3');
   const urlEl  = doc.querySelector('section .bookmark-link a');
   const ps     = [...doc.querySelectorAll('section p')].filter(p => !p.classList.contains('bookmark-link'));
+  let sourceTitle = '';
+  if (urlEl) {
+    const linkText = urlEl.textContent.trim().replace(/^→\s*/, '');
+    if (linkText && linkText !== 'Read the original') sourceTitle = linkText;
+  }
   return {
-    title: h3    ? h3.textContent.trim()        : '',
-    url:   urlEl ? urlEl.getAttribute('href')   : '',
-    body:  ps.map(p => p.textContent.trim()).filter(Boolean).join('\n\n')
+    title:       h3    ? h3.textContent.trim()      : '',
+    url:         urlEl ? urlEl.getAttribute('href') : '',
+    sourceTitle: sourceTitle,
+    body:        ps.map(p => p.textContent.trim()).filter(Boolean).join('\n\n')
   };
+}
+
+function getDomain(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ''); }
+  catch (e) { return ''; }
 }
 
 function buildHead() {
@@ -355,13 +370,20 @@ ${pTags}
 ` + buildFoot();
 }
 
-function buildBookmarkHtml(title, url, body) {
+function buildBookmarkHtml(title, url, body, sourceTitle) {
   const paras = body.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   const pTags = paras.map(p => `\t\t\t<p>${escapeHtml(p)}</p>`).join('\n');
+  const linkText   = sourceTitle ? sourceTitle : 'Read the original';
+  const domain     = getDomain(url);
+  const sourceSpan = domain
+    ? `\n\t\t\t\t<span class="bookmark-source">${escapeHtml(domain)}</span>`
+    : '';
   return buildHead() + `
 \t\t<section>
 \t\t\t<h3>${escapeHtml(title)}</h3>
-\t\t\t<p class="bookmark-link"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">→ Read the original</a></p>
+\t\t\t<p class="bookmark-link">
+\t\t\t\t<a href="${escapeHtml(url)}" target="_blank" rel="noopener">→ ${escapeHtml(linkText)}</a>${sourceSpan}
+\t\t\t</p>
 ${pTags}
 \t\t</section>
 ` + buildFoot();
@@ -374,6 +396,7 @@ async function publish() {
   const title = document.getElementById('title-input').value.trim();
   const body  = document.getElementById('body-input').value.trim();
   const url   = tag === 'bookmarks' ? document.getElementById('url-input').value.trim() : '';
+  const sourceTitle = tag === 'bookmarks' ? document.getElementById('source-title-input').value.trim() : '';
 
   if (!title) { setStatus('new-status', 'Title is required.', 'error'); return; }
   if (!body)  { setStatus('new-status', 'Body is required.',  'error'); return; }
@@ -388,20 +411,24 @@ async function publish() {
 
     setStatus('new-status', `Creating post ${postNum}…`);
     const html = tag === 'bookmarks'
-      ? buildBookmarkHtml(title, url, body)
+      ? buildBookmarkHtml(title, url, body, sourceTitle)
       : buildPostHtml(title, body);
     await apiPut(`blog/${postNum}.html`, html, null, `Add blog post: ${title}`);
 
     setStatus('new-status', 'Updating posts.json…');
     const date  = new Date().toISOString().split('T')[0];
     const entry = { num: postNum, title, tag, date };
-    if (tag === 'bookmarks') entry.url = url;
+    if (tag === 'bookmarks') {
+      entry.url = url;
+      if (sourceTitle) entry.sourceTitle = sourceTitle;
+    }
     await writePostsJson([...posts, entry], postsSha, `Update posts.json: add post ${postNum}`);
 
     setStatus('new-status', `Done! Post ${postNum} is live in ~30s.`, 'success');
     document.getElementById('title-input').value = '';
     document.getElementById('body-input').value  = '';
     document.getElementById('url-input').value   = '';
+    document.getElementById('source-title-input').value = '';
   } catch (err) {
     setStatus('new-status', 'Error: ' + err.message, 'error');
   } finally {
@@ -423,15 +450,16 @@ async function onEditSelect() {
 
   setStatus('edit-status', 'Loading post…');
   try {
-    const postData             = await apiGet(`blog/${postNum}.html`);
-    const { title, url, body } = parsePostHtml(decodeContent(postData.content));
+    const postData                          = await apiGet(`blog/${postNum}.html`);
+    const { title, url, sourceTitle, body } = parsePostHtml(decodeContent(postData.content));
 
     document.getElementById('edit-title').value = title;
     document.getElementById('edit-body').value  = body;
 
     const urlField = document.getElementById('edit-url-field');
     if (tag === 'bookmarks') {
-      document.getElementById('edit-url-input').value = url || '';
+      document.getElementById('edit-url-input').value          = url || '';
+      document.getElementById('edit-source-title-input').value = sourceTitle || '';
       urlField.style.display = 'block';
     } else {
       urlField.style.display = 'none';
@@ -456,6 +484,7 @@ async function saveEdit() {
   const title   = document.getElementById('edit-title').value.trim();
   const body    = document.getElementById('edit-body').value.trim();
   const url     = tag === 'bookmarks' ? document.getElementById('edit-url-input').value.trim() : '';
+  const sourceTitle = tag === 'bookmarks' ? document.getElementById('edit-source-title-input').value.trim() : '';
 
   if (!title) { setStatus('edit-status', 'Title is required.', 'error'); return; }
   if (!body)  { setStatus('edit-status', 'Body is required.',  'error'); return; }
@@ -464,7 +493,7 @@ async function saveEdit() {
   btn.disabled = true;
   setStatus('edit-status', 'Saving post…');
   try {
-    const html   = tag === 'bookmarks' ? buildBookmarkHtml(title, url, body) : buildPostHtml(title, body);
+    const html   = tag === 'bookmarks' ? buildBookmarkHtml(title, url, body, sourceTitle) : buildPostHtml(title, body);
     const result = await apiPut(`blog/${postNum}.html`, html, sha, `Edit blog post ${postNum}: ${title}`);
     btn.dataset.sha = result.content.sha;
 
@@ -473,7 +502,10 @@ async function saveEdit() {
     const updated = posts.map(p => {
       if (p.num !== postNum) return p;
       const e = { ...p, title };
-      if (tag === 'bookmarks') e.url = url;
+      if (tag === 'bookmarks') {
+        e.url = url;
+        if (sourceTitle) e.sourceTitle = sourceTitle; else delete e.sourceTitle;
+      }
       return e;
     });
     await writePostsJson(updated, postsSha, `Update posts.json: edit post ${postNum}`);

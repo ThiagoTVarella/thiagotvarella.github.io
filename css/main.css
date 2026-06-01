@@ -110,6 +110,26 @@ img {
 
 /******************** MENU END ********************/
 
-tab { 
+tab {
 	padding-left: 4em;
 }
+
+/******************** BLOG BOOKMARKS ********************/
+
+.bookmark-link {
+    margin-bottom: 1.5em;
+}
+.bookmark-link a {
+    color: #111;
+}
+.bookmark-link a:hover {
+    color: #555;
+}
+.bookmark-source {
+    display: block;
+    font-size: 0.8em;
+    color: #999;
+    margin-top: 0.2em;
+}
+
+/******************** BLOG BOOKMARKS END ********************/
