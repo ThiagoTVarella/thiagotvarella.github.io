@@ -10,5 +10,12 @@
     "title": "How do words become numbers?",
     "tag": "thoughts",
     "date": "2024-01-15"
+  },
+  {
+    "num": 3,
+    "title": "Running local LLMs on CPU",
+    "tag": "bookmarks",
+    "date": "2026-06-01",
+    "url": "https://news.ycombinator.com/item?id=48353348"
   }
 ]
