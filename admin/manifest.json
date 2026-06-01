@@ -1,7 +1,7 @@
 {
   "name": "Blog Publisher",
   "short_name": "Blog",
-  "description": "Publish posts to ThiagoTVarella.github.io",
+  "description": "Publish posts to thiagotvarella.github.io",
   "start_url": "/admin/",
   "display": "standalone",
   "background_color": "#f5f5f5",
