@@ -1,6 +1,8 @@
 :root {
     --c-footer: rgba(180, 180, 180, 1);
     --c-menu: rgba(50, 50, 50, 1);
+    /* height the footer needs; .container reserves this much space at its bottom */
+    --footer-h: 5em;
 }
 
 * {
@@ -45,6 +47,12 @@ footer {
     min-height:90%;
     width: 90%;
     position: relative;
+    /* The footer is taken out of flow, so it reserves no space of its own. On
+       desktop the min-height above leaves room for it, but on mobile the content
+       is usually taller than that and the footer lands on top of the last
+       elements (hiding things like the "Back to blog" link). Reserve room for it
+       plus some breathing space below the content. */
+    padding-bottom: calc(var(--footer-h) + 2.5em);
 }
 
 img {
