@@ -47,5 +47,13 @@
     "date": "2026-08-09",
     "url": "https://seg6.space/posts/phone-server/",
     "sourceTitle": "my server is a phone now"
+  },
+  {
+    "num": 8,
+    "title": "Reference for MIDI transformers",
+    "tag": "bookmarks",
+    "date": "2026-08-20",
+    "url": "https://simedw.com/2026/08/20/midi-autocomplete/",
+    "sourceTitle": "Training a 125M-parameter Model to Autocomplete Piano"
   }
 ]
