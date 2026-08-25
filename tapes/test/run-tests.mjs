@@ -6,6 +6,7 @@
 import * as audio from '../js/audio.js';
 import * as asr from '../js/asr.js';
 import * as store from '../js/store.js';
+import * as tr from '../js/translate.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -379,6 +380,145 @@ at('paths keep chunks zero-padded so they sort correctly', async () => {
   const s = mk();
   for (const i of [2, 10, 1]) await store.saveChunkText(s, 't1', fakeResult(i));
   eq(await s.list(store.paths.chunkDir('t1')), ['001.gr.json', '002.gr.json', '010.gr.json']);
+});
+
+// ------------------------------------------------------------ translate.js
+
+const segs = n => Array.from({ length: n }, (_, i) => ({ id: 's' + i, text: 'πρόταση ' + i }));
+// A backend that answers correctly, except for ids listed in `drop`.
+const mockChat = (drop = [], extra = {}) => {
+  const calls = [];
+  const fn = async messages => {
+    calls.push(messages);
+    // A real model reads the whole conversation, so the segment list is found wherever it
+    // appears -- in the repair round it sits in an earlier message, not the last one.
+    // Only the part after the instruction line counts; the context block is not to translate.
+    const ids = [];
+    for (const m of messages) {
+      if (m.role !== 'user') continue;
+      const i = m.content.indexOf('Translate these segments:');
+      if (i < 0) continue;
+      for (const g of m.content.slice(i).matchAll(/^(s\d+):/gm)) {
+        if (!ids.includes(g[1])) ids.push(g[1]);
+      }
+    }
+    const answer = ids.filter(id => !drop.includes(id));
+    drop = drop.filter(id => !ids.includes(id));   // the repair round gets them right
+    return { choices: [{ message: { content: JSON.stringify({
+        translations: answer.map(id => ({ id, en: 'sentence ' + id.slice(1) })),
+        flags: extra.flags || [], dates: extra.dates || [] }) } }],
+      usage: { cost: 0.001 } };
+  };
+  fn.calls = calls;
+  return fn;
+};
+
+at('batchSegments splits to 40 by default', async () => {
+  eq(tr.batchSegments(segs(95)).map(b => b.length), [40, 40, 15]);
+  eq(tr.batchSegments(segs(0)).length, 0);
+});
+
+at('glossaryBlock teaches inflection and ASR-mangling matching', async () => {
+  const b = tr.glossaryBlock([{ canonical_greek: 'Κώστας', observed_forms: ['Κώστα', 'Γκόστα'],
+                                english: 'Kostas', kind: 'person' }]);
+  ok(b.includes('Κώστας / Κώστα / Γκόστα => Kostas'), 'all observed forms must be listed');
+  ok(b.includes('inflected'), 'must instruct on Greek declension');
+});
+
+at('glossaryBlock is empty when there is no glossary yet', async () => eq(tr.glossaryBlock([]), ''));
+
+at('parseJson survives fenced and prose-wrapped output', async () => {
+  eq(tr.parseJson('```json\n{"a":1}\n```').a, 1);
+  eq(tr.parseJson('Sure! {"a":2} hope that helps').a, 2);
+  eq(tr.parseJson('{"a":3}').a, 3);
+});
+
+at('parseJson throws rather than returning junk', async () => {
+  let threw = false;
+  try { tr.parseJson('no json here'); } catch (e) { threw = true; }
+  ok(threw, 'unparseable output must raise, not silently yield nothing');
+});
+
+at('validate detects dropped and invented ids', async () => {
+  const batch = segs(3);
+  const v = tr.validate(batch, { translations: [
+    { id: 's0', en: 'a' }, { id: 's9', en: 'ghost' }] });
+  eq(v.missing, ['s1', 's2']);
+  eq(v.extra, ['s9']);
+});
+
+at('validate rejects empty translations', async () => {
+  eq(tr.validate(segs(1), { translations: [{ id: 's0', en: '   ' }] }).missing, ['s0']);
+});
+
+at('translateBatch returns one translation per input id', async () => {
+  const batch = segs(5);
+  const r = await tr.translateBatch(batch, { backend: mockChat() });
+  eq(r.translations.map(t => t.id), batch.map(s => s.id));
+  eq(r.unresolved, []);
+});
+
+at('translateBatch repairs dropped ids by re-asking for only those', async () => {
+  const backend = mockChat(['s2', 's4']);
+  const r = await tr.translateBatch(segs(6), { backend });
+  eq(r.unresolved, [], 'the repair loop must recover dropped ids');
+  ok(r.translations.every(t => t.en), 'every id must end up translated');
+  eq(backend.calls.length, 2, 'exactly one repair round should have been needed');
+  const repair = backend.calls[1][1].content;
+  ok(repair.includes('s2') && repair.includes('s4'), 'repair must target the dropped ids');
+  ok(!repair.includes('s0:'), 'repair must NOT re-send ids that already came back');
+});
+
+at('translateBatch reports ids it could not recover instead of hiding them', async () => {
+  // A backend that stubbornly never returns s1.
+  const backend = async messages => {
+    const ids = [...messages[messages.length - 1].content.matchAll(/^(s\d+):/gm)].map(m => m[1]);
+    return { choices: [{ message: { content: JSON.stringify({
+      translations: ids.filter(i => i !== 's1').map(id => ({ id, en: 'x' })) }) } }], usage: {} };
+  };
+  const r = await tr.translateBatch(segs(3), { backend, maxRepairs: 2 });
+  eq(r.unresolved, ['s1'], 'an unrecoverable id must be surfaced, never silently dropped');
+  eq(r.translations.find(t => t.id === 's1').en, null);
+});
+
+at('translateBatch discards flags for ids outside the batch', async () => {
+  const backend = mockChat([], { flags: [{ id: 's0', type: 'name', greek: 'Κώστα' },
+                                          { id: 'sZZ', type: 'name', greek: 'ghost' }] });
+  const r = await tr.translateBatch(segs(2), { backend });
+  eq(r.flags.length, 1);
+  eq(r.flags[0].id, 's0');
+});
+
+at('translateAll carries context across batches and accumulates cost', async () => {
+  const backend = mockChat();
+  const r = await tr.translateAll(segs(90), { backend, batchSize: 40 });
+  eq(r.translations.length, 90);
+  eq(backend.calls.length, 3);
+  // Batch 2 must have seen the tail of batch 1 as context.
+  const second = backend.calls[1][1].content;
+  ok(second.includes('Preceding context'), 'later batches need narrative continuity');
+  ok(second.includes('s39'), 'the tail of the previous batch should be the context');
+  close(r.cost, 0.003, 1e-9);
+});
+
+at('translateAll reports progress', async () => {
+  const seen = [];
+  await tr.translateAll(segs(85), { backend: mockChat(), batchSize: 40,
+                                    onProgress: (a, b) => seen.push([a, b]) });
+  eq(seen, [[40, 85], [80, 85], [85, 85]]);
+});
+
+at('dateRange picks the earliest and latest spoken dates', async () => {
+  eq(tr.dateRange([{ iso: '1978-03-14' }, { iso: '1978-03-02' }, { iso: null }]),
+     ['1978-03-02', '1978-03-14']);
+  eq(tr.dateRange([]), null);
+});
+
+at('systemPrompt insists on flagging names for a non-Greek-speaker', async () => {
+  const p = tr.systemPrompt([]);
+  ok(p.includes('FIRST time it appears'), 'names must be flagged even when confident');
+  ok(p.includes('does not speak Greek'));
+  ok(p.includes('"dates"'), 'date extraction rides along in the same call');
 });
 
 const run = async () => {

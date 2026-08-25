@@ -332,10 +332,11 @@ This is the difference between "a pile of transcripts" and "her grandfather's di
 ## Cost
 
 - **ASR:** ~$110 for 300 hours (MAI at $0.36/hr). Whisper-via-Groq fallback ≈ $8.
-- **Translation:** ~2.4–2.7M spoken words ≈ 5–7M Greek input tokens, plus glossary and
-  rolling-context overhead re-sent per batch, plus comparable output. At frontier
-  ~$3/$15 per M ≈ **$40–120 per full pass** — and re-translation multiplies passes. The first
-  draft's "$50" was optimistic.
+- **Translation:** `anthropic/claude-sonnet-5`, verified Aug 2026 at **$2/M in, $10/M out**.
+  ~2.4–2.7M spoken words ≈ 5–7M Greek input tokens (~$12), ~1.7M tokens of system-prompt and
+  rolling-context overhead re-sent across ~2,400 batches (~$3), and 5–6M output tokens (~$55).
+  **≈ $70–90 per full pass** — and re-translation multiplies passes, which is why only batches
+  containing a changed glossary term get re-run. The first draft's "$50" was optimistic.
 - Add OpenRouter's ~5% credit fee.
 - Accumulate `usage.cost` per request into `tape.json`; **pause the queue at a spend ceiling.**
 
