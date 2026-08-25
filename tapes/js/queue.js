@@ -24,6 +24,21 @@ export const STATE = {
   TRANSLATING: 'translating', DONE: 'done', PAUSED: 'paused', FAILED: 'failed'
 };
 
+// The checklist she sees while a recording is being read. Ordered, so the UI can show
+// what is done, what is happening now, and what is still ahead -- not just a percentage.
+export const STEPS = [
+  { key: STATE.PREPARING,   label: 'Splitting into pieces' },
+  { key: STATE.READING,     label: 'Listening to it' },
+  { key: STATE.TRANSLATING, label: 'Putting it into English' }
+];
+
+// -1 before any step has started (still STATE.QUEUED), STEPS.length once STATE.DONE.
+export function stepIndex(state) {
+  if (state === STATE.DONE) return STEPS.length;
+  const i = STEPS.findIndex(s => s.key === state);
+  return i;
+}
+
 const LOCK = 'tapes-queue';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -65,6 +80,12 @@ export class Queue {
     this._wakeLock = null;
     this._lockRelease = null;
     this._abort = { aborted: false };
+    // Injectable so the persistence throttle is testable without real timers.
+    this.now = opts.now || (() => Date.now());
+    // How often a bare progress tick is allowed to hit disk. Stage changes always persist
+    // immediately regardless of this -- they are rare and the whole point of the checklist
+    // is that they show up right away.
+    this.persistIntervalMs = opts.persistIntervalMs ?? 1200;
   }
 
   add(tape) {
@@ -73,6 +94,26 @@ export class Queue {
   }
 
   emit(name, ...a) { this.on[name]?.(...a); }
+
+  // Unthrottled: called on every stage transition. Rare, and the whole point of a live
+  // checklist is that the current step shows up immediately, not after a delay.
+  async #persist(tape) {
+    tape._persistedAt = this.now();
+    try {
+      await store.updateTape(this.store, tape.id,
+        { state: tape.state, progress: tape.progress ?? 0,
+          ...(tape.error ? { error: tape.error } : {}) });
+    } catch (e) { /* a transient write failure here must not stop the actual work */ }
+  }
+
+  // Throttled: called on every progress tick, which can fire many times inside one stage.
+  // Writing every one of those to disk would be wasted I/O for a number that only needs to
+  // be roughly current, not exact -- what matters is that a reload sees SOMETHING recent.
+  async #maybePersist(tape) {
+    const since = this.now() - (tape._persistedAt || 0);
+    if (since < this.persistIntervalMs) return;
+    await this.#persist(tape);
+  }
 
   // --- keeping the machine awake -----------------------------------------
 
@@ -145,6 +186,9 @@ export class Queue {
           tape.error = humanError(e);
           this.emit('error', tape, tape.error);
           this.emit('change', this.tapes);
+          // Otherwise a failure looks identical to still-working after a reload -- stuck,
+          // rather than "Needs attention".
+          await this.#persist(tape);
         }
       }
     } finally {
@@ -177,17 +221,27 @@ export class Queue {
 
   async #runTape(tape) {
     const S = this.store;
+    // Every progress tick updates the in-memory number immediately (so a live UI reflects
+    // it at once) and persists to disk on a throttle -- exact timing does not matter, only
+    // that a reload finds something recent rather than a value frozen at 0%.
+    const progress = p => {
+      tape.progress = p;
+      this.emit('progress', tape, p);
+      this.#maybePersist(tape);
+    };
 
     // 1. Split into chunks, unless disk says it is already done.
     const already = await S.list(store.paths.chunkDir(tape.id));
     const haveAudio = already.filter(n => n.endsWith('.mp3')).length;
     if (!haveAudio) {
       tape.state = STATE.PREPARING;
+      tape.progress = 0;
       this.emit('change', this.tapes);
+      await this.#persist(tape);
       const res = await this.deps.prepare(tape.file, {
         signal: this._abort,
         onStage: s => this.emit('stage', tape, s),
-        onProgress: (a, b) => this.emit('progress', tape, a / b * 0.25),
+        onProgress: (a, b) => progress(a / b * 0.25),
         onChunk: async (chunk, bytes) => {
           await S.write(store.paths.chunkAudio(tape.id, chunk.index), bytes);
         }
@@ -204,7 +258,9 @@ export class Queue {
 
     // 2. Transcribe whatever disk says is still missing.
     tape.state = STATE.READING;
+    tape.progress = 0.25;
     this.emit('change', this.tapes);
+    await this.#persist(tape);
     const pending = await store.pendingChunks(S, tape.id, tape.plan || []);
     const total = (tape.plan || []).length || 1;
 
@@ -221,7 +277,7 @@ export class Queue {
           hasTimestamps: false, hasConfidence: false,
           skipped: 'silent', text: '', segments: [], cost: 0
         });
-        this.emit('progress', tape, 0.25 + ((total - pending.length + pending.indexOf(chunk) + 1) / total) * 0.6);
+        progress(0.25 + ((total - pending.length + pending.indexOf(chunk) + 1) / total) * 0.6);
         continue;
       }
 
@@ -237,19 +293,21 @@ export class Queue {
       await store.saveChunkText(S, tape.id, result);
       this.#charge(result.cost, tape);
       const done = total - pending.length + pending.indexOf(chunk) + 1;
-      this.emit('progress', tape, 0.25 + (done / total) * 0.6);
+      progress(0.25 + (done / total) * 0.6);
     }
 
     // 3. Translate, unless it is already written.
     if (!(await S.exists(store.paths.translation(tape.id)))) {
       if (!this.#checkSpend()) return;
       tape.state = STATE.TRANSLATING;
+      tape.progress = 0.85;
       this.emit('change', this.tapes);
+      await this.#persist(tape);
 
       const segments = await collectSegments(S, tape.id, tape.plan || []);
       const out = await this.deps.translate(segments, {
         key: this.key, model: this.model, glossary: this.glossary,
-        onProgress: (a, b) => this.emit('progress', tape, 0.85 + (a / b) * 0.15)
+        onProgress: (a, b) => progress(0.85 + (a / b) * 0.15)
       });
       this.#charge(out.cost, tape);
 
@@ -261,7 +319,9 @@ export class Queue {
     }
 
     tape.state = STATE.DONE;
-    await store.refreshTapeSummary(this.store, tape.id, { state: STATE.DONE, dates: tape.dates });
+    tape.progress = 1;
+    await store.refreshTapeSummary(this.store, tape.id,
+      { state: STATE.DONE, dates: tape.dates, progress: 1 });
     this.emit('progress', tape, 1);
     this.emit('done', tape);
     this.emit('change', this.tapes);

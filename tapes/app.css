@@ -101,6 +101,14 @@ h2 { font-size: 1.05rem; font-weight: 700; margin: 26px 0 10px; }
 .bar { height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; grid-column: 1 / -1; margin-top: 6px; }
 .bar > i { display: block; height: 100%; background: var(--accent); }
 
+/* The checklist under a working tape's progress bar -- what is done, what is happening
+   now, and what is still ahead. Small and plain: this sits inside an already-busy card. */
+.mini-steps { grid-column: 1 / -1; display: flex; gap: 12px; margin-top: 7px;
+              font-size: .73rem; flex-wrap: wrap; }
+.mini-steps span { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-faint); }
+.mini-steps .done { color: var(--good); }
+.mini-steps .current { color: var(--accent); font-weight: 700; }
+
 /* ---------- reading ---------- */
 .entry { max-width: var(--measure); margin: 0 auto; }
 .entry-date, .entry h2 { padding-left: 26px; }

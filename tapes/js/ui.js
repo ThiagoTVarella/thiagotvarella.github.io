@@ -4,7 +4,8 @@
 
 import * as demoData from './demo.js';
 import * as store from './store.js';
-import { Queue, STATE, humanError } from './queue.js';
+import { Queue, STATE, stepIndex, humanError } from './queue.js';
+import { miniSteps, libraryBannerState, tapeClickMessage } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
@@ -100,12 +101,21 @@ function renderLibrary() {
     ? `${done.length} of ${state.tapes.length} recordings ready · about ${hours.toFixed(1)} hours of tape so far`
     : '';
 
-  const working = state.tapes.find(t => t.status === 'working');
-  $('#libBanner').innerHTML = working
-    ? `<div class="banner">Still reading <b>${working.label}</b>. You can read the finished
-       entries below while it works. <button class="tab" id="toNight"
-       style="padding:0 4px;color:var(--accent)">Show progress</button></div>` : '';
-  if (working) $('#toNight').onclick = () => openRunScreen(working);
+  const banner = libraryBannerState(state.tapes, !!(state.queue && state.queue.running));
+  if (banner.kind === 'running') {
+    $('#libBanner').innerHTML = `<div class="banner">Still reading <b>${banner.tape.label}</b>. You
+       can read the finished entries below while it works. <button class="tab" id="toNight"
+       style="padding:0 4px;color:var(--accent)">Show progress</button></div>`;
+    $('#toNight').onclick = () => openRunScreen(banner.tape);
+  } else if (banner.kind === 'stalled') {
+    $('#libBanner').innerHTML = `<div class="banner warn">${banner.tapes.length} recording${
+      banner.tapes.length > 1 ? 's' : ''} didn't finish being read -- probably the window closed
+      partway through. Nothing is lost. <button class="tab" id="continueStalled"
+      style="padding:0 4px;color:var(--accent)">Continue</button></div>`;
+    $('#continueStalled').onclick = () => continueStalled(banner.tapes);
+  } else {
+    $('#libBanner').innerHTML = '';
+  }
 
   // Chronological where he told us the date, otherwise by the order they came in.
   const sorted = [...state.tapes].sort((a, b) => (a.date || 'zzz').localeCompare(b.date || 'zzz'));
@@ -117,11 +127,9 @@ function renderLibrary() {
         t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}</div>
       <div class="state">${STATUS[t.status](t)}</div>
       ${t.status === 'working'
-        ? `<div class="bar"><i style="width:${(t.progress * 100).toFixed(0)}%"></i></div>` : ''}`;
-    card.onclick = () => {
-      if (t.status !== 'done') return toast(`"${t.label}" isn't ready yet.`);
-      openRead(t);
-    };
+        ? `<div class="bar"><i style="width:${(t.progress * 100).toFixed(0)}%"></i></div>${miniSteps(t)}`
+        : ''}`;
+    card.onclick = () => t.status === 'done' ? openRead(t) : toast(tapeClickMessage(t));
     list.appendChild(card);
   }
 }
@@ -719,19 +727,11 @@ const drop = $('#drop');
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 $('#fileInput').onchange = e => addFiles(e.target.files);
 
-$('#startRun').onclick = async () => {
-  if (!state.pending.length) return;
-
-  if (DEMO) {
-    const t = { id: 'tape-' + state.tapes.length, label: state.pending[0].label || state.pending[0].name,
-                side: state.pending[0].side, minutes: 45, status: 'working', progress: 0,
-                cost: 0, date: null, heading: null, segments: [] };
-    state.tapes.push(t);
-    state.pending = [];
-    openRunScreen(t);
-    return renderLibrary();
-  }
-
+// Shared by a fresh run and a resumed one: same events, same run screen, same banner
+// logic in renderLibrary(). Whether a tape is brand new or picking back up after an
+// abandoned run looks identical from here -- the engine already knows what is left to do.
+async function runQueue(specs) {
+  if (!specs.length) return;
   if (!state.key) { toast('The access key is missing — check Settings.'); return go('settings'); }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
@@ -764,30 +764,81 @@ $('#startRun').onclick = async () => {
     }
   });
 
-  for (const f of state.pending) {
-    // A dropped file needs an id and a tape.json; one recorded here already has both, and
-    // its audio is already in her folder -- so read it back rather than re-saving it.
-    const id = f.tapeId ||
-      ('tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6));
-    let file = f.file;
-    if (f.alreadyStored) {
-      const saved = await state.store.readJSON(store.paths.tape(id)).catch(() => ({}));
-      const blob = await state.store.readBlob(`tapes/${id}/${saved.source || 'source.webm'}`);
-      file = new File([blob], saved.source || 'source.webm', { type: blob.type });
-    }
-    queue.add({ id, file, label: f.label || f.name, side: f.side });
-    const prior = f.alreadyStored
-      ? await state.store.readJSON(store.paths.tape(id)).catch(() => ({})) : {};
-    await state.store.writeJSON(store.paths.tape(id),
-      { ...prior, id, label: f.label || f.name, side: f.side, state: STATE.QUEUED });
-  }
-  state.pending = [];
-  renderPending();
+  for (const spec of specs) queue.add(spec);
 
   state.queue = queue;
   openRunScreen({ label: queue.tapes[0].label, minutes: 45, progress: 0 });
   await queue.start();
+}
+
+$('#startRun').onclick = async () => {
+  if (!state.pending.length) return;
+
+  if (DEMO) {
+    const t = { id: 'tape-' + state.tapes.length, label: state.pending[0].label || state.pending[0].name,
+                side: state.pending[0].side, minutes: 45, status: 'working', progress: 0,
+                cost: 0, date: null, heading: null, segments: [] };
+    state.tapes.push(t);
+    state.pending = [];
+    openRunScreen(t);
+    return renderLibrary();
+  }
+
+  if (!state.key) { toast('The access key is missing — check Settings.'); return go('settings'); }
+  if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
+
+  const specs = [];
+  for (const f of state.pending) {
+    const id = f.tapeId ||
+      ('tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6));
+    let file = f.file;
+    let sourceName;
+    if (f.alreadyStored) {
+      // Already recorded straight into her folder; read it back rather than re-saving it.
+      const saved = await state.store.readJSON(store.paths.tape(id)).catch(() => ({}));
+      sourceName = saved.source || 'source.webm';
+      const blob = await state.store.readBlob(`tapes/${id}/${sourceName}`);
+      file = new File([blob], sourceName, { type: blob.type });
+    } else {
+      // A dropped file lives only in browser memory until now. Save it to her folder
+      // immediately, the same way a recording already is, so an interruption before
+      // chunking even starts still leaves something a later "Continue" can pick up.
+      const ext = (f.file.name.match(/\.(\w+)$/) || [])[1] || 'audio';
+      sourceName = `source.${ext}`;
+      await state.store.write(`tapes/${id}/${sourceName}`, new Uint8Array(await f.file.arrayBuffer()));
+    }
+    const prior = f.alreadyStored
+      ? await state.store.readJSON(store.paths.tape(id)).catch(() => ({})) : {};
+    await state.store.writeJSON(store.paths.tape(id),
+      { ...prior, id, label: f.label || f.name, side: f.side, state: STATE.QUEUED, source: sourceName });
+    specs.push({ id, file, label: f.label || f.name, side: f.side });
+  }
+  state.pending = [];
+  renderPending();
+  await runQueue(specs);
 };
+
+// The library's "Continue" banner: rebuild a File for each stalled tape from what is
+// already on disk and hand it back to the same run path. Nothing is redone that the
+// engine can already see is finished -- that is the whole point of resuming by folder
+// contents rather than by memory.
+async function continueStalled(tapes) {
+  const specs = [];
+  const missing = [];
+  for (const t of tapes) {
+    try {
+      const saved = await state.store.readJSON(store.paths.tape(t.id));
+      const sourceName = saved.source || 'source.webm';
+      const blob = await state.store.readBlob(`tapes/${t.id}/${sourceName}`);
+      specs.push({ id: t.id, file: new File([blob], sourceName, { type: blob.type }),
+                   label: t.label, side: t.side });
+    } catch (e) { missing.push(t.label); }
+  }
+  if (missing.length) {
+    toast(`Couldn't find the recording for ${missing.join(', ')} -- it may need to be added again.`);
+  }
+  await runQueue(specs);
+}
 
 // Load what is actually in her folder, so the library survives a reload.
 async function refreshLibrary() {
@@ -797,12 +848,17 @@ async function refreshLibrary() {
   for (const id of ids) {
     try {
       const t = await state.store.readJSON(store.paths.tape(id));
-      const done = t.state === STATE.DONE;
+      const stepIdx = stepIndex(t.state);
+      // A tape mid-processing (PREPARING/READING/TRANSLATING) is 'working' with a real
+      // percentage, not the same flat "Waiting" as one that has not started at all.
+      const status = t.state === STATE.DONE ? 'done'
+                   : t.state === STATE.FAILED ? 'error'
+                   : stepIdx >= 0 ? 'working' : 'queued';
       tapes.push({
         id, label: t.label || id, side: t.side || 'A',
         minutes: Math.round((t.duration || 0) / 60) || 0,
-        status: done ? 'done' : (t.state === STATE.FAILED ? 'error' : 'queued'),
-        progress: 0, cost: t.cost || 0,
+        status, stepIdx, error: t.error || null,
+        progress: t.progress || 0, cost: t.cost || 0,
         date: (t.dates && t.dates[0] && t.dates[0].iso) || null,
         heading: null, segments: []
       });

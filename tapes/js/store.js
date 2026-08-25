@@ -193,6 +193,18 @@ export async function pendingChunks(store, tapeId, planned) {
   return planned.map((c, i) => ({ ...c, index: i })).filter(c => !haveIt.has(c.index));
 }
 
+// A cheap merge-and-write for fields that change often (live progress, the current stage)
+// and must not pay refreshTapeSummary's cost of rescanning every chunk file on disk each
+// time. Progress is reported many times a second during a run; refreshTapeSummary is
+// reserved for real stage boundaries where recomputing cost/segments actually matters.
+export async function updateTape(store, tapeId, patch) {
+  let tape = {};
+  try { tape = await store.readJSON(paths.tape(tapeId)); } catch (e) {}
+  const merged = { ...tape, ...patch, id: tapeId };
+  await store.writeJSON(paths.tape(tapeId), merged);
+  return merged;
+}
+
 export async function saveChunkText(store, tapeId, result) {
   await store.writeJSON(paths.chunkText(tapeId, result.chunk), result);
 }
