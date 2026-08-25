@@ -10,6 +10,7 @@ import * as tr from '../js/translate.js';
 import * as gl from '../js/glossary.js';
 import * as ff from '../js/ffmpeg.js';
 import * as q from '../js/queue.js';
+import * as entry from '../js/entry.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -1006,6 +1007,177 @@ at('collectSegments skips a chunk that never transcribed rather than failing', a
   await store.saveChunkText(st, 't1', { chunk: 0, start: 0, segments: [{ id: 'c0s0', text: 'a' }] });
   const segs = await q.collectSegments(st, 't1', [{}, {}, {}]);
   eq(segs.length, 1, 'missing chunks contribute nothing and do not throw');
+});
+
+// ---------------------------------------------------------------- entry.js
+
+async function seedTape(st, { translated = true, dropId = null, flags = [] } = {}) {
+  await st.writeJSON(store.paths.tape('t1'), {
+    id: 't1', label: 'Μάρτιος 1978', side: 'A',
+    plan: [{ start: 0, duration: 70 }, { start: 70, duration: 70 }],
+    dates: [{ id: 'c0s0', iso: '1978-03-14' }]
+  });
+  await store.saveChunkText(st, 't1', { chunk: 0, start: 0, segments: [
+    { id: 'c0s0', text: 'Ήρθε ο Κώστας.', start: 3, confidence: 0.9 },
+    { id: 'c0s1', text: 'Έβρεχε όλη μέρα.', start: 12, confidence: 0.5 }] });
+  await store.saveChunkText(st, 't1', { chunk: 1, start: 70, segments: [
+    { id: 'c1s0', text: 'Πήγα στην Αθήνα.', start: 74, confidence: 0.95 }] });
+  if (translated) {
+    await st.writeJSON(store.paths.translation('t1'), { translations: [
+      { id: 'c0s0', en: 'Costas came.' },
+      { id: 'c0s1', en: dropId === 'c0s1' ? null : 'It rained all day.' },
+      { id: 'c1s0', en: 'I went to Athens.' }], unresolved: dropId ? [dropId] : [] });
+  }
+  if (flags.length) await st.writeJSON(store.paths.flags('t1'), flags);
+  return st;
+}
+
+at('formatHeading renders a full date, and degrades for partial ones', async () => {
+  eq(entry.formatHeading('1978-03-14'), 'Tuesday, 14 March 1978');
+  eq(entry.formatHeading('1978-03'), 'March 1978');
+  eq(entry.formatHeading('1978'), '1978');
+  eq(entry.formatHeading(null), null);
+});
+
+at('loadEntry joins Greek, English and flags by segment id', async () => {
+  const st = await seedTape(new store.MemoryStore(),
+    { flags: [{ id: 'c0s1', guess: 'all day' }] });
+  const e = await entry.loadEntry(st, 't1');
+  eq(e.heading, 'Tuesday, 14 March 1978');
+  eq(e.segments.length, 3);
+  eq(e.segments[0].en, 'Costas came.');
+  eq(e.segments[0].gr, 'Ήρθε ο Κώστας.');
+  eq(e.segments[2].chunk, 1);
+  eq(e.segments[2].chunkStart, 70, 'playback needs the chunk offset, not just the segment time');
+  eq(e.segments[1].unsure, 'all day');
+});
+
+at('a dropped translation shows the Greek, never an empty line', async () => {
+  const st = await seedTape(new store.MemoryStore(), { dropId: 'c0s1' });
+  const e = await entry.loadEntry(st, 't1');
+  const seg = e.segments.find(s => s.id === 'c0s1');
+  eq(seg.untranslated, true);
+  eq(seg.en, null);
+  ok(seg.gr, 'the Greek must still be there to render -- a blank reads as him saying nothing');
+});
+
+at('loadEntry works on a tape transcribed but not yet translated', async () => {
+  const st = await seedTape(new store.MemoryStore(), { translated: false });
+  const e = await entry.loadEntry(st, 't1');
+  eq(e.segments.length, 3);
+  ok(e.segments.every(s => s.untranslated), 'all untranslated, none thrown away');
+});
+
+at('loadEntry on an unknown tape returns an empty entry rather than throwing', async () => {
+  const e = await entry.loadEntry(new store.MemoryStore(), 'nope');
+  eq(e.segments, []);
+  eq(e.heading, null);
+});
+
+at('confirming a rename rewrites the English on disk and logs an audit', async () => {
+  const st = await seedTape(new store.MemoryStore());
+  const g = { id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας',
+              observed_forms: ['Κώστα'], english: 'Kostas' };
+  const r = await entry.applyCorrectionAcross(st, ['t1'], g, 'Costas', 'Kostas');
+  const t = await st.readJSON(store.paths.translation('t1'));
+  eq(t.translations.find(x => x.id === 'c0s0').en, 'Kostas came.');
+  eq(t.translations.find(x => x.id === 'c0s0').enOriginal, 'Costas came.',
+     'the original must be kept so a bad correction is reversible');
+  eq(t.translations.find(x => x.id === 'c1s0').en, 'I went to Athens.', 'untouched lines stay');
+  const log = await st.readJSON('corrections.json');
+  eq(log.length, 1);
+  eq(log[0].tape, 't1');
+  ok(/updated in 1 place/.test(r.summary), r.summary);
+});
+
+at('a correction that costs nothing says so and writes no audit', async () => {
+  const st = await seedTape(new store.MemoryStore());
+  const g = { id: 'k', greek: 'Κώστας', canonical_greek: 'Κώστας', english: 'Costas' };
+  const r = await entry.applyCorrectionAcross(st, ['t1'], g, 'Costas', 'Costas');
+  eq(r.tapes, 0, 'confirming the guess touches no tape');
+  eq(await st.exists('corrections.json'), false);
+});
+
+at('a tier-2 sentence is re-read, and only that sentence', async () => {
+  const st = new store.MemoryStore();
+  await st.writeJSON(store.paths.tape('t1'), { id: 't1', label: 'x',
+    plan: [{ start: 0, duration: 70 }], dates: [] });
+  await store.saveChunkText(st, 't1', { chunk: 0, start: 0, segments: [
+    { id: 'c0s0', text: 'Ήρθε ο Γκόστα σήμερα.', start: 1, confidence: 0.4 },
+    { id: 'c0s1', text: 'Έβρεχε.', start: 9, confidence: 0.9 }] });
+  await st.writeJSON(store.paths.translation('t1'), { translations: [
+    { id: 'c0s0', en: 'The cost came today.' },      // the name was read as a common word
+    { id: 'c0s1', en: 'It rained.' }], unresolved: [] });
+
+  const asked = [];
+  const g = { id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας',
+              observed_forms: ['Γκόστα'], english: 'Kostas' };
+  const r = await entry.applyCorrectionAcross(st, ['t1'], g, 'Costas', 'Kostas', {
+    translate: async segs => {
+      asked.push(...segs.map(s => s.id));
+      return { translations: segs.map(s => ({ id: s.id, en: 'Kostas came today.' })), cost: 0.0002 };
+    }
+  });
+  eq(asked, ['c0s0'], 'only the broken sentence is re-read, never the batch or the tape');
+  const t = await st.readJSON(store.paths.translation('t1'));
+  eq(t.translations.find(x => x.id === 'c0s0').en, 'Kostas came today.');
+  eq(t.translations.find(x => x.id === 'c0s1').en, 'It rained.', 'the other line is untouched');
+  ok(/re-read/.test(r.summary), r.summary);
+});
+
+at('a failed re-read leaves the original text alone rather than blanking it', async () => {
+  const st = new store.MemoryStore();
+  await st.writeJSON(store.paths.tape('t1'), { id: 't1', plan: [{ start: 0, duration: 70 }] });
+  await store.saveChunkText(st, 't1', { chunk: 0, start: 0,
+    segments: [{ id: 'c0s0', text: 'Ήρθε ο Γκόστα.', start: 1 }] });
+  await st.writeJSON(store.paths.translation('t1'),
+    { translations: [{ id: 'c0s0', en: 'The cost came.' }], unresolved: [] });
+
+  const g = { id: 'k', greek: 'Κώστας', canonical_greek: 'Κώστας',
+              observed_forms: ['Γκόστα'], english: 'Kostas' };
+  const r = await entry.applyCorrectionAcross(st, ['t1'], g, 'Costas', 'Kostas',
+    { translate: async () => { throw new Error('offline'); } });
+  eq(r.failed, 1);
+  const t = await st.readJSON(store.paths.translation('t1'));
+  eq(t.translations[0].en, 'The cost came.', 'a failed re-read must not destroy what was there');
+});
+
+at('answering several names is one merged sweep across tapes', async () => {
+  const st = await seedTape(new store.MemoryStore());
+  await st.writeJSON(store.paths.tape('t2'), { id: 't2', label: 'b',
+    plan: [{ start: 0, duration: 70 }], dates: [] });
+  await store.saveChunkText(st, 't2', { chunk: 0, start: 0,
+    segments: [{ id: 'd0s0', text: 'Ο Κώστας ήρθε.', start: 2 }] });
+  await st.writeJSON(store.paths.translation('t2'),
+    { translations: [{ id: 'd0s0', en: 'Costas arrived.' }], unresolved: [] });
+
+  const g = { id: 'k', greek: 'Κώστας', canonical_greek: 'Κώστας', english: 'Kostas' };
+  const r = await entry.applyCorrectionAcross(st, ['t1', 't2'], g, 'Costas', 'Kostas');
+  eq(r.tapes, 2, 'both tapes mentioning him are swept in one pass');
+  eq((await st.readJSON(store.paths.translation('t2'))).translations[0].en, 'Kostas arrived.');
+  eq((await st.readJSON('corrections.json')).length, 2);
+});
+
+at('playback releases the previous blob URL before making a new one', async () => {
+  const made = [], freed = [];
+  let n = 0;
+  const src = entry.makeAudioSource({
+    createURL: () => { const u = 'blob:' + (++n); made.push(u); return u; },
+    revokeURL: u => freed.push(u)
+  });
+  src.use({}); src.use({}); src.use({});
+  eq(made, ['blob:1', 'blob:2', 'blob:3']);
+  eq(freed, ['blob:1', 'blob:2'], 'each URL is freed when the next is made');
+  src.release();
+  eq(freed, ['blob:1', 'blob:2', 'blob:3'], 'and the last on release');
+  eq(src.current, null);
+});
+
+at('releasing twice is harmless', async () => {
+  const freed = [];
+  const src = entry.makeAudioSource({ createURL: () => 'blob:x', revokeURL: u => freed.push(u) });
+  src.use({}); src.release(); src.release();
+  eq(freed, ['blob:x']);
 });
 
 const run = async () => {

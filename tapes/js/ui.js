@@ -5,6 +5,8 @@
 import * as demoData from './demo.js';
 import * as store from './store.js';
 import { Queue, STATE, humanError } from './queue.js';
+import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
+import { translateAll } from './translate.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -37,6 +39,7 @@ const state = {
   folder: null,
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
+  model: localStorage.getItem('tapes_model') || undefined,
   cap: localStorage.getItem('tapes_cap') || '50',
   reading: null,
   store: null,
@@ -122,32 +125,54 @@ function renderLibrary() {
 
 // ---------------------------------------------------------------- reading
 
-function openRead(tape) {
+async function openRead(tape) {
   state.reading = tape;
   go('read');
   const box = $('#entry');
-  box.innerHTML = `
-    <div class="entry-date">${tape.label}</div>
+  box.innerHTML = `<div class="entry-date">${tape.label}</div>
     <h2>${tape.heading || 'Undated entry'}</h2>`;
 
-  for (const s of tape.segments) {
+  // Demo data carries its own segments; a real tape has to be assembled from her folder.
+  let entry = tape;
+  if (!DEMO) {
+    box.innerHTML += '<p class="muted">Opening…</p>';
+    try { entry = await loadEntry(state.store, tape.id); }
+    catch (e) { box.innerHTML += '<p class="muted">Couldn\'t open this one.</p>'; return; }
+    state.reading = entry;
+    box.innerHTML = `<div class="entry-date">${entry.label}</div>
+      <h2>${entry.heading || 'Undated entry'}</h2>`;
+  }
+
+  if (!entry.segments.length) {
+    box.innerHTML += '<p class="muted">Nothing has been read from this recording yet.</p>';
+    $('#entryFoot').innerHTML = '';
+    return;
+  }
+
+  for (const s of entry.segments) {
     const p = el('button', 'para');
-    let html = s.en;
     const ROUGH = 0.7;
-    if (s.unsure) {
+
+    // An id the translator dropped shows the Greek rather than a blank line -- an empty
+    // paragraph would read as though he said nothing at all.
+    let html = s.untranslated
+      ? `<span class="untranslated" title="This line couldn't be put into English.">${s.gr}</span>`
+      : (s.en || '');
+
+    if (!s.untranslated && s.unsure && html.includes(s.unsure)) {
       html = html.replace(s.unsure,
         `<span class="unsure" title="The tape was rough here — this part is a best guess.">${s.unsure}</span>`);
-    } else if (s.confidence < ROUGH) {
-      // No single span to blame, so mark the whole line rather than claim a mark she can't find.
+    } else if (!s.untranslated && s.confidence != null && s.confidence < ROUGH) {
       p.classList.add('rough');
       p.title = 'The tape was rough here — this line is less certain than the rest.';
     }
     p.innerHTML = `<svg class="play" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg>${html}`;
-    p.onclick = () => playFrom(tape, s, p);
+    p.onclick = () => playFrom(entry, s, p);
     box.appendChild(p);
   }
 
-  const low = tape.segments.filter(s => s.unsure || s.confidence < 0.7).length;
+  const low = entry.segments.filter(s => s.unsure || s.untranslated ||
+                                    (s.confidence != null && s.confidence < 0.7)).length;
   $('#entryFoot').innerHTML =
     `Click any line to hear him say it.` +
     (low ? ` &nbsp;·&nbsp; ${low} passage${low > 1 ? 's were' : ' was'} hard to make out —
@@ -155,7 +180,25 @@ function openRead(tape) {
 }
 
 let playTimer = null;
-function playFrom(tape, s, node) {
+const audioSource = makeAudioSource();
+
+// The audio lives in her folder, which has no URL. It must be read as a blob and handed to
+// the player as an object URL -- and the previous one revoked, or clicking through an entry
+// leaks a megabyte and a half per line until reload.
+export async function playChunk(tapeId, chunkIndex, offsetSec = 0) {
+  const a = $('#player');
+  a.pause();
+  const blob = await state.store.readBlob(store.paths.chunkAudio(tapeId, chunkIndex));
+  a.src = audioSource.use(blob);   // releases the previous URL before making a new one
+  await new Promise((res, rej) => {
+    a.onloadedmetadata = res;          // currentTime is ignored before metadata arrives
+    a.onerror = () => rej(new Error('audio'));
+  });
+  a.currentTime = Math.max(0, offsetSec);
+  await a.play();
+}
+
+function playFrom(entry, s, node) {
   $$('.para.playing').forEach(n => n.classList.remove('playing'));
   clearTimeout(playTimer);
   node.classList.add('playing');
@@ -164,10 +207,10 @@ function playFrom(tape, s, node) {
     playTimer = setTimeout(() => node.classList.remove('playing'), 2200);
     return;
   }
-  const a = $('#player');
-  a.src = `./tapes/${tape.id}/chunks/${String(s.chunk || 0).padStart(3, '0')}.mp3`;
-  a.currentTime = Math.max(0, s.start - (s.chunkStart || 0));
-  a.play().catch(() => toast("Couldn't play that bit — the audio file may have moved."));
+  // In MAI-only mode there are no intra-chunk timestamps, so fall back to the chunk start.
+  const offset = (s.start != null ? s.start : s.chunkStart) - (s.chunkStart || 0);
+  playChunk(entry.id, s.chunk || 0, offset)
+    .catch(() => toast("Couldn't play that bit — the recording may have moved."));
 }
 const fmtTime = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 
@@ -291,13 +334,39 @@ function renderReview() {
   $('#nameIn').onkeydown = e => { if (e.key === 'Enter') $('#save').click(); };
 
   function next() { state.nameIdx++; renderReview(); }
-  function commit(value, wasGuessRight) {
-    state.glossary.unshift({ id: n.id, english: value, greek: n.greek, kind: n.kind,
-                             heard: n.heard, note: pendingNote, confirmed: true });
-    toast(wasGuessRight
-      ? `Good — "${value}" is now fixed everywhere.`
-      : `Changed to "${value}" — updated in every recording.`);
+
+  async function commit(value, wasGuessRight) {
+    const entry = { id: n.id, english: value, greek: n.greek,
+                    canonical_greek: n.greek, observed_forms: n.observed_forms || [n.greek],
+                    kind: n.kind, heard: n.heard, note: pendingNote, confirmed: true };
+    state.glossary.unshift(entry);
     next();
+
+    if (DEMO) {
+      toast(wasGuessRight ? `Good — "${value}" is kept for every recording.`
+                          : `Changed to "${value}".`);
+      return;
+    }
+
+    try {
+      await state.store.writeJSON(store.paths.glossary(), state.glossary);
+
+      // Confirming the guess changes no English anywhere -- it only teaches future tapes.
+      if (wasGuessRight && value === n.guess) {
+        return toast(`Kept as "${value}" — every recording from here on will match.`);
+      }
+
+      const ids = state.tapes.map(t => t.id);
+      const r = await applyCorrectionAcross(state.store, ids, entry, n.guess, value, {
+        translate: translateAll,
+        translateOpts: { key: state.key, model: state.model, glossary: state.glossary }
+      });
+      // Say what actually happened, rather than claiming work that was not done.
+      toast(`"${value}" — ${r.summary}`);
+      if (r.failed) toast(`${r.failed} of them couldn't be re-read just now; they're unchanged.`);
+    } catch (e) {
+      toast("Saved the name, but couldn't update the recordings just now.");
+    }
   }
 }
 

@@ -121,6 +121,12 @@ h2 { font-size: 1.05rem; font-weight: 700; margin: 26px 0 10px; }
 .para.rough:hover { background: var(--paper-2); }
 /* Uncertain passages are marked softly -- a hint, never an alarm. */
 .para .unsure { border-bottom: 1.5px dotted var(--accent-2); cursor: help; }
+/* A line the translator dropped shows his Greek rather than a blank -- visibly unfinished,
+   never silently empty. */
+.para .untranslated {
+  font-style: italic; color: var(--ink-soft);
+  border-bottom: 1.5px dotted var(--rule); cursor: help;
+}
 .entry-foot { max-width: var(--measure); margin: 30px auto 0; padding-top: 14px;
   border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: .8rem; }
 
