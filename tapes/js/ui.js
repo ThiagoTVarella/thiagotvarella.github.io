@@ -523,6 +523,13 @@ $('#quality').onchange = e => { state.quality = e.target.value; localStorage.set
 // ---------------------------------------------------------------- setup
 
 function refreshSetup() {
+  // Say this up front rather than only when she taps. Android Chrome has no
+  // showDirectoryPicker at all, so on a phone the button can never do anything, and a
+  // dead button with no explanation is the worst version of that.
+  const canPickFolder = 'showDirectoryPicker' in window;
+  $('#unsupported').hidden = canPickFolder;
+  $('#pickFolder').disabled = !canPickFolder;
+
   $('#step-folder').classList.toggle('done', !!state.folder);
   $('#step-key').classList.toggle('done', !!state.key);
   $('#finishSetup').disabled = !(state.folder && state.key);
