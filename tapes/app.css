@@ -44,11 +44,15 @@ a { color: var(--accent); }
   border-bottom: 1px solid var(--rule); background: var(--paper);
   position: sticky; top: 0; z-index: 20;
 }
-.brand { font-size: 1rem; font-weight: 700; margin-right: auto; letter-spacing: .01em; }
+/* The brand yields space so the tabs never get squeezed into each other. Without
+   min-width:0 a flex item will not shrink below its content, and on a narrow phone the
+   tabs overlap -- the Add tab ends up sitting on top of the settings gear. */
+.brand { font-size: 1rem; font-weight: 700; margin-right: auto; letter-spacing: .01em;
+         white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .brand small { display: block; font-size: .68rem; color: var(--ink-faint); font-weight: 400; letter-spacing: 0; }
 .tab {
   padding: 7px 13px; border-radius: 999px; color: var(--ink-soft);
-  font-size: .85rem; position: relative; white-space: nowrap;
+  font-size: .85rem; position: relative; white-space: nowrap; flex: 0 0 auto;
 }
 .tab:hover { background: var(--paper-2); }
 .tab[aria-current="true"] { background: var(--ink); color: var(--paper); }
@@ -200,7 +204,11 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
 .runscreen .r-exit { margin-top: 26px; color: #8d8272; border: 1px solid #2b271f; }
 
 /* ---------- misc ---------- */
+/* A <label> is display:inline by default, so with padding and a border it fragments across
+   line boxes instead of forming one box -- the dashed outline renders in pieces beside the
+   text above it. It has to be a block. */
 .drop {
+  display: block; width: 100%;
   border: 2px dashed var(--rule); border-radius: var(--radius); padding: 44px 20px;
   text-align: center; color: var(--ink-faint); background: var(--paper-2);
 }
@@ -232,6 +240,15 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
 }
 @media (max-width: 620px) {
   .brand small { display: none; }
+  .brand { font-size: .92rem; }
+  .topbar { padding: 10px 12px; gap: 2px; }
+  .tab { padding: 7px 10px; font-size: .82rem; }
+  .drop { padding: 34px 16px; }
+}
+/* Below this the four tabs plus the name genuinely do not fit; the name goes. */
+@media (max-width: 400px) {
+  .brand { font-size: 0; }
+  .tab { padding: 7px 8px; font-size: .8rem; }
   main { padding: 18px 14px 70px; }
   .para { font-size: 1.06rem; }
 }
