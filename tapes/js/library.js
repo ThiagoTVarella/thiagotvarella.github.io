@@ -50,12 +50,12 @@ export function stalledMessage({ failed = 0, unfinished = 0 }) {
   const n = failed + unfinished;
   const plural = n === 1 ? 'recording' : 'recordings';
   if (failed && unfinished) {
-    return `${n} ${plural} still need reading — some ran into a problem, some were interrupted. Nothing is lost.`;
+    return `${n} ${plural} still need reading. Some ran into a problem, some were interrupted. Nothing is lost.`;
   }
   if (failed) {
-    return `${failed} ${failed === 1 ? 'recording' : 'recordings'} ran into a problem. Nothing is lost — the audio is still here.`;
+    return `${failed} ${failed === 1 ? 'recording' : 'recordings'} ran into a problem. Nothing is lost: the audio is still here.`;
   }
-  return `${unfinished} ${plural} didn't finish being read — probably the window closed partway through. Nothing is lost.`;
+  return `${unfinished} ${plural} didn't finish being read. The window probably closed partway through. Nothing is lost.`;
 }
 
 // The failure reason, shown persistently on the card itself rather than in a toast that
@@ -71,7 +71,7 @@ export function tapeErrorNote(tape) {
 // (a recording stuck at "Waiting" with zero information) feel like a dead end.
 export function tapeClickMessage(tape) {
   if (tape.status === 'error') {
-    return `Trying "${tape.label}" again — picking up from where it stopped.`;
+    return `Trying "${tape.label}" again, picking up from where it stopped.`;
   }
   if (tape.status === 'working') {
     const step = STEPS[tape.stepIdx];
@@ -146,7 +146,7 @@ export function formatSize(bytes) {
 export function mediaNote(tape) {
   if (tape.status === 'done')    return 'Read and put into English';
   if (tape.status === 'working') return 'Being read right now';
-  if (tape.status === 'error')   return 'Ran into a problem being read — the audio itself is fine';
+  if (tape.status === 'error')   return 'Ran into a problem being read. The audio itself is fine';
   return 'Waiting to be read';
 }
 
@@ -203,4 +203,22 @@ export function formatLength(seconds) {
   if (min < 60) return `${min} min`;
   const h = Math.floor(min / 60), m = min % 60;
   return m ? `${h} hr ${m} min` : `${h} hr`;
+}
+
+// What the foot of an entry says. Two different things used to be counted as one: spans the
+// translator flagged (which really do become questions under Glossary) and lines merely
+// shaded for low confidence or a dropped translation (which never appear there at all). So a
+// recording with nothing flagged still pointed her at an empty Glossary. Count them apart,
+// and only promise the Glossary for the ones that will actually turn up in it.
+export function entryFooter({ flagged = 0, shaded = 0 } = {}) {
+  const parts = ['Click any line to hear him say it.'];
+  if (flagged) {
+    parts.push(`${flagged} ${flagged === 1 ? 'word or phrase is' : 'words and phrases are'} `
+             + `waiting for your ear under Glossary.`);
+  }
+  if (shaded) {
+    parts.push(`${shaded} ${shaded === 1 ? 'line is' : 'lines are'} shaded where the tape `
+             + `was hard to make out.`);
+  }
+  return parts.join(' · ');
 }

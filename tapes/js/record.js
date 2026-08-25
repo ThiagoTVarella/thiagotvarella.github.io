@@ -79,10 +79,10 @@ export function levelToBar(db, floor = -60, ceil = 0) {
 
 // Plain-language verdict for the meter, so she is not reading decibels.
 export function levelAdvice(level, secondsSeen = 0) {
-  if (level.clipping) return { tone: 'bad', text: 'Too loud — turn the player down a little.' };
+  if (level.clipping) return { tone: 'bad', text: 'Too loud. Turn the player down a little.' };
   if (level.silent) return { tone: 'bad', text: "Not hearing anything yet." };
-  if (level.db < -45) return { tone: 'warn', text: 'Very quiet — move closer or turn it up.' };
-  if (level.db > -6) return { tone: 'warn', text: 'Quite loud — easing off a bit would be safer.' };
+  if (level.db < -45) return { tone: 'warn', text: 'Very quiet. Move closer or turn it up.' };
+  if (level.db > -6) return { tone: 'warn', text: 'Quite loud. Easing off a bit would be safer.' };
   if (secondsSeen < 2) return { tone: 'ok', text: 'Picking it up.' };
   return { tone: 'ok', text: 'Sounds good.' };
 }

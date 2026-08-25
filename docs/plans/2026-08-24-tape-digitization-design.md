@@ -714,6 +714,55 @@ Two things that only showed up against a real browser:
 would leave a dropped `.mp3` being looked up as `source.webm` and reported as missing when
 it is sitting right there.
 
+### The glossary was never actually connected
+
+Reported from the real app: a finished entry said "1 passage was hard to make out, they're
+shaded, and you can help sort them out under Glossary" -- and the Glossary was empty. Pulling
+that thread found three separate breaks on one path, not one.
+
+- **`flags.json` was written and read by nobody.** The translation stage faithfully recorded
+  every span it was unsure of, and `state.pendingWords` was populated from `demo.js` alone.
+  In the real app the "Needs your ear" queue was empty forever. `buildReviewQueue()` now
+  turns flags into questions: entries she has already answered drop out, and the rest are
+  **clustered** by Greek stem and recorded form, so one name asked in forty batches is one
+  question rather than forty, ranked by how often the tape said it.
+- **`glossary.json` was written but never read back.** Every confirmed name was lost on
+  reload, and the next write clobbered the file with whatever was in memory.
+- **The footer conflated two different things.** It counted flagged spans together with
+  lines merely shaded for low confidence or a dropped translation, then promised the
+  Glossary for all of them. Only a flagged span ever appears there. `entryFooter()` counts
+  them apart and only names the Glossary for the ones that will actually turn up in it.
+  (It also said "1 passage **was** hard to make out, **they're** shaded".)
+
+The clustering deliberately stops where the evidence does. Stem matching catches inflection
+(Κώστας/Κώστα), which differs at the end. It cannot catch Γκόστα, which differs at the
+front, and guessing that they are one word would be the app asserting something it merely
+inferred. So the mangling is a separate question, and answering it records Γκόστα as an
+observed form, which is what makes every later occurrence match. **The queue converges by
+being told, not by guessing.**
+
+### Opening an entry was slow for text already on disk
+
+Every File System Access call is a round trip to the browser process, and two habits
+multiplied them. `collectSegments` awaited each chunk in turn, and every read re-walked
+`tapes/<id>/chunks` from the root. A three-chunk test recording cost 33 round trips; a
+45-minute tape cost 255, and took seconds to open.
+
+Reads now run concurrently (`Promise.all` preserves chunk order, which the diary depends on),
+the Greek, English and flags are fetched together rather than in series, and `FsaStore` caches
+directory handles -- they are stable for the life of a picked folder, and picking a new one
+builds a new store. Measured against a simulated 8ms round trip: **2090ms to 73ms** for a
+45-minute tape, and now flat rather than growing with length.
+
+### Two things the interface asserted without evidence
+
+- **"date not found yet"** on every undated card. The date comes only from what he *speaks*
+  on the tape; nothing ever asks her for one. On a finished recording where he never said a
+  date, "yet" promises a future that will not arrive, and on a test recording it reads as a
+  fault. Removed: the entry heading already says "Undated entry" where it matters.
+- **Em dashes** are gone from every user-facing string, rewritten one at a time as a full
+  stop, colon or comma depending on what the dash was doing, rather than swapped for a hyphen.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.

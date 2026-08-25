@@ -63,7 +63,7 @@ KNOWN WORDS. Match these across ANY inflected form (Greek declines names:
 (Γκόστα -> Κώστας). Always render the English exactly as given.
 
 Lines marked "she says" are facts the family told us directly. Treat them as true and
-use them to resolve ambiguity — but do not repeat them in the translation, and do not
+use them to resolve ambiguity, but do not repeat them in the translation, and do not
 extend them: if she says someone is his brother, that does not license you to describe
 anyone else's relationships.
 

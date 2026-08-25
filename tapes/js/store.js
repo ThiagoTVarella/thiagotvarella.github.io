@@ -54,11 +54,28 @@ export class MemoryStore {
 }
 
 export class FsaStore {
-  constructor(root) { this.root = root; }
+  constructor(root) {
+    this.root = root;
+    // Directory handles, keyed by path. Every File System Access call is a round trip to
+    // the browser process, and without this each read of tapes/<id>/chunks/007.gr.json
+    // re-walks three directories from the root -- so opening a 45-minute tape spent most
+    // of its time resolving the same two handles forty times over. Folder handles are
+    // stable for the life of a picked folder, and picking a new one builds a new store.
+    this.dirs = new Map();
+  }
 
   async #dir(parts, create) {
+    const key = parts.join('/');
+    if (!create && this.dirs.has(key)) return this.dirs.get(key);
     let h = this.root;
-    for (const p of parts) h = await h.getDirectoryHandle(p, { create });
+    const walked = [];
+    for (const p of parts) {
+      walked.push(p);
+      const k = walked.join('/');
+      const cached = !create && this.dirs.get(k);
+      h = cached || await h.getDirectoryHandle(p, { create });
+      this.dirs.set(k, h);
+    }
     return h;
   }
   async #split(path, create) {

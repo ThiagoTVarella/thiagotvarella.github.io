@@ -11,7 +11,7 @@ const seg = (i, gr, en, opts = {}) => ({
 
 export const TAPES = [
   {
-    id: 'tape-001', label: 'Μάρτιος 1978 — Α', side: 'A', minutes: 46,
+    id: 'tape-001', label: 'Μάρτιος 1978 Α', side: 'A', minutes: 46,
     status: 'done', cost: 0.42, date: '1978-03-14',
     heading: 'Tuesday, 14 March 1978',
     segments: [
@@ -39,7 +39,7 @@ export const TAPES = [
     ]
   },
   {
-    id: 'tape-002', label: 'Μάρτιος 1978 — Β', side: 'B', minutes: 44,
+    id: 'tape-002', label: 'Μάρτιος 1978 Β', side: 'B', minutes: 44,
     status: 'done', cost: 0.40, date: '1978-03-15',
     heading: 'Wednesday, 15 March 1978',
     segments: [
@@ -61,7 +61,7 @@ export const TAPES = [
     ]
   },
   {
-    id: 'tape-003', label: 'Απρίλιος 1978 — Α', side: 'A', minutes: 51,
+    id: 'tape-003', label: 'Απρίλιος 1978 Α', side: 'A', minutes: 51,
     status: 'working', progress: 0.62, cost: 0.28, date: '1978-04-02',
     heading: 'Sunday, 2 April 1978', segments: []
   },

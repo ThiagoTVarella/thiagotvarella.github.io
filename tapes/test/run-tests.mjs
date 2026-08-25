@@ -638,7 +638,7 @@ at('confirming the existing guess costs nothing anywhere', async () => {
   eq(plan.substitute.length, 0);
   eq(plan.retranslate.length, 0);
   eq(gl.estimateCost(plan), 0);
-  eq(gl.describePlan(plan), 'Nothing else needs changing — it already reads that way.');
+  eq(gl.describePlan(plan), 'Nothing else needs changing. It already reads that way.');
 });
 
 at('a renaming is a free substitution, not a re-translation', async () => {
@@ -1992,6 +1992,134 @@ t('a short recording is never described as lasting no time at all', () => {
   eq(lib.formatLength(46 * 60), '46 min');
   eq(lib.formatLength(90 * 60), '1 hr 30 min');
   eq(lib.formatLength(0), '', 'an unknown length says nothing, not "0 sec"');
+});
+
+// --- the review queue actually reaching her --------------------------------
+
+t('flags on disk become questions, clustered so one name is asked once', () => {
+  // The bug: nothing ever turned flags.json into the "Needs your ear" queue, so it was
+  // populated from demo data alone and stood empty forever in the real app -- while a
+  // finished entry told her the shaded passages could be sorted out there.
+  const occ = [
+    { id: 'a1', type: 'word', greek: 'Κώστας', guess: 'Kostas', tape: 't1', en: 'Kostas came at midday.' },
+    { id: 'a2', type: 'word', greek: 'Κώστα',  guess: 'Kostas', tape: 't1', en: "We went to Kostas' house." },
+    { id: 'a3', type: 'word', greek: 'Γκόστα', guess: 'the cost', tape: 't2', en: 'He mentioned the cost.' },
+    { id: 'b1', type: 'word', greek: 'Ελένη',  guess: 'Eleni', tape: 't1', en: 'Eleni was unwell.' }
+  ];
+  const q = gl.buildReviewQueue(occ, []);
+  eq(q[0].heard, 2, 'the two inflections of one name are one question, not two');
+  eq(q[0].guess, 'Kostas', 'the reading it gave most often is the one put to her');
+  eq(q[0].observed_forms.sort(), ['Κώστα', 'Κώστας'],
+     'both forms the tape produced are carried, so a saved entry matches either later');
+});
+
+t('a mangling the tape invented is asked separately, because nothing links them yet', () => {
+  // Stem matching catches inflection (Κώστας/Κώστα), which differs at the END. It cannot
+  // catch Γκόστα, which differs at the FRONT -- and guessing that they are the same word
+  // would be the app asserting something it merely inferred. So it is a separate question,
+  // and answering it records Γκόστα as an observed form, which is what makes every LATER
+  // occurrence match. The queue converges by being told, not by guessing.
+  const q = gl.buildReviewQueue([
+    { id: 'a1', greek: 'Κώστας', guess: 'Kostas', tape: 't1', en: 'Kostas came at midday.' },
+    { id: 'a3', greek: 'Γκόστα', guess: 'the cost', tape: 't2', en: 'He mentioned the cost.' }
+  ], []);
+  eq(q.length, 2, 'two questions, because the app cannot know they are one word');
+  // And once she has answered, the recorded form retires it for good.
+  eq(gl.buildReviewQueue([{ id: 'x', greek: 'Γκόστα', guess: 'the cost', tape: 't', en: '' }],
+       [{ id: 'k', canonical_greek: 'Κώστας', observed_forms: ['Γκόστα'] }]).length, 0);
+});
+
+t('a name she has already answered never comes back', () => {
+  const occ = [{ id: 'a1', type: 'word', greek: 'Κώστα', guess: 'Kostas', tape: 't1', en: 'x' }];
+  eq(gl.buildReviewQueue(occ, []).length, 1);
+  // Matching is by form, not by exact string: the glossary holds the nominative, the tape
+  // said the genitive.
+  eq(gl.buildReviewQueue(occ, [{ id: 'k', english: 'Kostas', canonical_greek: 'Κώστας' }]).length, 0);
+  // And a mangling only ever recorded as an observed form still counts as answered.
+  eq(gl.buildReviewQueue([{ id: 'a', greek: 'Γκόστα', guess: 'x', tape: 't', en: '' }],
+       [{ id: 'k', canonical_greek: 'Κώστας', observed_forms: ['Γκόστα'] }]).length, 0);
+});
+
+t('the questions are ranked by how often the tape said the thing', () => {
+  const occ = [
+    { id: '1', greek: 'Ελένη', guess: 'Eleni', tape: 't', en: '' },
+    { id: '2', greek: 'Κώστας', guess: 'Kostas', tape: 't', en: '' },
+    { id: '3', greek: 'Κώστα', guess: 'Kostas', tape: 't', en: '' },
+    { id: '4', greek: 'Κώστας', guess: 'Kostas', tape: 't', en: '' }
+  ];
+  eq(gl.buildReviewQueue(occ, []).map(q => q.heard), [3, 1]);
+});
+
+t('a cluster with more than one spelling says so, mechanically', () => {
+  const one = gl.buildReviewQueue(
+    [{ id: '1', greek: 'Ελένη', guess: 'Eleni', tape: 't', en: '' }], []);
+  eq(one[0].hint, null, 'a single form needs no explanation');
+  const many = gl.buildReviewQueue([
+    { id: '1', greek: 'Κώστας', guess: 'Kostas', tape: 't', en: '' },
+    { id: '2', greek: 'Κώστα',  guess: 'Kostas', tape: 't', en: '' }
+  ], []);
+  eq(/more than one way/.test(many[0].hint), true, many[0].hint);
+  // The hint reports spellings, never what the thing is. This is the standing rule the
+  // glossary broke three times in review: no relationships, no categories, no inference.
+  eq(/\b(person|place|city|village|his|her|wife|husband|brother|sister|father)\b/i
+       .test(many[0].hint), false, many[0].hint);
+});
+
+t('a blurred stretch anywhere in a cluster makes it a phrase, not a word', () => {
+  const q = gl.buildReviewQueue([
+    { id: '1', type: 'word', greek: 'στο περβόλι', guess: 'in the orchard', tape: 't', en: '' },
+    { id: '2', type: 'phrase', greek: 'στο περβολι', guess: 'in the orchard', tape: 't', en: '' }
+  ], []);
+  eq(q[0].kind, 'phrase', 'she cannot spell back what she could not hear as a word');
+});
+
+t('context is the English around the guess, or nothing when it is not there', () => {
+  eq(gl.contextAround('Kostas came at midday and we brought the wood in.', 'Kostas'),
+     ['', ' came at midday and we brought the wood in.']);
+  eq(gl.contextAround('We went to see Kostas today.', 'Kostas'),
+     ['We went to see ', ' today.']);
+  // The translator read the mangled name as an ordinary word, so the guess is not in the
+  // sentence at all. Show no context rather than inventing a position for it.
+  eq(gl.contextAround('He mentioned the cost.', 'Kostas'), ['', '']);
+});
+
+t('the entry footer only points at the Glossary for things that reach it', () => {
+  // The bug she hit: one low-confidence line said "you can help sort them out under
+  // Glossary", and the Glossary was empty -- nothing shaded for confidence ever goes there.
+  const shadedOnly = lib.entryFooter({ flagged: 0, shaded: 1 });
+  eq(/Glossary/.test(shadedOnly), false, shadedOnly);
+  eq(shadedOnly,
+     'Click any line to hear him say it. · 1 line is shaded where the tape was hard to make out.');
+  eq(lib.entryFooter({ flagged: 1, shaded: 0 }),
+     'Click any line to hear him say it. · 1 word or phrase is waiting for your ear under Glossary.');
+  eq(lib.entryFooter({}), 'Click any line to hear him say it.');
+});
+
+t('the footer agrees with itself about singular and plural', () => {
+  // "1 passage was hard to make out - they're shaded" was the exact string she saw.
+  const one = lib.entryFooter({ flagged: 1, shaded: 1 });
+  eq(/1 line is shaded/.test(one), true, one);
+  eq(/1 word or phrase is waiting/.test(one), true, one);
+  const many = lib.entryFooter({ flagged: 3, shaded: 2 });
+  eq(/2 lines are shaded/.test(many), true, many);
+  eq(/3 words and phrases are waiting/.test(many), true, many);
+});
+
+t('no user-facing message uses an em dash', () => {
+  const strings = [
+    lib.stalledMessage({ failed: 1, unfinished: 1 }), lib.stalledMessage({ failed: 2 }),
+    lib.stalledMessage({ unfinished: 2 }), lib.mediaNote({ status: 'error' }),
+    lib.tapeClickMessage({ status: 'error', label: 'x' }), lib.entryFooter({ flagged: 1, shaded: 1 }),
+    lib.formatRemaining(300), lib.formatLength(90), lib.mediaSummary([{ status: 'done' }]),
+    gl.describePlan({ substitute: [], retranslate: [], untouched: 0 }),
+    q.humanError({ status: 429 }), q.humanError({ status: 500 }), q.humanError({ status: 401 }),
+    q.humanError(new Error('NetworkError')), q.humanError(new Error('boom')),
+    rec.levelAdvice({ clipping: true }).text, rec.levelAdvice({ db: -60 }).text,
+    rec.levelAdvice({ db: -3 }).text
+  ];
+  for (const s of strings) {
+    eq(/[–—]/.test(s), false, 'em or en dash in: ' + s);
+  }
 });
 
 const run = async () => {
