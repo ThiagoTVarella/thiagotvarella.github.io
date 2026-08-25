@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Tapes</title>
+<meta name="theme-color" content="#faf7f2">
+<link rel="manifest" href="/tapes/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/tapes/app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">The Tapes<small>Grandpa's diary</small></div>
+  <nav class="row" id="tabs">
+    <button class="tab" data-go="library">Diary</button>
+    <button class="tab" data-go="names">Names<span class="badge" id="nameBadge" hidden>0</span></button>
+    <button class="tab" data-go="add">Add</button>
+    <button class="tab" data-go="settings" title="Settings" aria-label="Settings">⚙</button>
+  </nav>
+</header>
+
+<main>
+  <!-- first run ------------------------------------------------------------ -->
+  <section class="view" id="v-welcome" hidden>
+    <h1>Let's set this up</h1>
+    <p class="lede">Three quick things, once. After that you just drop in a recording and
+      come back later to read it.</p>
+    <div class="steps" id="setupSteps">
+      <div class="step" id="step-folder">
+        <div>
+          <b>Choose where to keep everything</b>
+          <p class="note-inline">Pick a folder on this computer — say <i>Grandpa Tapes</i>. Recordings
+            and transcripts live there as ordinary files that you own. Nothing is uploaded to a website.</p>
+          <button class="btn btn-sm" id="pickFolder" style="margin-top:8px">Choose folder…</button>
+        </div>
+      </div>
+      <div class="step" id="step-key">
+        <div>
+          <b>Paste the access key</b>
+          <p class="note-inline">Thiago will send you a long code beginning with <code>sk-or-</code>.
+            It's saved only in this browser.</p>
+          <input type="text" id="keyInput" placeholder="sk-or-v1-…" style="margin-top:8px;text-align:left">
+        </div>
+      </div>
+      <div class="step" id="step-go">
+        <div>
+          <b>Add your first recording</b>
+          <p class="note-inline">Any audio file from the tape deck — it doesn't matter what kind.</p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:26px"><button class="btn" id="finishSetup" disabled>Start</button></div>
+  </section>
+
+  <!-- library --------------------------------------------------------------- -->
+  <section class="view" id="v-library" hidden>
+    <div class="spread" style="margin-bottom:6px">
+      <h1>The diary</h1>
+      <button class="btn btn-ghost btn-sm" data-go="add">Add a recording</button>
+    </div>
+    <p class="lede" id="libLede"></p>
+    <div id="libBanner"></div>
+    <div class="tape-list" id="tapeList"></div>
+    <div class="empty" id="libEmpty" hidden>
+      <div class="big">📼</div>
+      <p><b>Nothing here yet.</b></p>
+      <p class="muted" style="margin:6px 0 18px">Add a recording from the tape deck and it'll
+        appear here, in English, once it's been read through.</p>
+      <button class="btn" data-go="add">Add your first recording</button>
+    </div>
+  </section>
+
+  <!-- reading --------------------------------------------------------------- -->
+  <section class="view" id="v-read" hidden>
+    <button class="tab" data-go="library" style="margin-bottom:18px;padding-left:0">← All entries</button>
+    <article class="entry" id="entry"></article>
+    <div class="entry-foot" id="entryFoot"></div>
+  </section>
+
+  <!-- names ----------------------------------------------------------------- -->
+  <section class="view" id="v-names" hidden>
+    <h1>Who is this?</h1>
+    <p class="lede">Listen and write what you hear. Answering once fixes that name in every tape.</p>
+    <div id="nameCard"></div>
+    <div class="empty" id="namesEmpty" hidden>
+      <div class="big">✓</div>
+      <p><b>All caught up.</b></p>
+      <p class="muted" style="margin-top:6px">New names will show up here as more tapes are read.</p>
+    </div>
+  </section>
+
+  <!-- add ------------------------------------------------------------------- -->
+  <section class="view" id="v-add" hidden>
+    <h1>Add recordings</h1>
+    <p class="lede">Drop in as many as you like. They'll be worked through one at a time —
+      roughly an hour of listening for each hour of tape, so it's best left running overnight.</p>
+    <label class="drop" id="drop" for="fileInput">
+      <div style="font-size:2rem;opacity:.5">＋</div>
+      <div style="margin-top:8px"><b>Drop audio files here</b></div>
+      <div class="note-inline">or click to choose · any format</div>
+      <input type="file" id="fileInput" accept="audio/*,video/*" multiple hidden>
+    </label>
+    <div id="pending" class="stack" style="margin-top:18px"></div>
+    <div id="addActions" hidden style="margin-top:20px">
+      <div class="banner" id="estimate"></div>
+      <button class="btn" id="startRun">Start reading these</button>
+    </div>
+  </section>
+
+  <!-- settings -------------------------------------------------------------- -->
+  <section class="view" id="v-settings" hidden>
+    <h1>Settings</h1>
+    <p class="lede">You shouldn't need to come here often.</p>
+    <div class="stack">
+      <div class="card">
+        <div class="field" style="margin:0">
+          <label>Where everything is kept</label>
+          <div class="spread">
+            <span id="folderName" class="muted">Not chosen yet</span>
+            <button class="btn btn-ghost btn-sm" id="changeFolder">Change…</button>
+          </div>
+          <p class="note-inline">Back this folder up somewhere. It's the only copy.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field" style="margin:0">
+          <label>Access key</label>
+          <input type="password" id="keyInput2" placeholder="sk-or-v1-…">
+          <p class="note-inline" id="keyState"></p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field" style="margin:0">
+          <label>Quality</label>
+          <select id="quality">
+            <option value="cross">Best — reads each tape twice and cross-checks (recommended)</option>
+            <option value="text">Most accurate words, less precise playback</option>
+            <option value="nav">Faster and cheaper</option>
+          </select>
+          <p class="note-inline">Best is slower and costs a little more, but it can tell you
+            which passages it wasn't sure about.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field" style="margin:0">
+          <label>Stop after spending</label>
+          <input type="text" id="cap" placeholder="50" style="max-width:9em;text-align:left">
+          <p class="note-inline">In dollars. Everything pauses at this point and waits for you.
+            Spent so far: <b id="spent">$0.00</b></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- overnight run -->
+<div class="night" id="night" hidden>
+  <svg class="n-ring" viewBox="0 0 120 120">
+    <circle class="t" cx="60" cy="60" r="52"></circle>
+    <circle class="v" cx="60" cy="60" r="52" id="ring"
+            transform="rotate(-90 60 60)" stroke-dasharray="326.7" stroke-dashoffset="326.7"></circle>
+  </svg>
+  <div class="n-big" id="nightPct">0%</div>
+  <div class="n-sub" id="nightWhat">Getting started…</div>
+  <div class="n-sub" id="nightLeft" style="margin-top:14px"></div>
+  <div class="n-sub" style="margin-top:22px;font-size:.82rem">
+    Leave this window open and the lid up. It'll keep going through the night.
+  </div>
+  <button class="btn btn-ghost n-exit" id="nightExit">Leave this screen</button>
+</div>
+
+<audio id="player" hidden></audio>
+<script type="module" src="/tapes/js/ui.js"></script>
+</body>
+</html>
