@@ -680,6 +680,40 @@ the whole recording, which is far worse than failing outright.
 Verified end to end on a real 9-second browser recording (the exact case reported):
 duration recovered as 9s, three chunks, 9.00s of 9s covered with no gaps.
 
+### The audio itself had nowhere to be seen
+
+Her folder *is* the archive, so every recording was already an ordinary file she owned --
+but nothing in the app said so, and there was no way from inside it to play a whole
+recording back, check one that had gone wrong, or take a copy anywhere else. The diary list
+is the list of recordings, but it is organised around *reading* them; a recording that
+failed shows an error and a retry, which is exactly the moment you want to confirm the
+audio survived and the diary has nothing to show you.
+
+A **Recordings** screen, reached from the diary header, lists every recording whatever
+state it is in: length, file size, where it stands in plain words, an inline player, and
+**Save a copy**. Deliberately not a fifth top-level tab -- the top bar already crowds at
+320px, and this is somewhere she visits occasionally, not one of the things she does.
+
+Two things that only showed up against a real browser:
+
+- **A browser discards a download filename it cannot encode.** Not the offending
+  characters -- the *whole name*, saving the file as `download`. Since the tapes are
+  labelled in Greek, every saved copy would have landed as `download`, `download (1)`,
+  `download (2)`: worse than the `source.webm` collision the naming was meant to fix.
+  `toLatin()` transliterates Greek to Latin letters, which is also simply more useful to
+  someone who does not read Greek -- `Martios 1978 - A - side A.wav` tells her which tape
+  this is and the original does not.
+- **The demo runs the real screen**, against a folder of generated tones rather than a
+  stub, so finding the file, reading it, playing it and saving it are all genuinely
+  exercised with no tape and no folder. One demo tape deliberately has no audio, because
+  "the file is gone" is a state the screen must say something honest about and is otherwise
+  easy never to see.
+
+`sourceName()` resolves the recording from the **directory listing** rather than from
+`tape.json`, for the same reason chunks do: a run that died before writing `tape.json`
+would leave a dropped `.mp3` being looked up as `source.webm` and reported as missing when
+it is sitting right there.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.

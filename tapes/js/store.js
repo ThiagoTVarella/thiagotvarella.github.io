@@ -31,6 +31,15 @@ export class MemoryStore {
     };
   }
   async readJSON(path) { return JSON.parse(await this.read(path)); }
+  async readBlob(path) {
+    const d = await this.read(path);
+    const name = path.split('/').pop();
+    // Tests run in plain node, where File/Blob exist but are not what the DOM would hand
+    // back; a plain shape with the two fields callers actually use is enough.
+    return typeof Blob === 'undefined'
+      ? { name, size: d.length ?? d.byteLength ?? 0, type: '' }
+      : new File([d], name);
+  }
   async exists(path) { return this.files.has(path); }
   async remove(path) { this.files.delete(path); }
   async list(dir) {
@@ -156,6 +165,7 @@ export const paths = {
   tapeDir:  id => `tapes/${id}`,
   tape:     id => `tapes/${id}/tape.json`,
   chunkDir: id => `tapes/${id}/chunks`,
+  source:   (id, name) => `tapes/${id}/${name}`,
   chunkAudio: (id, i) => `tapes/${id}/chunks/${String(i).padStart(3, '0')}.mp3`,
   chunkText:  (id, i) => `tapes/${id}/chunks/${String(i).padStart(3, '0')}.gr.json`,
   translation: id => `tapes/${id}/translation.en.json`,
@@ -163,6 +173,17 @@ export const paths = {
   transcriptTxt: id => `tapes/${id}/transcript.gr.txt`,
   translationTxt: id => `tapes/${id}/translation.en.txt`
 };
+
+// Which file in a tape folder is the original recording. The directory listing is the
+// authority here for the same reason it is for chunks: tape.json may never have been
+// written if the run died early, and a dropped .mp3 that got looked up as source.webm
+// would look to her like the audio had been lost when it is sitting right there.
+export async function sourceName(store, tapeId, hint) {
+  const names = await store.list(paths.tapeDir(tapeId));
+  const found = names.filter(n => /^source\./i.test(n));
+  if (found.includes(hint)) return hint;
+  return found[0] || hint || null;
+}
 
 const chunkIndex = name => {
   const m = /^(\d+)\.gr\.json$/.exec(name);

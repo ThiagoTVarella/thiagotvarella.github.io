@@ -80,3 +80,80 @@ export function tapeClickMessage(tape) {
   }
   return `"${tape.label}" hasn't started yet.`;
 }
+
+// --- the recordings screen ------------------------------------------------
+//
+// Her folder is the archive, so the audio is already ordinary files she owns. But she has
+// no reason to know that, and no way from in here to play a whole recording back, check one
+// that went wrong, or take a copy somewhere else. These are the decisions that screen makes.
+
+const GREEK = {
+  α: 'a', β: 'v', γ: 'g', δ: 'd', ε: 'e', ζ: 'z', η: 'i',
+  θ: 'th', ι: 'i', κ: 'k', λ: 'l', μ: 'm', ν: 'n', ξ: 'x',
+  ο: 'o', π: 'p', ρ: 'r', σ: 's', ς: 's', τ: 't', υ: 'y',
+  φ: 'f', χ: 'ch', ψ: 'ps', ω: 'o'
+};
+
+// Greek written in Latin letters. Two reasons, and the second is the important one:
+// a browser handed a filename it cannot encode discards the WHOLE name and saves the file
+// as "download" -- so every Greek-labelled tape would land in her Downloads as download,
+// download (1), download (2), which is worse than the "source.webm" problem this is meant
+// to solve. And she does not read Greek: "Martios 1978" tells her which tape this is and
+// the original does not. Letter-by-letter on purpose -- digraph rules (ου, μπ, ντ) are more
+// faithful and less predictable, and a filename only has to be recognisable.
+export function toLatin(text) {
+  return String(text ?? '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')     // accents off, so ά matches α
+    .replace(/[\u2010-\u2015]/g, '-')                     // the dash family, all to a hyphen
+    .split('')
+    .map(c => {
+      const lower = GREEK[c.toLowerCase()];
+      if (!lower) return c;
+      return c === c.toLowerCase() ? lower : lower.replace(/^./, m => m.toUpperCase());
+    })
+    .join('')
+    .replace(/[^\x20-\x7e]/g, '');                        // anything still unencodable
+}
+
+// What a saved copy should be called. Every tape stores its audio as "source.webm", which
+// is correct on disk (the folder gives it context) and useless in a Downloads folder, where
+// the third one would land as "source (2).webm". Name it after the tape instead.
+export function downloadName(tape, fileName = '') {
+  const ext = (/\.([a-z0-9]+)$/i.exec(fileName) || [, 'webm'])[1].toLowerCase();
+  const clean = t => toLatin(t)
+    .replace(/[\\/:*?"<>|\x00-\x1f]/g, ' ')   // illegal on Windows, awkward everywhere else
+    .replace(/\(\s*\)/g, '')                  // "Summer 1979 (?)" should not keep bare brackets
+    .replace(/\s+/g, ' ')
+    .trim();
+  // A label that transliterates to nothing at all (punctuation, or a script this table does
+  // not cover) must not collapse every tape to the same name; the id is always distinct.
+  const base = /[a-z0-9]/i.test(clean(tape.label)) ? clean(tape.label)
+             : clean(tape.id) || 'recording';
+  const side = tape.side ? ` - side ${clean(tape.side) || 'A'}` : '';
+  return `${base}${side}.${ext}`;
+}
+
+export function formatSize(bytes) {
+  if (!(bytes > 0)) return '';
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  const mb = bytes / (1024 * 1024);
+  return mb < 100 ? `${mb.toFixed(1)} MB` : `${Math.round(mb)} MB`;
+}
+
+// Where each recording stands, said plainly. The failed case is the one that matters most
+// here: the whole reason to reach for this screen after an error is to reassure yourself
+// the audio survived, so say so rather than repeating the error.
+export function mediaNote(tape) {
+  if (tape.status === 'done')    return 'Read and put into English';
+  if (tape.status === 'working') return 'Being read right now';
+  if (tape.status === 'error')   return 'Ran into a problem being read — the audio itself is fine';
+  return 'Waiting to be read';
+}
+
+export function mediaSummary(tapes) {
+  if (!tapes.length) return '';
+  const ready = tapes.filter(t => t.status === 'done').length;
+  const n = tapes.length;
+  return `${n} recording${n === 1 ? '' : 's'}` +
+    (ready === n ? '.' : `, ${ready} of them read through so far.`);
+}

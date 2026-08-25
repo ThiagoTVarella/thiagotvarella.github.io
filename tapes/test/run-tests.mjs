@@ -1843,6 +1843,101 @@ at('fixStreamedDuration cleans up its listener so it cannot fire twice', async (
   eq(el._currentTime, 1e9, 'no leftover listener resetting this behind our back');
 });
 
+// --- the recordings screen -------------------------------------------------
+
+t('a saved copy is named after the tape, not "source.webm"', () => {
+  eq(lib.downloadName({ label: 'Grandpa 1978', side: 'A' }, 'source.webm'),
+     'Grandpa 1978 - side A.webm');
+  // The extension follows the real file, so a dropped mp3 does not get saved as .webm.
+  eq(lib.downloadName({ label: 'Grandpa 1978', side: 'B' }, 'source.mp3'),
+     'Grandpa 1978 - side B.mp3');
+});
+
+t('a saved copy never carries characters the filesystem will reject', () => {
+  const name = lib.downloadName({ label: 'tape 3/4: "the good one" <A>', side: 'A' }, 'source.webm');
+  eq(/[\\/:*?"<>|]/.test(name), false, 'no illegal characters survive: ' + name);
+  eq(name, 'tape 3 4 the good one A - side A.webm');
+});
+
+t('an unlabelled tape still gets a usable filename', () => {
+  eq(lib.downloadName({ id: 'tape-004', side: 'A' }, 'source.webm'), 'tape-004 - side A.webm');
+  // A label of nothing but punctuation falls back to the id rather than collapsing every
+  // such tape onto one name.
+  eq(lib.downloadName({ label: '///', id: 'tape-005', side: 'A' }, 'source.webm'),
+     'tape-005 - side A.webm');
+});
+
+t('a Greek tape label survives as a filename a browser can actually write', () => {
+  // Chromium discards the ENTIRE download name if it cannot encode it, saving the file as
+  // "download" -- so a folder of Greek-labelled tapes would come out download, download (1),
+  // download (2). Transliterating is also simply more useful: she does not read Greek.
+  const name = lib.downloadName({ label: 'Μάρτιος 1978 — Α', side: 'A' }, 'source.wav');
+  eq(name, 'Martios 1978 - A - side A.wav');
+  eq(/^[\x20-\x7e]+$/.test(name), true, 'nothing outside plain ASCII survives: ' + name);
+});
+
+t('transliteration keeps case, strips accents, and normalises the dash family', () => {
+  eq(lib.toLatin('Θεσσαλονίκη'), 'Thessaloniki');
+  eq(lib.toLatin('Ελένη'), 'Eleni');
+  eq(lib.toLatin('Κώστας'), 'Kostas');
+  eq(lib.toLatin('a – b — c'), 'a - b - c');
+  eq(lib.toLatin('already latin'), 'already latin');
+});
+
+t('two Greek tapes never transliterate onto the same filename', () => {
+  const a = lib.downloadName({ label: 'Μάρτιος 1978 — Α', side: 'A' }, 'source.wav');
+  const b = lib.downloadName({ label: 'Απρίλιος 1978 — Α', side: 'A' }, 'source.wav');
+  eq(a === b, false, `both tapes would be saved as ${a}`);
+});
+
+t('a failed recording is described by what survived, not by the error', () => {
+  // The reason to open this screen after a failure is to check the audio is still there,
+  // so it says so. The error itself is on the diary card, where the retry lives.
+  const note = lib.mediaNote({ status: 'error', error: 'Couldn\'t work out how long this is.' });
+  eq(/audio itself is fine/.test(note), true, note);
+  eq(note.includes("Couldn't work out"), false, 'the error is not repeated here');
+  eq(lib.mediaNote({ status: 'done' }), 'Read and put into English');
+  eq(lib.mediaNote({ status: 'queued' }), 'Waiting to be read');
+});
+
+t('mediaSummary counts what is readable without hiding what is not', () => {
+  eq(lib.mediaSummary([]), '');
+  eq(lib.mediaSummary([{ status: 'done' }]), '1 recording.');
+  eq(lib.mediaSummary([{ status: 'done' }, { status: 'error' }, { status: 'queued' }]),
+     '3 recordings, 1 of them read through so far.');
+});
+
+at('the source file is found from the directory listing, not from tape.json', async () => {
+  const st = new store.MemoryStore();
+  await st.write('tapes/t1/source.mp3', new Uint8Array([1, 2, 3]));
+  await st.writeJSON('tapes/t1/tape.json', { id: 't1' });   // crashed before recording the name
+  // Trusting the default would look for source.webm and report the audio as missing when
+  // it is sitting right there.
+  eq(await store.sourceName(st, 't1', 'source.webm'), 'source.mp3');
+  eq(await store.sourceName(st, 't1', 'source.mp3'), 'source.mp3');
+});
+
+at('a tape whose audio really is gone reports nothing rather than a wrong name', async () => {
+  const st = new store.MemoryStore();
+  await st.writeJSON('tapes/t2/tape.json', { id: 't2' });
+  eq(await store.sourceName(st, 't2', null), null);
+});
+
+at('the store can hand back the original recording as a blob to play and save', async () => {
+  const st = new store.MemoryStore();
+  await st.write('tapes/t1/source.webm', new Uint8Array(2048));
+  const f = await st.readBlob(store.paths.source('t1', 'source.webm'));
+  eq(f.size, 2048);
+  eq(lib.formatSize(f.size), '2 KB');
+});
+
+t('file sizes are readable at every scale a tape side reaches', () => {
+  eq(lib.formatSize(0), '');
+  eq(lib.formatSize(900), '1 KB');
+  eq(lib.formatSize(1024 * 1024 * 3.25), '3.3 MB');
+  eq(lib.formatSize(1024 * 1024 * 412), '412 MB');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }
