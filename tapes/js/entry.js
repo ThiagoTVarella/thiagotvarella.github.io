@@ -33,23 +33,25 @@ export async function loadEntry(S, tapeId) {
   let tape = {};
   try { tape = await S.readJSON(store.paths.tape(tapeId)); } catch (e) {}
 
-  const greek = await collectSegments(S, tapeId, tape.plan || []);
+  // The Greek, the English and the flags are three independent files. Reading them one
+  // after another made opening a finished entry wait for three round trips in series for
+  // text already sitting on disk; nothing here depends on anything else here.
+  const [greek, translation, rawFlags] = await Promise.all([
+    collectSegments(S, tapeId, tape.plan || []),
+    S.readJSON(store.paths.translation(tapeId)).catch(() => null),   // not translated yet
+    S.readJSON(store.paths.flags(tapeId)).catch(() => null)
+  ]);
 
-  let english = new Map(), unresolved = new Set();
-  try {
-    const t = await S.readJSON(store.paths.translation(tapeId));
-    for (const row of (t.translations || [])) {
-      if (row.en) english.set(row.id, row.en); else unresolved.add(row.id);
-    }
-    for (const id of (t.unresolved || [])) unresolved.add(id);
-  } catch (e) { /* not translated yet */ }
+  const english = new Map(), unresolved = new Set();
+  for (const row of (translation?.translations || [])) {
+    if (row.en) english.set(row.id, row.en); else unresolved.add(row.id);
+  }
+  for (const id of (translation?.unresolved || [])) unresolved.add(id);
 
-  let flags = new Map();
-  try {
-    for (const f of (await S.readJSON(store.paths.flags(tapeId))) || []) {
-      if (f && f.id && f.guess) flags.set(f.id, f.guess);
-    }
-  } catch (e) {}
+  const flags = new Map();
+  for (const f of (rawFlags || [])) {
+    if (f && f.id && f.guess) flags.set(f.id, f.guess);
+  }
 
   const range = dateRange(tape.dates || []);
   const segments = greek.map(g => {

@@ -331,16 +331,21 @@ export class Queue {
 // --- helpers ---------------------------------------------------------------
 
 export async function collectSegments(S, tapeId, plan) {
+  // Concurrently, not one after another. Every read is a round trip to the browser process,
+  // and a 45-minute tape is forty of them -- awaiting each in turn made opening an entry
+  // take seconds for text that is already sitting on disk. Promise.all keeps chunk order,
+  // which the diary depends on.
+  const chunks = await Promise.all(plan.map(async (_, i) => {
+    try { return await S.readJSON(store.paths.chunkText(tapeId, i)); }
+    catch (e) { return null; }   // a chunk that never transcribed contributes nothing
+  }));
   const out = [];
-  for (let i = 0; i < plan.length; i++) {
-    try {
-      const c = await S.readJSON(store.paths.chunkText(tapeId, i));
-      for (const seg of (c.segments || [])) {
-        out.push({ id: seg.id, text: seg.text, chunk: i,
-                   start: seg.start ?? c.start, confidence: seg.confidence ?? null });
-      }
-    } catch (e) { /* a chunk that never transcribed simply contributes nothing */ }
-  }
+  chunks.forEach((c, i) => {
+    for (const seg of (c?.segments || [])) {
+      out.push({ id: seg.id, text: seg.text, chunk: i,
+                 start: seg.start ?? c.start, confidence: seg.confidence ?? null });
+    }
+  });
   return out;
 }
 
@@ -365,9 +370,9 @@ async function toBase64(blob) {
 export function humanError(e) {
   const m = String(e?.message || e || '');
   if (e?.status === 401 || e?.status === 403) return 'That access key was refused. Check Settings.';
-  if (e?.status === 429) return "The service is busy — I'll try again in a moment.";
-  if (e?.status >= 500) return "The service had a problem — I'll try again in a moment.";
-  if (/NetworkError|Failed to fetch|network/i.test(m)) return "Couldn't reach the internet — I'll retry.";
+  if (e?.status === 429) return "The service is busy. I'll try again in a moment.";
+  if (e?.status >= 500) return "The service had a problem. I'll try again in a moment.";
+  if (/NetworkError|Failed to fetch|network/i.test(m)) return "Couldn't reach the internet. I'll retry.";
   if (/how long/i.test(m)) return m;
   if (/quota|insufficient|credit/i.test(m)) return 'NO CREDIT';
   return 'Something went wrong reading this recording. It can be tried again.';

@@ -7,8 +7,9 @@ import * as store from './store.js';
 import { Queue, STATE, stepIndex, humanError } from './queue.js';
 import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
          tapeErrorNote, downloadName, formatSize, mediaNote, mediaSummary,
-         remainingEstimate, formatRemaining, formatLength } from './library.js';
+         remainingEstimate, formatRemaining, formatLength, entryFooter } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
+import { buildReviewQueue } from './glossary.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
          makeLevelSmoother, fixStreamedDuration } from './record.js';
@@ -26,6 +27,9 @@ const el = (tag, cls, html) => {
 };
 
 const DEMO = new URLSearchParams(location.search).has('demo');
+
+// Below this, a line is shaded as less certain than the rest.
+const ROUGH_LINE = 0.7;
 
 // Every internal stage gets a sentence. She never sees a state name or a status code.
 const SAYING = {
@@ -130,7 +134,6 @@ function renderLibrary() {
     card.innerHTML = `
       <div class="title">${t.heading || t.label}</div>
       <div class="meta">${[t.label, `side ${t.side}`, formatLength(tapeSeconds(t))].filter(Boolean).join(' · ')}${
-        t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}${
         tapeErrorNote(t)
           ? `<br><span style="color:var(--accent-2)">${tapeErrorNote(t).reason}</span> · ${tapeErrorNote(t).action}`
           : ''}</div>
@@ -177,7 +180,7 @@ async function openRead(tape) {
 
   for (const s of entry.segments) {
     const p = el('button', 'para');
-    const ROUGH = 0.7;
+    const ROUGH = ROUGH_LINE;
 
     // An id the translator dropped shows the Greek rather than a blank line -- an empty
     // paragraph would read as though he said nothing at all.
@@ -187,22 +190,22 @@ async function openRead(tape) {
 
     if (!s.untranslated && s.unsure && html.includes(s.unsure)) {
       html = html.replace(s.unsure,
-        `<span class="unsure" title="The tape was rough here — this part is a best guess.">${s.unsure}</span>`);
+        `<span class="unsure" title="The tape was rough here. This part is a best guess.">${s.unsure}</span>`);
     } else if (!s.untranslated && s.confidence != null && s.confidence < ROUGH) {
       p.classList.add('rough');
-      p.title = 'The tape was rough here — this line is less certain than the rest.';
+      p.title = 'The tape was rough here. This line is less certain than the rest.';
     }
     p.innerHTML = `<svg class="play" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg>${html}`;
     p.onclick = () => playFrom(entry, s, p);
     box.appendChild(p);
   }
 
-  const low = entry.segments.filter(s => s.unsure || s.untranslated ||
-                                    (s.confidence != null && s.confidence < 0.7)).length;
-  $('#entryFoot').innerHTML =
-    `Click any line to hear him say it.` +
-    (low ? ` &nbsp;·&nbsp; ${low} passage${low > 1 ? 's were' : ' was'} hard to make out —
-       they're shaded, and you can help sort them out under <b>Glossary</b>.` : '');
+  // Only a flagged span becomes a question under Glossary. A line shaded for low
+  // confidence, or one the translator dropped, is shaded and nothing more.
+  const flagged = entry.segments.filter(s => s.unsure).length;
+  const shaded = entry.segments.filter(s => !s.unsure &&
+    (s.untranslated || (s.confidence != null && s.confidence < ROUGH_LINE))).length;
+  $('#entryFoot').textContent = entryFooter({ flagged, shaded });
 }
 
 let playTimer = null;
@@ -229,14 +232,14 @@ function playFrom(entry, s, node) {
   clearTimeout(playTimer);
   node.classList.add('playing');
   if (DEMO) {
-    toast(`Playing from ${fmtTime(s.start)} — audio isn't loaded in the demo`);
+    toast(`Playing from ${fmtTime(s.start)}. Audio isn't loaded in the demo.`);
     playTimer = setTimeout(() => node.classList.remove('playing'), 2200);
     return;
   }
   // In MAI-only mode there are no intra-chunk timestamps, so fall back to the chunk start.
   const offset = (s.start != null ? s.start : s.chunkStart) - (s.chunkStart || 0);
   playChunk(entry.id, s.chunk || 0, offset)
-    .catch(() => toast("Couldn't play that bit — the recording may have moved."));
+    .catch(() => toast("Couldn't play that bit. The recording may have moved."));
 }
 const fmtTime = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 
@@ -274,8 +277,9 @@ async function renderMedia() {
   $('#mediaEmpty').hidden = tapes.length > 0;
   $('#mediaLede').textContent =
     'The original audio, exactly as it came off the tape. ' + mediaSummary(tapes);
-  $('#mediaWhere').innerHTML = 'They sit in the folder you chose' +
-    (state.folderName ? ` — <b>${escapeText(state.folderName)}</b>` : '') +
+  $('#mediaWhere').innerHTML = (state.folderName
+      ? `They sit in <b>${escapeText(state.folderName)}</b>, the folder you chose`
+      : 'They sit in the folder you chose') +
     ', as ordinary files you own. <b>Save a copy</b> puts one in your Downloads as well.';
 
   for (const t of tapes) list.appendChild(await mediaRow(t, st));
@@ -416,7 +420,7 @@ function renderReview() {
     <div id="noteBlock" hidden>
       <p class="ask">Anything worth remembering about this one?</p>
       <input type="text" id="noteIn" autocomplete="off"
-             placeholder="what or who it is — only if you know">
+             placeholder="what or who it is, only if you know">
       <p class="note-inline">Entirely optional.</p>
       <div class="name-actions">
         <button class="btn" id="noteSave">Save note</button>
@@ -446,7 +450,7 @@ function renderReview() {
     pendingNote = $('#noteIn').value.trim();
     $('#askBlock').hidden = false; $('#noteBlock').hidden = true;
     $('#note').textContent = pendingNote ? 'Edit note' : 'Add a note';
-    if (pendingNote) toast('Noted — saved with this entry.');
+    if (pendingNote) toast('Noted. Saved with this entry.');
   };
   $('#yes').onclick = () => commit(n.guess, true);
   $('#skip').onclick = next;
@@ -483,7 +487,7 @@ function renderReview() {
     next();
 
     if (DEMO) {
-      toast(wasGuessRight ? `Good — "${value}" is kept for every recording.`
+      toast(wasGuessRight ? `Good. "${value}" is kept for every recording.`
                           : `Changed to "${value}".`);
       return;
     }
@@ -493,7 +497,7 @@ function renderReview() {
 
       // Confirming the guess changes no English anywhere -- it only teaches future tapes.
       if (wasGuessRight && value === n.guess) {
-        return toast(`Kept as "${value}" — every recording from here on will match.`);
+        return toast(`Kept as "${value}". Every recording from here on will match.`);
       }
 
       const ids = state.tapes.map(t => t.id);
@@ -502,7 +506,7 @@ function renderReview() {
         translateOpts: { key: state.key, model: state.model, glossary: state.glossary }
       });
       // Say what actually happened, rather than claiming work that was not done.
-      toast(`"${value}" — ${r.summary}`);
+      toast(`"${value}": ${r.summary}`);
       if (r.failed) toast(`${r.failed} of them couldn't be re-read just now; they're unchanged.`);
     } catch (e) {
       toast("Saved the name, but couldn't update the recordings just now.");
@@ -546,7 +550,7 @@ function editRow(id) {
       <div class="field" style="margin:0">
         <label>Your note <span class="muted">(optional)</span></label>
         <input type="text" id="edNote" value="${g.note || ''}"
-               placeholder="only if you know — nothing here is guessed">
+               placeholder="only if you know, nothing here is guessed">
       </div>
       <div class="name-actions">
         <button class="btn btn-sm" id="edSave">Save</button>
@@ -725,7 +729,7 @@ $('#recStart').onclick = async () => {
         $('#recTime').textContent = formatElapsed(secs);
       },
       onData: async blob => { await recSink?.write(blob); },
-      onError: () => toast('Trouble saving — the recording is still going.')
+      onError: () => toast('Trouble saving. The recording is still going.')
     });
     // Written straight to her folder as it arrives, so a 45-minute side is never held in
     // memory and a crash still leaves everything captured up to that moment.
@@ -823,7 +827,7 @@ function setRunProgress(tape, p) { paintRun(tape, p); }
 function renderSettings() {
   $('#folderName').textContent = state.folderName || state.folder || (DEMO ? 'Grandpa Tapes (demo)' : 'Not chosen yet');
   $('#keyInput2').value = state.key;
-  $('#keyState').textContent = state.key ? 'Saved on this computer.' : 'Not set — nothing can be read without it.';
+  $('#keyState').textContent = state.key ? 'Saved on this computer.' : 'Not set. Nothing can be read without it.';
   $('#quality').value = state.quality;
 }
 $('#keyInput2').oninput = e => { state.key = e.target.value.trim(); localStorage.setItem('or_key', state.key); renderSettings(); };
@@ -845,7 +849,7 @@ function refreshSetup() {
 }
 $('#pickFolder').onclick = async () => {
   if (!('showDirectoryPicker' in window)) {
-    return toast('This browser can\'t open folders — please use Chrome or Edge on a computer.');
+    return toast('This browser can\'t open folders. Please use Chrome or Edge on a computer.');
   }
   try {
     state.store = await store.pickProject();
@@ -877,7 +881,7 @@ $('#fileInput').onchange = e => addFiles(e.target.files);
 // abandoned run looks identical from here -- the engine already knows what is left to do.
 async function runQueue(specs) {
   if (!specs.length) return;
-  if (!state.key) { toast('The access key is missing — check Settings.'); return go('settings'); }
+  if (!state.key) { toast('The access key is missing. Check Settings.'); return go('settings'); }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
   const queue = new Queue({
@@ -904,7 +908,7 @@ async function runQueue(specs) {
       unresolved: (tape, ids) =>
         toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be put into English.`),
       error: (tape, msg) => toast(msg),
-      done: async tape => { await refreshLibrary(); },
+      done: async tape => { await refreshLibrary(); await refreshReview(); },
       stop: async () => { closeRunScreen(); await refreshLibrary(); }
     }
   });
@@ -929,7 +933,7 @@ $('#startRun').onclick = async () => {
     return renderLibrary();
   }
 
-  if (!state.key) { toast('The access key is missing — check Settings.'); return go('settings'); }
+  if (!state.key) { toast('The access key is missing. Check Settings.'); return go('settings'); }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
   const specs = [];
@@ -1018,6 +1022,43 @@ async function refreshLibrary() {
   renderLibrary();
 }
 
+// Load the glossary and the outstanding questions from her folder.
+//
+// Both used to exist only in demo data. flags.json was written faithfully by the
+// translation stage and then read by nobody, so "Needs your ear" was empty forever while a
+// finished entry told her the shaded passages could be sorted out there. And glossary.json
+// was written but never read back, so every confirmed name was lost on reload -- and the
+// next write clobbered the file with whatever was in memory.
+async function refreshReview() {
+  if (DEMO || !state.store) return;
+
+  try { state.glossary = (await state.store.readJSON(store.paths.glossary())) || []; }
+  catch (e) { state.glossary = []; }
+
+  // Concurrently across tapes: each is three small files, and doing them in turn would put
+  // the same round-trip cost on opening the Glossary that opening an entry used to have.
+  const per = await Promise.all(state.tapes.map(async t => {
+    const [flags, tr, tape] = await Promise.all([
+      state.store.readJSON(store.paths.flags(t.id)).catch(() => null),
+      state.store.readJSON(store.paths.translation(t.id)).catch(() => null),
+      state.store.readJSON(store.paths.tape(t.id)).catch(() => null)
+    ]);
+    if (!flags || !flags.length) return [];
+    const english = new Map((tr?.translations || []).map(r => [r.id, r.en]));
+    return flags.filter(f => f && f.greek).map(f => ({
+      id: f.id, type: f.type, greek: f.greek, guess: f.guess,
+      tape: t.id, en: english.get(f.id) || '',
+      chunk: f.chunk ?? null,
+      start: f.chunk != null ? (tape?.plan?.[f.chunk]?.start ?? null) : null
+    }));
+  }));
+
+  state.pendingWords = buildReviewQueue(per.flat(), state.glossary);
+  state.nameIdx = 0;
+  $('#nameBadge').hidden = state.pendingWords.length === 0;
+  $('#nameBadge').textContent = state.pendingWords.length;
+}
+
 // ---------------------------------------------------------------- boot
 
 function boot() {
@@ -1038,6 +1079,7 @@ function boot() {
       state.folderName = st.root?.name || null;
       refreshSetup();
       await refreshLibrary();
+      await refreshReview();
     }).catch(() => {});
   }
   const ready = (state.folder || DEMO) && state.key;

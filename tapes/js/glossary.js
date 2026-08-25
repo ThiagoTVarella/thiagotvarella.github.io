@@ -143,7 +143,7 @@ export function undo(segments, audit) {
 // Plain language, no jargon, and honest about cost. Re-transcription is never on the table.
 export function describePlan(plan) {
   const s = plan.substitute.length, r = plan.retranslate.length;
-  if (!s && !r) return 'Nothing else needs changing — it already reads that way.';
+  if (!s && !r) return 'Nothing else needs changing. It already reads that way.';
   const parts = [];
   if (s) parts.push(`updated in ${s} place${s > 1 ? 's' : ''} straight away`);
   if (r) parts.push(`${r} sentence${r > 1 ? 's' : ''} re-read for sense`);
@@ -169,4 +169,73 @@ export function mergePlans(plans) {
   out.tier = out.retranslate.length ? TIER.RETRANSLATE
            : out.substitute.length  ? TIER.SUBSTITUTE : TIER.NONE;
   return out;
+}
+
+// --- building the review queue --------------------------------------------
+//
+// The translation stage writes flags.json per tape: every span it was unsure of, plus the
+// Greek it saw and its best reading. Nothing turned those into questions, so the "Needs your
+// ear" queue was populated from demo data alone and was empty forever in the real app --
+// while a finished entry told her the shaded passages could be sorted out under Glossary.
+//
+// Two things have to happen before a flag is a question worth asking. Anything she has
+// already answered must drop out, and the rest must be CLUSTERED: the same name flagged in
+// forty batches is one question, not forty. Clustering is by Greek stem and recorded form,
+// so inflections (Κώστας/Κώστα) and manglings gather together.
+
+const modeOf = xs => {
+  const counts = new Map();
+  for (const x of xs) counts.set(x, (counts.get(x) || 0) + 1);
+  let best = null, n = 0;
+  for (const [x, c] of counts) if (c > n) { best = x; n = c; }
+  return best;
+};
+
+// The English on either side of the guess, so she reads it in place rather than in isolation.
+// When the translator rendered the term some other way the guess is not in the sentence at
+// all -- exactly the case a blind substitution would break -- so show no context rather than
+// inventing a position for it.
+export function contextAround(english, guess) {
+  const text = String(english || ''), g = String(guess || '');
+  const at = g ? text.indexOf(g) : -1;
+  return at < 0 ? ['', ''] : [text.slice(0, at), text.slice(at + g.length)];
+}
+
+export function buildReviewQueue(occurrences, glossary = []) {
+  const known = (glossary || []).filter(Boolean);
+  const fresh = (occurrences || []).filter(o =>
+    o && o.greek && !known.some(g => formsOf(g).some(f => sameWord(f, o.greek))));
+
+  const clusters = [];
+  for (const o of fresh) {
+    let c = clusters.find(c => c.forms.some(f => sameWord(f, o.greek)));
+    if (!c) { c = { forms: [], items: [] }; clusters.push(c); }
+    if (!c.forms.some(f => normalizeGreek(f) === normalizeGreek(o.greek))) c.forms.push(o.greek);
+    c.items.push(o);
+  }
+
+  return clusters.map(c => {
+    const greek = modeOf(c.items.map(i => i.greek));
+    const guess = modeOf(c.items.map(i => i.guess).filter(Boolean)) || '';
+    // One blurred stretch in a cluster makes the whole thing a phrase: she cannot spell back
+    // what she could not hear as a word, so the question has to change shape.
+    const kind = c.items.some(i => i.type === 'phrase') ? 'phrase' : 'word';
+    const sample = c.items.find(i => guess && String(i.en || '').includes(guess)) || c.items[0];
+    return {
+      id: 'g_' + (normalizeGreek(greek).replace(/[^a-zα-ω0-9]+/gi, '') || c.items[0].id),
+      greek,
+      observed_forms: c.forms,
+      heard: c.items.length,
+      guess, kind,
+      context: contextAround(sample.en, guess),
+      tape: sample.tape || null,
+      chunk: sample.chunk ?? null,
+      at: sample.start ?? null,
+      // Mechanical, and deliberately phrased as such: the stems match but the strings differ,
+      // so the tape rendered one term more than one way. It says nothing about what it IS.
+      hint: c.forms.length > 1
+        ? `The tape says this more than one way (${c.forms.join(', ')}). They look like the same word.`
+        : null
+    };
+  }).sort((a, b) => b.heard - a.heard || String(a.greek).localeCompare(String(b.greek)));
 }
