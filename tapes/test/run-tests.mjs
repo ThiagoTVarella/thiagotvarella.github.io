@@ -421,9 +421,38 @@ at('batchSegments splits to 40 by default', async () => {
 
 at('glossaryBlock teaches inflection and ASR-mangling matching', async () => {
   const b = tr.glossaryBlock([{ canonical_greek: 'Κώστας', observed_forms: ['Κώστα', 'Γκόστα'],
-                                english: 'Kostas', kind: 'person' }]);
+                                english: 'Kostas', kind: 'word' }]);
   ok(b.includes('Κώστας / Κώστα / Γκόστα => Kostas'), 'all observed forms must be listed');
   ok(b.includes('inflected'), 'must instruct on Greek declension');
+});
+
+// This is the bug the field existed to avoid: she writes a note and it goes nowhere.
+at("her note reaches the model", async () => {
+  const b = tr.glossaryBlock([{ greek: 'Κώστας', english: 'Kostas',
+                                note: "my grandfather's brother, lived in Athens" }]);
+  ok(b.includes("my grandfather's brother"), 'the note she wrote must reach the prompt');
+  ok(b.includes('she says:'), 'and be marked as coming from her, not inferred');
+});
+
+at('glossaryBlock accepts the legacy plural key rather than silently dropping it', async () => {
+  ok(tr.glossaryBlock([{ greek: 'Ελένη', english: 'Eleni', notes: 'his wife' }])
+       .includes('his wife'), 'reading the wrong key must not lose her knowledge');
+});
+
+at('glossaryBlock never leaks the word/phrase kind into the prompt', async () => {
+  const b = tr.glossaryBlock([{ greek: 'Κώστας', english: 'Kostas', kind: 'word' }]);
+  ok(!/\(word\)|\(phrase\)|\(person\)|\(place\)/.test(b),
+     'kind describes the audio problem and tells the translator nothing: ' + b);
+});
+
+at('glossaryBlock omits the note line entirely when she has not written one', async () => {
+  const b = tr.glossaryBlock([{ greek: 'Κώστας', english: 'Kostas', note: '   ' }]);
+  ok(!b.includes('she says:'), 'an empty note must not produce a dangling label');
+});
+
+at('the prompt forbids extending what she said to other people', async () => {
+  const b = tr.glossaryBlock([{ greek: 'Κώστας', english: 'Kostas', note: 'his brother' }]);
+  ok(/do not\s+extend them/.test(b), 'one stated relationship must not license inventing others');
 });
 
 at('glossaryBlock is empty when there is no glossary yet', async () => eq(tr.glossaryBlock([]), ''));
