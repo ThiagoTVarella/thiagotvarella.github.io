@@ -40,7 +40,7 @@ const state = {
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
   model: localStorage.getItem('tapes_model') || undefined,
-  cap: localStorage.getItem('tapes_cap') || '50',
+  cap: '50',  // internal safety limit for the queue; not shown or editable in the UI
   reading: null,
   store: null,
   queue: null,
@@ -516,12 +516,9 @@ function renderSettings() {
   $('#keyInput2').value = state.key;
   $('#keyState').textContent = state.key ? 'Saved on this computer.' : 'Not set — nothing can be read without it.';
   $('#quality').value = state.quality;
-  $('#cap').value = state.cap;
-  $('#spent').textContent = money(state.tapes.reduce((n, t) => n + (t.cost || 0), 0));
 }
 $('#keyInput2').oninput = e => { state.key = e.target.value.trim(); localStorage.setItem('or_key', state.key); renderSettings(); };
 $('#quality').onchange = e => { state.quality = e.target.value; localStorage.setItem('tapes_quality', state.quality); };
-$('#cap').oninput = e => { state.cap = e.target.value; localStorage.setItem('tapes_cap', state.cap); };
 
 // ---------------------------------------------------------------- setup
 
@@ -587,10 +584,9 @@ $('#startRun').onclick = async () => {
       progress: (tape, p) => setRunProgress(tape, p),
       retry: (tape, msg) => setRunSaying(msg),
       spend: total => { state.spent = total; },
-      capped: (spent, cap) => {
+      capped: () => {
         closeRunScreen();
-        toast(`Paused — that's ${money(spent)} spent, which is the limit you set.`);
-        go('settings');
+        toast('Paused for now — check back with Thiago.');
       },
       readOnly: () => {
         closeRunScreen();
