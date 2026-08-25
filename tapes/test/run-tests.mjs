@@ -521,6 +521,27 @@ at('systemPrompt insists on flagging names for a non-Greek-speaker', async () =>
   ok(p.includes('"dates"'), 'date extraction rides along in the same call');
 });
 
+at('compareModels lines up the same sentence across models', async () => {
+  const r = await tr.compareModels(segs(3), ['m1', 'm2'], { backend: mockChat(), sampleSize: 3 });
+  eq(r.rows.length, 3);
+  eq(r.rows[0].versions.map(v => v.model), ['m1', 'm2']);
+  ok(r.rows.every(row => row.versions.every(v => v.en)), 'every model should answer every row');
+  ok(r.totalCost > 0);
+});
+
+at('compareModels survives one model failing outright', async () => {
+  const good = mockChat();
+  const backend = async (messages, model) => {
+    if (model === 'bad') throw new Error('model unavailable');
+    return good(messages);
+  };
+  const r = await tr.compareModels(segs(2), ['good', 'bad'], { backend, sampleSize: 2 });
+  eq(r.runs.length, 2);
+  eq(r.runs[1].error, 'model unavailable', 'a failing model must be reported, not thrown');
+  ok(r.rows.every(row => row.versions[0].en), 'the working model still produces output');
+  ok(r.rows.every(row => row.versions[1].en === null), 'the failed model yields nulls');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }

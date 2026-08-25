@@ -5,15 +5,30 @@
 // dates, because a diary that cannot be ordered chronologically is just a pile of text.
 
 const CHAT = 'https://openrouter.ai/api/v1/chat/completions';
-// Greek->English is well served by cheap models, and the Greek transcripts are kept on
-// disk, so translation is re-runnable at any time for the price of one pass. That makes
-// defaulting cheap the right risk: if the English reads badly, re-run with a better model.
-// Spend the money on transcription instead -- that one cannot be redone without the tape.
-// Prices verified Aug 2026, per million tokens.
+// Model choice is evidence-based, not habit. On GreekMMLU (ACL 2026 Findings, 21,805
+// native-Greek questions, 80+ models) Gemini 3 Flash scores 93.16%, ahead of GPT-5.2 at
+// 87.75% and GPT-4o at 86.81% -- a Flash-tier model beating every flagship on Greek.
+// GreekBarBench agrees independently: Gemini-2.5-Flash 8.4 > GPT-4.1 8.32 >
+// Claude-3.7-Sonnet 7.71 (human expert 7.78). Claude was absent from GreekMMLU entirely,
+// so it is unevidenced here rather than proven worse -- either way there is no reason to
+// default to it.
+//
+// Caveat: those benchmarks measure Greek COMPREHENSION on CLEAN text. This task is
+// generation into English from ASR-garbled Greek, which no public benchmark covers. The
+// tool therefore ships an A/B so the real comparison happens on real content: the Greek
+// transcripts are stored, so re-translating one tape with another model costs cents and
+// the verdict is one she can make herself, since she is judging English prose.
+//
+// Prices per million tokens, verified Aug 2026.
 export const TRANSLATION_MODELS = [
-  { id: 'google/gemini-3.7-flash',   label: 'Gemini 3.7 Flash (default)', in: 0.375, out: 1.875 },
-  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5 (best)',     in: 2.00,  out: 10.00 },
-  { id: 'openai/gpt-5.6-sol',        label: 'GPT-5.6',                    in: 2.00,  out: 10.00 }
+  { id: 'google/gemini-3.7-flash',   label: 'Gemini 3.7 Flash (default)', in: 0.375, out: 1.875,
+    note: 'Best-evidenced on Greek and the cheapest. ~$13 per full pass.' },
+  { id: 'openai/gpt-5.6-sol',        label: 'GPT-5.6',                    in: 2.00,  out: 10.00,
+    note: 'GPT family ranks second on GreekMMLU. ~$70 per full pass.' },
+  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5',            in: 2.00,  out: 10.00,
+    note: 'Unevidenced on Greek; strong at preserving voice and register.' },
+  { id: 'moonshotai/kimi-k3',        label: 'Kimi K3 (open weights)',     in: 2.80,  out: 14.00,
+    note: 'Most expensive of these, no Greek evidence. Included for comparison.' }
 ];
 export const DEFAULT_MODEL = 'google/gemini-3.7-flash';
 
@@ -127,7 +142,8 @@ async function chat(key, model, messages, fetchImpl) {
 export async function translateBatch(batch, opts = {}) {
   const { key, model = DEFAULT_MODEL, glossary = [], tail = [], fetchImpl,
           backend, maxRepairs = 2 } = opts;
-  const send = backend || (msgs => chat(key, model, msgs, fetchImpl));
+  const send = backend ? (msgs => backend(msgs, model))
+                       : (msgs => chat(key, model, msgs, fetchImpl));
 
   const sys = systemPrompt(glossary, opts);
   let res = await send([{ role: 'system', content: sys },
@@ -189,4 +205,31 @@ export async function translateAll(segments, opts = {}) {
 export function dateRange(dates) {
   const iso = (dates || []).map(d => d && d.iso).filter(Boolean).sort();
   return iso.length ? [iso[0], iso[iso.length - 1]] : null;
+}
+
+// Translate the same segments with several models so the choice is settled on real
+// content instead of benchmarks. Cheap by design: one tape's worth of Greek is already
+// on disk, so a 3-model comparison costs cents. She judges the English, which is a
+// verdict she is actually qualified to give.
+export async function compareModels(segments, models, opts = {}) {
+  const sample = segments.slice(0, opts.sampleSize || BATCH);
+  const runs = [];
+  for (const model of models) {
+    try {
+      const r = await translateBatch(sample, { ...opts, model });
+      runs.push({ model, cost: r.cost, unresolved: r.unresolved.length,
+                  translations: r.translations, flags: r.flags.length });
+    } catch (e) {
+      runs.push({ model, error: e.message, translations: [] });
+    }
+  }
+  // Rows aligned by segment id so the same sentence can be read across models.
+  const rows = sample.map(seg => ({
+    id: seg.id, greek: seg.text,
+    versions: runs.map(r => ({
+      model: r.model,
+      en: (r.translations.find(t => t.id === seg.id) || {}).en ?? null
+    }))
+  }));
+  return { rows, runs, totalCost: runs.reduce((n, r) => n + (r.cost || 0), 0) };
 }
