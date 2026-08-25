@@ -960,7 +960,11 @@ $('#startRun').onclick = async () => {
       ? await state.store.readJSON(store.paths.tape(id)).catch(() => ({})) : {};
     await state.store.writeJSON(store.paths.tape(id),
       { ...prior, id, label: f.label || f.name, side: f.side, state: STATE.QUEUED, source: sourceName });
-    specs.push({ id, file, label: f.label || f.name, side: f.side });
+    // How long the recorder actually ran, when this came from the microphone. It is the
+    // only length available before the file has been decoded, and it is what lets the
+    // slowest stage report progress instead of sitting at zero.
+    specs.push({ id, file, label: f.label || f.name, side: f.side,
+                 recordedSeconds: prior.recordedSeconds || null });
   }
   state.pending = [];
   renderPending();
@@ -985,11 +989,12 @@ async function continueStalled(tapes) {
         await state.store.writeJSON(store.paths.tape(t.id), { ...rest, state: STATE.QUEUED });
       }
       specs.push({ id: t.id, file: new File([blob], sourceName, { type: blob.type }),
-                   label: t.label, side: t.side });
+                   label: t.label, side: t.side,
+                   recordedSeconds: saved.recordedSeconds || saved.duration || null });
     } catch (e) { missing.push(t.label); }
   }
   if (missing.length) {
-    toast(`Couldn't find the recording for ${missing.join(', ')} -- it may need to be added again.`);
+    toast(`Couldn't find the recording for ${missing.join(', ')}. It may need to be added again.`);
   }
   await runQueue(specs);
 }

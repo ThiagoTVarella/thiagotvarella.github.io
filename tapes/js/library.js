@@ -76,7 +76,7 @@ export function tapeClickMessage(tape) {
   if (tape.status === 'working') {
     const step = STEPS[tape.stepIdx];
     const pct = Math.round((tape.progress || 0) * 100);
-    return `Still ${(step?.label || 'working on it').toLowerCase()} -- ${pct}% so far.`;
+    return `Still ${(step?.label || 'working on it').toLowerCase()}, ${pct}% so far.`;
   }
   return `"${tape.label}" hasn't started yet.`;
 }
