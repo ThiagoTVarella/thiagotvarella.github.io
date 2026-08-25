@@ -719,7 +719,10 @@ at('describePlan speaks plainly and never mentions re-transcribing', async () =>
 
 // A fake engine that records every call, so the orchestration and -- crucially -- the
 // memory discipline can be verified with no wasm, no network, and no audio.
-function fakeFfmpeg({ duration = '00:10:00.00', silences = [] } = {}) {
+// `duration: null` reproduces a browser recording, whose header carries no duration at all
+// (`Duration: N/A`). `progressTime` is what a decode pass reports as its final position --
+// the only remaining way to learn the length of such a file.
+function fakeFfmpeg({ duration = '00:10:00.00', silences = [], progressTime, failScan = false } = {}) {
   const calls = { exec: [], mount: [], unmount: 0, writeFile: 0, readFile: [], deleteFile: [] };
   let logSink = null;
   const ff = {
@@ -736,14 +739,28 @@ function fakeFfmpeg({ duration = '00:10:00.00', silences = [] } = {}) {
       calls.exec.push(args);
       const emit = m => logSink?.({ message: m });
       if (args.length === 2 && args[0] === '-i') {
-        emit(`  Duration: ${duration}, start: 0.000000, bitrate: 256 kb/s`);
+        emit(duration
+          ? `  Duration: ${duration}, start: 0.000000, bitrate: 256 kb/s`
+          : `  Duration: N/A, start: 0.000000, bitrate: N/A`);
         throw new Error('at least one output file must be specified');   // real ffmpeg does this
       }
       if (args.join(' ').includes('silencedetect')) {
+        emit(duration
+          ? `  Duration: ${duration}, start: 0.000000, bitrate: 256 kb/s`
+          : `  Duration: N/A, start: 0.000000, bitrate: N/A`);
         for (const s of silences) {
           emit(`[silencedetect @ 0x1] silence_start: ${s.start}`);
           emit(`[silencedetect @ 0x1] silence_end: ${s.end} | silence_duration: ${s.end - s.start}`);
         }
+        // A decoding pass prints its running position; the last one is where audio ended.
+        // Only emitted for a real timestamp -- ffmpeg would never print a malformed one,
+        // and pretending it might made this fake lie about what is recoverable.
+        const finalTime = progressTime ?? duration;
+        if (finalTime && /^\d+:\d{2}:\d{2}/.test(finalTime)) {
+          emit(`size=N/A time=00:00:00.06 bitrate=N/A speed=N/A    `);
+          emit(`size=N/A time=${finalTime} bitrate=N/A speed= 123x`);
+        }
+        if (failScan) throw new Error('decode aborted');
       }
     }
   };
@@ -767,6 +784,70 @@ at('parseDuration reads the ffmpeg header, taking the last match', async () => {
   eq(ff.parseDuration('Duration: 00:45:12.34, start: 0'), 45 * 60 + 12.34);
   eq(ff.parseDuration('Duration: 01:00:00.00\nDuration: 03:00:00.00'), 10800);
   eq(ff.parseDuration('no duration here'), null);
+});
+
+// A browser recording carries no duration in its header, which is the same defect that
+// made the <audio> element report Infinity. These log samples are copied verbatim from a
+// real MediaRecorder webm run through ffmpeg.wasm.
+at('parseProgressDuration recovers the length a decode pass observed', async () => {
+  const realLog = [
+    '  Duration: N/A, start: 0.000000, bitrate: N/A',
+    'size=N/A time=00:00:00.06 bitrate=N/A speed=N/A    ',
+    'size=N/A time=00:00:04.99 bitrate=N/A speed= 123x'
+  ].join('\n');
+  eq(ff.parseDuration(realLog), null, 'the header genuinely has nothing to read');
+  close(ff.parseProgressDuration(realLog), 4.99, 1e-9, 'but the decode pass knows');
+});
+
+at('parseProgressDuration takes the LAST position, not the first', async () => {
+  const log = 'time=00:00:01.00\ntime=00:00:20.50\ntime=00:01:05.25';
+  close(ff.parseProgressDuration(log), 65.25, 1e-9);
+});
+
+at('parseProgressDuration returns null when there is nothing to go on', async () => {
+  eq(ff.parseProgressDuration(''), null);
+  eq(ff.parseProgressDuration('no timing here'), null);
+  eq(ff.parseProgressDuration('time=00:00:00.00'), null, 'a zero-length read is not a duration');
+});
+
+at('a recording with no duration in its header is still prepared', async () => {
+  // duration: null reproduces `Duration: N/A`; the fake emits progress lines the way a
+  // real decode pass does, which is the only remaining source of the length.
+  const factory = fakeFfmpeg({ duration: null, progressTime: '00:00:04.99' });
+  const engine = new ff.TapeAudio({ factory });
+  const chunks = [];
+  const r = await ff.prepareTape(fakeFile('source.webm'), {
+    engine, targetSec: 2, minSec: 1, maxSec: 3, searchSec: 1,
+    onChunk: (c, b) => chunks.push(c)
+  });
+  close(r.duration, 4.99, 1e-9, 'the measured duration must be used, not a thrown error');
+  ok(chunks.length > 0, 'and the recording must actually get chunked');
+});
+
+at('a header duration still wins when there is one', async () => {
+  const factory = fakeFfmpeg({ duration: '00:00:30.00', progressTime: '00:00:29.90' });
+  const engine = new ff.TapeAudio({ factory });
+  const r = await ff.prepareTape(fakeFile(), { engine, targetSec: 10, minSec: 5, maxSec: 15 });
+  close(r.duration, 30, 1e-9, 'the container header is authoritative when present');
+});
+
+at('a decode that dies partway is not believed about the length', async () => {
+  // The dangerous case: a pass that aborts after a fraction of a second has still printed
+  // a position. Trusting it would treat a 45-minute side as a few seconds and quietly
+  // discard almost all of it -- far worse than failing outright.
+  const factory = fakeFfmpeg({ duration: null, progressTime: '00:00:00.06', failScan: true });
+  const engine = new ff.TapeAudio({ factory });
+  let msg = null;
+  try { await ff.prepareTape(fakeFile('source.webm'), { engine }); } catch (e) { msg = e.message; }
+  ok(msg && /how long/.test(msg), 'must refuse rather than accept a bogus 0.06s: ' + msg);
+});
+
+at('a recording whose length cannot be found at all still fails clearly', async () => {
+  const factory = fakeFfmpeg({ duration: null, progressTime: null });
+  const engine = new ff.TapeAudio({ factory });
+  let msg = null;
+  try { await ff.prepareTape(fakeFile(), { engine }); } catch (e) { msg = e.message; }
+  ok(msg && /how long/.test(msg), 'got: ' + msg);
 });
 
 at('probeDuration survives ffmpeg exiting non-zero with no output file', async () => {
