@@ -194,6 +194,33 @@ t('normalizeWhisper flags hallucination-suspect segments', () => {
   eq(n.segments[1].suspect, true, 'no_speech_prob 0.9 / avg_logprob -1.4 must be flagged');
 });
 
+// The next four come from real API responses, not from the documented thresholds.
+t('pure hiss is flagged even though its avg_logprob looks fine', () => {
+  // Observed on 20s of tape hiss: no_speech 1.000, avg_logprob 0.000.
+  ok(asr.isSuspect({ no_speech_prob: 1.0, avg_logprob: 0.0, text: '' }),
+     'requiring BOTH conditions would miss the one case that matters');
+});
+
+t('a correct short segment is NOT flagged despite a low avg_logprob', () => {
+  // Observed: the segment "1978." transcribed perfectly at avg_logprob -1.134.
+  ok(!asr.isSuspect({ no_speech_prob: 0.0, avg_logprob: -1.134, text: '1978.' }),
+     'short segments are naturally less confident; flagging them teaches distrust of correct text');
+});
+
+t('a long low-confidence segment is still flagged', () => {
+  ok(asr.isSuspect({ no_speech_prob: 0.0, avg_logprob: -1.4,
+                     text: 'ένα δύο τρία τέσσερα πέντε έξι' }));
+});
+
+t('confidence does NOT catch confident misrecognition — only cross-check does', () => {
+  // Observed on degraded audio: Whisper wrote "Η ημερά είναι τρίτη" for "Σήμερα είναι Τρίτη"
+  // at no_speech 0.000, avg_logprob -0.527 -- entirely unflagged.
+  const wrong = { no_speech_prob: 0.0, avg_logprob: -0.527, text: 'Η ημερά είναι τρίτη.' };
+  ok(!asr.isSuspect(wrong), 'the acoustic signal cannot see this class of error');
+  ok(asr.agreement('Σήμερα είναι Τρίτη.', 'Η ημερά είναι τρίτη.') < 0.7,
+     'cross-check is the signal that catches misrecognition');
+});
+
 t('normalizeWhisper degrades gracefully when segments are missing', () => {
   const n = asr.normalizeWhisper({ text: 'κάτι' }, CHUNK);
   eq(n.hasTimestamps, false);
