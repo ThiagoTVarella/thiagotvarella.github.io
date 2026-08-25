@@ -8,7 +8,7 @@ import { Queue, STATE, humanError } from './queue.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
-         makeLevelSmoother } from './record.js';
+         makeLevelSmoother, fixStreamedDuration } from './record.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -539,7 +539,8 @@ $('#recOpen').onclick = async () => {
 };
 $('#recDevice').onchange = () => startPreview();
 
-// Twenty seconds, played straight back. Cheap insurance against a wasted side.
+// A handful of seconds, played straight back. Cheap insurance against a wasted side.
+const TEST_SECONDS = 5;
 $('#recTest').onclick = async () => {
   const btn = $('#recTest');
   btn.disabled = true; $('#recStart').disabled = true;
@@ -552,12 +553,12 @@ $('#recTest').onclick = async () => {
       onData: async b => parts.push(b),
       onLevel: (lvl, secs) => {
         paintMeter($('#meterBar'), $('#meterAdvice'), lvl, secs);
-        btn.textContent = `Testing… ${Math.max(0, 20 - Math.floor(secs))}s`;
+        btn.textContent = `Testing… ${Math.max(0, TEST_SECONDS - Math.floor(secs))}s`;
       }
     });
   } catch (e) { btn.disabled = false; $('#recStart').disabled = false; return; }
 
-  await new Promise(res => setTimeout(res, 20000));
+  await new Promise(res => setTimeout(res, TEST_SECONDS * 1000));
   const info = await r.stop();
   const blob = new Blob(parts, { type: info.mime });
   const a = $('#recTestAudio');
@@ -566,6 +567,10 @@ $('#recTest').onclick = async () => {
   $('#recTestOut').hidden = false;
   btn.textContent = 'Test again';
   btn.disabled = false; $('#recStart').disabled = false;
+  // A blob built from streamed recorder chunks reports duration as Infinity in Chrome,
+  // which makes the seek bar jump to the end instead of tracking playback. Fix it once
+  // metadata is in, rather than leaving the player looking broken.
+  a.onloadedmetadata = () => fixStreamedDuration(a);
   await startPreview();
 };
 

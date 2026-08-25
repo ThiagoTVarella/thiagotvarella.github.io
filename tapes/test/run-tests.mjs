@@ -1418,6 +1418,69 @@ at('the file sink appends at the right offsets and commits on close', async () =
   eq((await st.read('tapes/t1/source.webm')).length, 5, 'committed only on close');
 });
 
+// A minimal fake <audio> element: enough surface to drive fixStreamedDuration without a
+// real DOM. Simulates the Chrome behaviour being worked around -- duration is Infinity
+// until currentTime is pushed past the real end, at which point the browser discovers it
+// and fires 'timeupdate'.
+function fakeAudioEl({ realDuration = 12.4, fireTimeUpdate = true } = {}) {
+  const listeners = {};
+  return {
+    duration: Infinity,
+    _currentTime: 0,
+    get currentTime() { return this._currentTime; },
+    set currentTime(v) {
+      this._currentTime = v;
+      if (v > 1000) {
+        // The browser has scanned to the real end and now knows the duration.
+        this.duration = realDuration;
+        if (fireTimeUpdate) (listeners['timeupdate'] || []).forEach(fn => fn());
+      }
+    },
+    addEventListener(ev, fn) { (listeners[ev] ||= []).push(fn); },
+    removeEventListener(ev, fn) {
+      listeners[ev] = (listeners[ev] || []).filter(f => f !== fn);
+    }
+  };
+}
+
+at('fixStreamedDuration resolves immediately when duration is already finite', async () => {
+  const el = fakeAudioEl();
+  el.duration = 7.5;
+  const d = await rec.fixStreamedDuration(el, { timeoutMs: 50 });
+  eq(d, 7.5);
+  eq(el.currentTime, 0, 'must not seek at all when nothing was broken');
+});
+
+at('fixStreamedDuration recovers the real duration from an Infinity blob', async () => {
+  const el = fakeAudioEl({ realDuration: 5.2 });
+  const d = await rec.fixStreamedDuration(el, { probeTime: 1e9, timeoutMs: 500 });
+  eq(d, 5.2, 'the browser-reported duration after the scan settles');
+  eq(el.currentTime, 0, 'playback position must be reset to the start once fixed');
+});
+
+at('fixStreamedDuration seeks to the probe offset to trigger the browser scan', async () => {
+  const el = fakeAudioEl({ realDuration: 20 });
+  await rec.fixStreamedDuration(el, { probeTime: 1e9, timeoutMs: 500 });
+  ok(el._currentTime === 0, 'ends at 0, but only after having been pushed past 1e9 to force it');
+});
+
+at('fixStreamedDuration falls back on a timeout rather than hanging forever', async () => {
+  // A player that never fires timeupdate for the trick -- must not leave the caller stuck.
+  const el = fakeAudioEl({ fireTimeUpdate: false });
+  const t0 = Date.now();
+  await rec.fixStreamedDuration(el, { probeTime: 1e9, timeoutMs: 40 });
+  ok(Date.now() - t0 < 500, 'must resolve via the timeout, not wait indefinitely');
+});
+
+at('fixStreamedDuration cleans up its listener so it cannot fire twice', async () => {
+  const el = fakeAudioEl({ realDuration: 8 });
+  await rec.fixStreamedDuration(el, { probeTime: 1e9, timeoutMs: 500 });
+  eq(el._currentTime, 0);
+  // A second, unrelated seek must not retrigger the removed listener into resetting time.
+  el.currentTime = 1e9;
+  eq(el._currentTime, 1e9, 'no leftover listener resetting this behind our back');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }

@@ -108,6 +108,38 @@ export function makeLevelSmoother({ holdMs = 1500, now = () => Date.now() } = {}
   };
 }
 
+// Chrome bug (still present in 2026): a blob built from streamed MediaRecorder chunks
+// (webm/opus) has no duration written into its container, since it was never finalized as
+// a complete file -- it was recorded live, one timeslice appended after another. The
+// <audio> element reports `duration === Infinity` for it. A seek bar cannot compute a fill
+// percentage against Infinity, so instead of tracking playback left-to-right it snaps
+// toward the end and sits there -- exactly the "jumps to the end" symptom.
+//
+// The fix is a known workaround, not a guess: seeking to a huge offset forces the browser
+// to scan the stream looking for where it actually ends, and discovering that end is what
+// makes it compute the real duration. `timeupdate` fires once that scan settles, at which
+// point the duration is correct and playback can be reset to the start.
+export function fixStreamedDuration(el, { probeTime = 1e9, timeoutMs = 4000 } = {}) {
+  return new Promise(resolve => {
+    if (isFinite(el.duration)) return resolve(el.duration);
+
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      el.removeEventListener('timeupdate', onTimeUpdate);
+      el.currentTime = 0;
+      resolve(el.duration);
+    };
+    const onTimeUpdate = () => finish();
+    el.addEventListener('timeupdate', onTimeUpdate);
+    el.currentTime = probeTime;
+    // Some engines never fire timeupdate for this trick (or the file is unusually short);
+    // do not leave the player silently broken if that happens.
+    setTimeout(finish, timeoutMs);
+  });
+}
+
 export const formatElapsed = s => {
   const m = Math.floor(s / 60), sec = Math.floor(s % 60);
   return `${m}:${String(sec).padStart(2, '0')}`;
