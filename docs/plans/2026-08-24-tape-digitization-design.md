@@ -157,9 +157,8 @@ Follows the `scheduler/` + `admin/` precedent — self-contained tool, opts out 
   js/ui.js          ✅ the five screens
   js/demo.js        ✅ invented 1978 content for ?demo=1
   test/run-tests.mjs ✅ 76 tests, no network, no tapes, no key
-  js/ffmpeg.js      ⬜ ffmpeg.wasm wrapper (WORKERFS mount, run the argv audio.js builds)
-  js/queue.js       ⬜ worker-driven scheduler, wake lock, Web Locks, spend ceiling
-  vendor/           ⬜ ffmpeg.wasm single-threaded core
+  js/ffmpeg.js      ✅ WORKERFS mount, per-chunk cut, MEMFS freed as it goes
+  js/queue.js       ✅ timer-free loop, wake lock, Web Locks, spend ceiling, resume
 ```
 
 > ⚠️ **Single-threaded `@ffmpeg/core`.** The MT build needs `SharedArrayBuffer`, which requires
@@ -456,8 +455,8 @@ repeated in the translation and **not** to be extended to anyone else.
 - ✅ **Phase 3 — glossary.** `glossary.js`: Greek stem + observed-form matching, three-tier
   corrections, batching, undo.
 - ✅ **Phase 4 — interface.** All five screens, demo mode, warm archival design, light + dark.
-- ⬜ **Phase 2b — the engine that runs it.** `ffmpeg.js` + `queue.js`: the only remaining gap
-  between "a convincing shell" and "a working tool".
+- ✅ **Phase 2b — the engine.** `ffmpeg.js` + `queue.js`, wired to `Add → Start`. The library
+  now loads from her folder on reload.
 - ⬜ **Phase 5 — polish.** Search across entries, TXT export, link from the Coding card in
   `portfolio.html:105-118`.
 
@@ -466,17 +465,15 @@ thousands of artifacts is not a usable path. Desktop Chrome/Edge is a stated req
 
 ### Next
 
-1. **`js/ffmpeg.js`** — load the single-threaded core, mount input via WORKERFS, run the argv
-   `audio.js` already builds, read each chunk out and free it. The riskiest remaining code:
-   the 3-hour-file memory path is where this falls over, and it is testable with a generated
-   WAV and no tapes.
-2. **`js/queue.js`** — worker-driven and **timer-free**, wake lock, `navigator.locks`
-   single-writer guard, spend ceiling, resume reconciled from the directory listing.
-3. **Wire `Add → Start`** to the real pipeline. It currently shows the run screen without
-   driving anything.
-4. **Playback** — `Read` and the glossary card call `playFrom()`, which needs real chunk files
-   on disk to seek into.
-5. Then Phase 0b, once tapes exist.
+1. **Run it on a real audio file.** Everything is tested against fakes; nothing has yet met
+   ffmpeg.wasm, WORKERFS, or a live OpenRouter response. This is the step that will find the
+   real bugs, and it needs only a key and any audio — no tapes.
+2. **Playback.** `Read` and the glossary card call `playFrom()`, which needs to resolve a
+   segment to its chunk file and seek within it.
+3. **Wire glossary corrections** to `glossary.js` so confirming a name actually rewrites the
+   English on disk, rather than only updating the list in memory.
+4. **Search and TXT export**, then link from the Coding card in `portfolio.html:105-118`.
+5. Phase 0b bake-off once tapes exist.
 
 ### Known gaps, deliberately left
 

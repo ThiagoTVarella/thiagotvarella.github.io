@@ -3,6 +3,8 @@
 // no tokens, no API. Errors are sentences, not status codes.
 
 import * as demoData from './demo.js';
+import * as store from './store.js';
+import { Queue, STATE, humanError } from './queue.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -16,6 +18,17 @@ const money = n => '$' + (n || 0).toFixed(2);
 
 const DEMO = new URLSearchParams(location.search).has('demo');
 
+// Every internal stage gets a sentence. She never sees a state name or a status code.
+const SAYING = {
+  loading:    'Getting ready…',
+  reading:    'Opening the recording…',
+  listening:  'Finding where he pauses…',
+  splitting:  'Splitting it into pieces…',
+  [STATE.READING]:     'Listening to it…',
+  [STATE.TRANSLATING]: 'Putting it into English…',
+  [STATE.PREPARING]:   'Getting the recording ready…'
+};
+
 const state = {
   view: 'library',
   tapes: [],
@@ -26,6 +39,9 @@ const state = {
   quality: localStorage.getItem('tapes_quality') || 'cross',
   cap: localStorage.getItem('tapes_cap') || '50',
   reading: null,
+  store: null,
+  queue: null,
+  spent: 0,
   nameIdx: 0,
   pending: []
 };
@@ -414,7 +430,15 @@ function openRunScreen(tape) {
     runTimer = setInterval(() => { p = Math.min(1, p + 0.01); paint(); if (p >= 1) clearInterval(runTimer); }, 700);
   }
 }
-$('#runExit').onclick = () => { $('#runScreen').hidden = true; clearInterval(runTimer); };
+$('#runExit').onclick = () => closeRunScreen();
+function closeRunScreen() { $('#runScreen').hidden = true; clearInterval(runTimer); }
+function setRunSaying(text) { $('#runWhat').textContent = text; }
+function setRunProgress(tape, p) {
+  const C = 2 * Math.PI * 52;
+  $('#ring').setAttribute('stroke-dashoffset', String(C * (1 - Math.max(0, Math.min(1, p)))));
+  $('#runPct').textContent = Math.round(p * 100) + '%';
+  if (tape?.label) $('#runLeft').textContent = tape.label;
+}
 
 // ---------------------------------------------------------------- settings
 
@@ -442,10 +466,10 @@ $('#pickFolder').onclick = async () => {
     return toast('This browser can\'t open folders — please use Chrome or Edge on a computer.');
   }
   try {
-    const { pickProject } = await import('./store.js');
-    await pickProject();
+    state.store = await store.pickProject();
     state.folder = 'chosen';
     refreshSetup();
+    await refreshLibrary();
   } catch (e) { /* she cancelled */ }
 };
 $('#keyInput').oninput = e => {
@@ -465,16 +489,88 @@ const drop = $('#drop');
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 $('#fileInput').onchange = e => addFiles(e.target.files);
 
-$('#startRun').onclick = () => {
-  if (!state.key && !DEMO) { toast('The access key is missing — check Settings.'); return go('settings'); }
-  const t = { id: 'tape-' + Date.now(), label: state.pending[0].label || state.pending[0].name,
-              side: state.pending[0].side, minutes: 45, status: 'working', progress: 0,
-              cost: 0, date: null, heading: null, segments: [] };
-  state.tapes.push(t);
+$('#startRun').onclick = async () => {
+  if (!state.pending.length) return;
+
+  if (DEMO) {
+    const t = { id: 'tape-' + state.tapes.length, label: state.pending[0].label || state.pending[0].name,
+                side: state.pending[0].side, minutes: 45, status: 'working', progress: 0,
+                cost: 0, date: null, heading: null, segments: [] };
+    state.tapes.push(t);
+    state.pending = [];
+    openRunScreen(t);
+    return renderLibrary();
+  }
+
+  if (!state.key) { toast('The access key is missing — check Settings.'); return go('settings'); }
+  if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
+
+  const queue = new Queue({
+    store: state.store,
+    key: state.key,
+    mode: state.quality,
+    glossary: state.glossary,
+    spendCap: parseFloat(state.cap) || Infinity,
+    spent: state.tapes.reduce((n, t) => n + (t.cost || 0), 0),
+    on: {
+      change: () => renderLibrary(),
+      stage: (tape, st) => setRunSaying(SAYING[st] || 'Working…'),
+      progress: (tape, p) => setRunProgress(tape, p),
+      retry: (tape, msg) => setRunSaying(msg),
+      spend: total => { state.spent = total; },
+      capped: (spent, cap) => {
+        closeRunScreen();
+        toast(`Paused — that's ${money(spent)} spent, which is the limit you set.`);
+        go('settings');
+      },
+      readOnly: () => {
+        closeRunScreen();
+        toast('This is already running in another window, so nothing was changed here.');
+      },
+      unresolved: (tape, ids) =>
+        toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be put into English.`),
+      error: (tape, msg) => toast(msg),
+      done: async tape => { await refreshLibrary(); },
+      stop: async () => { closeRunScreen(); await refreshLibrary(); }
+    }
+  });
+
+  for (const f of state.pending) {
+    const id = 'tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
+    queue.add({ id, file: f.file, label: f.label || f.name, side: f.side });
+    await state.store.writeJSON(store.paths.tape(id),
+      { id, label: f.label || f.name, side: f.side, state: STATE.QUEUED });
+  }
   state.pending = [];
-  openRunScreen(t);
-  renderLibrary();
+  renderPending();
+
+  state.queue = queue;
+  openRunScreen({ label: queue.tapes[0].label, minutes: 45, progress: 0 });
+  await queue.start();
 };
+
+// Load what is actually in her folder, so the library survives a reload.
+async function refreshLibrary() {
+  if (DEMO || !state.store) return;
+  const ids = await state.store.list('tapes');
+  const tapes = [];
+  for (const id of ids) {
+    try {
+      const t = await state.store.readJSON(store.paths.tape(id));
+      const done = t.state === STATE.DONE;
+      tapes.push({
+        id, label: t.label || id, side: t.side || 'A',
+        minutes: Math.round((t.duration || 0) / 60) || 0,
+        status: done ? 'done' : (t.state === STATE.FAILED ? 'error' : 'queued'),
+        progress: 0, cost: t.cost || 0,
+        date: (t.dates && t.dates[0] && t.dates[0].iso) || null,
+        heading: null, segments: []
+      });
+    } catch (e) { /* a folder mid-write */ }
+  }
+  state.tapes = tapes;
+  renderLibrary();
+}
 
 // ---------------------------------------------------------------- boot
 
@@ -485,6 +581,17 @@ function boot() {
     state.glossary = demoData.GLOSSARY;
     state.folder = 'Grandpa Tapes (demo)';
     state.key = state.key || 'demo';
+  }
+  if (!DEMO) {
+    // File System Access re-permission needs a gesture, so this can only succeed silently
+    // when the grant survived. Otherwise she gets the folder button and one click.
+    store.restoreProject().then(async st => {
+      if (!st) return;
+      state.store = st;
+      state.folder = 'chosen';
+      refreshSetup();
+      await refreshLibrary();
+    }).catch(() => {});
   }
   const ready = (state.folder || DEMO) && state.key;
   $('#nameBadge').hidden = state.pendingWords.length === 0;
