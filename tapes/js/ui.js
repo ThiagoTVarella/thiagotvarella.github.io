@@ -6,7 +6,8 @@ import * as demoData from './demo.js';
 import * as store from './store.js';
 import { Queue, STATE, stepIndex, humanError } from './queue.js';
 import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
-         tapeErrorNote, downloadName, formatSize, mediaNote, mediaSummary } from './library.js';
+         tapeErrorNote, downloadName, formatSize, mediaNote, mediaSummary,
+         remainingEstimate, formatRemaining, formatLength } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
@@ -14,6 +15,9 @@ import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElap
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
+// Real tapes carry a measured duration in seconds; demo ones only ever had whole minutes.
+const tapeSeconds = t => t.seconds || (t.minutes || 0) * 60;
+
 const el = (tag, cls, html) => {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -99,7 +103,7 @@ function renderLibrary() {
   list.hidden = !has;
 
   const done = state.tapes.filter(t => t.status === 'done');
-  const hours = state.tapes.reduce((n, t) => n + (t.minutes || 0), 0) / 60;
+  const hours = state.tapes.reduce((n, t) => n + tapeSeconds(t), 0) / 3600;
   $('#libLede').textContent = has
     ? `${done.length} of ${state.tapes.length} recordings ready · about ${hours.toFixed(1)} hours of tape so far`
     : '';
@@ -125,7 +129,7 @@ function renderLibrary() {
     const card = el('button', 'tape');
     card.innerHTML = `
       <div class="title">${t.heading || t.label}</div>
-      <div class="meta">${t.label} · side ${t.side} · ${t.minutes} min${
+      <div class="meta">${[t.label, `side ${t.side}`, formatLength(tapeSeconds(t))].filter(Boolean).join(' · ')}${
         t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}${
         tapeErrorNote(t)
           ? `<br><span style="color:var(--accent-2)">${tapeErrorNote(t).reason}</span> · ${tapeErrorNote(t).action}`
@@ -286,7 +290,7 @@ async function mediaRow(t, st) {
   }
 
   const facts = [
-    t.minutes ? `${t.minutes} min` : '',
+    formatLength(tapeSeconds(t)),
     file ? formatSize(file.size) : '',
     mediaNote(t)
   ].filter(Boolean).join(' · ');
@@ -771,33 +775,48 @@ $('#recStop').onclick = async () => {
 // window stays open and the machine stays awake.
 
 let runTimer = null;
+// When the tape currently on screen actually started being worked on. The estimate divides
+// by this, so it must survive opening and closing the screen -- reopening it from the
+// library banner mid-run must not restart the clock and make the remaining time collapse.
+let runClock = { id: null, at: 0 };
+
+function runClockFor(tape, now = Date.now()) {
+  const id = tape?.id ?? tape?.label ?? 'run';
+  if (runClock.id !== id) runClock = { id, at: now };
+  return runClock.at;
+}
+
+function paintRun(tape, p) {
+  const C = 2 * Math.PI * 52;
+  const pct = Math.max(0, Math.min(1, p || 0));
+  $('#ring').setAttribute('stroke-dashoffset', String(C * (1 - pct)));
+  $('#runPct').textContent = Math.round(pct * 100) + '%';
+  const left = formatRemaining(remainingEstimate({
+    startedAt: runClockFor(tape), now: Date.now(), progress: pct
+  }));
+  // Until there is enough of a run to measure, the label alone -- never a guessed duration.
+  $('#runLeft').textContent = [tape?.label, left].filter(Boolean).join(' · ');
+}
+
 function openRunScreen(tape) {
   $('#runScreen').hidden = false;
-  const total = tape.minutes;
+  runClockFor(tape);
+  $('#runWhat').textContent = `Reading ${tape.label}`;
   let p = tape.progress || 0;
-  const paint = () => {
-    const C = 2 * Math.PI * 52;
-    $('#ring').setAttribute('stroke-dashoffset', String(C * (1 - p)));
-    $('#runPct').textContent = Math.round(p * 100) + '%';
-    $('#runWhat').textContent = `Reading ${tape.label}`;
-    const left = Math.max(1, Math.round(total * (1 - p)));
-    $('#runLeft').textContent = `about ${left} minute${left > 1 ? 's' : ''} left on this one`;
-  };
-  paint();
+  paintRun(tape, p);
   if (DEMO) {
     clearInterval(runTimer);
-    runTimer = setInterval(() => { p = Math.min(1, p + 0.01); paint(); if (p >= 1) clearInterval(runTimer); }, 700);
+    runTimer = setInterval(() => {
+      p = Math.min(1, p + 0.01);
+      paintRun(tape, p);
+      if (p >= 1) clearInterval(runTimer);
+    }, 700);
   }
 }
 $('#runExit').onclick = () => closeRunScreen();
 function closeRunScreen() { $('#runScreen').hidden = true; clearInterval(runTimer); }
 function setRunSaying(text) { $('#runWhat').textContent = text; }
-function setRunProgress(tape, p) {
-  const C = 2 * Math.PI * 52;
-  $('#ring').setAttribute('stroke-dashoffset', String(C * (1 - Math.max(0, Math.min(1, p)))));
-  $('#runPct').textContent = Math.round(p * 100) + '%';
-  if (tape?.label) $('#runLeft').textContent = tape.label;
-}
+function setRunProgress(tape, p) { paintRun(tape, p); }
 
 // ---------------------------------------------------------------- settings
 
@@ -893,7 +912,7 @@ async function runQueue(specs) {
   for (const spec of specs) queue.add(spec);
 
   state.queue = queue;
-  openRunScreen({ label: queue.tapes[0].label, minutes: 45, progress: 0 });
+  openRunScreen(queue.tapes[0]);
   await queue.start();
 }
 
@@ -902,7 +921,7 @@ $('#startRun').onclick = async () => {
 
   if (DEMO) {
     const t = { id: 'tape-' + state.tapes.length, label: state.pending[0].label || state.pending[0].name,
-                side: state.pending[0].side, minutes: 45, status: 'working', progress: 0,
+                side: state.pending[0].side, minutes: 0, status: 'working', progress: 0,
                 cost: 0, date: null, heading: null, segments: [] };
     state.tapes.push(t);
     state.pending = [];
@@ -987,7 +1006,7 @@ async function refreshLibrary() {
                    : stepIdx >= 0 ? 'working' : 'queued';
       tapes.push({
         id, label: t.label || id, side: t.side || 'A',
-        minutes: Math.round((t.duration || 0) / 60) || 0,
+        minutes: Math.round((t.duration || 0) / 60) || 0, seconds: t.duration || 0,
         status, stepIdx, error: t.error || null, source: t.source || null,
         progress: t.progress || 0, cost: t.cost || 0,
         date: (t.dates && t.dates[0] && t.dates[0].iso) || null,

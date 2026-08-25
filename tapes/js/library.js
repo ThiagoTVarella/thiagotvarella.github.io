@@ -157,3 +157,50 @@ export function mediaSummary(tapes) {
   return `${n} recording${n === 1 ? '' : 's'}` +
     (ready === n ? '.' : `, ${ready} of them read through so far.`);
 }
+
+// --- how much longer ------------------------------------------------------
+//
+// The run screen used to multiply the tape's own length by the fraction left, which quietly
+// asserted that reading a tape takes exactly as long as playing it. It does not -- splitting
+// runs several times faster than realtime and transcription faster still -- and the length it
+// multiplied was a hardcoded placeholder of 45 minutes, so a nine-second recording announced
+// "about 45 minutes left on this one".
+//
+// Measure instead. Extrapolate from what this run has actually done so far, and return null
+// -- meaning say nothing -- until there is enough of a sample to divide by. For the first
+// few seconds "nothing" is the honest answer, and better than a number pulled out of the air.
+export function remainingEstimate({ startedAt, now, progress,
+                                    minSeconds = 8, minProgress = 0.02,
+                                    maxSeconds = 6 * 3600 } = {}) {
+  if (!(progress > 0) || progress >= 1) return null;
+  const elapsed = (now - startedAt) / 1000;
+  if (!(elapsed >= minSeconds) || progress < minProgress) return null;
+  const remaining = elapsed * (1 - progress) / progress;
+  // Six hours is far past anything real -- the longest plausible tape side splits in well
+  // under an hour -- so a figure like this means a stalled request, not a slow one. It is
+  // not information, it is alarming, and the checklist already shows what step it is on.
+  return remaining > maxSeconds ? null : remaining;
+}
+
+// Coarse on purpose. The underlying number moves on every chunk, and a countdown that flips
+// between "about 7 minutes" and "about 6 minutes" and back reads as one that cannot make up
+// its mind. Blunt rounding makes it hold still.
+export function formatRemaining(sec) {
+  if (sec == null) return '';
+  if (sec < 50) return 'less than a minute left';
+  const min = sec / 60;
+  if (min < 1.5) return 'about a minute left';
+  if (min < 10) return `about ${Math.round(min)} minutes left`;
+  return `about ${Math.round(min / 5) * 5} minutes left`;
+}
+
+// A nine-second recording rounded to minutes reads as "0 min", which looks like a fault.
+// Seconds below a minute, hours above one, so nothing is ever described as lasting nothing.
+export function formatLength(seconds) {
+  if (!(seconds > 0)) return '';
+  if (seconds < 60) return `${Math.round(seconds)} sec`;
+  const min = Math.round(seconds / 60);
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? `${h} hr ${m} min` : `${h} hr`;
+}
