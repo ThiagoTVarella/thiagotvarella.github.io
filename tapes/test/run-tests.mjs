@@ -749,6 +749,18 @@ function fakeFfmpeg({ duration = '00:10:00.00', silences = [] } = {}) {
 }
 const fakeFile = (name = 'tape.wav') => ({ name, size: 900e6 });
 
+at('the ffmpeg core URL points at the esm build, not umd', async () => {
+  // The worker runs as type:"module", so importScripts is unavailable and the library
+  // dynamic-imports instead, rewriting '/umd/' to '/esm/' on the way. Naming umd means umd
+  // never loads, and breaks outright once the files are vendored somewhere without '/umd/'
+  // in the path. Verified against a real browser run.
+  const src = await import('node:fs').then(fs =>
+    fs.readFileSync(new URL('../js/ffmpeg.js', import.meta.url), 'utf8'));
+  const m = src.match(/const CDN = '([^']+)'/);
+  ok(m, 'CDN constant should exist');
+  ok(m[1].endsWith('/esm'), 'must name the esm core directly, got: ' + m[1]);
+});
+
 at('parseDuration reads the ffmpeg header, taking the last match', async () => {
   eq(ff.parseDuration('Duration: 00:45:12.34, start: 0'), 45 * 60 + 12.34);
   eq(ff.parseDuration('Duration: 01:00:00.00\nDuration: 03:00:00.00'), 10800);

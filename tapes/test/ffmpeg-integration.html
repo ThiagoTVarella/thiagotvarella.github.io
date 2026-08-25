@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ffmpeg.wasm integration check</title>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Comfortaa', system-ui, sans-serif; background: #faf7f2; color: #221f1b;
+         max-width: 46em; margin: 0 auto; padding: 28px 18px; line-height: 1.6; }
+  h1 { font-size: 1.3rem; } p { color: #57514a; font-size: .9rem; }
+  button { background: #221f1b; color: #faf7f2; border: 0; border-radius: 999px;
+           padding: 12px 22px; font: inherit; font-weight: 700; cursor: pointer; }
+  button[disabled] { opacity: .4; cursor: default; }
+  pre { background: #f2ede4; border: 1px solid #e2d9cb; border-radius: 10px; padding: 14px;
+        font-size: .78rem; overflow-x: auto; white-space: pre-wrap; line-height: 1.55; }
+  .ok { color: #1e8449; font-weight: 700; } .bad { color: #c0392b; font-weight: 700; }
+</style>
+</head>
+<body>
+<h1>ffmpeg.wasm integration check</h1>
+<p>
+  The one part of the pipeline that cannot be tested with fakes: loading the wasm core,
+  mounting a file through WORKERFS, detecting pauses, and cutting real MP3 chunks at them.
+  Audio is generated here in the page, so nothing is needed but a browser.
+</p>
+<p>
+  First run downloads ~32&nbsp;MB of wasm and is cached afterwards. Everything after that
+  takes a second or two. <b>Chrome or Edge on a desktop.</b>
+</p>
+<button id="go">Run the check</button>
+<pre id="log">idle</pre>
+
+<script type="module">
+import { prepareTape, TapeAudio } from '/tapes/js/ffmpeg.js';
+
+const out = document.getElementById('log');
+const log = m => { out.textContent += m + '\n'; };
+let failures = 0;
+const check = (name, pass, detail) => {
+  failures += pass ? 0 : 1;
+  log(`  ${pass ? '✓' : '✗'} ${name}${detail ? ' — ' + detail : ''}`);
+};
+
+// Two bursts of speech-like energy either side of a clear 1.2s pause, over a hiss floor.
+// The chunk boundary should land in the middle of that pause, and nowhere else.
+function makeTestWav() {
+  const rate = 16000, spec = [[0.3, 0], [2.2, 130], [1.2, 0], [2.0, 155], [0.3, 0]];
+  const total = Math.round(spec.reduce((n, [d]) => n + d, 0) * rate);
+  const pcm = new Int16Array(total);
+  let i = 0;
+  for (const [dur, f0] of spec) {
+    for (let n = 0; n < Math.round(dur * rate); n++, i++) {
+      let v = (Math.random() * 2 - 1) * 120;                       // tape hiss
+      if (f0) {
+        const t = i / rate;
+        v += 3000 * (0.6 + 0.4 * Math.sin(2 * Math.PI * 4 * t)) *
+             (Math.sin(2 * Math.PI * f0 * t) + Math.sin(2 * Math.PI * f0 * 2 * t) / 2);
+      }
+      pcm[i] = Math.max(-32768, Math.min(32767, v));
+    }
+  }
+  const buf = new ArrayBuffer(44 + pcm.byteLength), dv = new DataView(buf);
+  const str = (o, s) => [...s].forEach((c, k) => dv.setUint8(o + k, c.charCodeAt(0)));
+  str(0, 'RIFF'); dv.setUint32(4, 36 + pcm.byteLength, true); str(8, 'WAVEfmt ');
+  dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+  dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true);
+  dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  str(36, 'data'); dv.setUint32(40, pcm.byteLength, true);
+  new Int16Array(buf, 44).set(pcm);
+  return new File([buf], 'check.wav', { type: 'audio/wav' });
+}
+
+document.getElementById('go').onclick = async () => {
+  const btn = document.getElementById('go');
+  btn.disabled = true;
+  out.textContent = '';
+  failures = 0;
+  const t0 = performance.now();
+
+  try {
+    const file = makeTestWav();
+    log(`generated ${(file.size / 1024).toFixed(0)} KB of test audio (6.0s)\n`);
+
+    const engine = new TapeAudio();
+    const chunks = [];
+    const res = await prepareTape(file, {
+      engine,
+      targetSec: 3, minSec: 1.5, maxSec: 5, searchSec: 2,
+      noiseDb: -30, minSilenceSec: 0.25,
+      onStage: s => log('stage: ' + s),
+      onChunk: (c, bytes) => chunks.push({ ...c, bytes: bytes.length })
+    });
+
+    log('\nresults:');
+    check('duration detected', Math.abs(res.duration - 6) < 0.2, res.duration + 's');
+    check('the pause was found', res.silences.some(s => s.end - s.start > 1),
+          res.silences.length + ' silences');
+
+    const cut = chunks.length > 1 ? chunks[1].start : null;
+    const pause = res.silences.find(s => s.end - s.start > 1);
+    const mid = pause ? (pause.start + pause.end) / 2 : null;
+    check('the cut landed inside the pause',
+          cut != null && pause && cut > pause.start && cut < pause.end,
+          cut != null ? `cut at ${cut.toFixed(2)}s, pause ${pause?.start.toFixed(2)}–${pause?.end.toFixed(2)}s` : 'no cut');
+    check('the cut is at the pause midpoint', mid != null && Math.abs(cut - mid) < 0.1,
+          mid != null ? `midpoint ${mid.toFixed(2)}s` : '');
+
+    const covered = chunks.reduce((n, c) => n + c.duration, 0) + 
+                    res.chunks.filter(c => c.skipped).reduce((n, c) => n + c.duration, 0);
+    check('chunks cover the whole recording with no gaps',
+          Math.abs(covered - res.duration) < 0.05, covered.toFixed(2) + 's of ' + res.duration + 's');
+    check('every chunk encoded to mp3', chunks.length > 0 && chunks.every(c => c.bytes > 1000),
+          chunks.map(c => (c.bytes / 1024).toFixed(1) + 'KB').join(', '));
+
+    for (const c of chunks) {
+      log(`    #${c.index} ${c.start.toFixed(2)}s +${c.duration.toFixed(2)}s → ${(c.bytes / 1024).toFixed(1)} KB`);
+    }
+    await engine.terminate();
+  } catch (e) {
+    log('\nFAILED: ' + (e?.message || e));
+    failures++;
+  }
+
+  const secs = ((performance.now() - t0) / 1000).toFixed(1);
+  out.innerHTML += failures
+    ? `\n<span class="bad">${failures} check(s) failed</span> — ${secs}s`
+    : `\n<span class="ok">all checks passed</span> — ${secs}s`;
+  btn.disabled = false;
+};
+</script>
+</body>
+</html>
