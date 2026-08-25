@@ -13,7 +13,16 @@
 import { planChunks, markSilentChunks, parseSilenceLog, silenceScanArgs, chunkArgs, DEFAULTS }
   from './audio.js';
 
-const CDN = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+// The ESM core, deliberately -- NOT the umd one the docs lead you to.
+//
+// @ffmpeg/ffmpeg spawns its worker with `type: "module"`, where `importScripts` does not
+// exist. Its worker catches that failure and falls back to a dynamic import, first
+// rewriting '/umd/' to '/esm/' in the URL. So pointing at the umd build means the umd build
+// is never what loads: it fails, gets string-replaced, and the esm build loads instead.
+// Naming the esm path directly removes a guaranteed-to-fail step and, more importantly,
+// stops the whole thing breaking for anyone who vendors the files to a path with no
+// '/umd/' in it to rewrite -- which is exactly how this was found.
+const CDN = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
 const MOUNT = '/tape';
 
 // "Duration: 00:45:12.34, start: ..." -- ffmpeg.wasm ships no ffprobe, so the log is the
