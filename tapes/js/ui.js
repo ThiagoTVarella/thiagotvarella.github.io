@@ -16,7 +16,6 @@ const el = (tag, cls, html) => {
   if (html != null) n.innerHTML = html;
   return n;
 };
-const money = n => '$' + (n || 0).toFixed(2);
 
 const DEMO = new URLSearchParams(location.search).has('demo');
 
@@ -279,7 +278,7 @@ function renderReview() {
       <p class="ask">Anything worth remembering about this one?</p>
       <input type="text" id="noteIn" autocomplete="off"
              placeholder="what or who it is — only if you know">
-      <p class="note-inline">Entirely optional. Only you can say; nothing here is guessed.</p>
+      <p class="note-inline">Entirely optional.</p>
       <div class="name-actions">
         <button class="btn" id="noteSave">Save note</button>
         <button class="btn btn-ghost" id="noteCancel">Back</button>
@@ -320,7 +319,7 @@ function renderReview() {
       ? 'What do you hear instead?'
       : 'What do you think he actually says?';
     $('#fixHelp').textContent = kind.ask === 'name'
-      ? "However you'd spell it in English — it doesn't have to be exact."
+      ? "However you'd spell it in English."
       : "Even a rough idea helps. Leave it blank if you can't tell.";
     const i = $('#nameIn');
     i.value = '';
@@ -455,11 +454,8 @@ function renderPending() {
     box.appendChild(c);
   });
 
-  const mins = state.pending.length * 45;
   $('#estimate').innerHTML =
-    `<b>${state.pending.length} recording${state.pending.length > 1 ? 's' : ''}</b> —
-     roughly ${(mins / 60).toFixed(1)} hours of work, costing about
-     <b>${money(mins / 60 * 0.55)}</b>. You can stop and pick it up again any time.`;
+    `<b>${state.pending.length} recording${state.pending.length > 1 ? 's' : ''}</b>`;
 
   box.oninput = e => {
     const i = e.target.dataset.label ?? e.target.dataset.side;

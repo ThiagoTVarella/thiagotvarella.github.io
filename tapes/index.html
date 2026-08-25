@@ -12,7 +12,7 @@
 <body>
 
 <header class="topbar">
-  <div class="brand">The Tapes<small>Grandpa's diary</small></div>
+  <div class="brand">The Tapes<small>Transcribe and translate from Greek</small></div>
   <nav class="row" id="tabs">
     <button class="tab" data-go="library">Diary</button>
     <button class="tab" data-go="glossary">Glossary<span class="badge" id="nameBadge" hidden>0</span></button>
@@ -25,8 +25,8 @@
   <!-- first run ------------------------------------------------------------ -->
   <section class="view" id="v-welcome" hidden>
     <h1>Let's set this up</h1>
-    <p class="lede">Three quick things, once. After that you just drop in a recording and
-      come back later to read it.</p>
+    <p class="lede">Three steps once, then drop in the recordings and come back later to
+      read them.</p>
     <div class="banner warn" id="unsupported" hidden>
       <b>This needs a computer.</b> Phones and tablets can't give a web page a folder to work
       in, so open this on a desktop or laptop in <b>Chrome</b> or <b>Edge</b>. Safari and
@@ -44,15 +44,14 @@
       <div class="step" id="step-key">
         <div>
           <b>Paste the access key</b>
-          <p class="note-inline">Thiago will send you a long code beginning with <code>sk-or-</code>.
-            It's saved only in this browser.</p>
+          <p class="note-inline">Thiago will send you a long code beginning with <code>sk-or-</code>.</p>
           <input type="text" id="keyInput" placeholder="sk-or-v1-…" style="margin-top:8px;text-align:left">
         </div>
       </div>
       <div class="step" id="step-go">
         <div>
           <b>Add your first recording</b>
-          <p class="note-inline">Any audio file from the tape deck — it doesn't matter what kind.</p>
+          <p class="note-inline">Any audio file from the tape deck.</p>
         </div>
       </div>
     </div>
@@ -115,8 +114,7 @@
   <section class="view" id="v-add" hidden>
     <h1>Add recordings</h1>
     <p class="lede">Drop in as many as you like. They'll be worked through one at a time,
-      taking roughly as long as the tapes themselves — so start them whenever suits you
-      and go and do something else.</p>
+      taking roughly as long as the tapes themselves.</p>
     <label class="drop" id="drop" for="fileInput">
       <div style="font-size:2rem;opacity:.5">＋</div>
       <div style="margin-top:8px"><b>Drop audio files here</b></div>
@@ -160,8 +158,8 @@
             <option value="text">Most accurate words, less precise playback</option>
             <option value="nav">Faster and cheaper</option>
           </select>
-          <p class="note-inline">Best is slower and costs a little more, but it can tell you
-            which passages it wasn't sure about.</p>
+          <p class="note-inline">Best is slower, but it can tell you which passages it
+            wasn't sure about.</p>
         </div>
       </div>
     </div>
