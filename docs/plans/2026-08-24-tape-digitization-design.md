@@ -159,6 +159,7 @@ Follows the `scheduler/` + `admin/` precedent — self-contained tool, opts out 
   test/run-tests.mjs ✅ 76 tests, no network, no tapes, no key
   js/ffmpeg.js      ✅ WORKERFS mount, per-chunk cut, MEMFS freed as it goes
   js/queue.js       ✅ timer-free loop, wake lock, Web Locks, spend ceiling, resume
+  js/entry.js       ✅ join Greek+English+flags from disk, correction sweep, blob URLs
 ```
 
 > ⚠️ **Single-threaded `@ffmpeg/core`.** The MT build needs `SharedArrayBuffer`, which requires
@@ -457,23 +458,120 @@ repeated in the translation and **not** to be extended to anyone else.
 - ✅ **Phase 4 — interface.** All five screens, demo mode, warm archival design, light + dark.
 - ✅ **Phase 2b — the engine.** `ffmpeg.js` + `queue.js`, wired to `Add → Start`. The library
   now loads from her folder on reload.
-- ⬜ **Phase 5 — polish.** Search across entries, TXT export, link from the Coding card in
+- ✅ **Phase 5a — reading a real tape.** `entry.js`; playback reads blobs from her folder;
+  glossary confirmations rewrite the English on disk.
+- ⬜ **Phase 5b — polish.** Search across entries, TXT export, link from the Coding card in
   `portfolio.html:105-118`.
 
 **Dropped:** the Safari download fallback. Per-file prompts across hundreds of tapes and
 thousands of artifacts is not a usable path. Desktop Chrome/Edge is a stated requirement.
 
-### Next
+---
 
-1. **Run it on a real audio file.** Everything is tested against fakes; nothing has yet met
-   ffmpeg.wasm, WORKERFS, or a live OpenRouter response. This is the step that will find the
-   real bugs, and it needs only a key and any audio — no tapes.
-2. **Playback.** `Read` and the glossary card call `playFrom()`, which needs to resolve a
-   segment to its chunk file and seek within it.
-3. **Wire glossary corrections** to `glossary.js` so confirming a name actually rewrites the
-   English on disk, rather than only updating the list in memory.
-4. **Search and TXT export**, then link from the Coding card in `portfolio.html:105-118`.
-5. Phase 0b bake-off once tapes exist.
+## Next phase: make a real tape readable
+
+### Context
+
+The engine runs and the interface looks finished, but **a real processed tape cannot actually
+be read**. Reading `tapes/js/ui.js` closely turned up two defects that are not "not wired yet" —
+they cannot work as written:
+
+1. **`openRead()` renders `tape.segments`**, which only `demo.js` ever populates.
+   `refreshLibrary()` sets `segments: []` for every real tape, so opening one shows an empty
+   entry. Nothing joins the per-chunk Greek on disk to the translated English.
+2. **`playFrom()` builds a URL**: `` `./tapes/${tape.id}/chunks/000.mp3` ``. That is a *web*
+   path, but the audio lives in **her chosen folder**, reachable only through File System
+   Access handles — it has no URL and is not under the site root. This can never resolve. It
+   also reads `s.chunkStart`, which nothing sets.
+
+Both are the same root cause: the reading path was built against demo data and never against
+the store. Third, `commit()` in the glossary only pushes to `state.glossary` in memory —
+`glossary.js` is fully built and tested but **nothing calls it**, so a confirmed name changes
+no English on disk.
+
+### 1. `tapes/js/entry.js` — assemble an entry from disk
+
+New module. One function does the join that `openRead` needs:
+
+```js
+loadEntry(store, tapeId) -> { id, label, heading, date, segments: [
+  { id, gr, en, chunk, start, confidence, unsure, unresolved }
+] }
+```
+
+- Reuse **`collectSegments()`** from `js/queue.js` — it already walks `plan` and reads each
+  `chunks/NNN.gr.json`, returning `{id, text, chunk, start, confidence}`.
+- Join `translation.en.json` by segment `id`; join `flags.json` to set `unsure` (the flag's
+  `guess` string, which `openRead` already highlights).
+- `heading` from `tape.json.dates` via **`dateRange()`** in `js/translate.js`; fall back to
+  "Undated entry", which `openRead` already handles.
+- A translation entry with `en: null` (the `unresolved` case the queue already reports) must
+  render the **Greek** with a marker, never an empty paragraph — a blank line would read as
+  though he said nothing.
+
+`openRead` becomes async and calls this; the demo path stays as-is so `?demo=1` keeps working.
+
+### 2. Playback through the store, not URLs
+
+Replace the URL construction in `playFrom()`:
+
+- `store.readBlob(paths.chunkAudio(tapeId, seg.chunk))` → `URL.createObjectURL(blob)`.
+- Seek to `seg.start - chunkStart`, taking `chunkStart` from `tape.plan[seg.chunk].start`
+  (the field `s.chunkStart` was never populated; drop it).
+- **Revoke the previous object URL on every play.** Chunks are ~1.5 MB and she may click
+  dozens of lines; unrevoked blobs leak until reload.
+- When `hasTimestamps` is false (MAI-only mode) `seg.start` is `null` — fall back to the chunk
+  start, which is the documented `seek(seg) → seg.start ?? chunk.start` rule.
+- The glossary card's **"Hear this bit"** uses the same helper, seeking to the flag's segment.
+
+### 3. Wire glossary corrections to `glossary.js`
+
+`commit()` currently updates memory only. It should:
+
+1. Write `glossary.json`.
+2. For each tape, load its segments (via `entry.js`), call **`planCorrection()`**, then
+   **`applySubstitutions()`**, and write the amended `translation.en.json` back.
+3. Collect the tier-2 `retranslate` list and re-run **only those segments** through
+   `translateAll()`.
+4. Append the returned `audit` entry to `corrections.json` so **`undo()`** stays usable.
+5. Report with **`describePlan()`** — already written to say "updated in 3 places, 1 sentence
+   re-read" and never to mention re-transcribing.
+
+Replace the current unconditional toast ("now fixed everywhere") with the real plan summary:
+today it claims work it does not do.
+
+Corrections must **batch** (`mergePlans()`) rather than sweeping every tape per answer.
+
+### 4. Polish
+
+Search across entries, TXT export via `paths.transcriptTxt` / `paths.translationTxt`, and a
+link from the Coding card in `portfolio.html:105-118` (use a **relative** href — the existing
+entries are absolute `https://thiagotvarella.github.io/...` and break under local preview).
+
+### Verification
+
+Everything below runs with **no tapes, no key, no network**:
+
+```
+node tapes/test/run-tests.mjs      # currently 99 passing
+python3 -m http.server 8000        # then /tapes/?demo=1
+```
+
+New tests to add:
+
+1. `loadEntry` joins Greek, English, and flags by id — and renders Greek with a marker where
+   `en` is null, rather than an empty paragraph.
+2. `loadEntry` on a tape that is transcribed but not yet translated returns Greek segments
+   rather than throwing.
+3. Playback resolves `seg.start ?? chunk.start`, so MAI-only mode (all timestamps null) still
+   seeks somewhere valid.
+4. A confirmed name rewrites `translation.en.json` on disk, appends an audit entry, and
+   `undo()` restores the model's original wording.
+5. Answering several names produces **one** merged sweep, not one per answer.
+6. Object URLs are revoked — assert the previous URL is released before a new one is created.
+
+Then, still un-run and the real risk: **one live pass** on any audio file with a real key.
+Nothing has yet met ffmpeg.wasm, WORKERFS, or an actual OpenRouter response.
 
 ### Known gaps, deliberately left
 
