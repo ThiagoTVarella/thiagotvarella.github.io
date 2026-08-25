@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tape Digitizer — Phase 0 Probe</title>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Comfortaa', sans-serif; background: #f5f5f5; padding: 20px; color: #111; }
+  .card { background: #fff; border-radius: 12px; padding: 24px; width: 100%; max-width: 900px;
+          margin: 0 auto 20px; box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+  h1 { font-size: 1.3rem; margin-bottom: 4px; }
+  h2 { font-size: 1rem; margin: 24px 0 10px; }
+  .subtitle { font-size: .85rem; color: #999; margin-bottom: 20px; line-height: 1.5; }
+  label { display: block; font-size: .85rem; color: #666; margin-bottom: 4px; }
+  input[type=text], input[type=password], input[type=file] {
+    width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: .95rem; font-family: inherit; margin-bottom: 16px; outline: none; background: #fff; }
+  input:focus { border-color: #2c2c2c; }
+  button { width: 100%; padding: 14px; background: #2c2c2c; color: #fff; border: none;
+           border-radius: 8px; font-size: 1rem; font-family: inherit; cursor: pointer; margin-bottom: 10px; }
+  button:hover { background: #444; }
+  button:disabled { background: #aaa; cursor: default; }
+  .status { margin: 12px 0; font-size: .9rem; min-height: 20px; color: #666; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-bottom: 10px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #eee; vertical-align: top; }
+  th { color: #999; font-weight: normal; font-size: .75rem; text-transform: uppercase; }
+  .v { font-weight: bold; white-space: nowrap; }
+  .pass { color: #1e8449; } .fail { color: #c0392b; } .info { color: #2471a3; } .warn { color: #b9770e; }
+  pre { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 12px;
+        font-size: .75rem; overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+        max-height: 320px; overflow-y: auto; line-height: 1.5; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px) { .cols { grid-template-columns: 1fr; } }
+  .note { font-size: .8rem; color: #999; margin-top: 6px; line-height: 1.5; }
+  .cost { font-size: .85rem; color: #666; }
+  .greek { font-size: .85rem; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Phase 0 Probe</h1>
+  <p class="subtitle">
+    <b>Test 1 needs no tapes.</b> The API contract probes don't care what the audio contains &mdash;
+    any Greek clip settles them, so you can run them today. <b>Test 2</b> compares transcription
+    quality and only means something on real tape audio; save it for when the tapes arrive.
+    Costs a few cents. Nothing is uploaded anywhere except OpenRouter.
+  </p>
+
+  <label>OpenRouter API key</label>
+  <input type="password" id="key" placeholder="sk-or-v1-..." autocomplete="off">
+
+  <label>Audio sample &mdash; any Greek speech, 1&ndash;5 min. For test 2, real tape audio containing names.</label>
+  <input type="file" id="speech" accept="audio/*">
+
+  <label>Hiss-only sample &mdash; ~30s of tape with no speech (optional; the hallucination probe)</label>
+  <input type="file" id="hiss" accept="audio/*">
+
+  <button id="runContract">1 &mdash; Run API contract tests (no tapes needed)</button>
+  <button id="runBakeoff">2 &mdash; Run quality bake-off (needs real tape audio)</button>
+  <div class="status" id="status"></div>
+  <div class="cost" id="cost"></div>
+</div>
+
+<div class="card" id="contractCard" style="display:none">
+  <h2>API contract</h2>
+  <table id="contractTable"><thead><tr><th>Probe</th><th>Expected</th><th>Result</th><th>Detail</th></tr></thead><tbody></tbody></table>
+  <div class="note">
+    The design assumes MAI rejects <code>verbose_json</code> and silently ignores <code>prompt</code>.
+    If either turns out otherwise, the pipeline gets simpler &mdash; that is what this table is for.
+  </div>
+  <h2>Raw responses</h2>
+  <p class="note">These become the mock backend's fixtures &mdash; download them so the pipeline can be
+     built and tested offline, with no tapes and no API spend.</p>
+  <button id="saveFixtures" style="width:auto;padding:10px 18px;font-size:.85rem">Download as fixtures.json</button>
+  <pre id="raw">&mdash;</pre>
+</div>
+
+<div class="card" id="bakeoffCard" style="display:none">
+  <h2>Transcript comparison</h2>
+  <div class="cols">
+    <div>
+      <label>microsoft/mai-transcribe-1.5</label>
+      <pre class="greek" id="tMai">&mdash;</pre>
+    </div>
+    <div>
+      <label>openai/whisper-large-v3</label>
+      <pre class="greek" id="tWhisper">&mdash;</pre>
+    </div>
+  </div>
+  <h2>Hallucination probe (hiss-only audio)</h2>
+  <p class="note">Any text here is invented. Whisper's confidence fields should mark it; MAI has no way to.</p>
+  <div class="cols">
+    <div><label>MAI on hiss</label><pre class="greek" id="hMai">&mdash;</pre></div>
+    <div><label>Whisper on hiss + confidence</label><pre class="greek" id="hWhisper">&mdash;</pre></div>
+  </div>
+  <h2>Glossary biasing A/B (Whisper via Groq)</h2>
+  <p class="note">Same audio, with and without a name list in <code>provider.options.groq.prompt</code>. If these are identical, biasing is not reaching the model.</p>
+  <div class="cols">
+    <div><label>Without name hints</label><pre class="greek" id="bOff">&mdash;</pre></div>
+    <div><label>With name hints</label><pre class="greek" id="bOn">&mdash;</pre></div>
+  </div>
+</div>
+
+<script>
+const API = 'https://openrouter.ai/api/v1';
+const MAI = 'microsoft/mai-transcribe-1.5';
+const WHISPER = 'openai/whisper-large-v3';
+// Plausible Greek names for the biasing A/B. Replace with real ones from her family once known.
+const NAME_HINTS = 'Κώστας, Ελένη, Θεσσαλονίκη, Παναγιώτης, Δημήτρης, Αθήνα, Καλαμάτα';
+
+const $ = id => document.getElementById(id);
+const raws = {};
+let totalCost = 0;
+
+$('key').value = localStorage.getItem('or_key') || '';
+$('key').addEventListener('change', e => localStorage.setItem('or_key', e.target.value.trim()));
+
+function setStatus(t) { $('status').textContent = t; }
+function addCost(j) {
+  const c = j && j.usage && typeof j.usage.cost === 'number' ? j.usage.cost : 0;
+  totalCost += c;
+  $('cost').textContent = totalCost ? 'Spent so far: $' + totalCost.toFixed(4) : '';
+  return c;
+}
+
+function row(name, expected, verdict, cls, detail) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td>' + name + '</td><td style="color:#999">' + expected +
+    '</td><td class="v ' + cls + '">' + verdict + '</td><td>' + (detail || '') + '</td>';
+  $('contractTable').querySelector('tbody').appendChild(tr);
+}
+
+async function toBase64(file) {
+  const buf = new Uint8Array(await file.arrayBuffer());
+  let s = '';
+  for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const fmtOf = f => (f.name.split('.').pop() || 'mp3').toLowerCase().replace('m4a', 'mp4');
+
+// Returns {ok, status, json, text} without throwing on HTTP errors -- a 400 is a result, not a failure.
+async function transcribe(key, body, label) {
+  let res, text, json = null;
+  try {
+    res = await fetch(API + '/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (e) {
+    // A network-level failure here is the CORS signal.
+    return { ok: false, status: 0, json: null, text: 'fetch failed (likely CORS or offline): ' + e.message };
+  }
+  text = await res.text();
+  try { json = JSON.parse(text); } catch (e) {}
+  if (label) { raws[label] = json || text; $('raw').textContent = JSON.stringify(raws, null, 2); }
+  if (json) addCost(json);
+  return { ok: res.ok, status: res.status, json, text };
+}
+
+const audioBody = (model, b64, fmt, extra) =>
+  Object.assign({ model, input_audio: { data: b64, format: fmt }, language: 'el' }, extra || {});
+
+const textOf = r => (r.json && (r.json.text || (r.json.choices && r.json.choices[0] && r.json.choices[0].message))) || null;
+const errOf = r => (r.json && r.json.error && (r.json.error.message || JSON.stringify(r.json.error))) || r.text.slice(0, 300);
+
+$('saveFixtures').onclick = () => {
+  const blob = new Blob([JSON.stringify(raws, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'fixtures.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+
+$('runContract').onclick = async () => {
+  const key = $('key').value.trim();
+  const file = $('speech').files[0];
+  if (!key) return setStatus('Paste your OpenRouter key first.');
+  if (!file) return setStatus('Pick a speech sample first.');
+
+  $('contractCard').style.display = 'block';
+  $('contractTable').querySelector('tbody').innerHTML = '';
+  $('runContract').disabled = true;
+
+  try {
+    setStatus('Encoding audio...');
+    const b64 = await toBase64(file), fmt = fmtOf(file);
+
+    // 1. CORS + auth. A browser fetch that resolves at all proves CORS is open.
+    setStatus('1/7 CORS and auth...');
+    try {
+      const r = await fetch(API + '/key', { headers: { 'Authorization': 'Bearer ' + key } });
+      const j = await r.json();
+      raws['key_check'] = j;
+      row('CORS + auth', 'resolves in browser', r.ok ? 'PASS' : 'AUTH FAIL', r.ok ? 'pass' : 'fail',
+          r.ok ? 'Browser-direct calls work. Limit: ' + JSON.stringify((j.data || {}).limit) : errOf({json:j,text:''}));
+    } catch (e) {
+      row('CORS + auth', 'resolves in browser', 'BLOCKED', 'fail',
+          'No backend-free design is possible if this fails: ' + e.message);
+      throw new Error('CORS blocked - everything else is moot.');
+    }
+
+    // 2. MAI + verbose_json. The design predicts a 400.
+    setStatus('2/7 MAI verbose_json...');
+    let r = await transcribe(key, audioBody(MAI, b64, fmt, { response_format: 'verbose_json' }), 'mai_verbose_json');
+    row('MAI + <code>verbose_json</code>', '400 rejected', r.status === 400 ? 'REJECTED (as predicted)' : (r.ok ? 'ACCEPTED!' : 'HTTP ' + r.status),
+        r.status === 400 ? 'fail' : (r.ok ? 'pass' : 'warn'),
+        r.ok ? 'Design can be simplified - timestamps ARE available.' : errOf(r));
+
+    // 3. MAI + plain json. Capture the real response shape.
+    setStatus('3/7 MAI plain json...');
+    const maiPlain = await transcribe(key, audioBody(MAI, b64, fmt, { response_format: 'json' }), 'mai_json');
+    row('MAI + <code>json</code>', '200, text only', maiPlain.ok ? 'OK' : 'HTTP ' + maiPlain.status,
+        maiPlain.ok ? 'pass' : 'fail',
+        maiPlain.ok ? 'Top-level keys: <code>' + Object.keys(maiPlain.json).join(', ') + '</code>' : errOf(maiPlain));
+
+    // 4. Undocumented Azure biasing passthrough. The model page advertises keyword biasing.
+    setStatus('4/7 Azure biasing passthrough...');
+    r = await transcribe(key, audioBody(MAI, b64, fmt, {
+      response_format: 'json',
+      provider: { options: { azure: { phrases: NAME_HINTS.split(', ') } } }
+    }), 'mai_azure_biasing');
+    const changed = r.ok && maiPlain.ok && textOf(r) !== textOf(maiPlain);
+    row('MAI keyword biasing', 'undocumented - probing', !r.ok ? 'HTTP ' + r.status : (changed ? 'OUTPUT CHANGED' : 'no effect'),
+        !r.ok ? 'warn' : (changed ? 'pass' : 'fail'),
+        changed ? 'A biasing passthrough exists - the glossary can reach the ASR after all.'
+                : 'Confirms glossary must work post-ASR.');
+
+    // 5. data_collection deny. With a sole provider this fails closed rather than degrading.
+    setStatus('5/7 data_collection deny...');
+    r = await transcribe(key, audioBody(MAI, b64, fmt, {
+      response_format: 'json', provider: { data_collection: 'deny' }
+    }), 'mai_data_deny');
+    row('MAI + <code>data_collection: deny</code>', 'still routes', r.ok ? 'ROUTES' : 'NO PROVIDER',
+        r.ok ? 'pass' : 'fail',
+        r.ok ? 'Privacy flag is compatible with MAI.' : 'Must choose: MAI or the privacy flag. ' + errOf(r));
+
+    // 6. Whisper + verbose_json, pinned to Groq. Check the confidence fields exist.
+    setStatus('6/7 Whisper verbose_json...');
+    r = await transcribe(key, audioBody(WHISPER, b64, fmt, {
+      response_format: 'verbose_json',
+      provider: { order: ['groq'], allow_fallbacks: false }
+    }), 'whisper_verbose_json');
+    const seg = r.ok && r.json.segments && r.json.segments[0];
+    const conf = seg ? ['avg_logprob', 'no_speech_prob', 'compression_ratio'].filter(k => k in seg) : [];
+    row('Whisper + <code>verbose_json</code>', 'segments + confidence',
+        seg ? 'OK (' + r.json.segments.length + ' segments)' : (r.ok ? 'no segments' : 'HTTP ' + r.status),
+        seg ? 'pass' : 'fail',
+        seg ? 'Confidence fields present: <code>' + (conf.join(', ') || 'none') + '</code>' : errOf(r));
+
+    // 7. Groq prompt biasing A/B.
+    setStatus('7/7 Groq biasing A/B...');
+    const off = await transcribe(key, audioBody(WHISPER, b64, fmt, {
+      response_format: 'json', provider: { order: ['groq'], allow_fallbacks: false } }), 'whisper_no_bias');
+    const on = await transcribe(key, audioBody(WHISPER, b64, fmt, {
+      response_format: 'json',
+      provider: { order: ['groq'], allow_fallbacks: false, options: { groq: { prompt: 'Expected names: ' + NAME_HINTS } } }
+    }), 'whisper_bias');
+    const biasWorks = off.ok && on.ok && textOf(off) !== textOf(on);
+    row('Whisper prompt biasing', 'output differs', !on.ok ? 'HTTP ' + on.status : (biasWorks ? 'BIASING WORKS' : 'no difference'),
+        !on.ok ? 'warn' : (biasWorks ? 'pass' : 'warn'),
+        biasWorks ? 'Glossary can reach the ASR if Whisper is chosen.'
+                  : 'Either biasing is inert, or this sample has no affected words.');
+    $('bOff').textContent = textOf(off) || '(none)';
+    $('bOn').textContent = textOf(on) || '(none)';
+    $('bakeoffCard').style.display = 'block';
+
+    setStatus('Contract tests complete. Total cost: $' + totalCost.toFixed(4));
+  } catch (e) {
+    setStatus('Stopped: ' + e.message);
+  } finally {
+    $('runContract').disabled = false;
+  }
+};
+
+$('runBakeoff').onclick = async () => {
+  const key = $('key').value.trim();
+  const file = $('speech').files[0];
+  if (!key) return setStatus('Paste your OpenRouter key first.');
+  if (!file) return setStatus('Pick a speech sample first.');
+
+  $('bakeoffCard').style.display = 'block';
+  $('runBakeoff').disabled = true;
+
+  try {
+    setStatus('Encoding...');
+    const b64 = await toBase64(file), fmt = fmtOf(file);
+
+    setStatus('Transcribing with MAI...');
+    const m = await transcribe(key, audioBody(MAI, b64, fmt, { response_format: 'json' }), 'bakeoff_mai');
+    $('tMai').textContent = m.ok ? (textOf(m) || '(empty)') : 'ERROR: ' + errOf(m);
+
+    setStatus('Transcribing with Whisper...');
+    const w = await transcribe(key, audioBody(WHISPER, b64, fmt, {
+      response_format: 'verbose_json', provider: { order: ['groq'], allow_fallbacks: false } }), 'bakeoff_whisper');
+    $('tWhisper').textContent = w.ok ? (textOf(w) || '(empty)') : 'ERROR: ' + errOf(w);
+
+    const hiss = $('hiss').files[0];
+    if (hiss) {
+      setStatus('Hallucination probe...');
+      const hb = await toBase64(hiss), hf = fmtOf(hiss);
+
+      const hm = await transcribe(key, audioBody(MAI, hb, hf, { response_format: 'json' }), 'hiss_mai');
+      const hmText = hm.ok ? (textOf(hm) || '') : 'ERROR: ' + errOf(hm);
+      $('hMai').textContent = hmText.trim() ? 'HALLUCINATED:\n' + hmText : '(empty - good)';
+
+      const hw = await transcribe(key, audioBody(WHISPER, hb, hf, {
+        response_format: 'verbose_json', provider: { order: ['groq'], allow_fallbacks: false } }), 'hiss_whisper');
+      if (hw.ok) {
+        const segs = hw.json.segments || [];
+        const txt = (hw.json.text || '').trim();
+        // The standard Whisper hallucination filter.
+        const caught = segs.filter(s => s.no_speech_prob > 0.6 || s.avg_logprob < -1.0).length;
+        $('hWhisper').textContent = (txt ? 'HALLUCINATED:\n' + txt + '\n\n' : '(empty - good)\n\n') +
+          segs.length + ' segments, ' + caught + ' would be filtered by ' +
+          'no_speech_prob>0.6 || avg_logprob<-1.0' +
+          (segs.length ? '\n\n' + segs.slice(0, 5).map(s =>
+            '[' + s.start.toFixed(1) + '-' + s.end.toFixed(1) + '] no_speech=' +
+            (s.no_speech_prob != null ? s.no_speech_prob.toFixed(3) : '?') +
+            ' avg_logprob=' + (s.avg_logprob != null ? s.avg_logprob.toFixed(2) : '?') +
+            '\n  ' + s.text.trim()).join('\n') : '');
+      } else {
+        $('hWhisper').textContent = 'ERROR: ' + errOf(hw);
+      }
+    } else {
+      $('hMai').textContent = $('hWhisper').textContent = '(no hiss sample provided)';
+    }
+
+    setStatus('Bake-off complete. Total cost: $' + totalCost.toFixed(4) +
+              '. Compare the two transcripts against what you can hear.');
+  } catch (e) {
+    setStatus('Stopped: ' + e.message);
+  } finally {
+    $('runBakeoff').disabled = false;
+  }
+};
+</script>
+</body>
+</html>
