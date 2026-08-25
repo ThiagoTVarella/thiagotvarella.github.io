@@ -124,26 +124,49 @@ h2 { font-size: 1.05rem; font-weight: 700; margin: 26px 0 10px; }
 .entry-foot { max-width: var(--measure); margin: 30px auto 0; padding-top: 14px;
   border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: .8rem; }
 
-/* ---------- names review ---------- */
-.name-card { max-width: 27em; margin: 0 auto; text-align: center; }
-.name-greek {
-  font-family: var(--serif); font-size: 2.6rem; line-height: 1.2;
-  margin: 6px 0 2px; word-break: break-word;
+/* ---------- glossary review ---------- */
+.name-card { max-width: 30em; margin: 0 auto; text-align: center; }
+.kind-chip {
+  display: inline-block; font-size: .7rem; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-faint); border: 1px solid var(--rule); border-radius: 999px;
+  padding: 3px 11px; margin-bottom: 14px;
 }
-.name-count { color: var(--ink-faint); font-size: .85rem; margin-bottom: 20px; }
+.name-greek {
+  font-family: var(--serif); font-size: 2.5rem; line-height: 1.2;
+  margin: 0 0 18px; word-break: break-word;
+}
+/* A blurred phrase is longer than a name, so it must not be set at name size. */
+.phrase-greek {
+  font-family: var(--serif); font-size: 1.3rem; font-style: italic; line-height: 1.5;
+  color: var(--ink-soft); margin: 0 0 18px;
+}
 .clip {
   background: var(--paper-2); border: 1px solid var(--rule); border-radius: var(--radius);
-  padding: 18px; margin-bottom: 18px;
+  padding: 18px; margin-bottom: 16px;
 }
-.clip .ctx { font-family: var(--serif); color: var(--ink-soft); font-size: .95rem; line-height: 1.7; }
+.clip .ctx { font-family: var(--serif); color: var(--ink-soft); font-size: .98rem; line-height: 1.7; }
 .clip .ctx b { color: var(--ink); font-weight: 600; }
+.hint { margin-bottom: 14px; font-style: italic; }
+/* The question is stated plainly, and each button below says what it will do -- no
+   prefilled box where "confirm" and "save my edit" are indistinguishable. */
+.ask { font-size: 1.02rem; margin-bottom: 14px; line-height: 1.5; }
 input[type=text] {
   width: 100%; padding: 13px 15px; border: 1px solid var(--rule); border-radius: 10px;
   background: var(--paper); font-size: 1.05rem; text-align: center;
 }
 input[type=text]:focus { outline: none; border-color: var(--accent); }
-.name-actions { display: flex; gap: 8px; margin-top: 14px; }
-.name-actions .btn { flex: 1; justify-content: center; }
+.name-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.name-actions .btn { flex: 1; min-width: 11em; }
+.linkish {
+  margin-top: 14px; color: var(--ink-faint); font-size: .82rem; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.linkish:hover { color: var(--ink); }
+.gloss-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 15px; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--paper-2); text-align: left;
+}
 
 /* ---------- night mode (the overnight run) ---------- */
 .night {

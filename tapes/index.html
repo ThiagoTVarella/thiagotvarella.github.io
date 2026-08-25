@@ -15,7 +15,7 @@
   <div class="brand">The Tapes<small>Grandpa's diary</small></div>
   <nav class="row" id="tabs">
     <button class="tab" data-go="library">Diary</button>
-    <button class="tab" data-go="names">Names<span class="badge" id="nameBadge" hidden>0</span></button>
+    <button class="tab" data-go="glossary">Glossary<span class="badge" id="nameBadge" hidden>0</span></button>
     <button class="tab" data-go="add">Add</button>
     <button class="tab" data-go="settings" title="Settings" aria-label="Settings">⚙</button>
   </nav>
@@ -79,15 +79,30 @@
     <div class="entry-foot" id="entryFoot"></div>
   </section>
 
-  <!-- names ----------------------------------------------------------------- -->
-  <section class="view" id="v-names" hidden>
-    <h1>Who is this?</h1>
-    <p class="lede">Listen and write what you hear. Answering once fixes that name in every tape.</p>
-    <div id="nameCard"></div>
-    <div class="empty" id="namesEmpty" hidden>
-      <div class="big">✓</div>
-      <p><b>All caught up.</b></p>
-      <p class="muted" style="margin-top:6px">New names will show up here as more tapes are read.</p>
+  <!-- glossary ------------------------------------------------------------- -->
+  <section class="view" id="v-glossary" hidden>
+    <h1>Glossary</h1>
+    <p class="lede">Some words come off the tape unclear — names, places, the odd phrase.
+      Sorting one out here fixes it in every recording, past and future.</p>
+
+    <div id="reviewWrap">
+      <div class="spread" style="margin-bottom:10px">
+        <h2 style="margin:0">Needs your ear</h2>
+        <span class="muted" id="reviewLeft"></span>
+      </div>
+      <div id="nameCard"></div>
+    </div>
+
+    <div class="card" id="reviewDone" hidden style="text-align:center;padding:30px">
+      <div style="font-size:1.7rem;opacity:.5">✓</div>
+      <p style="margin-top:6px"><b>Nothing needs you right now.</b></p>
+      <p class="muted" style="font-size:.85rem;margin-top:4px">More will turn up as recordings are read.</p>
+    </div>
+
+    <h2>Sorted so far</h2>
+    <div id="glossList" class="stack"></div>
+    <div class="empty" id="glossEmpty" hidden style="padding:26px">
+      <p class="muted">Nothing sorted yet. Answer one above and it'll appear here.</p>
     </div>
   </section>
 

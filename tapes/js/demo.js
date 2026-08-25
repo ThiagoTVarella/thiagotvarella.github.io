@@ -71,7 +71,7 @@ export const TAPES = [
 
 // Names awaiting her confirmation. She hears the audio and types what she hears; the
 // Greek spelling is the tool's problem, never hers.
-export const NAMES = [
+export const PENDING = [
   { id: 'n1', greek: 'Παναγιώτης', heard: 31, guess: 'Panagiotis', kind: 'person',
     context: ['I went to the market and found old ', ' outside the coffee house.'],
     tape: 'tape-002', at: 41 },
@@ -81,7 +81,17 @@ export const NAMES = [
     hint: 'Possibly the same person as Κώστας, misheard.' },
   { id: 'n3', greek: 'Καλαμάτα', heard: 4, guess: 'Kalamata', kind: 'place',
     context: ['He said something about a village near ', ' but I did not hear well.'],
-    tape: 'tape-002', at: 105 }
+    tape: 'tape-002', at: 105 },
+  // Not a name at all -- the tape simply blurred a phrase. She cannot spell the Greek,
+  // but she CAN say whether the English reads sensibly, so the question changes shape.
+  { id: 'n4', greek: 'στο περβόλι του μπαρμπα-Γιώργη', heard: 1, kind: 'phrase',
+    guess: 'in old man Giorgis\' orchard',
+    context: ['We spent the whole morning ', ', pruning what was left after the frost.'],
+    tape: 'tape-002', at: 402,
+    hint: 'The tape drops out for about a second here.' },
+  { id: 'n5', greek: 'Ζάππειο', heard: 6, guess: 'Zappeion', kind: 'place',
+    context: ['We walked as far as the ', ' and sat until it got dark.'],
+    tape: 'tape-001', at: 233 }
 ];
 
 export const GLOSSARY = [
