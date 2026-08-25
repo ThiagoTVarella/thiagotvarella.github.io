@@ -309,6 +309,6 @@ export function humanError(e) {
   if (e?.status >= 500) return "The service had a problem — I'll try again in a moment.";
   if (/NetworkError|Failed to fetch|network/i.test(m)) return "Couldn't reach the internet — I'll retry.";
   if (/how long/i.test(m)) return m;
-  if (/quota|insufficient|credit/i.test(m)) return 'The account is out of credit.';
+  if (/quota|insufficient|credit/i.test(m)) return 'The allowance ran out and needs renewing. (NO-CREDIT)';
   return 'Something went wrong reading this recording. It can be tried again.';
 }

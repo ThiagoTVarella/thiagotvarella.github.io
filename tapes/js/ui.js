@@ -40,7 +40,9 @@ const state = {
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
   model: localStorage.getItem('tapes_model') || undefined,
-  cap: '50',  // internal safety limit for the queue; not shown or editable in the UI
+  // Backstop only, against a runaway loop. The real limit is the one set on the API key
+  // itself, which is managed outside this tool.
+  cap: '100',
   reading: null,
   store: null,
   queue: null,
@@ -593,7 +595,7 @@ $('#startRun').onclick = async () => {
       spend: total => { state.spent = total; },
       capped: () => {
         closeRunScreen();
-        toast('Paused for now — check back with Thiago.');
+        toast('Paused — the allowance ran out and needs renewing. (LIMIT-REACHED)');
       },
       readOnly: () => {
         closeRunScreen();
