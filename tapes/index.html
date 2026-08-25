@@ -121,6 +121,55 @@
       <div class="note-inline">or click to choose · any format</div>
       <input type="file" id="fileInput" accept="audio/*,video/*" multiple hidden>
     </label>
+
+    <div class="or-line"><span>or</span></div>
+
+    <div class="card" id="recCard">
+      <div class="spread">
+        <div>
+          <b>Record straight from a player</b>
+          <p class="note-inline" style="margin-top:4px">If the cassette player has no way to
+            plug into a computer, just play it out loud and let this listen.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="recOpen">Set up</button>
+      </div>
+
+      <div id="recPanel" hidden style="margin-top:18px">
+        <div class="field">
+          <label>Listening with</label>
+          <select id="recDevice"></select>
+          <p class="note-inline">Put the microphone close to the player's speaker, in as quiet
+            a room as you can manage.</p>
+        </div>
+
+        <div class="meter-wrap">
+          <div class="meter"><i id="meterBar"></i></div>
+          <div class="meter-advice" id="meterAdvice">Waiting for sound…</div>
+        </div>
+
+        <div class="name-actions" style="margin-bottom:4px">
+          <button class="btn btn-ghost" id="recTest">Test 20 seconds</button>
+          <button class="btn" id="recStart">Start recording</button>
+        </div>
+        <p class="note-inline" id="recHint">A test is worth it — better than finding out at the
+          end of a side.</p>
+
+        <div id="recTestOut" hidden style="margin-top:14px">
+          <p class="note-inline" style="margin-bottom:6px">Have a listen. Can you make him out?</p>
+          <audio id="recTestAudio" controls style="width:100%"></audio>
+        </div>
+      </div>
+
+      <div id="recLive" hidden style="margin-top:18px;text-align:center">
+        <div class="rec-dot"></div>
+        <div class="rec-time" id="recTime">0:00</div>
+        <div class="meter" style="margin:14px 0"><i id="meterBarLive"></i></div>
+        <div class="meter-advice" id="meterAdviceLive"></div>
+        <p class="note-inline" style="margin:12px 0">Flip the tape when the side ends and it'll
+          keep going, or stop and start a new one for side B.</p>
+        <button class="btn" id="recStop">Stop and save</button>
+      </div>
+    </div>
     <div id="pending" class="stack" style="margin-top:18px"></div>
     <div id="addActions" hidden style="margin-top:20px">
       <div class="banner" id="estimate"></div>

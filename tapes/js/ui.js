@@ -7,6 +7,8 @@ import * as store from './store.js';
 import { Queue, STATE, humanError } from './queue.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
+import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
+         makeLevelSmoother } from './record.js';
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -473,6 +475,158 @@ function addFiles(files) {
   renderPending();
 }
 
+// ------------------------------------------------------------- recording
+//
+// Lets her hold a microphone up to the cassette player rather than buying a cable and an
+// interface. The level meter and the test recording exist for one reason: a whole side
+// captured silently or clipped is 45 minutes she does not get back.
+
+let recorder = null;
+let recSink = null;
+let recWakeLock = null;
+
+// One smoother per meter, so a pause for breath does not read as a fault.
+const smoothers = new WeakMap();
+function paintMeter(barEl, adviceEl, raw, seconds) {
+  if (!smoothers.has(barEl)) smoothers.set(barEl, makeLevelSmoother());
+  const level = smoothers.get(barEl)(raw);
+  const a = levelAdvice(level, seconds);
+  barEl.style.width = (levelToBar(level.db) * 100).toFixed(1) + '%';
+  const meter = barEl.parentElement;
+  meter.classList.toggle('warn', a.tone === 'warn');
+  meter.classList.toggle('bad', a.tone === 'bad');
+  adviceEl.textContent = a.text;
+  adviceEl.className = 'meter-advice ' + (a.tone === 'ok' ? '' : a.tone);
+}
+
+async function fillDevices() {
+  const sel = $('#recDevice');
+  const list = await listInputs();
+  sel.innerHTML = list.length
+    ? list.map(d => `<option value="${d.id}">${d.label}</option>`).join('')
+    : '<option value="">No microphone found</option>';
+}
+
+// A live meter with nothing being saved, so she can aim and set the volume first.
+async function startPreview() {
+  await stopPreview();
+  recorder = new Recorder();
+  try {
+    await recorder.start({
+      deviceId: $('#recDevice').value || undefined,
+      onLevel: (lvl, secs) => paintMeter($('#meterBar'), $('#meterAdvice'), lvl, secs)
+    });
+  } catch (e) {
+    $('#meterAdvice').textContent = e.name === 'NotAllowedError'
+      ? 'The browser needs permission to use the microphone.'
+      : "Couldn't open that microphone.";
+    $('#meterAdvice').className = 'meter-advice bad';
+    recorder = null;
+  }
+}
+async function stopPreview() {
+  if (recorder && !recSink) { await recorder.stop(); recorder = null; }
+}
+
+$('#recOpen').onclick = async () => {
+  const panel = $('#recPanel');
+  panel.hidden = !panel.hidden;
+  $('#recOpen').textContent = panel.hidden ? 'Set up' : 'Close';
+  if (panel.hidden) return stopPreview();
+  await fillDevices();
+  await startPreview();
+  await fillDevices();   // device labels only appear once permission is granted
+};
+$('#recDevice').onchange = () => startPreview();
+
+// Twenty seconds, played straight back. Cheap insurance against a wasted side.
+$('#recTest').onclick = async () => {
+  const btn = $('#recTest');
+  btn.disabled = true; $('#recStart').disabled = true;
+  await stopPreview();
+  const parts = [];
+  const r = new Recorder({ timeslice: 1000 });
+  try {
+    await r.start({
+      deviceId: $('#recDevice').value || undefined,
+      onData: async b => parts.push(b),
+      onLevel: (lvl, secs) => {
+        paintMeter($('#meterBar'), $('#meterAdvice'), lvl, secs);
+        btn.textContent = `Testing… ${Math.max(0, 20 - Math.floor(secs))}s`;
+      }
+    });
+  } catch (e) { btn.disabled = false; $('#recStart').disabled = false; return; }
+
+  await new Promise(res => setTimeout(res, 20000));
+  const info = await r.stop();
+  const blob = new Blob(parts, { type: info.mime });
+  const a = $('#recTestAudio');
+  if (a.src && a.src.startsWith('blob:')) URL.revokeObjectURL(a.src);
+  a.src = URL.createObjectURL(blob);
+  $('#recTestOut').hidden = false;
+  btn.textContent = 'Test again';
+  btn.disabled = false; $('#recStart').disabled = false;
+  await startPreview();
+};
+
+$('#recStart').onclick = async () => {
+  if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
+  await stopPreview();
+
+  const id = 'tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
+  recorder = new Recorder();
+  try {
+    const info = await recorder.start({
+      deviceId: $('#recDevice').value || undefined,
+      onLevel: (lvl, secs) => {
+        paintMeter($('#meterBarLive'), $('#meterAdviceLive'), lvl, secs);
+        $('#recTime').textContent = formatElapsed(secs);
+      },
+      onData: async blob => { await recSink?.write(blob); },
+      onError: () => toast('Trouble saving — the recording is still going.')
+    });
+    // Written straight to her folder as it arrives, so a 45-minute side is never held in
+    // memory and a crash still leaves everything captured up to that moment.
+    recSink = await makeFileSink(state.store, `tapes/${id}/source.${info.extension}`);
+    recorder._tapeId = id;
+    recorder._ext = info.extension;
+  } catch (e) {
+    recorder = null;
+    return toast('The browser needs permission to use the microphone.');
+  }
+
+  // A side runs 45 minutes; the machine sleeping halfway through would lose it.
+  try { recWakeLock = await navigator.wakeLock?.request('screen'); } catch (e) {}
+
+  $('#recPanel').hidden = true;
+  $('#recLive').hidden = false;
+  $('#recOpen').hidden = true;
+};
+
+$('#recStop').onclick = async () => {
+  const id = recorder?._tapeId;
+  const ext = recorder?._ext || 'webm';
+  const info = await recorder?.stop();
+  const bytes = await recSink?.close();
+  recorder = null; recSink = null;
+  try { await recWakeLock?.release(); } catch (e) {}
+  recWakeLock = null;
+
+  $('#recLive').hidden = true;
+  $('#recOpen').hidden = false;
+  $('#recOpen').textContent = 'Set up';
+
+  if (!bytes) return toast('Nothing was captured.');
+  await state.store.writeJSON(store.paths.tape(id), {
+    id, label: '', side: 'A', source: `source.${ext}`,
+    recordedSeconds: Math.round(info.seconds)
+  });
+  state.pending.push({ name: `Recording (${formatElapsed(info.seconds)})`, tapeId: id,
+                       label: '', side: 'A', alreadyStored: true });
+  renderPending();
+  toast(`Saved ${formatElapsed(info.seconds)}. Name it below, then start reading.`);
+};
+
 // ------------------------------------------------- the run screen
 // Shown while it works. Deliberately says nothing about time of day: she may run this
 // overnight, or during a workday in the background. The only real constraint is that the
@@ -606,10 +760,21 @@ $('#startRun').onclick = async () => {
   });
 
   for (const f of state.pending) {
-    const id = 'tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
-    queue.add({ id, file: f.file, label: f.label || f.name, side: f.side });
+    // A dropped file needs an id and a tape.json; one recorded here already has both, and
+    // its audio is already in her folder -- so read it back rather than re-saving it.
+    const id = f.tapeId ||
+      ('tape-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6));
+    let file = f.file;
+    if (f.alreadyStored) {
+      const saved = await state.store.readJSON(store.paths.tape(id)).catch(() => ({}));
+      const blob = await state.store.readBlob(`tapes/${id}/${saved.source || 'source.webm'}`);
+      file = new File([blob], saved.source || 'source.webm', { type: blob.type });
+    }
+    queue.add({ id, file, label: f.label || f.name, side: f.side });
+    const prior = f.alreadyStored
+      ? await state.store.readJSON(store.paths.tape(id)).catch(() => ({})) : {};
     await state.store.writeJSON(store.paths.tape(id),
-      { id, label: f.label || f.name, side: f.side, state: STATE.QUEUED });
+      { ...prior, id, label: f.label || f.name, side: f.side, state: STATE.QUEUED });
   }
   state.pending = [];
   renderPending();
