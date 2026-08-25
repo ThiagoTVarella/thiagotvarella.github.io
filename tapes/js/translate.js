@@ -48,13 +48,27 @@ export function batchSegments(segments, size = BATCH) {
 export function glossaryBlock(entries) {
   if (!entries || !entries.length) return '';
   const lines = entries.map(e => {
-    const forms = [e.canonical_greek, ...(e.observed_forms || [])].filter(Boolean);
+    const forms = [e.canonical_greek || e.greek, ...(e.observed_forms || [])].filter(Boolean);
+    // `note` is what SHE wrote. Accept the legacy plural spelling too, because reading the
+    // wrong key silently drops her knowledge rather than failing loudly.
+    const note = (e.note ?? e.notes ?? '').trim();
+    // Deliberately no `kind`: it records only whether the tape blurred a word or a phrase,
+    // which tells the translator nothing and previously leaked a person/place ontology.
     return `- ${[...new Set(forms)].join(' / ')} => ${e.english}` +
-           (e.kind ? ` (${e.kind})` : '') + (e.notes ? ` -- ${e.notes}` : '');
+           (note ? `\n    she says: ${note}` : '');
   });
-  return `\nKNOWN NAMES. Match these across ANY inflected form (Greek declines names:
-Κώστας/Κώστα/Κώστᾳ) and across phonetically-close ASR errors (Γκόστα -> Κώστας).
-Always render the English exactly as given:\n${lines.join('\n')}\n`;
+  return `
+KNOWN WORDS. Match these across ANY inflected form (Greek declines names:
+Κώστας/Κώστα/Κώστᾳ) and across phonetically-close recognition errors
+(Γκόστα -> Κώστας). Always render the English exactly as given.
+
+Lines marked "she says" are facts the family told us directly. Treat them as true and
+use them to resolve ambiguity — but do not repeat them in the translation, and do not
+extend them: if she says someone is his brother, that does not license you to describe
+anyone else's relationships.
+
+${lines.join('\n')}
+`;
 }
 
 export function systemPrompt(glossary, opts = {}) {
