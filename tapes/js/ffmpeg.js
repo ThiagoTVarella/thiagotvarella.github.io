@@ -51,14 +51,19 @@ export class TapeAudio {
   async load(onProgress) {
     if (this.ff) return this.ff;
     const make = this.factory || (async () => {
-      const [{ FFmpeg }, { toBlobURL }] = await Promise.all([
-        import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js'),
-        import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js')
-      ]);
+      // Imported from OUR origin, not a CDN. classes.js starts its worker with
+      // `new Worker(new URL("./worker.js", import.meta.url))`, and worker scripts must be
+      // same-origin -- a browser rule CORS cannot relax. Importing this package from unpkg
+      // makes that URL cross-origin and the browser refuses to construct the worker:
+      // "Script at 'https://unpkg.com/.../worker.js' cannot be accessed from origin ...".
+      // See ../vendor/ffmpeg/README.md.
+      const { FFmpeg } = await import('../vendor/ffmpeg/index.js');
       const ff = new FFmpeg();
+      // The 31MB core stays on the CDN: the worker pulls it with a dynamic import(), and
+      // cross-origin *module* imports are allowed where worker construction is not.
       await ff.load({
-        coreURL: await toBlobURL(`${this.baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${this.baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+        coreURL: `${this.baseURL}/ffmpeg-core.js`,
+        wasmURL: `${this.baseURL}/ffmpeg-core.wasm`
       });
       return ff;
     });

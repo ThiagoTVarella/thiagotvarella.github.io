@@ -27,6 +27,7 @@
 <p>
   First run downloads ~32&nbsp;MB of wasm and is cached afterwards. Everything after that
   takes a second or two. <b>Chrome or Edge on a desktop.</b>
+  Add <code>?core=&lt;url&gt;</code> to load the wasm core from somewhere other than the CDN.
 </p>
 <button id="go">Run the check</button>
 <pre id="log">idle</pre>
@@ -82,7 +83,11 @@ document.getElementById('go').onclick = async () => {
     const file = makeTestWav();
     log(`generated ${(file.size / 1024).toFixed(0)} KB of test audio (6.0s)\n`);
 
-    const engine = new TapeAudio();
+    // ?core=<url> points at a self-hosted copy of the 31MB wasm core instead of the CDN.
+    // Useful for testing offline, and for anyone who would rather not depend on unpkg.
+    const coreOverride = new URLSearchParams(location.search).get('core');
+    const engine = new TapeAudio(coreOverride ? { baseURL: coreOverride } : {});
+    if (coreOverride) log('core from: ' + coreOverride);
     const chunks = [];
     const res = await prepareTape(file, {
       engine,
