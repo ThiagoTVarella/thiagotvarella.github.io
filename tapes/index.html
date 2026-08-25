@@ -62,7 +62,10 @@
   <section class="view" id="v-library" hidden>
     <div class="spread" style="margin-bottom:6px">
       <h1>The diary</h1>
-      <button class="btn btn-ghost btn-sm" data-go="add">Add a recording</button>
+      <div class="row" style="gap:8px">
+        <button class="btn btn-ghost btn-sm" data-go="media">Recordings</button>
+        <button class="btn btn-ghost btn-sm" data-go="add">Add a recording</button>
+      </div>
     </div>
     <p class="lede" id="libLede"></p>
     <div id="libBanner"></div>
@@ -81,6 +84,18 @@
     <button class="tab" data-go="library" style="margin-bottom:18px;padding-left:0">← All entries</button>
     <article class="entry" id="entry"></article>
     <div class="entry-foot" id="entryFoot"></div>
+  </section>
+
+  <!-- recordings ------------------------------------------------------------ -->
+  <section class="view" id="v-media" hidden>
+    <button class="tab" data-go="library" style="margin-bottom:18px;padding-left:0">← All entries</button>
+    <h1>Recordings</h1>
+    <p class="lede" id="mediaLede"></p>
+    <p class="note-inline" id="mediaWhere" style="margin-bottom:20px"></p>
+    <div class="stack" id="mediaList"></div>
+    <div class="empty" id="mediaEmpty" hidden style="padding:34px">
+      <p class="muted">Nothing recorded yet.</p>
+    </div>
   </section>
 
   <!-- glossary ------------------------------------------------------------- -->

@@ -81,7 +81,7 @@ h2 { font-size: 1.05rem; font-weight: 700; margin: 26px 0 10px; }
   border-radius: var(--radius); padding: 16px 18px;
 }
 .row { display: flex; align-items: center; gap: 12px; }
-.spread { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.spread { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 .empty { text-align: center; padding: 56px 20px; color: var(--ink-faint); }
 .empty .big { font-size: 2.4rem; margin-bottom: 10px; opacity: .6; }
@@ -278,3 +278,11 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
   main { padding: 18px 14px 70px; }
   .para { font-size: 1.06rem; }
 }
+
+/* --- recordings ---------------------------------------------------------- */
+.media { border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px; }
+.media .top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.media .name { font-weight: 700; }
+.media .facts { color: var(--ink-faint); font-size: .8rem; margin-top: 3px; }
+.media .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.media audio { width: 100%; margin-top: 12px; display: block; }

@@ -5,7 +5,8 @@
 import * as demoData from './demo.js';
 import * as store from './store.js';
 import { Queue, STATE, stepIndex, humanError } from './queue.js';
-import { miniSteps, libraryBannerState, tapeClickMessage } from './library.js';
+import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
+         tapeErrorNote, downloadName, formatSize, mediaNote, mediaSummary } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
@@ -39,6 +40,7 @@ const state = {
   pendingWords: [],
   glossary: [],
   folder: null,
+  folderName: null,
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
   model: localStorage.getItem('tapes_model') || undefined,
@@ -71,6 +73,7 @@ function go(view) {
   if (view === 'library') renderLibrary();
   if (view === 'glossary') renderReview();
   if (view === 'add') renderPending();
+  if (view === 'media') renderMedia();
   if (view === 'settings') renderSettings();
 }
 
@@ -108,10 +111,9 @@ function renderLibrary() {
        style="padding:0 4px;color:var(--accent)">Show progress</button></div>`;
     $('#toNight').onclick = () => openRunScreen(banner.tape);
   } else if (banner.kind === 'stalled') {
-    $('#libBanner').innerHTML = `<div class="banner warn">${banner.tapes.length} recording${
-      banner.tapes.length > 1 ? 's' : ''} didn't finish being read -- probably the window closed
-      partway through. Nothing is lost. <button class="tab" id="continueStalled"
-      style="padding:0 4px;color:var(--accent)">Continue</button></div>`;
+    $('#libBanner').innerHTML = `<div class="banner warn">${stalledMessage(banner)}
+      <button class="tab" id="continueStalled"
+      style="padding:0 4px;color:var(--accent)">${banner.failed ? 'Try again' : 'Continue'}</button></div>`;
     $('#continueStalled').onclick = () => continueStalled(banner.tapes);
   } else {
     $('#libBanner').innerHTML = '';
@@ -124,12 +126,21 @@ function renderLibrary() {
     card.innerHTML = `
       <div class="title">${t.heading || t.label}</div>
       <div class="meta">${t.label} · side ${t.side} · ${t.minutes} min${
-        t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}</div>
+        t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}${
+        tapeErrorNote(t)
+          ? `<br><span style="color:var(--accent-2)">${tapeErrorNote(t).reason}</span> · ${tapeErrorNote(t).action}`
+          : ''}</div>
       <div class="state">${STATUS[t.status](t)}</div>
       ${t.status === 'working'
         ? `<div class="bar"><i style="width:${(t.progress * 100).toFixed(0)}%"></i></div>${miniSteps(t)}`
         : ''}`;
-    card.onclick = () => t.status === 'done' ? openRead(t) : toast(tapeClickMessage(t));
+    card.onclick = () => {
+      if (t.status === 'done') return openRead(t);
+      // A failed tape is retried in place: everything already transcribed stays on disk
+      // and is skipped, so this costs only the work that had not happened yet.
+      if (t.status === 'error') { toast(tapeClickMessage(t)); return continueStalled([t]); }
+      toast(tapeClickMessage(t));
+    };
     list.appendChild(card);
   }
 }
@@ -224,6 +235,120 @@ function playFrom(entry, s, node) {
     .catch(() => toast("Couldn't play that bit — the recording may have moved."));
 }
 const fmtTime = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+
+// ---------------------------------------------------------- recordings
+
+// One player for the whole screen, so opening a second recording releases the first.
+// These are whole tape sides -- hundreds of megabytes each -- and leaving object URLs
+// alive per row would pin every one of them in memory until reload.
+const mediaSource = makeAudioSource();
+let mediaOpen = null;
+let demoMediaStore = null;
+
+// The demo runs the real screen against a folder of generated tones rather than a stubbed
+// one, so every part of this path -- finding the file, reading it, playing it, saving it --
+// is actually exercised without a tape or a folder.
+async function mediaStore() {
+  if (!DEMO) return state.store;
+  if (!demoMediaStore) demoMediaStore = await demoData.makeMediaStore(store.MemoryStore);
+  return demoMediaStore;
+}
+
+// The audio she actually recorded, rather than the pieces it was cut into. Reachable for
+// every recording whatever state it is in: after a failure this screen is how she confirms
+// the recording survived, which is exactly when the diary list has nothing to show her.
+async function renderMedia() {
+  const list = $('#mediaList');
+  list.innerHTML = '';
+  mediaSource.release();
+  mediaOpen = null;
+
+  const st = await mediaStore();
+  if (!st) { go('welcome'); return; }
+
+  const tapes = [...state.tapes].sort((a, b) => (a.date || 'zzz').localeCompare(b.date || 'zzz'));
+  $('#mediaEmpty').hidden = tapes.length > 0;
+  $('#mediaLede').textContent =
+    'The original audio, exactly as it came off the tape. ' + mediaSummary(tapes);
+  $('#mediaWhere').innerHTML = 'They sit in the folder you chose' +
+    (state.folderName ? ` — <b>${escapeText(state.folderName)}</b>` : '') +
+    ', as ordinary files you own. <b>Save a copy</b> puts one in your Downloads as well.';
+
+  for (const t of tapes) list.appendChild(await mediaRow(t, st));
+}
+
+async function mediaRow(t, st) {
+  const row = el('div', 'media');
+  const name = await store.sourceName(st, t.id, t.source).catch(() => null);
+  let file = null;
+  if (name) {
+    try { file = await st.readBlob(store.paths.source(t.id, name)); } catch (e) {}
+  }
+
+  const facts = [
+    t.minutes ? `${t.minutes} min` : '',
+    file ? formatSize(file.size) : '',
+    mediaNote(t)
+  ].filter(Boolean).join(' · ');
+
+  row.innerHTML = `
+    <div class="top"><div class="name">${escapeText(t.label || t.id)}</div>
+      <div class="muted" style="font-size:.8rem">side ${escapeText(t.side || 'A')}</div></div>
+    <div class="facts">${escapeText(facts)}</div>`;
+
+  if (!file) {
+    // Said plainly rather than shown as a broken player. This is the one thing on this
+    // screen she would want to know immediately, so it does not get softened.
+    row.innerHTML += `<div class="facts" style="color:var(--accent-2);margin-top:8px">
+      The audio file for this one isn't in the folder any more.</div>`;
+    return row;
+  }
+
+  const acts = el('div', 'acts');
+  const listen = el('button', 'btn btn-ghost btn-sm', 'Listen');
+  const save = el('button', 'btn btn-ghost btn-sm', 'Save a copy');
+  acts.append(listen, save);
+  row.appendChild(acts);
+
+  listen.onclick = async () => {
+    if (mediaOpen && mediaOpen !== row) mediaOpen.querySelector('audio')?.remove();
+    let a = row.querySelector('audio');
+    if (a) { a.remove(); mediaOpen = null; listen.textContent = 'Listen'; return; }
+    a = el('audio');
+    a.controls = true;
+    a.preload = 'metadata';
+    a.src = mediaSource.use(file);
+    row.appendChild(a);
+    mediaOpen = row;
+    listen.textContent = 'Hide';
+    // A browser recording carries no duration in its header, so without this the seek bar
+    // snaps to the end and stays there -- the same defect the test playback had.
+    await fixStreamedDuration(a).catch(() => {});
+  };
+
+  save.onclick = () => saveCopy(file, downloadName(t, name));
+  return row;
+}
+
+// A copy in her Downloads folder, named after the tape. Every recording is stored as
+// "source.webm" in its own folder, which reads fine there and not at all once three of
+// them land side by side somewhere else.
+export function saveCopy(blob, filename, deps = {}) {
+  const createURL = deps.createURL || (b => URL.createObjectURL(b));
+  const revokeURL = deps.revokeURL || (u => URL.revokeObjectURL(u));
+  const url = createURL(blob);
+  const a = deps.anchor || document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  // The click starts the download synchronously; the URL must outlive that turn of the
+  // event loop, so it cannot be revoked inline.
+  setTimeout(() => revokeURL(url), 30000);
+  return filename;
+}
+
+const escapeText = s => String(s ?? '').replace(/[&<>"]/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ------------------------------------------------------------- glossary
 
@@ -677,7 +802,7 @@ function setRunProgress(tape, p) {
 // ---------------------------------------------------------------- settings
 
 function renderSettings() {
-  $('#folderName').textContent = state.folder || (DEMO ? 'Grandpa Tapes (demo)' : 'Not chosen yet');
+  $('#folderName').textContent = state.folderName || state.folder || (DEMO ? 'Grandpa Tapes (demo)' : 'Not chosen yet');
   $('#keyInput2').value = state.key;
   $('#keyState').textContent = state.key ? 'Saved on this computer.' : 'Not set — nothing can be read without it.';
   $('#quality').value = state.quality;
@@ -706,6 +831,7 @@ $('#pickFolder').onclick = async () => {
   try {
     state.store = await store.pickProject();
     state.folder = 'chosen';
+    state.folderName = state.store.root?.name || null;
     refreshSetup();
     await refreshLibrary();
   } catch (e) { /* she cancelled */ }
@@ -830,6 +956,11 @@ async function continueStalled(tapes) {
       const saved = await state.store.readJSON(store.paths.tape(t.id));
       const sourceName = saved.source || 'source.webm';
       const blob = await state.store.readBlob(`tapes/${t.id}/${sourceName}`);
+      // Drop any previous error, or a tape that now succeeds keeps showing the old reason.
+      if (saved.error) {
+        const { error, ...rest } = saved;
+        await state.store.writeJSON(store.paths.tape(t.id), { ...rest, state: STATE.QUEUED });
+      }
       specs.push({ id: t.id, file: new File([blob], sourceName, { type: blob.type }),
                    label: t.label, side: t.side });
     } catch (e) { missing.push(t.label); }
@@ -857,7 +988,7 @@ async function refreshLibrary() {
       tapes.push({
         id, label: t.label || id, side: t.side || 'A',
         minutes: Math.round((t.duration || 0) / 60) || 0,
-        status, stepIdx, error: t.error || null,
+        status, stepIdx, error: t.error || null, source: t.source || null,
         progress: t.progress || 0, cost: t.cost || 0,
         date: (t.dates && t.dates[0] && t.dates[0].iso) || null,
         heading: null, segments: []
@@ -885,6 +1016,7 @@ function boot() {
       if (!st) return;
       state.store = st;
       state.folder = 'chosen';
+      state.folderName = st.root?.name || null;
       refreshSetup();
       await refreshLibrary();
     }).catch(() => {});

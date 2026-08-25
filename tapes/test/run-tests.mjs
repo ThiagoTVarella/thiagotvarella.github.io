@@ -1272,9 +1272,13 @@ at('the banner says nothing when everything is done or nothing is running and no
   eq(lib.libraryBannerState([], true).kind, 'none');
 });
 
-at('a done tape never triggers the stalled banner even if a queue is not running', async () => {
-  eq(lib.libraryBannerState([{ id: 't1', status: 'done' }, { id: 't2', status: 'error' }], false).kind,
-     'none', 'an errored tape needs her attention via its own card, not a resume banner');
+at('a finished tape is never swept back into the resume banner', async () => {
+  eq(lib.libraryBannerState([{ id: 't1', status: 'done' }], false).kind, 'none');
+  // An errored one, by contrast, SHOULD be offered -- retrying is nearly free and the
+  // alternative is a dead end with no way forward but re-recording.
+  const b = lib.libraryBannerState([{ id: 't1', status: 'done' }, { id: 't2', status: 'error' }], false);
+  eq(b.kind, 'stalled');
+  eq(b.tapes.map(t => t.id), ['t2'], 'only the errored one, never the finished one');
 });
 
 at('clicking a working tape names the actual current step, not a flat "not ready"', async () => {
@@ -1283,14 +1287,108 @@ at('clicking a working tape names the actual current step, not a flat "not ready
   ok(/40%/.test(msg), msg);
 });
 
-at('clicking a failed tape surfaces the real reason', async () => {
-  const msg = lib.tapeClickMessage({ status: 'error', label: 'Side A', error: 'NO CREDIT' });
-  ok(msg.includes('NO CREDIT'), msg);
+at('the failure reason stays visible on the card, not only in a toast', async () => {
+  // Clicking a failed tape now retries it, so the reason cannot live in the click message
+  // alone -- it has to remain readable afterwards.
+  const note = lib.tapeErrorNote({ status: 'error', label: 'Side A', error: 'NO CREDIT' });
+  eq(note.reason, 'NO CREDIT');
+  ok(/try again/i.test(note.action), note.action);
+  eq(lib.tapeErrorNote({ status: 'working' }), null, 'nothing to say when it has not failed');
+});
+
+at('a failure with no recorded reason still says something', async () => {
+  const note = lib.tapeErrorNote({ status: 'error', label: 'Side A' });
+  ok(note.reason && !/undefined|null/.test(note.reason), note.reason);
 });
 
 at('clicking a queued tape that never started says so plainly', async () => {
   const msg = lib.tapeClickMessage({ status: 'queued', label: 'Side A' });
   ok(/hasn't started/i.test(msg), msg);
+});
+
+// ------------------------------------------------- retrying after a failure
+//
+// The question this answers: when something goes wrong, does she have to re-record?
+// No -- the audio and every finished chunk stay on disk, so a retry only does the work
+// that had not happened yet.
+
+at('a failed tape is resumable, not a dead end', async () => {
+  eq(lib.isResumable({ status: 'error' }), true, 'a failure must be retryable');
+  eq(lib.isResumable({ status: 'working' }), true);
+  eq(lib.isResumable({ status: 'queued' }), true);
+  eq(lib.isResumable({ status: 'done' }), false, 'finished work is not "outstanding"');
+});
+
+at('the banner offers to retry when something failed', async () => {
+  const b = lib.libraryBannerState([{ id: 't1', status: 'error', label: 'A' }], false);
+  eq(b.kind, 'stalled');
+  eq(b.failed, 1);
+  eq(b.unfinished, 0);
+  ok(/ran into a problem/i.test(lib.stalledMessage(b)), lib.stalledMessage(b));
+  ok(/nothing is lost/i.test(lib.stalledMessage(b)), 'must say the audio is still there');
+});
+
+at('the banner distinguishes an interruption from a failure', async () => {
+  const interrupted = lib.libraryBannerState([{ id: 't1', status: 'queued' }], false);
+  ok(/didn't finish/i.test(lib.stalledMessage(interrupted)));
+  ok(!/problem/i.test(lib.stalledMessage(interrupted)), 'an interruption is not an error');
+});
+
+at('the banner covers a mix of failed and merely interrupted', async () => {
+  const b = lib.libraryBannerState(
+    [{ id: 't1', status: 'error' }, { id: 't2', status: 'queued' }, { id: 't3', status: 'done' }],
+    false);
+  eq(b.failed, 1);
+  eq(b.unfinished, 1);
+  eq(b.tapes.length, 2, 'the finished one is not swept back in');
+  const msg = lib.stalledMessage(b);
+  ok(/problem/i.test(msg) && /interrupted/i.test(msg), msg);
+});
+
+at('clicking a failed tape says it is retrying, not just what broke', async () => {
+  const msg = lib.tapeClickMessage({ status: 'error', label: 'Side A', error: 'NO CREDIT' });
+  ok(/trying/i.test(msg) && /again/i.test(msg), msg);
+});
+
+at('retrying a failed tape redoes only the work that never happened', async () => {
+  const st = new store.MemoryStore();
+
+  // First run fails during translation, after every chunk has been transcribed.
+  const deps1 = { ...qDeps(), translate: async () => { throw new Error('network died'); } };
+  const Q1 = new q.Queue({ store: st, key: 'k', deps: deps1, on: {} });
+  Q1.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q1.start();
+
+  const failed = await st.readJSON(store.paths.tape('t1'));
+  eq(failed.state, q.STATE.FAILED);
+  ok(failed.error, 'the reason is recorded');
+  const { done } = await store.reconcile(st, 't1');
+  eq(done.length, 3, 'all three chunks were transcribed before it broke');
+
+  // Retry with a working translator, exactly as the Try again button does.
+  const deps2 = qDeps();
+  const Q2 = new q.Queue({ store: st, key: 'k', deps: deps2, on: {} });
+  Q2.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q2.start();
+
+  eq(deps2.seen.prepared, 0, 'the audio must not be re-split');
+  eq(deps2.seen.transcribed, [], 'and nothing already transcribed may be paid for twice');
+  eq(deps2.seen.translated, 1, 'only the step that failed is redone');
+  eq((await st.readJSON(store.paths.tape('t1'))).state, q.STATE.DONE);
+});
+
+at('a retry that fails again is still retryable, not stuck', async () => {
+  const st = new store.MemoryStore();
+  const broken = { ...qDeps(), prepare: async () => { throw new Error('still broken'); } };
+  const Q1 = new q.Queue({ store: st, key: 'k', deps: broken, on: {} });
+  Q1.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q1.start();
+  const Q2 = new q.Queue({ store: st, key: 'k', deps: broken, on: {} });
+  Q2.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q2.start();
+  const t = await st.readJSON(store.paths.tape('t1'));
+  eq(t.state, q.STATE.FAILED);
+  eq(lib.isResumable({ status: 'error' }), true, 'a repeated failure must not become permanent');
 });
 
 at('humanError never shows an HTTP status to her', async () => {
@@ -1743,6 +1841,101 @@ at('fixStreamedDuration cleans up its listener so it cannot fire twice', async (
   // A second, unrelated seek must not retrigger the removed listener into resetting time.
   el.currentTime = 1e9;
   eq(el._currentTime, 1e9, 'no leftover listener resetting this behind our back');
+});
+
+// --- the recordings screen -------------------------------------------------
+
+t('a saved copy is named after the tape, not "source.webm"', () => {
+  eq(lib.downloadName({ label: 'Grandpa 1978', side: 'A' }, 'source.webm'),
+     'Grandpa 1978 - side A.webm');
+  // The extension follows the real file, so a dropped mp3 does not get saved as .webm.
+  eq(lib.downloadName({ label: 'Grandpa 1978', side: 'B' }, 'source.mp3'),
+     'Grandpa 1978 - side B.mp3');
+});
+
+t('a saved copy never carries characters the filesystem will reject', () => {
+  const name = lib.downloadName({ label: 'tape 3/4: "the good one" <A>', side: 'A' }, 'source.webm');
+  eq(/[\\/:*?"<>|]/.test(name), false, 'no illegal characters survive: ' + name);
+  eq(name, 'tape 3 4 the good one A - side A.webm');
+});
+
+t('an unlabelled tape still gets a usable filename', () => {
+  eq(lib.downloadName({ id: 'tape-004', side: 'A' }, 'source.webm'), 'tape-004 - side A.webm');
+  // A label of nothing but punctuation falls back to the id rather than collapsing every
+  // such tape onto one name.
+  eq(lib.downloadName({ label: '///', id: 'tape-005', side: 'A' }, 'source.webm'),
+     'tape-005 - side A.webm');
+});
+
+t('a Greek tape label survives as a filename a browser can actually write', () => {
+  // Chromium discards the ENTIRE download name if it cannot encode it, saving the file as
+  // "download" -- so a folder of Greek-labelled tapes would come out download, download (1),
+  // download (2). Transliterating is also simply more useful: she does not read Greek.
+  const name = lib.downloadName({ label: 'Μάρτιος 1978 — Α', side: 'A' }, 'source.wav');
+  eq(name, 'Martios 1978 - A - side A.wav');
+  eq(/^[\x20-\x7e]+$/.test(name), true, 'nothing outside plain ASCII survives: ' + name);
+});
+
+t('transliteration keeps case, strips accents, and normalises the dash family', () => {
+  eq(lib.toLatin('Θεσσαλονίκη'), 'Thessaloniki');
+  eq(lib.toLatin('Ελένη'), 'Eleni');
+  eq(lib.toLatin('Κώστας'), 'Kostas');
+  eq(lib.toLatin('a – b — c'), 'a - b - c');
+  eq(lib.toLatin('already latin'), 'already latin');
+});
+
+t('two Greek tapes never transliterate onto the same filename', () => {
+  const a = lib.downloadName({ label: 'Μάρτιος 1978 — Α', side: 'A' }, 'source.wav');
+  const b = lib.downloadName({ label: 'Απρίλιος 1978 — Α', side: 'A' }, 'source.wav');
+  eq(a === b, false, `both tapes would be saved as ${a}`);
+});
+
+t('a failed recording is described by what survived, not by the error', () => {
+  // The reason to open this screen after a failure is to check the audio is still there,
+  // so it says so. The error itself is on the diary card, where the retry lives.
+  const note = lib.mediaNote({ status: 'error', error: 'Couldn\'t work out how long this is.' });
+  eq(/audio itself is fine/.test(note), true, note);
+  eq(note.includes("Couldn't work out"), false, 'the error is not repeated here');
+  eq(lib.mediaNote({ status: 'done' }), 'Read and put into English');
+  eq(lib.mediaNote({ status: 'queued' }), 'Waiting to be read');
+});
+
+t('mediaSummary counts what is readable without hiding what is not', () => {
+  eq(lib.mediaSummary([]), '');
+  eq(lib.mediaSummary([{ status: 'done' }]), '1 recording.');
+  eq(lib.mediaSummary([{ status: 'done' }, { status: 'error' }, { status: 'queued' }]),
+     '3 recordings, 1 of them read through so far.');
+});
+
+at('the source file is found from the directory listing, not from tape.json', async () => {
+  const st = new store.MemoryStore();
+  await st.write('tapes/t1/source.mp3', new Uint8Array([1, 2, 3]));
+  await st.writeJSON('tapes/t1/tape.json', { id: 't1' });   // crashed before recording the name
+  // Trusting the default would look for source.webm and report the audio as missing when
+  // it is sitting right there.
+  eq(await store.sourceName(st, 't1', 'source.webm'), 'source.mp3');
+  eq(await store.sourceName(st, 't1', 'source.mp3'), 'source.mp3');
+});
+
+at('a tape whose audio really is gone reports nothing rather than a wrong name', async () => {
+  const st = new store.MemoryStore();
+  await st.writeJSON('tapes/t2/tape.json', { id: 't2' });
+  eq(await store.sourceName(st, 't2', null), null);
+});
+
+at('the store can hand back the original recording as a blob to play and save', async () => {
+  const st = new store.MemoryStore();
+  await st.write('tapes/t1/source.webm', new Uint8Array(2048));
+  const f = await st.readBlob(store.paths.source('t1', 'source.webm'));
+  eq(f.size, 2048);
+  eq(lib.formatSize(f.size), '2 KB');
+});
+
+t('file sizes are readable at every scale a tape side reaches', () => {
+  eq(lib.formatSize(0), '');
+  eq(lib.formatSize(900), '1 KB');
+  eq(lib.formatSize(1024 * 1024 * 3.25), '3.3 MB');
+  eq(lib.formatSize(1024 * 1024 * 412), '412 MB');
 });
 
 const run = async () => {

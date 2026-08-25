@@ -103,3 +103,34 @@ export const GLOSSARY = [
   { id: 'g2', english: 'Kostas', greek: 'Κώστας', kind: 'word', heard: 47, note: '' },
   { id: 'g3', english: 'Thessaloniki', greek: 'Θεσσαλονίκη', kind: 'word', heard: 19, note: '' }
 ];
+
+// A folder's worth of stand-in audio, so the Recordings screen can be explored -- and
+// tested -- through exactly the same code the real one runs: the same directory lookup,
+// the same blob read, the same player, the same download. Two seconds of a quiet tone each,
+// generated here rather than committed, because a real tape side is hundreds of megabytes.
+function toneWav(seconds = 2, hz = 220, rate = 8000) {
+  const n = Math.floor(seconds * rate), bytes = new Uint8Array(44 + n * 2);
+  const dv = new DataView(bytes.buffer);
+  const ascii = (off, str) => [...str].forEach((c, i) => dv.setUint8(off + i, c.charCodeAt(0)));
+  ascii(0, 'RIFF'); dv.setUint32(4, 36 + n * 2, true); ascii(8, 'WAVE');
+  ascii(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true);
+  dv.setUint16(22, 1, true); dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true);
+  dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+  ascii(36, 'data'); dv.setUint32(40, n * 2, true);
+  for (let i = 0; i < n; i++) {
+    const fade = Math.min(1, i / 400, (n - i) / 400);
+    dv.setInt16(44 + i * 2, Math.sin(2 * Math.PI * hz * i / rate) * 6000 * fade, true);
+  }
+  return bytes;
+}
+
+export async function makeMediaStore(MemoryStore) {
+  const st = new MemoryStore();
+  for (const [i, t] of TAPES.entries()) {
+    // tape-004 keeps no audio on purpose: a recording whose file has gone missing is a
+    // state the screen has to say something honest about, and it is easy to never see.
+    if (t.id === 'tape-004') continue;
+    await st.write(`tapes/${t.id}/source.wav`, toneWav(2, 180 + i * 60));
+  }
+  return st;
+}
