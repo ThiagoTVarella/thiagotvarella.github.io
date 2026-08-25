@@ -157,11 +157,15 @@ const fmtTime = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).p
 
 // ------------------------------------------------------------- glossary
 
+// The only distinction the interface needs is whether she can hear a discrete word and
+// spell it back, or whether the tape blurred a whole stretch. Deliberately NOT an
+// ontology: the app never claims something is a person, a place, or anything else --
+// Κώστας may be a man or a boat, and nothing in the audio settles it.
 const KIND = {
-  person: { chip: 'Person',        ask: 'name' },
-  place:  { chip: 'Place',         ask: 'name' },
+  word:   { chip: 'Unclear word',   ask: 'name' },
   phrase: { chip: 'Unclear phrase', ask: 'sense' }
 };
+const kindOf = k => KIND[k] || KIND.word;
 
 function renderReview() {
   const left = state.pendingWords.length - state.nameIdx;
@@ -174,7 +178,7 @@ function renderReview() {
   if (left <= 0) return;
 
   const n = state.pendingWords[state.nameIdx];
-  const kind = KIND[n.kind] || KIND.person;
+  const kind = kindOf(n.kind);
   const box = $('#nameCard');
   box.innerHTML = '';
 
@@ -202,7 +206,7 @@ function renderReview() {
         : `Our best guess is <b>"${n.guess}"</b>. Does that make sense here?`}</p>
       <div class="name-actions">
         <button class="btn" id="yes">${kind.ask === 'name' ? "Yes, that's right" : 'Yes, that reads right'}</button>
-        <button class="btn btn-ghost" id="no">${kind.ask === 'name' ? "No, it's someone else" : "No, that's not it"}</button>
+        <button class="btn btn-ghost" id="no">${kind.ask === 'name' ? "No, it's something else" : "No, that's not it"}</button>
       </div>
       <button class="linkish" id="note">Add a note</button>
       <button class="linkish" id="skip">Skip this one for now</button>
@@ -211,7 +215,7 @@ function renderReview() {
     <div id="noteBlock" hidden>
       <p class="ask">Anything worth remembering about this one?</p>
       <input type="text" id="noteIn" autocomplete="off"
-             placeholder="who they are, where they're from — only if you know">
+             placeholder="what or who it is — only if you know">
       <p class="note-inline">Entirely optional. Only you can say; nothing here is guessed.</p>
       <div class="name-actions">
         <button class="btn" id="noteSave">Save note</button>
@@ -257,7 +261,7 @@ function renderReview() {
       : "Even a rough idea helps. Leave it blank if you can't tell.";
     const i = $('#nameIn');
     i.value = '';
-    i.placeholder = kind.ask === 'name' ? 'e.g. Panagiotis' : 'e.g. in the neighbour\'s orchard';
+    i.placeholder = kind.ask === 'name' ? 'e.g. Panagiotis' : "e.g. in the neighbour's orchard";
     i.focus();
   };
   $('#cancel').onclick = () => { $('#askBlock').hidden = false; $('#fixBlock').hidden = true; };
@@ -290,7 +294,7 @@ function renderGlossList() {
       <div class="gloss-main">
         <b>${g.english}</b>
         <span class="muted" style="font-size:.82rem"> · ${g.greek}</span>
-        <div class="muted" style="font-size:.78rem">${KIND[g.kind]?.chip || 'Word'} · heard ${g.heard} times</div>
+        <div class="muted" style="font-size:.78rem">heard ${g.heard} times</div>
         ${g.note ? `<div class="gloss-note">${g.note}</div>` : ''}
       </div>
       <button class="linkish" data-edit="${g.id}">Change</button>`;

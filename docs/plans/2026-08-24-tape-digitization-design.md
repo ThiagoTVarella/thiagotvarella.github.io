@@ -269,11 +269,18 @@ doesn't pass through at all, the glossary's real consumers are the translation p
 text-matching for retroactive re-translation.
 
 ```json
-{ "id": "kostas", "english": "Kostas", "kind": "person",
+{ "id": "kostas", "english": "Kostas", "kind": "word",
   "canonical_greek": "Κώστας",
   "observed_forms": ["Κώστας", "Κώστα", "Γκόστα"],
-  "notes": "her great-uncle, Athens" }
+  "note": "" }
 ```
+
+**`kind` is not an ontology.** It records only whether the tape blurred a single word she
+could hear and spell back (`word`) or a longer stretch (`phrase`) — the shape of the audio
+problem, nothing about the world. The app never claims something is a person or a place:
+Κώστας may be a man, a boat, or a name day; Καλαμάτα may be a city or the olives, and
+nothing in the audio settles it. The translation prompt is explicitly forbidden from
+categorising. `note` is free text she writes, or stays empty — never inferred.
 
 `observed_forms` deliberately captures **ASR manglings**, which is what makes matching converge
 despite the lack of biasing. Match retroactively by accent-stripped stem (`Κώστ-`), not exact
