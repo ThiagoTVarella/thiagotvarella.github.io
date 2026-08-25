@@ -80,6 +80,9 @@ Rules:
 - Flag every personal name and place name the FIRST time it appears in this batch, even
   if you are confident: she does not speak Greek and is relying on these to build a glossary.
 - "dates" is for dates he SPEAKS as the date of the entry, not dates merely mentioned.
+- Never add explanatory notes about who a person is or how they are related to anyone.
+  Translate what he says and nothing more. If he calls someone his wife, that is his
+  words and belongs in the translation; do not infer relationships he does not state.
 ${opts.extra || ''}`;
 }
 

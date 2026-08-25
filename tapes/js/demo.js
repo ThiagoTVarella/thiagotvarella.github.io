@@ -78,7 +78,7 @@ export const PENDING = [
   { id: 'n2', greek: 'Γκόστα', heard: 12, guess: 'Kostas', kind: 'person',
     context: ['', ' came at midday and we brought the wood in from the shed.'],
     tape: 'tape-001', at: 66,
-    hint: 'Possibly the same person as Κώστας, misheard.' },
+    hint: 'This may be the same name as Κώστας, misheard by the tape.' },
   { id: 'n3', greek: 'Καλαμάτα', heard: 4, guess: 'Kalamata', kind: 'place',
     context: ['He said something about a village near ', ' but I did not hear well.'],
     tape: 'tape-002', at: 105 },
@@ -94,8 +94,11 @@ export const PENDING = [
     tape: 'tape-001', at: 233 }
 ];
 
+// Notes are hers alone. The tool never infers who anyone is or how they are related --
+// a plausible invented detail in a family archive is worse than a blank, because nobody
+// would think to check it.
 export const GLOSSARY = [
-  { id: 'g1', english: 'Eleni', greek: 'Ελένη', kind: 'person', heard: 84, note: 'his wife' },
-  { id: 'g2', english: 'Kostas', greek: 'Κώστας', kind: 'person', heard: 47, note: 'brother' },
+  { id: 'g1', english: 'Eleni', greek: 'Ελένη', kind: 'person', heard: 84, note: '' },
+  { id: 'g2', english: 'Kostas', greek: 'Κώστας', kind: 'person', heard: 47, note: '' },
   { id: 'g3', english: 'Thessaloniki', greek: 'Θεσσαλονίκη', kind: 'place', heard: 19, note: '' }
 ];

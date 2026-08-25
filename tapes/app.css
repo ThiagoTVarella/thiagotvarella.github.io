@@ -167,20 +167,28 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
   padding: 12px 15px; border: 1px solid var(--rule); border-radius: var(--radius);
   background: var(--paper-2); text-align: left;
 }
+.gloss-row.editing { display: block; border-color: var(--accent); }
+.gloss-main { min-width: 0; }
+.gloss-note {
+  font-family: var(--serif); font-size: .88rem; color: var(--ink-soft);
+  margin-top: 5px; padding-left: 9px; border-left: 2px solid var(--rule);
+}
+.gloss-row .field input { text-align: left; font-size: .95rem; padding: 9px 12px; }
+.gloss-row .name-actions .btn { flex: 0 0 auto; min-width: 0; }
 
-/* ---------- night mode (the overnight run) ---------- */
-.night {
+/* ---------- the run screen (shown while it works, any time of day) ---------- */
+.runscreen {
   position: fixed; inset: 0; z-index: 60; background: #0d0c0a; color: #e8dfd0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center; padding: 30px; gap: 6px;
 }
-.night .n-big { font-size: clamp(2.6rem, 11vw, 5rem); font-weight: 300; letter-spacing: -.02em; }
-.night .n-sub { color: #8d8272; max-width: 22em; line-height: 1.7; }
-.night .n-ring { width: 150px; height: 150px; margin-bottom: 14px; }
-.night .n-ring circle { fill: none; stroke-width: 5; }
-.night .n-ring .t { stroke: #2b271f; }
-.night .n-ring .v { stroke: #cfa969; stroke-linecap: round; transition: stroke-dashoffset .6s; }
-.night .n-exit { margin-top: 26px; color: #8d8272; border: 1px solid #2b271f; }
+.runscreen .r-big { font-size: clamp(2.6rem, 11vw, 5rem); font-weight: 300; letter-spacing: -.02em; }
+.runscreen .r-sub { color: #8d8272; max-width: 22em; line-height: 1.7; }
+.runscreen .r-ring { width: 150px; height: 150px; margin-bottom: 14px; }
+.runscreen .r-ring circle { fill: none; stroke-width: 5; }
+.runscreen .r-ring .t { stroke: #2b271f; }
+.runscreen .r-ring .v { stroke: #cfa969; stroke-linecap: round; transition: stroke-dashoffset .6s; }
+.runscreen .r-exit { margin-top: 26px; color: #8d8272; border: 1px solid #2b271f; }
 
 /* ---------- misc ---------- */
 .drop {

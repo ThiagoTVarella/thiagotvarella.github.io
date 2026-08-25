@@ -83,7 +83,7 @@ function renderLibrary() {
     ? `<div class="banner">Still reading <b>${working.label}</b>. You can read the finished
        entries below while it works. <button class="tab" id="toNight"
        style="padding:0 4px;color:var(--accent)">Show progress</button></div>` : '';
-  if (working) $('#toNight').onclick = () => openNight(working);
+  if (working) $('#toNight').onclick = () => openRunScreen(working);
 
   // Chronological where he told us the date, otherwise by the order they came in.
   const sorted = [...state.tapes].sort((a, b) => (a.date || 'zzz').localeCompare(b.date || 'zzz'));
@@ -204,7 +204,19 @@ function renderReview() {
         <button class="btn" id="yes">${kind.ask === 'name' ? "Yes, that's right" : 'Yes, that reads right'}</button>
         <button class="btn btn-ghost" id="no">${kind.ask === 'name' ? "No, it's someone else" : "No, that's not it"}</button>
       </div>
+      <button class="linkish" id="note">Add a note</button>
       <button class="linkish" id="skip">Skip this one for now</button>
+    </div>
+
+    <div id="noteBlock" hidden>
+      <p class="ask">Anything worth remembering about this one?</p>
+      <input type="text" id="noteIn" autocomplete="off"
+             placeholder="who they are, where they're from — only if you know">
+      <p class="note-inline">Entirely optional. Only you can say; nothing here is guessed.</p>
+      <div class="name-actions">
+        <button class="btn" id="noteSave">Save note</button>
+        <button class="btn btn-ghost" id="noteCancel">Back</button>
+      </div>
     </div>
 
     <div id="fixBlock" hidden>
@@ -218,7 +230,19 @@ function renderReview() {
     </div>`;
   box.appendChild(card);
 
+  let pendingNote = '';
   $('#hear').onclick = () => toast(DEMO ? "Audio isn't loaded in the demo" : 'Playing…');
+  $('#note').onclick = () => {
+    $('#askBlock').hidden = true; $('#noteBlock').hidden = false;
+    $('#noteIn').value = pendingNote; $('#noteIn').focus();
+  };
+  $('#noteCancel').onclick = () => { $('#askBlock').hidden = false; $('#noteBlock').hidden = true; };
+  $('#noteSave').onclick = () => {
+    pendingNote = $('#noteIn').value.trim();
+    $('#askBlock').hidden = false; $('#noteBlock').hidden = true;
+    $('#note').textContent = pendingNote ? 'Edit note' : 'Add a note';
+    if (pendingNote) toast('Noted — saved with this entry.');
+  };
   $('#yes').onclick = () => commit(n.guess, true);
   $('#skip').onclick = next;
 
@@ -247,7 +271,7 @@ function renderReview() {
   function next() { state.nameIdx++; renderReview(); }
   function commit(value, wasGuessRight) {
     state.glossary.unshift({ id: n.id, english: value, greek: n.greek, kind: n.kind,
-                             heard: n.heard, confirmed: true });
+                             heard: n.heard, note: pendingNote, confirmed: true });
     toast(wasGuessRight
       ? `Good — "${value}" is now fixed everywhere.`
       : `Changed to "${value}" — updated in every recording.`);
@@ -261,22 +285,52 @@ function renderGlossList() {
   $('#glossEmpty').hidden = state.glossary.length > 0;
   for (const g of state.glossary) {
     const row = el('div', 'gloss-row');
+    row.dataset.id = g.id;
     row.innerHTML = `
-      <div>
+      <div class="gloss-main">
         <b>${g.english}</b>
         <span class="muted" style="font-size:.82rem"> · ${g.greek}</span>
-        <div class="muted" style="font-size:.78rem">${KIND[g.kind]?.chip || 'Word'}${
-          g.note ? ' · ' + g.note : ''} · heard ${g.heard} times</div>
+        <div class="muted" style="font-size:.78rem">${KIND[g.kind]?.chip || 'Word'} · heard ${g.heard} times</div>
+        ${g.note ? `<div class="gloss-note">${g.note}</div>` : ''}
       </div>
       <button class="linkish" data-edit="${g.id}">Change</button>`;
     box.appendChild(row);
   }
   box.onclick = e => {
     const id = e.target.dataset.edit;
-    if (!id) return;
-    const g = state.glossary.find(x => x.id === id);
-    const v = prompt(`What should "${g.greek}" be called in English?`, g.english);
-    if (v && v.trim()) { g.english = v.trim(); renderGlossList(); toast('Updated everywhere.'); }
+    if (id) return editRow(id);
+  };
+}
+
+function editRow(id) {
+  const g = state.glossary.find(x => x.id === id);
+  const row = $(`.gloss-row[data-id="${id}"]`);
+  row.classList.add('editing');
+  row.innerHTML = `
+    <div class="gloss-main">
+      <div class="field" style="margin-bottom:10px">
+        <label>Called this in English</label>
+        <input type="text" id="edEn" value="${g.english}">
+      </div>
+      <div class="field" style="margin:0">
+        <label>Your note <span class="muted">(optional)</span></label>
+        <input type="text" id="edNote" value="${g.note || ''}"
+               placeholder="only if you know — nothing here is guessed">
+      </div>
+      <div class="name-actions">
+        <button class="btn btn-sm" id="edSave">Save</button>
+        <button class="btn btn-ghost btn-sm" id="edCancel">Cancel</button>
+      </div>
+    </div>`;
+  $('#edEn').focus();
+  $('#edCancel').onclick = renderGlossList;
+  $('#edSave').onclick = () => {
+    const v = $('#edEn').value.trim();
+    if (!v) return toast('Give it a name, or press Cancel.');
+    g.english = v;
+    g.note = $('#edNote').value.trim();
+    renderGlossList();
+    toast('Updated in every recording.');
   };
 }
 
@@ -311,8 +365,8 @@ function renderPending() {
   const mins = state.pending.length * 45;
   $('#estimate').innerHTML =
     `<b>${state.pending.length} recording${state.pending.length > 1 ? 's' : ''}</b> —
-     roughly ${(mins / 60).toFixed(1)} hours of listening, costing about
-     <b>${money(mins / 60 * 0.55)}</b>. Best started in the evening.`;
+     roughly ${(mins / 60).toFixed(1)} hours of work, costing about
+     <b>${money(mins / 60 * 0.55)}</b>. You can stop and pick it up again any time.`;
 
   box.oninput = e => {
     const i = e.target.dataset.label ?? e.target.dataset.side;
@@ -330,28 +384,31 @@ function addFiles(files) {
   renderPending();
 }
 
-// ---------------------------------------------------------------- night mode
+// ------------------------------------------------- the run screen
+// Shown while it works. Deliberately says nothing about time of day: she may run this
+// overnight, or during a workday in the background. The only real constraint is that the
+// window stays open and the machine stays awake.
 
-let nightTimer = null;
-function openNight(tape) {
-  $('#night').hidden = false;
+let runTimer = null;
+function openRunScreen(tape) {
+  $('#runScreen').hidden = false;
   const total = tape.minutes;
   let p = tape.progress || 0;
   const paint = () => {
     const C = 2 * Math.PI * 52;
     $('#ring').setAttribute('stroke-dashoffset', String(C * (1 - p)));
-    $('#nightPct').textContent = Math.round(p * 100) + '%';
-    $('#nightWhat').textContent = `Reading ${tape.label}`;
+    $('#runPct').textContent = Math.round(p * 100) + '%';
+    $('#runWhat').textContent = `Reading ${tape.label}`;
     const left = Math.max(1, Math.round(total * (1 - p)));
-    $('#nightLeft').textContent = `about ${left} minute${left > 1 ? 's' : ''} left on this one`;
+    $('#runLeft').textContent = `about ${left} minute${left > 1 ? 's' : ''} left on this one`;
   };
   paint();
   if (DEMO) {
-    clearInterval(nightTimer);
-    nightTimer = setInterval(() => { p = Math.min(1, p + 0.01); paint(); if (p >= 1) clearInterval(nightTimer); }, 700);
+    clearInterval(runTimer);
+    runTimer = setInterval(() => { p = Math.min(1, p + 0.01); paint(); if (p >= 1) clearInterval(runTimer); }, 700);
   }
 }
-$('#nightExit').onclick = () => { $('#night').hidden = true; clearInterval(nightTimer); };
+$('#runExit').onclick = () => { $('#runScreen').hidden = true; clearInterval(runTimer); };
 
 // ---------------------------------------------------------------- settings
 
@@ -409,7 +466,7 @@ $('#startRun').onclick = () => {
               cost: 0, date: null, heading: null, segments: [] };
   state.tapes.push(t);
   state.pending = [];
-  openNight(t);
+  openRunScreen(t);
   renderLibrary();
 };
 

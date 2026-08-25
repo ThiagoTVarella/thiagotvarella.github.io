@@ -109,8 +109,9 @@
   <!-- add ------------------------------------------------------------------- -->
   <section class="view" id="v-add" hidden>
     <h1>Add recordings</h1>
-    <p class="lede">Drop in as many as you like. They'll be worked through one at a time —
-      roughly an hour of listening for each hour of tape, so it's best left running overnight.</p>
+    <p class="lede">Drop in as many as you like. They'll be worked through one at a time,
+      taking roughly as long as the tapes themselves — so start them whenever suits you
+      and go and do something else.</p>
     <label class="drop" id="drop" for="fileInput">
       <div style="font-size:2rem;opacity:.5">＋</div>
       <div style="margin-top:8px"><b>Drop audio files here</b></div>
@@ -170,20 +171,21 @@
   </section>
 </main>
 
-<!-- overnight run -->
-<div class="night" id="night" hidden>
-  <svg class="n-ring" viewBox="0 0 120 120">
+<!-- shown while it works -->
+<div class="runscreen" id="runScreen" hidden>
+  <svg class="r-ring" viewBox="0 0 120 120">
     <circle class="t" cx="60" cy="60" r="52"></circle>
     <circle class="v" cx="60" cy="60" r="52" id="ring"
             transform="rotate(-90 60 60)" stroke-dasharray="326.7" stroke-dashoffset="326.7"></circle>
   </svg>
-  <div class="n-big" id="nightPct">0%</div>
-  <div class="n-sub" id="nightWhat">Getting started…</div>
-  <div class="n-sub" id="nightLeft" style="margin-top:14px"></div>
-  <div class="n-sub" style="margin-top:22px;font-size:.82rem">
-    Leave this window open and the lid up. It'll keep going through the night.
+  <div class="r-big" id="runPct">0%</div>
+  <div class="r-sub" id="runWhat">Getting started…</div>
+  <div class="r-sub" id="runLeft" style="margin-top:14px"></div>
+  <div class="r-sub" style="margin-top:22px;font-size:.82rem">
+    Keep this window open and stop your computer going to sleep. Other than that you can
+    leave it to itself and check back whenever.
   </div>
-  <button class="btn btn-ghost n-exit" id="nightExit">Leave this screen</button>
+  <button class="btn btn-ghost r-exit" id="runExit">Leave this screen</button>
 </div>
 
 <audio id="player" hidden></audio>
