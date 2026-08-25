@@ -656,6 +656,30 @@ what a click should tell her) are pure and exported, because `ui.js` touches `do
 module load and cannot be imported into the plain-node suite -- these are exactly the parts
 with real branching, so they are what needed tests, not just eyeballing.
 
+### A browser recording has no duration in its header
+
+The same defect, found twice. `MediaRecorder` writes timeslices as they arrive and never
+goes back to fill in the container header, so a recording made in the browser carries no
+duration at all. First this surfaced as `<audio>.duration === Infinity`, which made the
+test-playback seek bar snap to the end. Then the same file failed the pipeline outright:
+ffmpeg reads the same empty header, reports `Duration: N/A`, and `prepareTape` threw
+*"Couldn't work out how long this recording is."*
+
+Fixing the player did not fix the pipeline, because they read the length by different
+routes. The pipeline's fix is `parseProgressDuration()`: any pass that actually decodes the
+stream prints its running position as `time=HH:MM:SS.ms`, and the last one is where the
+audio ended. Silence detection already decodes the whole file, so the real duration comes
+free from a pass we were running anyway — the header is preferred when present, and the
+measured value is the fallback.
+
+One guard matters: a measured length is only trusted if that decode pass **ran to
+completion**. A pass that dies after a fraction of a second has still printed a position,
+and believing it would treat a 45-minute side as a few seconds — silently discarding almost
+the whole recording, which is far worse than failing outright.
+
+Verified end to end on a real 9-second browser recording (the exact case reported):
+duration recovered as 9s, three chunks, 9.00s of 9s covered with no gaps.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.

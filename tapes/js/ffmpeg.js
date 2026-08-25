@@ -36,6 +36,25 @@ export function parseDuration(log) {
          (last[4] ? parseFloat('0.' + last[4]) : 0);
 }
 
+// A stream recorded live in the browser has NO duration in its container -- MediaRecorder
+// writes timeslices as they arrive and never goes back to fill in the header. ffmpeg reports
+// `Duration: N/A` for these, which is the same underlying defect that made the <audio>
+// element report Infinity for the test playback.
+//
+// The length is still recoverable: any pass that actually decodes the stream prints its
+// running position as `time=HH:MM:SS.ms`, and the last one it prints is where the audio
+// ended. Since silence detection already decodes the whole file, the real duration is
+// available from a pass we are running anyway -- no extra work.
+export function parseProgressDuration(log) {
+  const re = /time=\s*(-?\d+):(\d{2}):(\d{2})(?:\.(\d+))?/g;
+  let m, last = null;
+  while ((m = re.exec(String(log || ''))) !== null) last = m;
+  if (!last) return null;
+  const secs = (+last[1]) * 3600 + (+last[2]) * 60 + (+last[3]) +
+               (last[4] ? parseFloat('0.' + last[4]) : 0);
+  return secs > 0 ? secs : null;
+}
+
 export class TapeAudio {
   // `factory` exists so tests can drive the whole orchestration with a fake engine --
   // no wasm, no network, no audio.
@@ -104,12 +123,21 @@ export class TapeAudio {
     return parseDuration(log);
   }
 
+  // Returns { silences, duration }. The duration is what this decode pass actually observed,
+  // which is the only way to learn the length of a stream whose header does not carry one.
   async scanSilences(input, total, opts = {}) {
     const o = { ...DEFAULTS, ...opts };
-    let log = '';
+    let log = '', ok = true;
     try { log = await this.#run(silenceScanArgs(input, o)); }
-    catch (e) { log = this.log.join('\n'); }
-    return parseSilenceLog(log, total);
+    catch (e) { log = this.log.join('\n'); ok = false; }
+    // Only trust a measured length from a pass that actually ran to the end. A decode that
+    // died early still printed a position, and believing it would silently treat a
+    // 45-minute side as a few seconds -- losing almost the whole recording without an error.
+    const measured = ok ? parseProgressDuration(log) : null;
+    const duration = total ?? measured;
+    // parseSilenceLog needs the total to close a silence that runs to the end of the file,
+    // so it must be given the measured value when the header had none.
+    return { silences: parseSilenceLog(log, duration), duration, measured, ok };
   }
 
   // One chunk, read out and immediately freed. Never accumulate outputs in MEMFS.
@@ -147,11 +175,17 @@ export async function prepareTape(file, {
   stage('reading');
   const input = await audio.mount(file);
 
-  const duration = await audio.probeDuration(input);
-  if (!duration) throw new Error("Couldn't work out how long this recording is.");
+  // May be null: a stream recorded in the browser carries no duration in its header.
+  // That is not a failure -- the silence scan below decodes the whole file anyway and
+  // reports the length it actually observed.
+  const headerDuration = await audio.probeDuration(input);
 
   stage('listening');
-  const silences = await audio.scanSilences(input, duration, opts);
+  const scan = await audio.scanSilences(input, headerDuration, opts);
+  const silences = scan.silences;
+  const duration = headerDuration ?? scan.duration;
+
+  if (!duration) throw new Error("Couldn't work out how long this recording is.");
 
   const planned = markSilentChunks(planChunks(silences, duration, opts), silences);
 
