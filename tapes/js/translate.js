@@ -69,7 +69,7 @@ ${glossaryBlock(glossary)}
 Return ONLY JSON of this shape:
 {
   "translations": [{"id": "<segment id, exactly as given>", "en": "<English>"}],
-  "flags": [{"id": "<segment id>", "type": "name"|"place"|"garbled"|"uncertain",
+  "flags": [{"id": "<segment id>", "type": "word"|"phrase",
              "greek": "<the exact Greek span in question>", "guess": "<your best reading>"}],
   "dates": [{"id": "<segment id>", "spoken": "<the date as spoken, in Greek>",
              "iso": "<YYYY-MM-DD, or YYYY-MM, or YYYY if only partly stated>"}]
@@ -77,8 +77,13 @@ Return ONLY JSON of this shape:
 
 Rules:
 - Emit exactly one translation per input id. Never merge, split, drop, or invent ids.
-- Flag every personal name and place name the FIRST time it appears in this batch, even
-  if you are confident: she does not speak Greek and is relying on these to build a glossary.
+- Flag every proper name the FIRST time it appears in this batch, even if you are
+  confident: she does not speak Greek and is relying on these to build a glossary.
+- "type" describes only the SHAPE of the problem, never what the thing is: use "word" for a
+  single unclear term she could hear and spell back, and "phrase" for a longer stretch the
+  tape blurred. Do NOT categorise anything as a person, a place, an organisation, or
+  anything else. Κώστας may be a man, a boat, or a name day; Καλαμάτα may be a city or the
+  olives. You cannot tell from the audio and neither can we, so do not guess.
 - "dates" is for dates he SPEAKS as the date of the entry, not dates merely mentioned.
 - Never add explanatory notes about who a person is or how they are related to anyone.
   Translate what he says and nothing more. If he calls someone his wife, that is his
