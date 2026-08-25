@@ -7,6 +7,7 @@ import * as audio from '../js/audio.js';
 import * as asr from '../js/asr.js';
 import * as store from '../js/store.js';
 import * as tr from '../js/translate.js';
+import * as gl from '../js/glossary.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -540,6 +541,117 @@ at('compareModels survives one model failing outright', async () => {
   eq(r.runs[1].error, 'model unavailable', 'a failing model must be reported, not thrown');
   ok(r.rows.every(row => row.versions[0].en), 'the working model still produces output');
   ok(r.rows.every(row => row.versions[1].en === null), 'the failed model yields nulls');
+});
+
+// ------------------------------------------------------------- glossary.js
+
+const ENTRY = { id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας',
+                observed_forms: ['Κώστα', 'Γκόστα'], english: 'Kostas' };
+
+at('normalizeGreek folds accents, case, and final sigma', async () => {
+  eq(gl.normalizeGreek('Κώστας'), gl.normalizeGreek('ΚΩΣΤΑΣ'));
+  eq(gl.normalizeGreek('Κώστας'), 'κωστασ');
+});
+
+at('sameWord matches across Greek inflection', async () => {
+  ok(gl.sameWord('Κώστας', 'Κώστα'), 'nominative and genitive are the same name');
+  ok(gl.sameWord('Ελένη', 'Ελένης'));
+  ok(!gl.sameWord('Κώστας', 'Ελένη'), 'different names must not collide');
+});
+
+at('sameWord does not collide short unrelated words', async () => {
+  ok(!gl.sameWord('και', 'με'));
+});
+
+at('greekMentions finds a declined form inside a sentence', async () => {
+  ok(gl.greekMentions('Ήρθε ο Κώστας το μεσημέρι.', ENTRY));
+  ok(gl.greekMentions('Πήγα στου Κώστα το σπίτι.', ENTRY), 'genitive inside a phrase');
+  ok(gl.greekMentions('Ήρθε ο Γκόστα σήμερα.', ENTRY), 'a recorded ASR mangling still matches');
+  ok(!gl.greekMentions('Η Ελένη μαγείρεψε φασόλια.', ENTRY));
+});
+
+at('confirming the existing guess costs nothing anywhere', async () => {
+  const segs = [{ id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας.', en: 'Kostas came.' }];
+  const plan = gl.planCorrection(segs, ENTRY, 'Kostas', 'Kostas');
+  eq(plan.tier, gl.TIER.NONE);
+  eq(plan.substitute.length, 0);
+  eq(plan.retranslate.length, 0);
+  eq(gl.estimateCost(plan), 0);
+  eq(gl.describePlan(plan), 'Nothing else needs changing — it already reads that way.');
+});
+
+at('a renaming is a free substitution, not a re-translation', async () => {
+  const segs = [
+    { id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας το μεσημέρι.', en: 'Costas came at midday.' },
+    { id: 's1', tape: 't1', gr: 'Πήγα στου Κώστα το σπίτι.',  en: "I went to Costas' house." },
+    { id: 's2', tape: 't1', gr: 'Η Ελένη μαγείρεψε.',          en: 'Eleni cooked.' }
+  ];
+  const plan = gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas');
+  eq(plan.tier, gl.TIER.SUBSTITUTE);
+  eq(plan.substitute.map(s => s.id), ['s0', 's1']);
+  eq(plan.untouched, 1, 'a sentence that never mentions him is not touched');
+  eq(plan.retranslate.length, 0, 'no model call needed for a pure renaming');
+  eq(gl.estimateCost(plan), 0);
+  eq(plan.substitute[0].preview, 'Kostas came at midday.');
+  eq(plan.substitute[1].preview, "I went to Kostas' house.");
+});
+
+at('substitution is whole-word, so it cannot corrupt other words', async () => {
+  eq(gl.substitute('Ann and Anna went', 'Ann', 'Anne'), 'Anne and Anna went');
+  eq(gl.substitute("Costas' house, Costas.", 'Costas', 'Kostas'), "Kostas' house, Kostas.");
+  eq(gl.findRendering('Anna went', 'Ann'), false, 'must not match inside a longer word');
+});
+
+at('a segment whose English lost the name is re-translated, not blindly swapped', async () => {
+  // The model read the mangled name as an ordinary word, so no swap could fix the sentence.
+  const segs = [{ id: 's0', tape: 't1', gr: 'Ήρθε ο Γκόστα σήμερα.', en: 'The cost came today.' }];
+  const plan = gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas');
+  eq(plan.tier, gl.TIER.RETRANSLATE);
+  eq(plan.substitute.length, 0, 'a blind swap here would leave a broken sentence');
+  eq(plan.retranslate.map(s => s.id), ['s0']);
+  ok(gl.estimateCost(plan) > 0 && gl.estimateCost(plan) < 0.01, 'per-sentence, not per-tape');
+});
+
+at('applying a correction keeps the original so it can be undone', async () => {
+  const segs = [{ id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας.', en: 'Costas came.' }];
+  const plan = gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas');
+  const { segments, audit } = gl.applySubstitutions(segs, plan, ENTRY);
+  eq(segments[0].en, 'Kostas came.');
+  eq(segments[0].enOriginal, 'Costas came.', 'the machine original must be preserved');
+  eq(audit.segments, ['s0']);
+  eq(gl.undo(segments, audit)[0].en, 'Costas came.', 'a bad correction must be reversible');
+});
+
+at('repeated corrections do not lose the true original', async () => {
+  let segs = [{ id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας.', en: 'Costas came.' }];
+  segs = gl.applySubstitutions(segs, gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas'), ENTRY).segments;
+  segs = gl.applySubstitutions(segs, gl.planCorrection(segs, ENTRY, 'Kostas', 'Konstantinos'), ENTRY).segments;
+  eq(segs[0].en, 'Konstantinos came.');
+  eq(segs[0].enOriginal, 'Costas came.', 'still the machine original, not the intermediate');
+});
+
+at('answering several names is one sweep, deduped', async () => {
+  const segs = [
+    { id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας.',   en: 'Costas came.' },
+    { id: 's1', tape: 't1', gr: 'Ήρθε ο Γκόστα.',   en: 'The cost arrived.' }
+  ];
+  const merged = gl.mergePlans([
+    gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas'),
+    gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas')
+  ]);
+  ok(!merged.substitute.some(x => merged.retranslate.some(r => r.id === x.id)),
+     'a segment queued for re-translation must not also be substituted');
+});
+
+at('describePlan speaks plainly and never mentions re-transcribing', async () => {
+  const segs = [
+    { id: 's0', tape: 't1', gr: 'Ήρθε ο Κώστας.', en: 'Costas came.' },
+    { id: 's1', tape: 't1', gr: 'Ήρθε ο Γκόστα.', en: 'The cost arrived.' }
+  ];
+  const d = gl.describePlan(gl.planCorrection(segs, ENTRY, 'Costas', 'Kostas'));
+  ok(/updated in 1 place/.test(d), d);
+  ok(/1 sentence re-read/.test(d), d);
+  ok(!/transcri/i.test(d), 'a glossary fix must never imply re-transcription');
 });
 
 const run = async () => {
