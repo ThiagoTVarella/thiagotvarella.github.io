@@ -595,7 +595,7 @@ $('#startRun').onclick = async () => {
       spend: total => { state.spent = total; },
       capped: () => {
         closeRunScreen();
-        toast('Paused — the allowance ran out and needs renewing. (LIMIT-REACHED)');
+        toast('LIMIT REACHED');
       },
       readOnly: () => {
         closeRunScreen();
