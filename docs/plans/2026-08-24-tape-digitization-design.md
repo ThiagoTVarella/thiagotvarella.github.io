@@ -332,11 +332,14 @@ This is the difference between "a pile of transcripts" and "her grandfather's di
 ## Cost
 
 - **ASR:** ~$110 for 300 hours (MAI at $0.36/hr). Whisper-via-Groq fallback ≈ $8.
-- **Translation:** `anthropic/claude-sonnet-5`, verified Aug 2026 at **$2/M in, $10/M out**.
-  ~2.4–2.7M spoken words ≈ 5–7M Greek input tokens (~$12), ~1.7M tokens of system-prompt and
-  rolling-context overhead re-sent across ~2,400 batches (~$3), and 5–6M output tokens (~$55).
-  **≈ $70–90 per full pass** — and re-translation multiplies passes, which is why only batches
-  containing a changed glossary term get re-run. The first draft's "$50" was optimistic.
+- **Translation:** `google/gemini-3.7-flash` by default, verified Aug 2026 at **$0.375/M in,
+  $1.875/M out**. ~7M Greek input tokens (~$2.60), ~1.7M tokens of system-prompt and
+  rolling-context overhead across ~2,400 batches (~$0.60), ~5.5M output tokens (~$10.30).
+  **≈ $13 per full pass.** Claude Sonnet 5 ($2/$10) would be ~$70–90 for the same work.
+  Because the Greek transcripts are stored, translation is **re-runnable at any time for the
+  price of one pass** — so the cheap default is low-risk, and the money belongs on
+  transcription, which cannot be redone without the physical tape. Model is a Settings
+  dropdown; re-translation still targets only batches containing a changed glossary term.
 - Add OpenRouter's ~5% credit fee.
 - Accumulate `usage.cost` per request into `tape.json`; **pause the queue at a spend ceiling.**
 

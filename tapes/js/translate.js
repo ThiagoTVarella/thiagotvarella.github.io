@@ -5,9 +5,17 @@
 // dates, because a diary that cannot be ordered chronologically is just a pile of text.
 
 const CHAT = 'https://openrouter.ai/api/v1/chat/completions';
-// Verified Aug 2026: $2/M in, $10/M out, 1M context. Opus-class is not worth ~5x here --
-// this is high-volume faithful translation, not reasoning. Configurable in Settings.
-export const DEFAULT_MODEL = 'anthropic/claude-sonnet-5';
+// Greek->English is well served by cheap models, and the Greek transcripts are kept on
+// disk, so translation is re-runnable at any time for the price of one pass. That makes
+// defaulting cheap the right risk: if the English reads badly, re-run with a better model.
+// Spend the money on transcription instead -- that one cannot be redone without the tape.
+// Prices verified Aug 2026, per million tokens.
+export const TRANSLATION_MODELS = [
+  { id: 'google/gemini-3.7-flash',   label: 'Gemini 3.7 Flash (default)', in: 0.375, out: 1.875 },
+  { id: 'anthropic/claude-sonnet-5', label: 'Claude Sonnet 5 (best)',     in: 2.00,  out: 10.00 },
+  { id: 'openai/gpt-5.6-sol',        label: 'GPT-5.6',                    in: 2.00,  out: 10.00 }
+];
+export const DEFAULT_MODEL = 'google/gemini-3.7-flash';
 
 // Deliberately smaller than the 100 the first draft assumed: id-mapped JSON at that size
 // reliably drops entries, merges adjacent ones, and invents ids.
