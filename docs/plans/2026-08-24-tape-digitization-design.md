@@ -332,14 +332,19 @@ This is the difference between "a pile of transcripts" and "her grandfather's di
 ## Cost
 
 - **ASR:** ~$110 for 300 hours (MAI at $0.36/hr). Whisper-via-Groq fallback ≈ $8.
-- **Translation:** `google/gemini-3.7-flash` by default, verified Aug 2026 at **$0.375/M in,
-  $1.875/M out**. ~7M Greek input tokens (~$2.60), ~1.7M tokens of system-prompt and
-  rolling-context overhead across ~2,400 batches (~$0.60), ~5.5M output tokens (~$10.30).
-  **≈ $13 per full pass.** Claude Sonnet 5 ($2/$10) would be ~$70–90 for the same work.
-  Because the Greek transcripts are stored, translation is **re-runnable at any time for the
-  price of one pass** — so the cheap default is low-risk, and the money belongs on
-  transcription, which cannot be redone without the physical tape. Model is a Settings
-  dropdown; re-translation still targets only batches containing a changed glossary term.
+- **Translation:** `google/gemini-3.7-flash`, chosen on **Greek-specific evidence**, not price.
+  On **GreekMMLU** (ACL 2026 Findings; 21,805 native-Greek questions, 80+ models) Gemini 3
+  Flash scores **93.16%**, ahead of GPT-5.2 (87.75%) and GPT-4o (86.81%) — a Flash-tier model
+  beating every flagship on Greek. **GreekBarBench** agrees independently: Gemini-2.5-Flash 8.4
+  > GPT-4.1 8.32 > Claude-3.7-Sonnet 7.71 (human expert 7.78). Claude was absent from
+  GreekMMLU, so it is *unevidenced* on Greek rather than proven worse. Kimi K3 is **more**
+  expensive than Sonnet 5 ($2.80/$14) with no Greek evidence, so it is not a budget option.
+  At $0.375/M in and $1.875/M out this is **≈ $13 per full pass** vs ~$70 for the GPT/Claude tier.
+  **Caveat:** both benchmarks measure *comprehension of clean Greek*, while this task is
+  *generation into English from ASR-garbled Greek* — which no public benchmark covers. Hence
+  `compareModels()`: because the Greek transcripts are stored, re-translating one tape under
+  several models costs cents, and the verdict is **English prose, which she can judge herself.**
+  That converts an unanswerable benchmark question into a five-minute human decision.
 - Add OpenRouter's ~5% credit fee.
 - Accumulate `usage.cost` per request into `tape.json`; **pause the queue at a spend ceiling.**
 
