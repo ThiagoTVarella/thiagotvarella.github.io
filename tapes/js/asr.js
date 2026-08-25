@@ -25,8 +25,28 @@ export const MODELS = {
 
 const API = 'https://openrouter.ai/api/v1/audio/transcriptions';
 
-// Whisper's own hallucination thresholds, from the reference implementation.
-export const HALLUCINATION = { noSpeechProb: 0.6, avgLogprob: -1.0 };
+// Hallucination thresholds, corrected against live data rather than taken from the docs.
+//
+// The textbook rule is `no_speech_prob > 0.6 || avg_logprob < -1.0`, and both halves of that
+// misfire on real transcripts:
+//
+//   * OR over-flags. A correct 2-second segment reading just "1978." came back with
+//     avg_logprob -1.134 -- short segments are naturally less confident, and marking one
+//     suspect teaches her to distrust text that is perfectly right.
+//   * AND under-flags. Twenty seconds of pure tape hiss came back with no_speech_prob 1.000
+//     and avg_logprob 0.000, so requiring both would have let the one case that matters pass.
+//
+// So: no_speech_prob is trusted on its own (it separated hiss 1.000 from speech 0.000
+// cleanly), while avg_logprob only counts on a segment long enough for it to mean anything.
+export const HALLUCINATION = { noSpeechProb: 0.6, avgLogprob: -1.0, minWords: 4 };
+
+export function isSuspect(seg) {
+  if (seg == null) return false;
+  if (seg.no_speech_prob > HALLUCINATION.noSpeechProb) return true;
+  const words = String(seg.text || '').trim().split(/\s+/).filter(Boolean).length;
+  return words >= HALLUCINATION.minWords &&
+         seg.avg_logprob != null && seg.avg_logprob < HALLUCINATION.avgLogprob;
+}
 
 // Greek sentence terminators. Note ';' is the Greek question mark and '·' the ano teleia.
 const SENTENCE_END = /([.;!?·…]+)(\s+|$)/g;
@@ -106,8 +126,7 @@ export function normalizeWhisper(res, chunk) {
       logprob: s.avg_logprob != null ? s.avg_logprob : null,
       confidence: toConfidence(s.avg_logprob),
       noSpeechProb: s.no_speech_prob != null ? s.no_speech_prob : null,
-      suspect: (s.no_speech_prob > HALLUCINATION.noSpeechProb) ||
-               (s.avg_logprob != null && s.avg_logprob < HALLUCINATION.avgLogprob)
+      suspect: isSuspect(s)
     }))
   };
 }
