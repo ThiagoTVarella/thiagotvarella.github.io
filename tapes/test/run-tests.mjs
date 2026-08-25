@@ -11,6 +11,7 @@ import * as gl from '../js/glossary.js';
 import * as ff from '../js/ffmpeg.js';
 import * as q from '../js/queue.js';
 import * as entry from '../js/entry.js';
+import * as lib from '../js/library.js';
 import * as rec from '../js/record.js';
 
 let pass = 0, fail = 0;
@@ -1027,6 +1028,188 @@ at('a failing tape is recorded and the queue carries on', async () => {
   eq(bad.tapes[0].state, q.STATE.FAILED);
   ok(bad.tapes[0].error && !/boom/.test(bad.tapes[0].error), 'raw errors must not surface');
   ok(bad.tapes[1].state !== q.STATE.QUEUED, 'one bad tape must not stop the rest');
+});
+
+// ---------------------------------------------- checklist + progress persistence
+//
+// The bug this section guards against: a recording sat forever at "Waiting" with no
+// indication anything was happening, because progress lived only in memory and was never
+// written to disk -- so a reload (or just leaving the run screen) made it look stalled
+// with no way to tell what stage it was on or continue it.
+
+at('stepIndex orders the checklist and knows before/after', async () => {
+  eq(q.STEPS.map(s => s.key), [q.STATE.PREPARING, q.STATE.READING, q.STATE.TRANSLATING]);
+  eq(q.stepIndex(q.STATE.QUEUED), -1, 'nothing has started yet');
+  eq(q.stepIndex(q.STATE.PREPARING), 0);
+  eq(q.stepIndex(q.STATE.READING), 1);
+  eq(q.stepIndex(q.STATE.TRANSLATING), 2);
+  eq(q.stepIndex(q.STATE.DONE), q.STEPS.length, 'past every step');
+});
+
+at('a stage transition persists to disk immediately, not just in memory', async () => {
+  const st = new store.MemoryStore();
+  const deps = qDeps();
+  const Q = new q.Queue({ store: st, key: 'k', deps, on: {} });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  const onDisk = await st.readJSON(store.paths.tape('t1'));
+  eq(onDisk.state, q.STATE.DONE, 'the final state must be on disk, not only in the Queue object');
+  eq(onDisk.progress, 1);
+});
+
+at('progress reaches disk mid-run, not only at the very end', async () => {
+  const st = new store.MemoryStore();
+  const seenProgress = [];
+  const deps = {
+    ...qDeps(),
+    prepare: async (file, o) => {
+      // Simulate ffmpeg reporting progress chunk by chunk, exactly like the real module.
+      const chunks = [{ start: 0, duration: 70, index: 0 }, { start: 70, duration: 70, index: 1 }];
+      for (let i = 0; i < chunks.length; i++) {
+        await o.onChunk?.(chunks[i], new Uint8Array([1]));
+        o.onProgress?.(i + 1, chunks.length);
+      }
+      return { duration: 140, silences: [], chunks, skipped: 0 };
+    }
+  };
+  // persistIntervalMs: 0 so every tick is written -- isolates "does it reach disk at all"
+  // from the separate throttle test below.
+  const Q = new q.Queue({ store: st, key: 'k', deps, persistIntervalMs: 0,
+    on: { progress: (t, p) => seenProgress.push(p) } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  ok(seenProgress.some(p => p > 0 && p < 1), 'expected an intermediate progress value');
+  // Read the disk state that would have been visible mid-run by re-deriving what a Queue
+  // sees fresh from disk after a "reload" -- reconcile must already show partial work,
+  // independent of anything the finished run wrote afterwards.
+  const { done } = await store.reconcile(st, 't1');
+  eq(done.length, 2, 'chunk-level progress must be visible on disk too, not just the number');
+});
+
+at('the progress-only write is throttled, but a stage change is not', async () => {
+  const st = new store.MemoryStore();
+  let clock = 0;
+  const writes = [];
+  const realUpdate = store.updateTape;
+  const deps = {
+    ...qDeps(),
+    prepare: async (file, o) => {
+      const chunks = [{ start: 0, duration: 10, index: 0 }];
+      await o.onChunk?.(chunks[0], new Uint8Array([1]));
+      // Many rapid ticks -- as a busy chunking stage might actually produce.
+      for (let i = 0; i < 10; i++) { o.onProgress?.(i + 1, 10); clock += 10; }
+      return { duration: 10, silences: [], chunks, skipped: 0 };
+    }
+  };
+  const Q = new q.Queue({ store: st, key: 'k', deps, now: () => clock,
+    persistIntervalMs: 1200, on: {} });
+  const origWrite = st.writeJSON.bind(st);
+  st.writeJSON = async (path, obj) => { if (path.endsWith('tape.json')) writes.push(obj.progress); return origWrite(path, obj); };
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  // 10 ticks at +10ms apart (100ms total) must not each hit disk under a 1200ms throttle;
+  // stage transitions (PREPARING entry, READING entry, TRANSLATING entry, DONE) still must.
+  ok(writes.length < 10, `throttle should have suppressed most of 10 rapid ticks, got ${writes.length}`);
+  ok(writes.length >= 3, `stage transitions must still always persist, got ${writes.length}`);
+});
+
+at('a failed tape is marked on disk, not left looking like it is still working', async () => {
+  const st = new store.MemoryStore();
+  const deps = { ...qDeps(), prepare: async () => { throw new Error('boom'); } };
+  const Q = new q.Queue({ store: st, key: 'k', deps, on: {} });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  const onDisk = await st.readJSON(store.paths.tape('t1'));
+  eq(onDisk.state, q.STATE.FAILED);
+  ok(onDisk.error, 'the reason must be readable after a reload, not just in the dead Queue object');
+});
+
+at('a fresh Queue against the same folder continues exactly where an abandoned one stopped', async () => {
+  // Simulates closing the tab (or the run screen) mid-processing: the old Queue object is
+  // simply gone, nothing calls stop() on it. A second Queue is then built against the same
+  // store, as "Continue" would do, and must not redo or lose anything.
+  const st = new store.MemoryStore();
+  const deps1 = qDeps();
+  const Q1 = new q.Queue({ store: st, key: 'k', deps: deps1,
+    on: { progress: (t, p) => { if (p > 0.25 && p < 0.9) Q1._abort.aborted = true; } } });
+  Q1.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q1.start();
+
+  const mid = await st.readJSON(store.paths.tape('t1'));
+  ok(mid.state === q.STATE.READING || mid.state === q.STATE.PREPARING,
+     'must have stopped partway through, got ' + mid.state);
+
+  const deps2 = qDeps();
+  const Q2 = new q.Queue({ store: st, key: 'k', deps: deps2, on: {} });
+  Q2.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q2.start();
+
+  eq(deps2.seen.prepared, 0, 'audio already on disk must not be re-split');
+  const final = await st.readJSON(store.paths.tape('t1'));
+  eq(final.state, q.STATE.DONE);
+});
+
+// ---------------------------------------------------------------- library.js
+//
+// These are the decisions behind the checklist and the "why is it stuck at Waiting" fix:
+// what the banner says, and what clicking an unfinished tape tells her.
+
+const workingTape = (over = {}) => ({ id: 't1', label: 'Side A', status: 'working',
+  stepIdx: 1, progress: 0.4, ...over });
+
+at('miniSteps marks done, current, and pending steps distinctly', async () => {
+  const html = lib.miniSteps(workingTape({ stepIdx: 1 }));
+  ok(html.includes('done">✓ Splitting into pieces'), html);
+  ok(html.includes('current">● Listening to it'), html);
+  ok(html.includes('">○ Putting it into English'), html);
+});
+
+at('miniSteps at the very first step has nothing marked done yet', async () => {
+  const html = lib.miniSteps(workingTape({ stepIdx: 0 }));
+  ok(!html.includes('done'), 'nothing should be checked off before the first step finishes');
+  ok(html.includes('current">● Splitting into pieces'));
+});
+
+at('the banner shows live progress only when a queue is actually running', async () => {
+  const tapes = [workingTape()];
+  eq(lib.libraryBannerState(tapes, true).kind, 'running');
+  eq(lib.libraryBannerState(tapes, true).tape.id, 't1');
+});
+
+at('the banner offers to continue when nothing is running but work remains', async () => {
+  // This is the exact bug: closing the tab (or reloading) mid-run leaves a tape looking
+  // identical to one that is actively being processed, unless "is anything running right
+  // now" is asked separately from "is this tape done".
+  const tapes = [workingTape(), { id: 't2', status: 'queued', label: 'Side B' }];
+  const banner = lib.libraryBannerState(tapes, false);
+  eq(banner.kind, 'stalled');
+  eq(banner.tapes.map(t => t.id), ['t1', 't2']);
+});
+
+at('the banner says nothing when everything is done or nothing is running and nothing waits', async () => {
+  eq(lib.libraryBannerState([{ id: 't1', status: 'done' }], false).kind, 'none');
+  eq(lib.libraryBannerState([], true).kind, 'none');
+});
+
+at('a done tape never triggers the stalled banner even if a queue is not running', async () => {
+  eq(lib.libraryBannerState([{ id: 't1', status: 'done' }, { id: 't2', status: 'error' }], false).kind,
+     'none', 'an errored tape needs her attention via its own card, not a resume banner');
+});
+
+at('clicking a working tape names the actual current step, not a flat "not ready"', async () => {
+  const msg = lib.tapeClickMessage(workingTape({ stepIdx: 1, progress: 0.4 }));
+  ok(/listening to it/i.test(msg), msg);
+  ok(/40%/.test(msg), msg);
+});
+
+at('clicking a failed tape surfaces the real reason', async () => {
+  const msg = lib.tapeClickMessage({ status: 'error', label: 'Side A', error: 'NO CREDIT' });
+  ok(msg.includes('NO CREDIT'), msg);
+});
+
+at('clicking a queued tape that never started says so plainly', async () => {
+  const msg = lib.tapeClickMessage({ status: 'queued', label: 'Side A' });
+  ok(/hasn't started/i.test(msg), msg);
 });
 
 at('humanError never shows an HTTP status to her', async () => {

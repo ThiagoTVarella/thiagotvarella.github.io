@@ -618,6 +618,44 @@ New tests to add:
 Then, still un-run and the real risk: **one live pass** on any audio file with a real key.
 Nothing has yet met ffmpeg.wasm, WORKERFS, or an actual OpenRouter response.
 
+### Progress that survives closing the tab
+
+Real-world testing (a 9-second recording) found the queue's live progress lived only in
+memory: the library read `tape.json` and saw exactly two states, `DONE` or `FAILED` --
+everything in between (splitting, transcribing, translating) collapsed into the same
+"Waiting" label, forever, with no way to tell what was actually happening. Worse, closing
+or reloading the tab lost the in-memory `Queue` object entirely, so a tape that had barely
+started stayed stuck at "Waiting" with no way to continue it from the UI at all -- even
+though the engine's chunk-by-chunk resume (`pendingChunks`/`reconcile`) already handled
+exactly this case correctly underneath.
+
+Fixed in `queue.js`/`store.js`/`library.js`:
+
+- **`STEPS`/`stepIndex`** in `queue.js` give the checklist a stable, ordered vocabulary:
+  Splitting into pieces → Listening to it → Putting it into English.
+- **Progress and stage now persist to disk.** Stage transitions write immediately
+  (`#persist`); bare progress ticks are throttled (`#maybePersist`, ~1.2s) so a busy chunking
+  loop does not hammer the store for a number that only needs to be roughly current. A
+  reload now finds something recent, not a value frozen at 0%.
+- **`refreshLibrary()` derives real status from disk** (`stepIndex(t.state) >= 0` → `working`
+  with a real percentage), instead of collapsing everything non-terminal into `queued`.
+- **A "Continue" banner** appears whenever some tape is unfinished and no queue is actively
+  running in this tab -- the exact signature of an abandoned run. It rebuilds a `File` from
+  what is already on disk (`tapes/<id>/source.*`) and feeds it back through the same
+  `runQueue()` path a fresh run uses; the engine redoes nothing already finished.
+- **Dropped files are now saved to her folder before processing starts**, not only after --
+  previously only a microphone recording was persisted immediately, so a dropped file
+  interrupted before its first chunk was cut had nothing on disk to resume from. Both paths
+  are symmetric now.
+- **The click-through message on an unfinished tape names its actual stage** (`tapeClickMessage`
+  in `library.js`) instead of a flat "isn't ready yet" -- the exact dead end that made the
+  original bug feel unanswerable.
+
+`library.js` is new: the view *decisions* (what the checklist marks, what the banner says,
+what a click should tell her) are pure and exported, because `ui.js` touches `document` at
+module load and cannot be imported into the plain-node suite -- these are exactly the parts
+with real branching, so they are what needed tests, not just eyeballing.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.
