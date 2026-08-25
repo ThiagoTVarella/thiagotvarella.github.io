@@ -1,0 +1,9 @@
+{
+  "name": "The Tapes",
+  "short_name": "The Tapes",
+  "start_url": "/tapes/",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#faf7f2",
+  "description": "Read a Greek audio diary in English."
+}
