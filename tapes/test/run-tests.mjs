@@ -8,6 +8,8 @@ import * as asr from '../js/asr.js';
 import * as store from '../js/store.js';
 import * as tr from '../js/translate.js';
 import * as gl from '../js/glossary.js';
+import * as ff from '../js/ffmpeg.js';
+import * as q from '../js/queue.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -681,6 +683,329 @@ at('describePlan speaks plainly and never mentions re-transcribing', async () =>
   ok(/updated in 1 place/.test(d), d);
   ok(/1 sentence re-read/.test(d), d);
   ok(!/transcri/i.test(d), 'a glossary fix must never imply re-transcription');
+});
+
+// --------------------------------------------------------------- ffmpeg.js
+
+// A fake engine that records every call, so the orchestration and -- crucially -- the
+// memory discipline can be verified with no wasm, no network, and no audio.
+function fakeFfmpeg({ duration = '00:10:00.00', silences = [] } = {}) {
+  const calls = { exec: [], mount: [], unmount: 0, writeFile: 0, readFile: [], deleteFile: [] };
+  let logSink = null;
+  const ff = {
+    calls,
+    on: (ev, fn) => { if (ev === 'log') logSink = fn; },
+    createDir: async () => {},
+    mount: async (type, cfg, path) => { calls.mount.push({ type, files: cfg.files, path }); },
+    unmount: async () => { calls.unmount++; },
+    writeFile: async () => { calls.writeFile++; },      // must never be called on the input
+    readFile: async n => { calls.readFile.push(n); return new Uint8Array([1, 2, 3]); },
+    deleteFile: async n => { calls.deleteFile.push(n); },
+    terminate: async () => {},
+    exec: async args => {
+      calls.exec.push(args);
+      const emit = m => logSink?.({ message: m });
+      if (args.length === 2 && args[0] === '-i') {
+        emit(`  Duration: ${duration}, start: 0.000000, bitrate: 256 kb/s`);
+        throw new Error('at least one output file must be specified');   // real ffmpeg does this
+      }
+      if (args.join(' ').includes('silencedetect')) {
+        for (const s of silences) {
+          emit(`[silencedetect @ 0x1] silence_start: ${s.start}`);
+          emit(`[silencedetect @ 0x1] silence_end: ${s.end} | silence_duration: ${s.end - s.start}`);
+        }
+      }
+    }
+  };
+  return async () => ff;
+}
+const fakeFile = (name = 'tape.wav') => ({ name, size: 900e6 });
+
+at('parseDuration reads the ffmpeg header, taking the last match', async () => {
+  eq(ff.parseDuration('Duration: 00:45:12.34, start: 0'), 45 * 60 + 12.34);
+  eq(ff.parseDuration('Duration: 01:00:00.00\nDuration: 03:00:00.00'), 10800);
+  eq(ff.parseDuration('no duration here'), null);
+});
+
+at('probeDuration survives ffmpeg exiting non-zero with no output file', async () => {
+  const a = new ff.TapeAudio({ factory: fakeFfmpeg({ duration: '00:45:00.00' }) });
+  await a.load();
+  const input = await a.mount(fakeFile());
+  eq(await a.probeDuration(input), 2700, 'the header still parses from a failed run');
+});
+
+at('the input is mounted with WORKERFS and never written into the wasm heap', async () => {
+  const factory = fakeFfmpeg({ duration: '00:03:00.00' });
+  const engine = new ff.TapeAudio({ factory });
+  const file = fakeFile('big.wav');
+  const r = await ff.prepareTape(file, { engine });
+  const c = (await factory()).calls;
+  eq(c.writeFile, 0, 'writeFile would copy a 0.9GB file into a 2GB heap');
+  eq(c.mount.length, 1);
+  eq(c.mount[0].type, 'WORKERFS', 'must mount, not copy');
+  eq(c.mount[0].files[0], file, 'mounts the File object itself, read lazily off disk');
+  ok(r.chunks.length > 0);
+});
+
+at('every chunk output is deleted from MEMFS as soon as it is read', async () => {
+  const factory = fakeFfmpeg({ duration: '00:05:00.00' });
+  const engine = new ff.TapeAudio({ factory });
+  await ff.prepareTape(fakeFile(), { engine });
+  const c = (await factory()).calls;
+  ok(c.readFile.length > 0, 'expected chunks');
+  eq(c.deleteFile, c.readFile, 'outputs must not accumulate in MEMFS');
+});
+
+at('chunks are handed over one at a time, not accumulated', async () => {
+  const factory = fakeFfmpeg({ duration: '00:05:00.00' });
+  const engine = new ff.TapeAudio({ factory });
+  const seen = [];
+  await ff.prepareTape(fakeFile(), {
+    engine,
+    onChunk: async (chunk, bytes) => { seen.push([chunk.index, bytes.length]); }
+  });
+  ok(seen.length > 1);
+  eq(seen.map(s => s[0]), seen.map((_, i) => i), 'delivered in order');
+  ok(seen.every(s => s[1] === 3), 'each chunk arrives with its bytes');
+});
+
+at('a silent chunk is never cut and never handed over', async () => {
+  // 5 minutes where the middle 200s is dead air.
+  const factory = fakeFfmpeg({ duration: '00:05:00.00', silences: [{ start: 90, end: 300 }] });
+  const engine = new ff.TapeAudio({ factory });
+  const handed = [];
+  const r = await ff.prepareTape(fakeFile(), { engine, onChunk: c => handed.push(c.index) });
+  const skipped = r.chunks.filter(c => c.skipped === 'silent');
+  ok(skipped.length > 0, 'dead air should have been detected');
+  eq(r.skipped, skipped.length);
+  ok(skipped.every(c => !handed.includes(c.index)),
+     'leader tape and dead ends must never reach a model');
+  ok(skipped.every(c => c.bytes === 0), 'and must never be encoded either');
+});
+
+at('the ffmpeg argv actually cuts at the planned offsets', async () => {
+  const factory = fakeFfmpeg({ duration: '00:04:00.00' });
+  const engine = new ff.TapeAudio({ factory });
+  const r = await ff.prepareTape(fakeFile(), { engine });
+  const cuts = (await factory()).calls.exec.filter(a => a.includes('-ss'));
+  eq(cuts.length, r.chunks.filter(c => !c.skipped).length);
+  eq(cuts[0][cuts[0].indexOf('-ss') + 1], '0.000', 'first chunk starts at zero');
+  ok(cuts[0].includes('16000') && cuts[0].includes('32k'), 'mono 16k 32kbps keeps uploads small');
+});
+
+at('progress is reported over the whole plan, including skipped chunks', async () => {
+  const factory = fakeFfmpeg({ duration: '00:05:00.00', silences: [{ start: 90, end: 300 }] });
+  const engine = new ff.TapeAudio({ factory });
+  const seen = [];
+  const r = await ff.prepareTape(fakeFile(), { engine, onProgress: (a, b) => seen.push([a, b]) });
+  eq(seen.length, r.chunks.length, 'skipped chunks still advance the bar');
+  eq(seen[seen.length - 1][0], seen[seen.length - 1][1], 'ends at 100%');
+});
+
+at('stages are announced in order so the UI can say what is happening', async () => {
+  const engine = new ff.TapeAudio({ factory: fakeFfmpeg({ duration: '00:02:00.00' }) });
+  const stages = [];
+  await ff.prepareTape(fakeFile(), { engine, onStage: s => stages.push(s) });
+  eq(stages, ['loading', 'reading', 'listening', 'splitting']);
+});
+
+at('an abort stops cutting partway and still unmounts', async () => {
+  const factory = fakeFfmpeg({ duration: '00:10:00.00' });
+  const engine = new ff.TapeAudio({ factory });
+  const ctrl = { aborted: false };
+  let n = 0;
+  const r = await ff.prepareTape(fakeFile(), {
+    engine, signal: ctrl,
+    onChunk: () => { if (++n === 2) ctrl.aborted = true; }
+  });
+  ok(r.chunks.length < 8, 'should have stopped early, got ' + r.chunks.length);
+  ok((await factory()).calls.unmount >= 1, 'the file must be released even on abort');
+});
+
+at('a recording of unknown length fails with something a person can read', async () => {
+  const engine = new ff.TapeAudio({ factory: fakeFfmpeg({ duration: 'garbage' }) });
+  let msg = null;
+  try { await ff.prepareTape(fakeFile(), { engine }); } catch (e) { msg = e.message; }
+  ok(msg && /how long/.test(msg), 'got: ' + msg);
+  ok(!/undefined|null|NaN/.test(msg), 'no internals in a message she might see');
+});
+
+// ---------------------------------------------------------------- queue.js
+
+// Minimal browser globals so the queue can run under node. Absent APIs must degrade,
+// not crash -- Web Locks and Wake Lock are exactly the things that vary by browser.
+// Node exposes `navigator` as a read-only getter, so it has to be redefined outright.
+const navStub = {};
+Object.defineProperty(globalThis, 'navigator', { value: navStub, writable: true, configurable: true });
+Object.defineProperty(globalThis, 'document', { configurable: true, writable: true,
+  value: { visibilityState: 'visible', addEventListener() {}, removeEventListener() {} } });
+if (!globalThis.btoa) globalThis.btoa = x => Buffer.from(x, 'binary').toString('base64');
+
+function qDeps({ failFirst = 0, translateCost = 0.01, chunkCost = 0.02 } = {}) {
+  let fails = failFirst;
+  const seen = { prepared: 0, transcribed: [], translated: 0 };
+  return {
+    seen,
+    prepare: async (file, o) => {
+      seen.prepared++;
+      const chunks = [
+        { start: 0, duration: 70, index: 0 },
+        { start: 70, duration: 70, index: 1 },
+        { start: 140, duration: 60, index: 2, isSilent: true }
+      ];
+      for (const c of chunks) if (!c.isSilent) await o.onChunk?.(c, new Uint8Array([1]));
+      return { duration: 200, silences: [], chunks, skipped: 1 };
+    },
+    transcribe: async (chunk) => {
+      if (fails-- > 0) { const e = new Error('busy'); e.status = 429; e.retryable = true; throw e; }
+      seen.transcribed.push(chunk.index);
+      return { chunk: chunk.index, start: chunk.start, duration: chunk.duration,
+               segments: [{ id: `c${chunk.index}s0`, text: 'κείμενο', start: chunk.start,
+                            confidence: 0.9 }], cost: chunkCost };
+    },
+    translate: async (segs) => {
+      seen.translated++;
+      return { translations: segs.map(s => ({ id: s.id, en: 'text' })),
+               flags: [], dates: [{ id: segs[0]?.id, iso: '1978-03-14' }],
+               unresolved: [], cost: translateCost };
+    }
+  };
+}
+const newQueue = (extra = {}) => {
+  const st = new store.MemoryStore();
+  const deps = qDeps(extra.depOpts);
+  const events = [];
+  const Q = new q.Queue({ store: st, key: 'k', deps,
+    on: new Proxy({}, { get: (_t, name) => (...a) => events.push([name, ...a]) }),
+    ...extra });
+  return { Q, st, deps, events };
+};
+
+at('a tape runs end to end and lands on disk', async () => {
+  const { Q, st, deps } = newQueue();
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.DONE);
+  eq(deps.seen.transcribed, [0, 1], 'the silent chunk is never transcribed');
+  eq(deps.seen.translated, 1);
+  ok(await st.exists(store.paths.translation('t1')), 'translation written');
+  ok(await st.exists(store.paths.flags('t1')), 'flags written');
+});
+
+at('cost accumulates across both stages and per tape', async () => {
+  const { Q } = newQueue();
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  close(Q.spent, 0.05, 1e-9, 'two chunks at 0.02 plus 0.01 translation');
+  close(Q.tapes[0].cost, 0.05, 1e-9);
+});
+
+at('the spend ceiling pauses the run instead of quietly overspending', async () => {
+  const { Q, events } = newQueue({ spendCap: 0.03 });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  Q.add({ id: 't2', file: { name: 'b.wav' } });
+  await Q.start();
+  ok(events.some(e => e[0] === 'capped'), 'must announce hitting the ceiling');
+  ok(Q.paused, 'and stop');
+  ok(Q.tapes[1].state !== q.STATE.DONE, 'the second tape must not have run');
+});
+
+at('a retryable failure is retried and then succeeds', async () => {
+  const { Q, events } = newQueue({ depOpts: { failFirst: 2 } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.DONE, 'a 429 must not fail the tape');
+  ok(events.some(e => e[0] === 'retry'), 'and should say it is retrying');
+});
+
+at('resuming re-does nothing that is already on disk', async () => {
+  const { Q, st, deps } = newQueue();
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  const firstPass = deps.seen.transcribed.length;
+
+  // Same folder, fresh queue -- as if the browser had been restarted.
+  const deps2 = qDeps();
+  const Q2 = new q.Queue({ store: st, key: 'k', deps: deps2, on: {} });
+  Q2.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q2.start();
+  eq(deps2.seen.transcribed.length, 0, 'nothing already transcribed may be paid for twice');
+  eq(deps2.seen.prepared, 0, 'and the audio must not be re-split');
+  eq(firstPass, 2);
+});
+
+at('a crash mid-tape resumes at the missing chunk, not from the start', async () => {
+  const st = new store.MemoryStore();
+  // Chunk 0 committed, chunk 1 never written.
+  await st.write(store.paths.chunkAudio('t1', 0), new Uint8Array([1]));
+  await st.write(store.paths.chunkAudio('t1', 1), new Uint8Array([1]));
+  await store.saveChunkText(st, 't1', { chunk: 0, segments: [{ id: 'c0s0', text: 'x' }], cost: 0 });
+  await st.writeJSON(store.paths.tape('t1'), { id: 't1', duration: 200,
+    plan: [{ start: 0, duration: 70 }, { start: 70, duration: 70 }] });
+
+  const deps = qDeps();
+  const Q = new q.Queue({ store: st, key: 'k', deps, on: {} });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(deps.seen.transcribed, [1], 'only the missing chunk is redone');
+});
+
+at('a second tab becomes read-only instead of double-billing', async () => {
+  const { Q, events } = newQueue();
+  // Simulate the lock already being held elsewhere.
+  navStub.locks = { request: (_n, _o, cb) => Promise.resolve(cb(null)) };
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  delete navStub.locks;
+  ok(Q.readOnly, 'the second tab must not write');
+  ok(events.some(e => e[0] === 'readOnly'));
+  eq(Q.tapes[0].state, q.STATE.QUEUED, 'and must not process anything');
+});
+
+at('pausing stops before the next tape', async () => {
+  const { Q } = newQueue();
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  Q.add({ id: 't2', file: { name: 'b.wav' } });
+  Q.on = { done: () => Q.pause() };
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.DONE);
+  ok(Q.tapes[1].state !== q.STATE.DONE, 'the queue must honour a pause between tapes');
+});
+
+at('a failing tape is recorded and the queue carries on', async () => {
+  const { Q, st } = newQueue();
+  const bad = new q.Queue({ store: st, key: 'k', on: {},
+    deps: { ...qDeps(), prepare: async () => { throw new Error('boom'); } } });
+  bad.add({ id: 't1', file: { name: 'a.wav' } });
+  bad.add({ id: 't2', file: { name: 'b.wav' } });
+  bad.deps.prepare = async (f) => {
+    if (f.name === 'a.wav') throw new Error('boom');
+    return { duration: 10, silences: [], chunks: [], skipped: 0 };
+  };
+  await bad.start();
+  eq(bad.tapes[0].state, q.STATE.FAILED);
+  ok(bad.tapes[0].error && !/boom/.test(bad.tapes[0].error), 'raw errors must not surface');
+  ok(bad.tapes[1].state !== q.STATE.QUEUED, 'one bad tape must not stop the rest');
+});
+
+at('humanError never shows an HTTP status to her', async () => {
+  eq(q.humanError({ status: 401 }), 'That access key was refused. Check Settings.');
+  ok(/busy/.test(q.humanError({ status: 429 })));
+  ok(/internet/.test(q.humanError(new Error('Failed to fetch'))));
+  const generic = q.humanError(new Error('TypeError: undefined is not a function'));
+  ok(!/undefined|TypeError|[0-9]{3}/.test(generic), 'got: ' + generic);
+});
+
+at('glossary terms are ordered by how often they were heard', async () => {
+  eq(q.glossaryTerms([{ greek: 'Α', heard: 3 }, { greek: 'Β', heard: 40 }, { greek: 'Γ', heard: 9 }]),
+     ['Β', 'Γ', 'Α'], 'the 224-token bias prompt should carry the most common names');
+});
+
+at('collectSegments skips a chunk that never transcribed rather than failing', async () => {
+  const st = new store.MemoryStore();
+  await store.saveChunkText(st, 't1', { chunk: 0, start: 0, segments: [{ id: 'c0s0', text: 'a' }] });
+  const segs = await q.collectSegments(st, 't1', [{}, {}, {}]);
+  eq(segs.length, 1, 'missing chunks contribute nothing and do not throw');
 });
 
 const run = async () => {
