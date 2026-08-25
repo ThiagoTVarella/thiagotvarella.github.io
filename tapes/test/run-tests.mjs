@@ -11,6 +11,7 @@ import * as gl from '../js/glossary.js';
 import * as ff from '../js/ffmpeg.js';
 import * as q from '../js/queue.js';
 import * as entry from '../js/entry.js';
+import * as rec from '../js/record.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -1217,6 +1218,204 @@ at('releasing twice is harmless', async () => {
   const src = entry.makeAudioSource({ createURL: () => 'blob:x', revokeURL: u => freed.push(u) });
   src.use({}); src.release(); src.release();
   eq(freed, ['blob:x']);
+});
+
+// --------------------------------------------------------------- record.js
+
+// This is the single most important assertion in this file. getUserMedia defaults all
+// three of these ON, tuned for phone calls, and each one actively damages a recording of
+// a cassette player: noise suppression eats steady tape hiss along with the quiet speech
+// buried in it, gain control pumps between pauses and speech and confuses the silence
+// detection the chunker relies on, and echo cancellation can attenuate the very sound we
+// are trying to capture, since it is coming from a speaker in the same room.
+at('microphone processing is switched OFF — hiss is signal here, not noise', async () => {
+  const c = rec.audioConstraints().audio;
+  eq(c.noiseSuppression, false, 'noise suppression would eat tape hiss and quiet speech with it');
+  eq(c.autoGainControl, false, 'gain control would pump between pauses and speech');
+  eq(c.echoCancellation, false, 'echo cancellation would fight the speaker in the room');
+  eq(c.channelCount, 1);
+});
+
+at('a chosen input device is requested exactly', async () => {
+  const c = rec.audioConstraints('abc123').audio;
+  eq(c.deviceId, { exact: 'abc123' });
+  eq(c.noiseSuppression, false, 'the processing flags must survive device selection');
+});
+
+at('mime selection prefers opus and falls back', async () => {
+  eq(rec.pickMimeType(t => t === 'audio/webm;codecs=opus'), 'audio/webm;codecs=opus');
+  eq(rec.pickMimeType(t => t === 'audio/mp4'), 'audio/mp4');
+  eq(rec.pickMimeType(() => false), '', 'with nothing supported, let the browser decide');
+  eq(rec.extensionFor('audio/webm;codecs=opus'), 'webm');
+  eq(rec.extensionFor('audio/mp4'), 'm4a');
+});
+
+at('analyseLevel reports silence, normal speech and clipping', async () => {
+  const tone = (amp, n = 2048) =>
+    Float32Array.from({ length: n }, (_, i) => amp * Math.sin(2 * Math.PI * 440 * i / 48000));
+  const quiet = rec.analyseLevel(new Float32Array(2048));
+  eq(quiet.silent, true);
+  eq(quiet.clipping, false);
+
+  const normal = rec.analyseLevel(tone(0.2));
+  eq(normal.silent, false);
+  eq(normal.clipping, false);
+  ok(normal.db > -30 && normal.db < -6, 'got ' + normal.db);
+
+  const loud = rec.analyseLevel(tone(1.0));
+  eq(loud.clipping, true, 'a full-scale signal must be reported as clipping');
+});
+
+at('levelToBar maps decibels onto a 0..1 meter', async () => {
+  eq(rec.levelToBar(-Infinity), 0);
+  eq(rec.levelToBar(-60), 0);
+  eq(rec.levelToBar(0), 1);
+  close(rec.levelToBar(-30), 0.5, 1e-9);
+  eq(rec.levelToBar(20), 1, 'must clamp rather than overflow the bar');
+});
+
+// A whole side recorded silently or clipped is 45 minutes she does not get back, so the
+// advice has to be plain and act before she walks away.
+at('level advice is plain language, and warns before a side is wasted', async () => {
+  eq(rec.levelAdvice({ clipping: true, silent: false, db: -3 }).tone, 'bad');
+  ok(/turn the player down/i.test(rec.levelAdvice({ clipping: true, db: -3 }).text));
+  eq(rec.levelAdvice({ silent: true, clipping: false, db: -80 }).tone, 'bad');
+  eq(rec.levelAdvice({ silent: false, clipping: false, db: -50 }).tone, 'warn');
+  eq(rec.levelAdvice({ silent: false, clipping: false, db: -20 }, 5).tone, 'ok');
+  ok(!/dB|decibel|rms/i.test(rec.levelAdvice({ silent: false, clipping: false, db: -20 }, 5).text),
+     'she should never be reading decibels');
+});
+
+// Found by feeding real speech through the meter: the advice flipped to "not hearing
+// anything yet" on every natural pause, which reads as a fault mid-recording.
+at('a pause for breath does not read as silence', async () => {
+  let t = 0;
+  const sm = rec.makeLevelSmoother({ holdMs: 1500, now: () => t });
+  const speech = { db: -18, rms: 0.1, peak: 0.3, clipping: false, silent: false };
+  const pause  = { db: -Infinity, rms: 0, peak: 0, clipping: false, silent: true };
+  eq(sm(speech).silent, false);
+  t += 400;
+  eq(sm(pause).silent, false, 'a short gap must not be reported as no sound at all');
+  t += 300;
+  eq(sm(pause).silent, false);
+  t += 2000;
+  eq(sm(pause).silent, true, 'but a genuinely quiet room eventually is');
+});
+
+at('a brief overload stays flagged long enough to be seen', async () => {
+  let t = 0;
+  const sm = rec.makeLevelSmoother({ holdMs: 1500, now: () => t });
+  eq(sm({ db: -2, clipping: true }).clipping, true);
+  t += 300;
+  eq(sm({ db: -20, clipping: false }).clipping, true, 'one clean frame must not clear it');
+  t += 2000;
+  eq(sm({ db: -20, clipping: false }).clipping, false);
+});
+
+at('the meter follows the loudest recent moment, not the latest frame', async () => {
+  let t = 0;
+  const sm = rec.makeLevelSmoother({ holdMs: 1000, now: () => t });
+  sm({ db: -10, clipping: false });
+  t += 200;
+  eq(sm({ db: -50, clipping: false }).db, -10, 'holds the peak');
+  t += 1500;
+  eq(sm({ db: -50, clipping: false }).db, -50, 'and lets go once the hold expires');
+});
+
+at('formatElapsed counts up in minutes and seconds', async () => {
+  eq(rec.formatElapsed(0), '0:00');
+  eq(rec.formatElapsed(65), '1:05');
+  eq(rec.formatElapsed(45 * 60 + 7), '45:07');
+});
+
+// --- the recorder itself, against fakes ---
+
+function fakeMedia() {
+  const tracks = [{ stop() { tracks.stopped = true; } }];
+  const stream = { getTracks: () => tracks };
+  return {
+    tracks,
+    mediaDevices: {
+      lastConstraints: null,
+      async getUserMedia(c) { this.lastConstraints = c; return stream; },
+      async enumerateDevices() {
+        return [{ kind: 'audioinput', deviceId: 'a', label: 'Built-in' },
+                { kind: 'videoinput', deviceId: 'v', label: 'Camera' },
+                { kind: 'audioinput', deviceId: 'b', label: '' }];
+      }
+    }
+  };
+}
+function FakeMediaRecorder(stream, opts) {
+  this.state = 'inactive'; this.mimeType = opts?.mimeType;
+  this.start = () => { this.state = 'recording'; FakeMediaRecorder.live = this; };
+  this.stop = () => { this.state = 'inactive'; this.onstop?.(); };
+  this.emit = data => this.ondataavailable?.({ data });
+}
+FakeMediaRecorder.isTypeSupported = t => t === 'audio/webm;codecs=opus';
+
+at('listInputs returns only microphones, with a fallback label', async () => {
+  const m = fakeMedia();
+  const list = await rec.listInputs(m.mediaDevices);
+  eq(list.length, 2, 'the camera must not appear');
+  eq(list[0].label, 'Built-in');
+  ok(list[1].label.length, 'an unlabelled device still needs something to show');
+});
+
+at('recording streams each slice out and never accumulates it', async () => {
+  const m = fakeMedia();
+  const r = new rec.Recorder({ mediaDevices: m.mediaDevices, MediaRecorder: FakeMediaRecorder });
+  const written = [];
+  const info = await r.start({ onData: async b => written.push(b.size) });
+  eq(info.mime, 'audio/webm;codecs=opus');
+  eq(info.extension, 'webm');
+  eq(m.mediaDevices.lastConstraints.audio.noiseSuppression, false,
+     'the real constraints must reach getUserMedia');
+
+  FakeMediaRecorder.live.emit({ size: 1000 });
+  FakeMediaRecorder.live.emit({ size: 1200 });
+  await new Promise(r2 => setTimeout(r2, 0));
+  eq(written, [1000, 1200], 'each slice is handed over as it arrives');
+
+  const out = await r.stop();
+  eq(out.bytes, 2200);
+  eq(m.tracks.stopped, true, 'the microphone must be released, or the tab keeps listening');
+});
+
+at('an empty slice is ignored rather than written', async () => {
+  const m = fakeMedia();
+  const r = new rec.Recorder({ mediaDevices: m.mediaDevices, MediaRecorder: FakeMediaRecorder });
+  const written = [];
+  await r.start({ onData: async b => written.push(b.size) });
+  FakeMediaRecorder.live.emit({ size: 0 });
+  FakeMediaRecorder.live.emit(null);
+  await new Promise(r2 => setTimeout(r2, 0));
+  eq(written, []);
+  await r.stop();
+});
+
+at('a failing sink is reported without killing the recording', async () => {
+  const m = fakeMedia();
+  const r = new rec.Recorder({ mediaDevices: m.mediaDevices, MediaRecorder: FakeMediaRecorder });
+  const errs = [];
+  await r.start({ onData: async () => { throw new Error('disk full'); },
+                  onError: e => errs.push(e.message) });
+  FakeMediaRecorder.live.emit({ size: 10 });
+  await new Promise(r2 => setTimeout(r2, 0));
+  eq(errs, ['disk full']);
+  ok(r.recording, 'the tape is still playing; do not silently stop capturing');
+  await r.stop();
+});
+
+at('the file sink appends at the right offsets and commits on close', async () => {
+  const st = new store.MemoryStore();
+  const sink = await rec.makeFileSink(st, 'tapes/t1/source.webm');
+  await sink.write({ arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer });
+  await sink.write({ arrayBuffer: async () => new Uint8Array([4, 5]).buffer });
+  eq(sink.bytes, 5);
+  const total = await sink.close();
+  eq(total, 5);
+  eq((await st.read('tapes/t1/source.webm')).length, 5, 'committed only on close');
 });
 
 const run = async () => {

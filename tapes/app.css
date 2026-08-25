@@ -203,6 +203,24 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
 .runscreen .r-ring .v { stroke: #cfa969; stroke-linecap: round; transition: stroke-dashoffset .6s; }
 .runscreen .r-exit { margin-top: 26px; color: #8d8272; border: 1px solid #2b271f; }
 
+/* ---------- recording ---------- */
+.or-line { display: flex; align-items: center; gap: 14px; margin: 20px 0; color: var(--ink-faint);
+           font-size: .82rem; }
+.or-line::before, .or-line::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+.meter-wrap { margin: 16px 0; }
+.meter { height: 10px; background: var(--rule); border-radius: 999px; overflow: hidden; }
+.meter > i { display: block; height: 100%; width: 0; background: var(--good);
+             transition: width .08s linear; }
+.meter.warn > i { background: var(--accent); }
+.meter.bad  > i { background: var(--accent-2); }
+.meter-advice { font-size: .85rem; margin-top: 8px; color: var(--ink-soft); }
+.meter-advice.bad { color: var(--accent-2); font-weight: 700; }
+.meter-advice.warn { color: var(--accent); }
+.rec-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--accent-2);
+           margin: 0 auto 10px; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+.rec-time { font-size: 2.4rem; font-weight: 300; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+
 /* ---------- misc ---------- */
 /* A <label> is display:inline by default, so with padding and a border it fragments across
    line boxes instead of forming one box -- the dashed outline renders in pieces beside the

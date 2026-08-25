@@ -15,6 +15,21 @@ export class MemoryStore {
   async write(path, data) { this.files.set(path, data); }
   async writeJSON(path, obj) { await this.write(path, JSON.stringify(obj, null, 2)); }
   async read(path) { if (!this.files.has(path)) throw new Error('ENOENT ' + path); return this.files.get(path); }
+  // Streaming writer, for recordings that must never be held in memory in full.
+  async writableStream(path) {
+    const parts = [];
+    const self = this;
+    return {
+      async write(cmd) { parts.push(cmd.data); },
+      async close() { 
+        const total = parts.reduce((n, p) => n + p.length, 0);
+        const out = new Uint8Array(total);
+        let o = 0;
+        for (const p of parts) { out.set(p, o); o += p.length; }
+        self.files.set(path, out);
+      }
+    };
+  }
   async readJSON(path) { return JSON.parse(await this.read(path)); }
   async exists(path) { return this.files.has(path); }
   async remove(path) { this.files.delete(path); }
@@ -52,6 +67,15 @@ export class FsaStore {
     try { await w.write(data); } finally { await w.close(); }
   }
   async writeJSON(path, obj) { await this.write(path, JSON.stringify(obj, null, 2)); }
+
+  // A writable left OPEN so a long recording can be appended to as it arrives rather than
+  // buffered whole. The caller must close() it; until then nothing is committed, which is
+  // the same temp-file-and-commit behaviour every other write here relies on.
+  async writableStream(path) {
+    const [dir, name] = await this.#split(path, true);
+    const fh = await dir.getFileHandle(name, { create: true });
+    return await fh.createWritable();
+  }
 
   async read(path) {
     const [dir, name] = await this.#split(path, false);

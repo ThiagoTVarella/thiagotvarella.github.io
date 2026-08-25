@@ -18,6 +18,8 @@ the proper nouns spelled right, because the names are what she'll care about mos
 Fixed constraints:
 
 - **No backend.** Static page on `thiagotvarella.github.io`. Nothing to deploy or maintain.
+- **No hardware required.** A tape can be captured by holding a microphone to the player's
+  speaker, so a line-out cable and a USB interface are optional rather than blocking.
 - **His OpenRouter key**, pasted into her browser, like the GitHub PAT in `admin/index.html`.
 - **Her data stays on her machine** (File System Access folder), except audio sent for ASR.
 - **She does not read Greek** — "proofread the transcript" is not a workflow she can perform.
@@ -202,6 +204,7 @@ Follows the `scheduler/` + `admin/` precedent — self-contained tool, opts out 
   js/ffmpeg.js      ✅ WORKERFS mount, per-chunk cut, MEMFS freed as it goes
   js/queue.js       ✅ timer-free loop, wake lock, Web Locks, spend ceiling, resume
   js/entry.js       ✅ join Greek+English+flags from disk, correction sweep, blob URLs
+  js/record.js      ✅ capture from a microphone held to the player, level meter, file sink
 ```
 
 > ⚠️ **Single-threaded `@ffmpeg/core`.** The MT build needs `SharedArrayBuffer`, which requires
