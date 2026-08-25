@@ -298,7 +298,41 @@ same entity as an existing entry?" — so she isn't asked about Kostas forty tim
 current guess and nearby occurrences of the same suspected entity, so she **confirms rather
 than invents**.
 
-Retroactive re-translation re-runs **only batches containing the changed term**, not whole tapes.
+### What a correction actually costs
+
+She will fix names *after* tapes are already translated, so the cost of a correction is a
+load-bearing design question. The answer is that it is almost always **free**, and it
+**never re-transcribes**.
+
+Transcription is the expensive, irreversible pass. A glossary fix changes how a word is
+rendered *in English* — it changes no Greek character on disk, so the transcript stays
+valid forever. (In the default mode ASR biasing does not reach the model at all, so
+re-transcribing would change nothing anyway. Offered only as a rare, explicit,
+per-tape action, never automatically.)
+
+Three tiers, decided without calling any model:
+
+| Tier | When | Cost |
+|---|---|---|
+| **0 — nothing** | She confirms the existing guess. The entry is recorded so future tapes match. | free |
+| **1 — substitute** | The rendering changes and the old one appears verbatim. Whole-word swap on disk. | free, instant |
+| **2 — re-translate** | The Greek mentions the term but the English lost it — the model read the mangled name as an ordinary word ("Γκόστα" → "the cost"). A blind swap would leave a broken sentence. | ~$0.0002 **per sentence** |
+
+Tier 1 covers the overwhelming majority. Tier 2 touches a handful of *sentences* — never a
+batch, never a tape. The first draft's "re-translate affected batches" was already 40× too
+coarse.
+
+Scoping is by Greek matching, not by scanning English: accent-folded stem comparison
+catches inflection (Κώστας/Κώστα/Κώστᾳ), and `observed_forms` catches ASR manglings, which
+differ at the *front* of the word and so can never be caught by stemming.
+
+Corrections are **batched** — answering ten names is one sweep over the files, not ten —
+and a segment queued for re-translation is never also substituted in the same sweep.
+
+Every substitution preserves the model's original wording in `enOriginal` (the *true*
+original, not an intermediate, across repeated corrections) with an audit entry, so a bad
+correction is reversible. This is irreplaceable material; a silent wrong edit is the worst
+failure available.
 
 ---
 
