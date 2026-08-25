@@ -27,11 +27,16 @@
     <h1>Let's set this up</h1>
     <p class="lede">Three quick things, once. After that you just drop in a recording and
       come back later to read it.</p>
+    <div class="banner warn" id="unsupported" hidden>
+      <b>This needs a computer.</b> Phones and tablets can't give a web page a folder to work
+      in, so open this on a desktop or laptop in <b>Chrome</b> or <b>Edge</b>. Safari and
+      Firefox can't do it either, on any device.
+    </div>
     <div class="steps" id="setupSteps">
       <div class="step" id="step-folder">
         <div>
           <b>Choose where to keep everything</b>
-          <p class="note-inline">Pick a folder on this computer — say <i>Grandpa Tapes</i>. Recordings
+          <p class="note-inline">Pick a folder on this computer. Recordings
             and transcripts live there as ordinary files that you own. Nothing is uploaded to a website.</p>
           <button class="btn btn-sm" id="pickFolder" style="margin-top:8px">Choose folder…</button>
         </div>
@@ -157,14 +162,6 @@
           </select>
           <p class="note-inline">Best is slower and costs a little more, but it can tell you
             which passages it wasn't sure about.</p>
-        </div>
-      </div>
-      <div class="card">
-        <div class="field" style="margin:0">
-          <label>Stop after spending</label>
-          <input type="text" id="cap" placeholder="50" style="max-width:9em;text-align:left">
-          <p class="note-inline">In dollars. Everything pauses at this point and waits for you.
-            Spent so far: <b id="spent">$0.00</b></p>
         </div>
       </div>
     </div>
