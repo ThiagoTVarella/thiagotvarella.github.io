@@ -1938,6 +1938,62 @@ t('file sizes are readable at every scale a tape side reaches', () => {
   eq(lib.formatSize(1024 * 1024 * 412), '412 MB');
 });
 
+// --- how much longer ------------------------------------------------------
+
+t('the time remaining is measured, not assumed from the tape length', () => {
+  // The bug: the estimate multiplied a HARDCODED 45 minutes by the fraction left, so a
+  // nine-second recording announced "about 45 minutes left on this one". Nothing about
+  // the tape's own length may enter this calculation -- splitting runs several times
+  // faster than realtime and transcription faster still.
+  const t0 = 1000;
+  // A quarter done after a minute means about three more minutes, whatever the tape is.
+  const sec = lib.remainingEstimate({ startedAt: t0, now: t0 + 60_000, progress: 0.25 });
+  eq(Math.round(sec), 180);
+  eq(lib.formatRemaining(sec), 'about 3 minutes left');
+});
+
+t('nothing is claimed until there is enough of a run to divide by', () => {
+  const t0 = 1000;
+  // Two seconds in, any extrapolation is noise -- so say nothing rather than a number.
+  eq(lib.remainingEstimate({ startedAt: t0, now: t0 + 2000, progress: 0.5 }), null);
+  eq(lib.remainingEstimate({ startedAt: t0, now: t0 + 30_000, progress: 0 }), null);
+  eq(lib.remainingEstimate({ startedAt: t0, now: t0 + 30_000, progress: 0.001 }), null);
+  eq(lib.formatRemaining(null), '', 'and an absent estimate prints nothing at all');
+});
+
+t('a finished tape reports no time left rather than zero minutes', () => {
+  eq(lib.remainingEstimate({ startedAt: 0, now: 60_000, progress: 1 }), null);
+});
+
+t('an absurd extrapolation is withheld rather than shown', () => {
+  // A first chunk that hangs makes the arithmetic say days. That is not information, and
+  // the checklist is already showing which step it is stuck on.
+  eq(lib.remainingEstimate({ startedAt: 0, now: 1_800_000, progress: 0.021 }), null);
+  // But a genuinely slow run inside the plausible range is still reported.
+  const ok = lib.remainingEstimate({ startedAt: 0, now: 600_000, progress: 0.2 });
+  eq(lib.formatRemaining(ok), 'about 40 minutes left');
+});
+
+t('the countdown is rounded coarsely enough to hold still', () => {
+  eq(lib.formatRemaining(10), 'less than a minute left');
+  eq(lib.formatRemaining(80), 'about a minute left');
+  eq(lib.formatRemaining(4 * 60), 'about 4 minutes left');
+  // Above ten minutes it rounds to five, so consecutive ticks do not flip the number.
+  eq(lib.formatRemaining(23 * 60), 'about 25 minutes left');
+  eq(lib.formatRemaining(22 * 60), 'about 20 minutes left');
+});
+
+t('a short recording is never described as lasting no time at all', () => {
+  // Rounding to minutes turned the nine-second test recording into "0 min", which reads
+  // as a fault rather than a length.
+  eq(lib.formatLength(9), '9 sec');
+  eq(lib.formatLength(59), '59 sec');
+  eq(lib.formatLength(60), '1 min');
+  eq(lib.formatLength(46 * 60), '46 min');
+  eq(lib.formatLength(90 * 60), '1 hr 30 min');
+  eq(lib.formatLength(0), '', 'an unknown length says nothing, not "0 sec"');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }
