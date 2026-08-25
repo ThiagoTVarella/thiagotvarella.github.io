@@ -138,29 +138,34 @@ present and falls back to LLM-derived flags when absent. **Every view must rende
 all three optional fields null** — that is the single most important invariant to test, and it is
 testable with no tapes and no API calls.
 
-### Files to create
+### Files
 
 Follows the `scheduler/` + `admin/` precedent — self-contained tool, opts out of site chrome
 (no Bootstrap, no `header.html`), like `bear.html` and `admin/index.html`.
 
 ```
 /tapes/
-  index.html          app shell, tabbed (mirror admin/index.html)
-  app.css
-  manifest.json       installable PWA, same pattern as admin/
-  js/store.js         folder handle, IndexedDB, atomic writes, directory reconciliation
-  js/audio.js         ffmpeg.wasm: silencedetect → cut → encode
-  js/api.js           OpenRouter calls, retry/backoff, cost accounting
-  js/queue.js         timer-free worker-driven scheduler, Web Locks guard
-  js/glossary.js      entity model, matching, prompt injection
-  js/ui.js            the five views
-  vendor/             ffmpeg.wasm single-threaded core
+  index.html        ✅ app shell, five screens
+  app.css           ✅ warm archival palette, light + dark
+  manifest.json     ✅ installable PWA
+  probe.html        ✅ Phase 0a API contract probe (a lab tool for him, not for her)
+  js/asr.js         ✅ three-mode adapter, normalized transcript, cross-check
+  js/audio.js       ✅ silence-aware chunk planning + ffmpeg argv (pure, testable)
+  js/store.js       ✅ folder handle, atomic writes, directory-listing resume
+  js/translate.js   ✅ batched translate + flags + dates, id-repair, model A/B
+  js/glossary.js    ✅ Greek matching, three-tier corrections, undo
+  js/ui.js          ✅ the five screens
+  js/demo.js        ✅ invented 1978 content for ?demo=1
+  test/run-tests.mjs ✅ 76 tests, no network, no tapes, no key
+  js/ffmpeg.js      ⬜ ffmpeg.wasm wrapper (WORKERFS mount, run the argv audio.js builds)
+  js/queue.js       ⬜ worker-driven scheduler, wake lock, Web Locks, spend ceiling
+  vendor/           ⬜ ffmpeg.wasm single-threaded core
 ```
 
 > ⚠️ **Single-threaded `@ffmpeg/core`.** The MT build needs `SharedArrayBuffer`, which requires
 > COOP/COEP response headers — **GitHub Pages cannot set headers.** ST is slower (~5–10×
-> realtime, so 10–20 min per 90-min tape); irrelevant for an overnight queue, but show it as a
-> real stage in the UI, not a blip.
+> realtime, so 10–20 min per 90-min tape); acceptable for a long unattended run, but show it
+> as a real stage in the UI, not a blip.
 
 ---
 
@@ -239,21 +244,22 @@ a chunk*. On resume, **reconcile from a directory listing**: a chunk is done iff
 Rely on `createWritable()`'s temp-file-and-commit-on-`close()` semantics — always `close()`,
 never truncate-then-write.
 
-### Surviving the night
+### Surviving a long run
 
 The first draft said the queue "resumes cleanly" but specified nothing that keeps it *running*:
 
 - **System sleep is the actual killer.** A page cannot prevent it except via the **Screen Wake
   Lock API**, which requires the page visible and is released when the tab hides. Add an
-  explicit **run mode**: hold a wake lock, tell her to keep the tab foregrounded, lid open,
-  plugged in.
+  explicit **run screen**: hold a wake lock and tell her to keep the window open and stop the
+  machine sleeping. **Say nothing about time of day** — she may run this overnight or during a
+  workday in the background, and "lid" assumes a laptop. The constraint is the same either way.
 - **Background-tab throttling** clamps `setTimeout` to ~1/min (worse under intensive
   throttling). Drive the queue from promise chains off `fetch` completions in a **worker** —
   **never from timers.**
 - **Tab discard / browser restart:** Chrome discards background tabs under memory pressure, and
   File System Access re-permission **requires a user gesture** — so the queue *cannot*
   self-resume. Design for it: one prominent **Resume** button on load, and a status line —
-  "stopped 3:12 AM after tape 41, $23.80 spent." Morning recovery must be one click.
+  "stopped after tape 41, $23.80 spent." Picking it back up must be one click.
 - **Concurrent tabs** would interleave `tape.json` writes and double-bill. Take a
   `navigator.locks.request('tapes-queue', …)`; second tab goes read-only.
 
@@ -360,13 +366,39 @@ This is the difference between "a pile of transcripts" and "her grandfather's di
 
 ## Views
 
-| View | Purpose |
+Built. Named for what she is doing, never for what the machine is doing.
+
+| Screen | Purpose |
 |---|---|
-| **Queue** | Drop files, per-tape/per-chunk progress, running cost, pause/resume/retry, run-mode status |
-| **Read** | English diary ordered by date; click a paragraph to play its chunk; search all tapes |
-| **Review** | Frequency-ranked name queue: hear the clip, confirm or name it, feed the glossary |
-| **Glossary** | Entity list; "re-translate affected batches" |
-| **Settings** | API key, model override, spend cap, folder picker |
+| **Diary** | Entries ordered by the date *he speaks*, not tape number; tapes with no date found say so rather than being silently misfiled |
+| *(reading)* | The payoff, so it gets the most care: serif, wide leading, narrow measure. Click any line to hear him say it. Unclear passages shaded softly, never alarmingly |
+| **Glossary** | "Needs your ear" queue above, confirmed entries below — one place, not a task list with no visible output |
+| **Add** | Drop files, name the tape, nudge to photograph the label first |
+| **Settings** | Key, folder, quality (**Best / Faster** — never model names), spend cap |
+| *(run screen)* | Shown while it works: progress ring, honest time remaining, dismissible |
+
+### What the interface never asserts
+
+Three separate corrections in review all turned out to be the same bug — **the tool stating
+something it had merely inferred** — so it is a standing rule, not three fixes:
+
+- **No relationships.** The glossary once read "Eleni · his wife". Nothing on the tape
+  established that. A plausible invented detail in a family archive is worse than a blank,
+  because nobody thinks to check it. Notes are free text *she* writes, or empty.
+- **No categories.** "Person" / "Place" chips were the model's guesses shown as fact, and not
+  safe ones: Κώστας may be a man, a boat, or a name day; Καλαμάτα may be a city or the olives.
+  `kind` now records only `word` vs `phrase` — the shape of the audio problem, which is
+  mechanical and checkable.
+- **No time of day.** The run screen assumed overnight, and "lid up" assumed a laptop.
+
+The translation prompt is where this must actually be enforced, not the UI: it is explicitly
+forbidden from categorising or annotating relationships. Her notes reach it as
+`she says: …`, framed as family-stated fact — usable to resolve ambiguity, **not** to be
+repeated in the translation and **not** to be extended to anyone else.
+
+> Lesson worth keeping: the UI change alone did not fix any of these. Each survived in the
+> prompt, and one (`e.note` vs `e.notes`) meant her input reached the model not at all. Fixing
+> the display is not fixing the behaviour.
 
 ---
 
@@ -407,37 +439,53 @@ This is the difference between "a pile of transcripts" and "her grandfather's di
 
 ---
 
-## Build order
+## Build order — status
 
-- **Phase 0a — API contract test. Not blocked on tapes; run it now.** Probes 2–6 don't care what
-  the audio contains, so any clip settles them: confirm CORS on `/audio/transcriptions`; confirm
-  `verbose_json` 400s on MAI; capture the exact plain-`json` response shape; probe whether an
-  undocumented `provider.options.azure.*` phrase-list passthrough exists (the model page does
-  advertise keyword biasing); confirm MAI still routes under `data_collection: "deny"`; confirm
-  Whisper returns `avg_logprob`/`no_speech_prob` and that `provider.options.groq.prompt` measurably
-  changes output. **This is the gate that invalidated the first draft.** Built: `tapes/probe.html`.
-- **Phase 0b — quality bake-off. Deferred until real tapes exist.** Same capture through both
-  models, containing names, a mumbled stretch, and **30s of pure hiss**. Scores word accuracy,
-  whether hiss produces hallucinated text, and whether Whisper's confidence fields catch it. This
-  sets the *default mode*, not the architecture — the adapter supports all three regardless, so
-  nothing downstream waits on it. Also calibrates the silencedetect threshold against tape hiss.
-- **Phase 1 — spine.** Folder picker + store with directory reconciliation, silence-aware
-  chunking with WORKERFS, transcribe one chunk, write files. Prove the path end-to-end.
-- **Phase 2 — pipeline.** Translation/flag/date call with id validation, worker queue, wake lock,
-  Web Locks, cost tracking, spend ceiling.
-- **Phase 3 — glossary + Review**, incl. NER bootstrap, entity unification, targeted re-translation.
-- **Phase 4 — Read view**, date ordering, search, click-to-play-chunk, TXT export.
-- **Phase 5 — polish.** PWA manifest; link from the Coding card in `portfolio.html:105-118`
-  (matching how `bear.html` and `scheduler/` were added — a tool, not a nav section).
+- ✅ **Phase 0a — API contract test.** Built as `tapes/probe.html`. Not blocked on tapes: any
+  Greek clip settles it. Confirms CORS, that `verbose_json` 400s on MAI, the real plain-`json`
+  shape, whether an undocumented Azure biasing passthrough exists, that MAI still routes under
+  `data_collection: "deny"`, and that Whisper returns the confidence fields. Exports
+  `fixtures.json` for the mock backend. **Optional now** — its job was picking a model, and
+  building both backends removed that decision.
+- ⬜ **Phase 0b — quality bake-off.** Needs real tapes. Sets the *default mode*, not the
+  architecture. Also calibrates the silencedetect threshold against real hiss.
+- ✅ **Phase 1 — spine (logic).** `store.js`, `audio.js`, `asr.js` with 42 tests. Chunk planning,
+  directory-listing resume, three-mode ASR normalization.
+- ✅ **Phase 2a — translation.** `translate.js`: batched, id-validated with targeted repair,
+  flags and spoken dates in the same call, model A/B.
+- ✅ **Phase 3 — glossary.** `glossary.js`: Greek stem + observed-form matching, three-tier
+  corrections, batching, undo.
+- ✅ **Phase 4 — interface.** All five screens, demo mode, warm archival design, light + dark.
+- ⬜ **Phase 2b — the engine that runs it.** `ffmpeg.js` + `queue.js`: the only remaining gap
+  between "a convincing shell" and "a working tool".
+- ⬜ **Phase 5 — polish.** Search across entries, TXT export, link from the Coding card in
+  `portfolio.html:105-118`.
 
 **Dropped:** the Safari download fallback. Per-file prompts across hundreds of tapes and
-thousands of artifacts is not a usable path. Declare **desktop Chrome/Edge a requirement** in
-Settings; at most ship a read-only export viewer later.
+thousands of artifacts is not a usable path. Desktop Chrome/Edge is a stated requirement.
 
-Repo convention is a design doc then an implementation plan under `docs/plans/`; write
-`docs/plans/2026-08-24-tape-digitization-design.md` alongside the code.
+### Next
 
----
+1. **`js/ffmpeg.js`** — load the single-threaded core, mount input via WORKERFS, run the argv
+   `audio.js` already builds, read each chunk out and free it. The riskiest remaining code:
+   the 3-hour-file memory path is where this falls over, and it is testable with a generated
+   WAV and no tapes.
+2. **`js/queue.js`** — worker-driven and **timer-free**, wake lock, `navigator.locks`
+   single-writer guard, spend ceiling, resume reconciled from the directory listing.
+3. **Wire `Add → Start`** to the real pipeline. It currently shows the run screen without
+   driving anything.
+4. **Playback** — `Read` and the glossary card call `playFrom()`, which needs real chunk files
+   on disk to seek into.
+5. Then Phase 0b, once tapes exist.
+
+### Known gaps, deliberately left
+
+- **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.
+  Needs a real "I'll never know this one", but the right shape depends on how often it happens.
+- **The run screen is dark**, designed when it was assumed to run overnight. In daylight next
+  to the paper-coloured app it may read as jarring rather than calm.
+- **`compareModels()` has no UI.** Deliberate: it is a tuning tool for him, not something she
+  should ever see.
 
 ## Testing without tapes
 
@@ -485,7 +533,8 @@ under local preview — use a relative href, or expect that one link to break lo
 
 Must verify:
 
-1. **Phase 0a contract probes** (now, any audio) and **0b bake-off** (when tapes arrive).
+1. ✅ **76 automated tests** — `node tapes/test/run-tests.mjs`. No network, no tapes, no key.
+1. **Phase 0a contract probes** (any audio) and **0b bake-off** (when tapes arrive).
 1. **All three modes over one mock tape** — confirm every view renders with `start`, `end`, and
    `confidence` all null. The most important test in this list.
 2. **A generated 3-hour WAV** through WORKERFS chunking without exhausting the wasm heap (the
