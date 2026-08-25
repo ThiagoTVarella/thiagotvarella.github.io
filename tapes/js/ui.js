@@ -19,7 +19,7 @@ const DEMO = new URLSearchParams(location.search).has('demo');
 const state = {
   view: 'library',
   tapes: [],
-  names: [],
+  pendingWords: [],
   glossary: [],
   folder: null,
   key: localStorage.getItem('or_key') || '',
@@ -46,7 +46,7 @@ function go(view) {
   $$('#tabs .tab').forEach(b => b.setAttribute('aria-current', String(b.dataset.go === view)));
   window.scrollTo(0, 0);
   if (view === 'library') renderLibrary();
-  if (view === 'names') renderName();
+  if (view === 'glossary') renderReview();
   if (view === 'add') renderPending();
   if (view === 'settings') renderSettings();
 }
@@ -135,7 +135,7 @@ function openRead(tape) {
   $('#entryFoot').innerHTML =
     `Click any line to hear him say it.` +
     (low ? ` &nbsp;·&nbsp; ${low} passage${low > 1 ? 's were' : ' was'} hard to make out —
-       they're shaded, and you can help fix them under <b>Names</b>.` : '');
+       they're shaded, and you can help sort them out under <b>Glossary</b>.` : '');
 }
 
 let playTimer = null;
@@ -155,51 +155,129 @@ function playFrom(tape, s, node) {
 }
 const fmtTime = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 
-// ---------------------------------------------------------------- names
+// ------------------------------------------------------------- glossary
 
-function renderName() {
-  const left = state.names.length - state.nameIdx;
+const KIND = {
+  person: { chip: 'Person',        ask: 'name' },
+  place:  { chip: 'Place',         ask: 'name' },
+  phrase: { chip: 'Unclear phrase', ask: 'sense' }
+};
+
+function renderReview() {
+  const left = state.pendingWords.length - state.nameIdx;
   $('#nameBadge').hidden = left <= 0;
   $('#nameBadge').textContent = left;
-  $('#namesEmpty').hidden = left > 0;
-  const box = $('#nameCard');
-  box.innerHTML = '';
+  $('#reviewWrap').hidden = left <= 0;
+  $('#reviewDone').hidden = left > 0;
+  $('#reviewLeft').textContent = left > 0 ? `${left} left` : '';
+  renderGlossList();
   if (left <= 0) return;
 
-  const n = state.names[state.nameIdx];
+  const n = state.pendingWords[state.nameIdx];
+  const kind = KIND[n.kind] || KIND.person;
+  const box = $('#nameCard');
+  box.innerHTML = '';
+
   const card = el('div', 'name-card');
+  const heard = n.heard > 1 ? `heard ${n.heard} times` : 'heard once';
+
+  // A name she can hear and spell. A blurred phrase she cannot -- but she can say whether
+  // our English reads sensibly, so that is what we ask instead.
+  const head = kind.ask === 'name'
+    ? `<div class="name-greek">${n.greek}</div>`
+    : `<div class="phrase-greek">${n.greek}</div>`;
+
   card.innerHTML = `
-    <div class="muted" style="font-size:.8rem">${left} left</div>
-    <div class="name-greek">${n.greek}</div>
-    <div class="name-count">heard ${n.heard} times${n.kind === 'place' ? ' · sounds like a place' : ''}</div>
+    <div class="kind-chip">${kind.chip} · ${heard}</div>
+    ${head}
     <div class="clip">
-      <button class="btn btn-ghost btn-sm" id="hear">▶ Hear him say it</button>
+      <button class="btn btn-ghost btn-sm" id="hear">▶ Hear this bit</button>
       <p class="ctx" style="margin-top:13px">${n.context[0]}<b>${n.guess}</b>${n.context[1]}</p>
     </div>
-    ${n.hint ? `<p class="note-inline" style="margin-bottom:10px">${n.hint}</p>` : ''}
-    <input type="text" id="nameIn" value="${n.guess}" autocomplete="off" spellcheck="false">
-    <p class="note-inline">Write it however you'd spell it in English.</p>
-    <div class="name-actions">
-      <button class="btn btn-ghost" id="skip">Not sure</button>
-      <button class="btn" id="save">That's it</button>
+    ${n.hint ? `<p class="note-inline hint">${n.hint}</p>` : ''}
+
+    <div id="askBlock">
+      <p class="ask">${kind.ask === 'name'
+        ? `We think this is <b>${n.guess}</b>.`
+        : `Our best guess is <b>"${n.guess}"</b>. Does that make sense here?`}</p>
+      <div class="name-actions">
+        <button class="btn" id="yes">${kind.ask === 'name' ? "Yes, that's right" : 'Yes, that reads right'}</button>
+        <button class="btn btn-ghost" id="no">${kind.ask === 'name' ? "No, it's someone else" : "No, that's not it"}</button>
+      </div>
+      <button class="linkish" id="skip">Skip this one for now</button>
+    </div>
+
+    <div id="fixBlock" hidden>
+      <p class="ask" id="fixAsk"></p>
+      <input type="text" id="nameIn" autocomplete="off" spellcheck="false">
+      <p class="note-inline" id="fixHelp"></p>
+      <div class="name-actions">
+        <button class="btn" id="save">Save it</button>
+        <button class="btn btn-ghost" id="cancel">Back</button>
+      </div>
     </div>`;
   box.appendChild(card);
 
-  const input = $('#nameIn');
-  input.focus(); input.select();
-  $('#hear').onclick = () => toast(DEMO ? 'Audio isn\'t loaded in the demo' : 'Playing…');
-  $('#skip').onclick = () => { state.nameIdx++; renderName(); };
-  $('#save').onclick = commit;
-  input.onkeydown = e => { if (e.key === 'Enter') commit(); };
+  $('#hear').onclick = () => toast(DEMO ? "Audio isn't loaded in the demo" : 'Playing…');
+  $('#yes').onclick = () => commit(n.guess, true);
+  $('#skip').onclick = next;
 
-  function commit() {
-    const v = input.value.trim();
-    if (!v) return input.focus();
-    state.glossary.push({ id: n.id, english: v, greek: n.greek, kind: n.kind, heard: n.heard });
-    state.nameIdx++;
-    toast(`Thanks — "${v}" is now fixed across every tape.`);
-    renderName();
+  $('#no').onclick = () => {
+    $('#askBlock').hidden = true;
+    $('#fixBlock').hidden = false;
+    $('#fixAsk').innerHTML = kind.ask === 'name'
+      ? 'What do you hear instead?'
+      : 'What do you think he actually says?';
+    $('#fixHelp').textContent = kind.ask === 'name'
+      ? "However you'd spell it in English — it doesn't have to be exact."
+      : "Even a rough idea helps. Leave it blank if you can't tell.";
+    const i = $('#nameIn');
+    i.value = '';
+    i.placeholder = kind.ask === 'name' ? 'e.g. Panagiotis' : 'e.g. in the neighbour\'s orchard';
+    i.focus();
+  };
+  $('#cancel').onclick = () => { $('#askBlock').hidden = false; $('#fixBlock').hidden = true; };
+  $('#save').onclick = () => {
+    const v = $('#nameIn').value.trim();
+    if (!v) return toast("Type what you think it is, or press Back and skip it.");
+    commit(v, false);
+  };
+  $('#nameIn').onkeydown = e => { if (e.key === 'Enter') $('#save').click(); };
+
+  function next() { state.nameIdx++; renderReview(); }
+  function commit(value, wasGuessRight) {
+    state.glossary.unshift({ id: n.id, english: value, greek: n.greek, kind: n.kind,
+                             heard: n.heard, confirmed: true });
+    toast(wasGuessRight
+      ? `Good — "${value}" is now fixed everywhere.`
+      : `Changed to "${value}" — updated in every recording.`);
+    next();
   }
+}
+
+function renderGlossList() {
+  const box = $('#glossList');
+  box.innerHTML = '';
+  $('#glossEmpty').hidden = state.glossary.length > 0;
+  for (const g of state.glossary) {
+    const row = el('div', 'gloss-row');
+    row.innerHTML = `
+      <div>
+        <b>${g.english}</b>
+        <span class="muted" style="font-size:.82rem"> · ${g.greek}</span>
+        <div class="muted" style="font-size:.78rem">${KIND[g.kind]?.chip || 'Word'}${
+          g.note ? ' · ' + g.note : ''} · heard ${g.heard} times</div>
+      </div>
+      <button class="linkish" data-edit="${g.id}">Change</button>`;
+    box.appendChild(row);
+  }
+  box.onclick = e => {
+    const id = e.target.dataset.edit;
+    if (!id) return;
+    const g = state.glossary.find(x => x.id === id);
+    const v = prompt(`What should "${g.greek}" be called in English?`, g.english);
+    if (v && v.trim()) { g.english = v.trim(); renderGlossList(); toast('Updated everywhere.'); }
+  };
 }
 
 // ---------------------------------------------------------------- add
@@ -340,14 +418,14 @@ $('#startRun').onclick = () => {
 function boot() {
   if (DEMO) {
     state.tapes = demoData.TAPES;
-    state.names = demoData.NAMES;
+    state.pendingWords = demoData.PENDING;
     state.glossary = demoData.GLOSSARY;
     state.folder = 'Grandpa Tapes (demo)';
     state.key = state.key || 'demo';
   }
   const ready = (state.folder || DEMO) && state.key;
-  $('#nameBadge').hidden = state.names.length === 0;
-  $('#nameBadge').textContent = state.names.length;
+  $('#nameBadge').hidden = state.pendingWords.length === 0;
+  $('#nameBadge').textContent = state.pendingWords.length;
   refreshSetup();
   go(ready ? 'library' : 'welcome');
 }
