@@ -208,8 +208,10 @@ function renderReview() {
         <button class="btn" id="yes">${kind.ask === 'name' ? "Yes, that's right" : 'Yes, that reads right'}</button>
         <button class="btn btn-ghost" id="no">${kind.ask === 'name' ? "No, it's something else" : "No, that's not it"}</button>
       </div>
-      <button class="linkish" id="note">Add a note</button>
-      <button class="linkish" id="skip">Skip this one for now</button>
+      <div class="link-row">
+        <button class="linkish" id="note">Add a note</button>
+        <button class="linkish" id="skip">Skip this one for now</button>
+      </div>
     </div>
 
     <div id="noteBlock" hidden>

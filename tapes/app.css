@@ -161,6 +161,9 @@ input[type=text]:focus { outline: none; border-color: var(--accent); }
   margin-top: 14px; color: var(--ink-faint); font-size: .82rem; text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Two separate choices, so they need real space between them rather than a word gap. */
+.link-row { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+.link-row .linkish { margin-top: 16px; }
 .linkish:hover { color: var(--ink); }
 .gloss-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
