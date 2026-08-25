@@ -13,6 +13,7 @@ import * as q from '../js/queue.js';
 import * as entry from '../js/entry.js';
 import * as lib from '../js/library.js';
 import * as rec from '../js/record.js';
+import * as rec_ from '../js/record.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -2120,6 +2121,228 @@ t('no user-facing message uses an em dash', () => {
   for (const s of strings) {
     eq(/[–—]/.test(s), false, 'em or en dash in: ' + s);
   }
+});
+
+// --- the last thing he says --------------------------------------------------
+
+at('stopping waits for the final slice to be written, not just for the recorder', async () => {
+  // The bug: ondataavailable is async, so the final blob's write was still in flight when
+  // onstop resolved stop(). The caller then closed the file, committing it WITHOUT the last
+  // slice -- which is the last thing he says on that side.
+  const written = [];
+  let releaseWrite;
+  const slow = new Promise(r => { releaseWrite = r; });
+
+  class FakeRecorder {
+    constructor() { this.state = 'inactive'; }
+    start() { this.state = 'recording'; }
+    stop() {
+      this.state = 'inactive';
+      // Exactly the real order: the final dataavailable, then onstop.
+      this.ondataavailable({ data: { size: 4, arrayBuffer: async () => new Uint8Array(4).buffer } });
+      this.onstop?.();
+    }
+  }
+  const rec = new rec_.Recorder({
+    MediaRecorder: FakeRecorder,
+    mediaDevices: { getUserMedia: async () => ({ getTracks: () => [] }) },
+    AudioContext: null
+  });
+  FakeRecorder.isTypeSupported = () => true;
+  await rec.start({ onData: async blob => { await slow; written.push(blob.size); } });
+
+  let stopped = false;
+  const p = rec.stop().then(() => { stopped = true; });
+  await new Promise(r => setTimeout(r, 20));
+  eq(stopped, false, 'stop() must not resolve while the last slice is still being written');
+  releaseWrite();
+  await p;
+  eq(written, [4], 'and by the time it does resolve, the slice is on disk');
+});
+
+at('a slice that fails to write still lets the recording stop', async () => {
+  const errors = [];
+  class FakeRecorder {
+    start() {} 
+    stop() {
+      this.ondataavailable({ data: { size: 2, arrayBuffer: async () => new Uint8Array(2).buffer } });
+      this.onstop?.();
+    }
+  }
+  FakeRecorder.isTypeSupported = () => true;
+  const rec = new rec_.Recorder({
+    MediaRecorder: FakeRecorder,
+    mediaDevices: { getUserMedia: async () => ({ getTracks: () => [] }) },
+    AudioContext: null
+  });
+  await rec.start({ onData: async () => { throw new Error('disk full'); },
+                    onError: e => errors.push(e.message) });
+  await rec.stop();   // must not hang or throw
+  eq(errors, ['disk full'], 'the failure is reported rather than swallowed or fatal');
+});
+
+at('overlapping slices never land on the same offset', async () => {
+  // position was read on one side of an await and advanced on the other, so two slices in
+  // flight at once both wrote at the same place -- silently overwriting a second of audio.
+  const writes = [];
+  const store = {
+    writableStream: async () => ({
+      // A real write yields before it completes; a synchronous fake would never open the
+      // window the bug lives in.
+      write: async cmd => {
+        await new Promise(r => setTimeout(r, 3));
+        writes.push({ position: cmd.position, len: cmd.data.length });
+      },
+      close: async () => {}
+    })
+  };
+  const sink = await rec_.makeFileSink(store, 'x');
+  const blob = n => ({ arrayBuffer: async () => {
+    await new Promise(r => setTimeout(r, 5));     // the await that opened the window
+    return new Uint8Array(n).buffer;
+  } });
+  // Fired together, exactly as a timeslice arriving during the previous write would.
+  await Promise.all([sink.write(blob(10)), sink.write(blob(20)), sink.write(blob(30))]);
+  eq(writes.map(w => w.position), [0, 10, 30], 'each slice lands after the one before it');
+  eq(sink.bytes, 60);
+});
+
+// --- not losing the end of a side ------------------------------------------
+
+t('a chunk holding his last words is never skipped for being mostly silence', () => {
+  // The end of a side is speech followed by blank tape. Judged on silent fraction alone,
+  // a chunk with his last two words and two minutes of nothing is 99% silence and would be
+  // thrown away whole -- losing the words, invisibly.
+  const chunk = { start: 0, duration: 120 };
+  const silences = [{ start: 1.4, end: 120 }];   // speaks for 1.4s, then blank tape
+  const [m] = audio.markSilentChunks([chunk], silences);
+  eq(m.silentFraction > 0.98, true, 'it really is over 98% silence');
+  eq(m.isSilent, false, 'and it must still be sent, because there is speech in it');
+  eq(m.longestSpeech, 1.4);
+});
+
+t('genuine leader tape is still skipped', () => {
+  // The guard must not defeat the hallucination guard it sits inside.
+  const [m] = audio.markSilentChunks([{ start: 0, duration: 90 }], [{ start: 0, end: 90 }]);
+  eq(m.isSilent, true);
+  eq(m.longestSpeech, 0);
+  // A click or a tape thump is not speech either.
+  const [n] = audio.markSilentChunks([{ start: 0, duration: 90 }],
+    [{ start: 0, end: 44.9 }, { start: 45, end: 90 }]);
+  eq(n.isSilent, true, 'a tenth of a second of noise does not make a chunk worth sending');
+});
+
+t('the longest unbroken run of sound is what counts, not the total', () => {
+  // Ten scattered tenths of a second add up to a second of sound but are not a word.
+  const chunk = { start: 0, duration: 10 };
+  const scattered = [];
+  for (let i = 0; i < 10; i++) scattered.push({ start: i, end: i + 0.9 });
+  const run = audio.longestSpeechRun(chunk, scattered);
+  eq(Math.abs(run - 0.1) < 1e-6, true, 'longest single run should be ~0.1s, got ' + run);
+  // The same total arriving in one stretch is a word.
+  const oneRun = [{ start: 0, end: 4.5 }, { start: 5.5, end: 10 }];
+  eq(audio.longestSpeechRun(chunk, oneRun), 1);
+  eq(audio.markSilentChunks([chunk], oneRun)[0].isSilent, false);
+
+  // And inside a chunk that IS over the silent threshold, the distinction is what decides
+  // whether it is sent: tape clicks are dropped, a word is kept.
+  const long = { start: 0, duration: 100 };
+  const clicks = [{ start: 0, end: 49.95 }, { start: 50, end: 99.9 }];    // two 0.05-0.1s gaps
+  eq(audio.markSilentChunks([long], clicks)[0].isSilent, true, 'clicks in blank tape');
+  const word = [{ start: 0, end: 49.4 }, { start: 50, end: 100 }];        // one 0.6s gap
+  eq(audio.markSilentChunks([long], word)[0].silentFraction > 0.98, true);
+  eq(audio.markSilentChunks([long], word)[0].isSilent, false, 'but a word in blank tape is kept');
+});
+
+t('a measured length lets the final chunk run past it, an exact one does not', () => {
+  // ffmpeg's last progress line lands slightly before the true end of a stream, so a
+  // browser recording measures short and the final word falls off the end.
+  const chunks = [{ start: 0, duration: 5 }, { start: 5, duration: 5.75 }];
+  const padded = audio.padFinalChunk(chunks, 2);
+  eq(padded[0].duration, 5, 'earlier chunks are untouched');
+  eq(padded[1].duration, 7.75, 'only the last one is allowed to overrun');
+  eq(padded[1].padded, true);
+  // Asking ffmpeg for more than exists is safe: it stops at end of file.
+  eq(audio.padFinalChunk([], 2), []);
+  eq(audio.padFinalChunk(chunks, 0), chunks, 'no padding when none is asked for');
+});
+
+at('the tail is padded only when the length had to be measured', async () => {
+  const seen = {};
+  const fake = total => ({
+    load: async () => {}, mount: async () => '/in', unmount: async () => {},
+    probeDuration: async () => total,
+    scanSilences: async () => ({ silences: [{ start: 4, end: 5 }], duration: 10, measured: 10, ok: true }),
+    cutChunk: async (i, chunk) => { (seen.chunks ||= []).push(chunk.duration); return new Uint8Array(1); }
+  });
+  const opts = { targetSec: 4, minSec: 2, maxSec: 6, searchSec: 2, tailPadSec: 2 };
+
+  seen.chunks = [];
+  await ff.prepareTape(new File([new Uint8Array(4)], 'a.wav'), { engine: fake(10), ...opts });
+  const exact = seen.chunks.reduce((a, b) => a + b, 0);
+  eq(exact, 10, 'a header length is exact, so the plan covers it and no more');
+
+  seen.chunks = [];
+  await ff.prepareTape(new File([new Uint8Array(4)], 'a.webm'), { engine: fake(null), ...opts });
+  const measured = seen.chunks.reduce((a, b) => a + b, 0);
+  eq(measured, 12, 'a measured length is a floor, so the last chunk overruns it');
+});
+
+at('the slowest stage reports progress instead of sitting at zero', async () => {
+  // Preparing a tape spends most of its time decoding the whole file to find the pauses,
+  // and that stretch used to emit nothing at all -- the part that looked frozen.
+  const positions = [];
+  const engine = {
+    load: async () => {}, mount: async () => '/in', unmount: async () => {},
+    probeDuration: async () => 100,
+    scanSilences: async (input, total, opts, onPosition) => {
+      for (const t of [10, 25, 50, 90, 100]) onPosition?.(t);
+      return { silences: [], duration: 100, measured: null, ok: true };
+    },
+    cutChunk: async () => new Uint8Array(1)
+  };
+  await ff.prepareTape(new File([new Uint8Array(4)], 'a.wav'), {
+    engine, targetSec: 50, minSec: 20, maxSec: 60, searchSec: 5,
+    onScan: f => positions.push(f)
+  });
+  eq(positions, [0.1, 0.25, 0.5, 0.9, 1], 'a real fraction of the file read so far');
+});
+
+at('with no length to compare against, the scan reports position but claims no fraction', async () => {
+  const seen = [];
+  const engine = {
+    load: async () => {}, mount: async () => '/in', unmount: async () => {},
+    probeDuration: async () => null,
+    scanSilences: async (i, t, o, onPosition) => { onPosition?.(7); return { silences: [], duration: 20, ok: true }; },
+    cutChunk: async () => new Uint8Array(1)
+  };
+  await ff.prepareTape(new File([new Uint8Array(4)], 'a.webm'), {
+    engine, targetSec: 50, minSec: 20, maxSec: 60,
+    onScan: (fraction, seconds) => seen.push([fraction, seconds])
+  });
+  eq(seen, [[null, 7]], 'no invented percentage when nothing says how long the file is');
+});
+
+at('a recording knows its own length, so even a headerless file can be followed', async () => {
+  const seen = [];
+  const engine = {
+    load: async () => {}, mount: async () => '/in', unmount: async () => {},
+    probeDuration: async () => null,             // MediaRecorder writes no duration
+    scanSilences: async (i, t, o, onPosition) => { onPosition?.(15); return { silences: [], duration: 30, ok: true }; },
+    cutChunk: async () => new Uint8Array(1)
+  };
+  await ff.prepareTape(new File([new Uint8Array(4)], 'source.webm'), {
+    engine, expectedSec: 30, targetSec: 50, minSec: 20, maxSec: 60,
+    onScan: f => seen.push(f)
+  });
+  eq(seen, [0.5], 'how long the recorder ran is a perfectly good total to measure against');
+});
+
+t('one line of ffmpeg output gives a position', () => {
+  eq(ff.parsePosition('size=  1024kB time=00:03:21.44 bitrate=  41.7kbits/s'), 201.44);
+  eq(ff.parsePosition('frame=  0 time=00:00:00.00'), 0);
+  eq(ff.parsePosition('[silencedetect @ 0x1] silence_start: 12.3'), null);
+  eq(ff.parsePosition(''), null);
 });
 
 const run = async () => {

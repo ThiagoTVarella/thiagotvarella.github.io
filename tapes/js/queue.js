@@ -40,6 +40,11 @@ export function stepIndex(state) {
 }
 
 const LOCK = 'tapes-queue';
+
+// Where the preparing stage sits inside a tape's overall 0..1 progress. Reading the file
+// through to find the pauses is the slow part; cutting the chunks afterwards is quick.
+const PREPARE_SCAN = 0.18;
+const PREPARE_END = 0.25;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // Retryable failures get four attempts over ~30s. A tab throttled mid-backoff simply waits
@@ -240,8 +245,16 @@ export class Queue {
       await this.#persist(tape);
       const res = await this.deps.prepare(tape.file, {
         signal: this._abort,
+        // How long the recorder ran, when this came from the microphone. Used only to make
+        // the scan reportable -- chunk planning uses the length actually measured.
+        expectedSec: tape.recordedSeconds || tape.duration || null,
         onStage: s => this.emit('stage', tape, s),
-        onProgress: (a, b) => progress(a / b * 0.25),
+        // Reading the file through is most of the work, so it gets most of the band.
+        onScan: (fraction, seconds) => {
+          if (fraction != null) progress(fraction * PREPARE_SCAN);
+          this.emit('scan', tape, seconds);
+        },
+        onProgress: (a, b) => progress(PREPARE_SCAN + (a / b) * (PREPARE_END - PREPARE_SCAN)),
         onChunk: async (chunk, bytes) => {
           await S.write(store.paths.chunkAudio(tape.id, chunk.index), bytes);
         }

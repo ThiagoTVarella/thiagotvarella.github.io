@@ -179,11 +179,19 @@ export class Recorder {
     if (onLevel && this.AudioCtx) this.#meter(onLevel);
 
     this.rec = new this.RecorderImpl(this.stream, this.mime ? { mimeType: this.mime } : undefined);
-    this.rec.ondataavailable = async e => {
+    // Writes started from this handler have to be tracked, because the handler cannot make
+    // the event wait for them. MediaRecorder fires the final dataavailable and then onstop
+    // immediately after, so without this stop() resolves with the last slice still in the
+    // air and the caller closes the file without it -- losing the last thing he says.
+    this._pending = new Set();
+    this.rec.ondataavailable = e => {
       if (!e.data || !e.data.size) return;
       this.bytes += e.data.size;
-      try { await onData?.(e.data); }
-      catch (err) { onError?.(err); }
+      const p = Promise.resolve()
+        .then(() => onData?.(e.data))
+        .catch(err => onError?.(err));      // a failed slice must not wedge stop()
+      this._pending.add(p);
+      p.then(() => this._pending.delete(p));
     };
     this.rec.onerror = e => onError?.(e.error || e);
     this.rec.start(this.timeslice);
@@ -214,6 +222,8 @@ export class Recorder {
       this.rec.onstop = res;
       try { this.rec.stop(); } catch (e) { res(); }
     });
+    // The final slice is dispatched just before onstop and is still being written.
+    await Promise.all([...this._pending]);
     if (this._raf) cancelAnimationFrame(this._raf);
     this.stream?.getTracks().forEach(t => t.stop());
     try { await this.ctx?.close(); } catch (e) {}
@@ -226,14 +236,27 @@ export class Recorder {
 // A crash mid-recording therefore leaves everything captured up to that moment on disk.
 export async function makeFileSink(store, path) {
   const handle = await store.writableStream(path);
-  let position = 0;
+  let position = 0;      // where the next slice goes
+  let written = 0;       // how much has actually landed
+  let chain = Promise.resolve();
+
   return {
-    write: async blob => {
-      const buf = new Uint8Array(await blob.arrayBuffer());
-      await handle.write({ type: 'write', position, data: buf });
-      position += buf.length;
+    // Slices are serialized. The offset used to be read on one side of an await and
+    // advanced on the other, so a slice arriving while the previous write was still in
+    // flight took the SAME offset and overwrote it -- silently destroying seconds of
+    // audio in the middle of a side, with a file that still looked plausible afterwards.
+    write: blob => {
+      chain = chain.then(async () => {
+        const buf = new Uint8Array(await blob.arrayBuffer());
+        await handle.write({ type: 'write', position, data: buf });
+        position += buf.length;
+        written = position;
+      });
+      return chain;
     },
-    close: async () => { await handle.close(); return position; },
-    get bytes() { return position; }
+    // Never commit ahead of the queue: whatever is still in flight is the end of the
+    // recording, which is the part it would be worst to lose.
+    close: async () => { await chain; await handle.close(); return written; },
+    get bytes() { return written; }
   };
 }

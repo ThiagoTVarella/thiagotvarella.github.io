@@ -10,7 +10,8 @@
 //    before ffmpeg's own working memory. WORKERFS reads lazily from the File on disk
 //    instead. Outputs are deleted from MEMFS the moment they are read out.
 
-import { planChunks, markSilentChunks, parseSilenceLog, silenceScanArgs, chunkArgs, DEFAULTS }
+import { planChunks, markSilentChunks, padFinalChunk, parseSilenceLog, silenceScanArgs,
+         chunkArgs, DEFAULTS }
   from './audio.js';
 
 // The ESM core, deliberately -- NOT the umd one the docs lead you to.
@@ -45,6 +46,15 @@ export function parseDuration(log) {
 // running position as `time=HH:MM:SS.ms`, and the last one it prints is where the audio
 // ended. Since silence detection already decodes the whole file, the real duration is
 // available from a pass we are running anyway -- no extra work.
+// One line's worth: `size=... time=00:03:21.44 bitrate=...`. The scan prints these all the
+// way through a decode, which is what makes the longest, quietest stage reportable at all.
+export function parsePosition(line) {
+  const m = /time=\s*(-?\d+):(\d{2}):(\d{2})(?:\.(\d+))?/.exec(String(line || ''));
+  if (!m) return null;
+  const secs = (+m[1]) * 3600 + (+m[2]) * 60 + (+m[3]) + (m[4] ? parseFloat('0.' + m[4]) : 0);
+  return secs >= 0 ? secs : null;
+}
+
 export function parseProgressDuration(log) {
   const re = /time=\s*(-?\d+):(\d{2}):(\d{2})(?:\.(\d+))?/g;
   let m, last = null;
@@ -89,14 +99,17 @@ export class TapeAudio {
     this.ff = await make(onProgress);
     this.ff.on?.('log', ({ message }) => {
       this.log.push(message);
+      this._onLine?.(message);
       this.onLog?.(message);
     });
     return this.ff;
   }
 
-  async #run(args) {
+  async #run(args, onLine) {
     this.log = [];
-    await this.ff.exec(args);
+    this._onLine = onLine || null;
+    try { await this.ff.exec(args); }
+    finally { this._onLine = null; }
     return this.log.join('\n');
   }
 
@@ -125,10 +138,13 @@ export class TapeAudio {
 
   // Returns { silences, duration }. The duration is what this decode pass actually observed,
   // which is the only way to learn the length of a stream whose header does not carry one.
-  async scanSilences(input, total, opts = {}) {
+  async scanSilences(input, total, opts = {}, onPosition) {
     const o = { ...DEFAULTS, ...opts };
     let log = '', ok = true;
-    try { log = await this.#run(silenceScanArgs(input, o)); }
+    const watch = onPosition
+      ? line => { const t = parsePosition(line); if (t != null) onPosition(t); }
+      : null;
+    try { log = await this.#run(silenceScanArgs(input, o), watch); }
     catch (e) { log = this.log.join('\n'); ok = false; }
     // Only trust a measured length from a pass that actually ran to the end. A decode that
     // died early still printed a position, and believing it would silently treat a
@@ -164,7 +180,7 @@ export class TapeAudio {
 //
 // `onChunk(chunk, bytes)` may be async; it is awaited before the next chunk is cut.
 export async function prepareTape(file, {
-  engine, onChunk, onProgress, onStage, signal, ...opts
+  engine, onChunk, onProgress, onScan, onStage, signal, expectedSec, ...opts
 } = {}) {
   const audio = engine || new TapeAudio();
   const stage = s => onStage?.(s);
@@ -181,13 +197,25 @@ export async function prepareTape(file, {
   const headerDuration = await audio.probeDuration(input);
 
   stage('listening');
-  const scan = await audio.scanSilences(input, headerDuration, opts);
+  // The silence scan decodes the whole file, and on a single-threaded core that is by far
+  // the longest part of preparing a tape -- and it used to report nothing at all, which is
+  // the stretch that looked frozen. ffmpeg prints its position throughout, so the scan can
+  // be followed live. The total comes from the header when there is one, and otherwise from
+  // however long the recorder ran, which is known because we timed it.
+  const knownTotal = headerDuration ?? (expectedSec > 0 ? expectedSec : null);
+  const scan = await audio.scanSilences(input, headerDuration, opts, sec => {
+    onScan?.(knownTotal ? Math.min(1, sec / knownTotal) : null, sec, knownTotal);
+  });
   const silences = scan.silences;
   const duration = headerDuration ?? scan.duration;
 
   if (!duration) throw new Error("Couldn't work out how long this recording is.");
 
-  const planned = markSilentChunks(planChunks(silences, duration, opts), silences);
+  // A measured length is a lower bound; a header length is exact. Only the measured case
+  // needs the last chunk to run past the end.
+  const exact = headerDuration != null;
+  let planned = markSilentChunks(planChunks(silences, duration, opts), silences, opts);
+  if (!exact) planned = padFinalChunk(planned, opts.tailPadSec ?? 2);
 
   stage('splitting');
   const made = [];

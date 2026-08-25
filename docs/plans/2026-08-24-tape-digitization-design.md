@@ -763,6 +763,49 @@ builds a new store. Measured against a simulated 8ms round trip: **2090ms to 73m
 - **Em dashes** are gone from every user-facing string, rewritten one at a time as a full
   stop, colon or comma depending on what the dash was doing, rather than swapped for a hyphen.
 
+### Losing the last thing he says
+
+Reported from the real app: recordings seemed to be cutting the final word. Testing the
+pipeline against generated audio whose last burst ends exactly at EOF found **four**
+independent ways the end of a recording could be lost, none of which was where I first
+looked. Chunk *planning* turned out to be exact (coverage 0 to 10.800s of a 10.8s file), and
+so did chunk *encoding* (a decoded chunk carried sound to within 1ms of its requested end).
+The losses were all elsewhere.
+
+1. **`Recorder.stop()` resolved before the final slice was written.** `ondataavailable` was
+   `async`, and an event handler cannot make its event wait. MediaRecorder fires the last
+   `dataavailable` and then `onstop` immediately after, so `stop()` returned with that write
+   still in the air and the caller closed the file without it. In-flight writes are now
+   tracked and awaited. This is the one that actually matches "the final word".
+2. **`makeFileSink` was not serializing writes.** The offset was read on one side of an
+   `await` and advanced on the other, so two slices in flight at once took the *same*
+   offset. A test firing three slices together showed all three written at position 0:
+   silent destruction of audio mid-side, in a file that still looks plausible. Writes now
+   go through a promise chain, and `close()` waits for the queue.
+3. **A measured duration is a lower bound.** ffmpeg's last progress line lands slightly
+   before a stream truly ends, so a browser recording (no duration in its header at all)
+   measured ~0.05s short and the plan stopped there. Measured (not header) lengths now let
+   the final chunk overrun: ffmpeg stops at EOF, so asking for more than exists cannot lose
+   anything. Verified: coverage went from 10.750s to past the true end.
+4. **`markSilentChunks` judged on silent fraction alone.** The end of a side is speech
+   followed by blank tape, and a chunk holding his last two words plus two minutes of
+   nothing is 99% silence, so it would have been skipped *whole*. A chunk containing an
+   unbroken stretch of sound longer than a word is now never skipped, however much silence
+   surrounds it, while genuine leader tape and scattered clicks still are.
+
+### The slowest stage reported nothing
+
+Preparing a tape spends most of its time in `silencedetect`, decoding the whole file on a
+single-threaded core, and that stretch emitted no progress at all. It was the part that
+looked frozen, and it is exactly where the invented "45 minutes" used to sit.
+
+ffmpeg prints its position throughout that decode, and we were already parsing those lines
+for the duration. `parsePosition()` now reads them one at a time, so the scan reports a real
+fraction of the file read so far, mapped into the first 0.18 of a tape's progress. The total
+comes from the header when there is one, and otherwise from **how long the recorder ran**,
+which is known because we timed it (`recordedSeconds`). With neither, it reports the position
+and claims no percentage rather than inventing one.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.

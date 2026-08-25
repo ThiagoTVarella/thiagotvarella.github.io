@@ -84,19 +84,57 @@ export function planChunks(silences, totalDuration, opts = {}) {
   return chunks;
 }
 
+// The longest unbroken stretch of NON-silence inside a chunk. This is what decides whether
+// a chunk holds speech, rather than the silent fraction alone.
+export function longestSpeechRun(chunk, silences) {
+  const cEnd = chunk.start + chunk.duration;
+  const inside = (silences || [])
+    .map(s => ({ start: Math.max(s.start, chunk.start), end: Math.min(s.end, cEnd) }))
+    .filter(s => s.end > s.start)
+    .sort((a, b) => a.start - b.start);
+  let longest = 0, cursor = chunk.start;
+  for (const s of inside) {
+    longest = Math.max(longest, s.start - cursor);
+    cursor = Math.max(cursor, s.end);
+  }
+  return Math.max(longest, cEnd - cursor);
+}
+
 // Mark chunks that are entirely silence so they are never sent to a model.
 // This is the cheapest hallucination guard available: leader tape and dead ends of
 // sides are exactly the input that makes ASR models invent speech.
-export function markSilentChunks(chunks, silences) {
+//
+// But the fraction alone is not safe at the end of a side. A chunk holding his last two
+// words followed by two minutes of blank tape is 99% silence, and skipping it would throw
+// those words away entirely -- the worst possible outcome, and an invisible one. So a chunk
+// containing an unbroken stretch of sound longer than a word is never skipped, however much
+// silence surrounds it.
+export function markSilentChunks(chunks, silences, opts = {}) {
+  const minSpeechSec = opts.minSpeechSec ?? 0.35;
   return chunks.map(c => {
     const cEnd = c.start + c.duration;
     const covered = (silences || []).reduce((acc, s) => {
       const overlap = Math.min(cEnd, s.end) - Math.max(c.start, s.start);
       return acc + Math.max(0, overlap);
     }, 0);
-    return { ...c, silentFraction: c.duration > 0 ? covered / c.duration : 1,
-             isSilent: c.duration > 0 && covered / c.duration > 0.98 };
+    const fraction = c.duration > 0 ? covered / c.duration : 1;
+    const speech = longestSpeechRun(c, silences);
+    return { ...c, silentFraction: fraction, longestSpeech: +speech.toFixed(3),
+             isSilent: c.duration > 0 && fraction > 0.98 && speech < minSpeechSec };
   });
+}
+
+// A duration recovered by watching a decode is a LOWER BOUND: ffmpeg's last progress line
+// is printed slightly before the stream truly ends, so a browser recording (which carries
+// no duration in its header at all) measures a little short. Being short by even a fraction
+// of a second clips the final word. Let the last chunk run past the measured end: ffmpeg
+// stops at EOF, so asking for more than exists costs nothing and cannot lose anything.
+export function padFinalChunk(chunks, seconds = 2) {
+  if (!chunks.length || !(seconds > 0)) return chunks;
+  const out = chunks.slice();
+  const last = out[out.length - 1];
+  out[out.length - 1] = { ...last, duration: +(last.duration + seconds).toFixed(3), padded: true };
+  return out;
 }
 
 // ffmpeg argv builders. Kept as data so they can be asserted in tests without running ffmpeg.
