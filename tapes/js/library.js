@@ -15,23 +15,55 @@ export function miniSteps(tape) {
   }).join('')}</div>`;
 }
 
+// A tape is resumable if it is anything other than finished. That deliberately includes
+// FAILED ones: retrying is nearly free, because every chunk already transcribed and any
+// translation already written stay on disk and are skipped. Nothing is ever re-recorded,
+// and nothing already paid for is paid for twice.
+export const isResumable = t =>
+  t.status === 'working' || t.status === 'queued' || t.status === 'error';
+
 // What the banner above the recordings list should say, given the tapes on hand and
 // whether a queue is actively running right now in this tab.
 //
 //   'running' -- a queue in THIS session is working on something; show its live progress.
-//   'stalled' -- nothing is running, but some tape is not done. Almost always the tab was
-//                closed or reloaded mid-run. The engine can pick up exactly where it left
-//                off; she just needs a way to ask it to.
+//   'stalled' -- nothing is running, but work remains: either interrupted partway (the tab
+//                was closed mid-run) or stopped by an error. Both are picked up the same
+//                way, so they share one action; only the wording differs.
 //   'none'    -- nothing to say.
 export function libraryBannerState(tapes, activelyRunning) {
   if (activelyRunning) {
     const working = tapes.find(t => t.status === 'working');
     if (working) return { kind: 'running', tape: working };
   } else {
-    const stalled = tapes.filter(t => t.status === 'working' || t.status === 'queued');
-    if (stalled.length) return { kind: 'stalled', tapes: stalled };
+    const stalled = tapes.filter(isResumable);
+    if (stalled.length) {
+      const failed = stalled.filter(t => t.status === 'error').length;
+      return { kind: 'stalled', tapes: stalled, failed, unfinished: stalled.length - failed };
+    }
   }
   return { kind: 'none' };
+}
+
+// One sentence covering both reasons work is outstanding, without pretending an error was
+// merely an interruption.
+export function stalledMessage({ failed = 0, unfinished = 0 }) {
+  const n = failed + unfinished;
+  const plural = n === 1 ? 'recording' : 'recordings';
+  if (failed && unfinished) {
+    return `${n} ${plural} still need reading — some ran into a problem, some were interrupted. Nothing is lost.`;
+  }
+  if (failed) {
+    return `${failed} ${failed === 1 ? 'recording' : 'recordings'} ran into a problem. Nothing is lost — the audio is still here.`;
+  }
+  return `${unfinished} ${plural} didn't finish being read — probably the window closed partway through. Nothing is lost.`;
+}
+
+// The failure reason, shown persistently on the card itself rather than in a toast that
+// disappears. Clicking a failed tape now retries it, so the reason has to live somewhere
+// she can still read after the click.
+export function tapeErrorNote(tape) {
+  if (tape.status !== 'error') return null;
+  return { reason: tape.error || 'something went wrong', action: 'tap to try again' };
 }
 
 // What clicking a tape that is not ready to read should say. Reflects its actual current
@@ -39,7 +71,7 @@ export function libraryBannerState(tapes, activelyRunning) {
 // (a recording stuck at "Waiting" with zero information) feel like a dead end.
 export function tapeClickMessage(tape) {
   if (tape.status === 'error') {
-    return `"${tape.label}" ran into a problem: ${tape.error || 'something went wrong'}.`;
+    return `Trying "${tape.label}" again — picking up from where it stopped.`;
   }
   if (tape.status === 'working') {
     const step = STEPS[tape.stepIdx];

@@ -5,7 +5,8 @@
 import * as demoData from './demo.js';
 import * as store from './store.js';
 import { Queue, STATE, stepIndex, humanError } from './queue.js';
-import { miniSteps, libraryBannerState, tapeClickMessage } from './library.js';
+import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
+         tapeErrorNote } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { translateAll } from './translate.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
@@ -108,10 +109,9 @@ function renderLibrary() {
        style="padding:0 4px;color:var(--accent)">Show progress</button></div>`;
     $('#toNight').onclick = () => openRunScreen(banner.tape);
   } else if (banner.kind === 'stalled') {
-    $('#libBanner').innerHTML = `<div class="banner warn">${banner.tapes.length} recording${
-      banner.tapes.length > 1 ? 's' : ''} didn't finish being read -- probably the window closed
-      partway through. Nothing is lost. <button class="tab" id="continueStalled"
-      style="padding:0 4px;color:var(--accent)">Continue</button></div>`;
+    $('#libBanner').innerHTML = `<div class="banner warn">${stalledMessage(banner)}
+      <button class="tab" id="continueStalled"
+      style="padding:0 4px;color:var(--accent)">${banner.failed ? 'Try again' : 'Continue'}</button></div>`;
     $('#continueStalled').onclick = () => continueStalled(banner.tapes);
   } else {
     $('#libBanner').innerHTML = '';
@@ -124,12 +124,21 @@ function renderLibrary() {
     card.innerHTML = `
       <div class="title">${t.heading || t.label}</div>
       <div class="meta">${t.label} · side ${t.side} · ${t.minutes} min${
-        t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}</div>
+        t.date ? '' : ' · <span style="color:var(--accent-2)">date not found yet</span>'}${
+        tapeErrorNote(t)
+          ? `<br><span style="color:var(--accent-2)">${tapeErrorNote(t).reason}</span> · ${tapeErrorNote(t).action}`
+          : ''}</div>
       <div class="state">${STATUS[t.status](t)}</div>
       ${t.status === 'working'
         ? `<div class="bar"><i style="width:${(t.progress * 100).toFixed(0)}%"></i></div>${miniSteps(t)}`
         : ''}`;
-    card.onclick = () => t.status === 'done' ? openRead(t) : toast(tapeClickMessage(t));
+    card.onclick = () => {
+      if (t.status === 'done') return openRead(t);
+      // A failed tape is retried in place: everything already transcribed stays on disk
+      // and is skipped, so this costs only the work that had not happened yet.
+      if (t.status === 'error') { toast(tapeClickMessage(t)); return continueStalled([t]); }
+      toast(tapeClickMessage(t));
+    };
     list.appendChild(card);
   }
 }
@@ -830,6 +839,11 @@ async function continueStalled(tapes) {
       const saved = await state.store.readJSON(store.paths.tape(t.id));
       const sourceName = saved.source || 'source.webm';
       const blob = await state.store.readBlob(`tapes/${t.id}/${sourceName}`);
+      // Drop any previous error, or a tape that now succeeds keeps showing the old reason.
+      if (saved.error) {
+        const { error, ...rest } = saved;
+        await state.store.writeJSON(store.paths.tape(t.id), { ...rest, state: STATE.QUEUED });
+      }
       specs.push({ id: t.id, file: new File([blob], sourceName, { type: blob.type }),
                    label: t.label, side: t.side });
     } catch (e) { missing.push(t.label); }
