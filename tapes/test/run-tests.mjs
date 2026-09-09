@@ -14,6 +14,7 @@ import * as entry from '../js/entry.js';
 import * as lib from '../js/library.js';
 import * as rec from '../js/record.js';
 import * as rec_ from '../js/record.js';
+import * as local from '../js/local.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -2343,6 +2344,290 @@ t('one line of ffmpeg output gives a position', () => {
   eq(ff.parsePosition('frame=  0 time=00:00:00.00'), 0);
   eq(ff.parsePosition('[silencedetect @ 0x1] silence_start: 12.3'), null);
   eq(ff.parsePosition(''), null);
+});
+
+
+// ------------------------------------------------------------------ listening on this computer
+
+const VOCAB = ['<unk> 0', '<blk>-not-yet', '▁Σή 2', 'με 3', 'ρα 4', '▁ο 5', '▁Κώ 6', 'στα 7', '. 8', '<|nospeech|> 9', '<blk> 10']
+  .filter(l => !l.includes('not-yet')).join('\n');
+
+t('the vocabulary is parsed by id, and the blank symbol is found by name', () => {
+  const v = local.parseVocab(VOCAB + '\r\n');
+  eq(v.pieces[2], '▁Σή');
+  eq(v.pieces[8], '.');
+  eq(v.blank, 10);
+  eq(local.parseVocab('a 0\nb 1').blank, 1, 'without <blk> the last id is assumed to be the blank');
+});
+
+// A scripted prediction network: each call returns the next (symbol, duration) pair.
+function scripted(plan, vocabSize) {
+  const calls = [];
+  let i = 0;
+  const step = async (t, prev, state) => {
+    const [k, d] = plan[Math.min(i++, plan.length - 1)];
+    calls.push({ t, prev, state });
+    const logits = new Float32Array(vocabSize + local.DURATIONS.length).fill(-9);
+    logits[k] = 1;
+    logits[vocabSize + d] = 1;
+    return { logits, state: { n: calls.length } };
+  };
+  return { step, calls };
+}
+
+at('a blank with duration 0 moves one frame on, so the loop always ends', async () => {
+  const { step, calls } = scripted([[10, 0]], 11);
+  const out = await local.greedyTdt(3, step, { blank: 10, vocabSize: 11 });
+  eq(out, []);
+  eq(calls.map(c => c.t), [0, 1, 2]);
+});
+
+at('a predicted duration jumps that many frames, symbol or blank', async () => {
+  const { step, calls } = scripted([[2, 3], [10, 2], [3, 0], [10, 0]], 11);
+  const out = await local.greedyTdt(8, step, { blank: 10, vocabSize: 11 });
+  eq(out.map(x => [x.id, x.t]), [[2, 0], [3, 5]]);
+  eq(calls.map(c => c.t), [0, 3, 5, 5, 6, 7]);
+});
+
+at('a symbol with duration 0 stays on its frame, but only up to maxSymbols', async () => {
+  const { step, calls } = scripted([[2, 0], [3, 0], [4, 0], [10, 0]], 11);
+  const out = await local.greedyTdt(2, step, { blank: 10, vocabSize: 11, maxSymbols: 2 });
+  eq(out.map(x => [x.id, x.t]), [[2, 0], [3, 0], [4, 1]], 'the third symbol was forced onto the next frame');
+  eq(calls.map(c => c.t), [0, 0, 1, 1]);
+});
+
+at('the prediction network only advances on a real symbol, never on a blank', async () => {
+  const { step, calls } = scripted([[10, 0], [2, 0], [10, 0], [10, 0]], 11);
+  await local.greedyTdt(3, step, { blank: 10, vocabSize: 11 });
+  eq(calls.map(c => c.prev), [10, 10, 2, 2], 'the previous symbol is fed back after it is emitted');
+  eq(calls.map(c => c.state && c.state.n), [null, null, 2, 2], 'state from the blank at call 1 was discarded; call 2 produced the state that sticks');
+});
+
+at('without a duration head the loop is plain RNN-T: one frame at a time', async () => {
+  const step = async () => ({ logits: new Float32Array([0, 0, 5]), state: null });
+  const out = await local.greedyTdt(3, step, { blank: 2, vocabSize: 3 });
+  eq(out, []);
+});
+
+t('pieces become words at ▁ boundaries, with times from the frames they were heard on', () => {
+  const v = local.parseVocab(VOCAB);
+  const words = local.tokensToWords([{ id: 2, t: 1 }, { id: 3, t: 2 }, { id: 4, t: 2 }, { id: 5, t: 6 },
+                                     { id: 6, t: 8 }, { id: 7, t: 9 }, { id: 8, t: 9 }], v);
+  eq(words, [{ word: 'Σήμερα', start: 0.08, end: 0.24 }, { word: 'ο', start: 0.48, end: 0.56 },
+             { word: 'Κώστα.', start: 0.64, end: 0.8 }]);
+  eq(local.wordsToText(words), 'Σήμερα ο Κώστα.');
+});
+
+t('the blank and the model\'s own markers never reach the text', () => {
+  const v = local.parseVocab(VOCAB);
+  const words = local.tokensToWords([{ id: 9, t: 0 }, { id: 10, t: 0 }, { id: 0, t: 1 }, { id: 2, t: 2 }], v);
+  eq(words, [{ word: 'Σή', start: 0.16, end: 0.24 }], 'an unknown piece at the start of a word is nothing');
+  eq(local.tokensToWords([], v), []);
+});
+
+t('the vocabulary cannot spell final sigma, so an unknown piece ending a Greek word is ς', () => {
+  const v = local.parseVocab(VOCAB);
+  const words = local.tokensToWords([{ id: 6, t: 0 }, { id: 7, t: 1 }, { id: 0, t: 2 }, { id: 8, t: 2 }], v);
+  eq(local.wordsToText(words), 'Κώστας.');
+  eq(words[0].end, 0.24, 'the repaired letter still counts for timing');
+  const latin = local.parseVocab('▁ok 0\n<unk> 1\n<blk> 2');
+  eq(local.wordsToText(local.tokensToWords([{ id: 0, t: 0 }, { id: 1, t: 1 }], latin)), 'ok',
+     'after anything but Greek letters an unknown piece stays unknown');
+  // Κώ <unk> στα: the unknown piece is inside the word, so it is not a final sigma
+  // (it is one of the accented letters the vocabulary also lacks) and is left out.
+  eq(local.wordsToText(local.tokensToWords([{ id: 6, t: 0 }, { id: 0, t: 1 }, { id: 7, t: 2 }], v)), 'Κώστα');
+  eq(local.wordsToText(local.tokensToWords([{ id: 6, t: 0 }, { id: 7, t: 1 }, { id: 0, t: 2 }], v)), 'Κώστας',
+     'at the very end of the transcript it closes the word too');
+});
+
+t('the prediction network\'s wants are read from the session, with a sane fallback', () => {
+  eq(local.describeDecoder(null), { targets: 'int32', states: [[2, 1, 640], [2, 1, 640]] });
+  const meta = { inputMetadata: [
+    { name: 'targets', type: 'int64', shape: [1, 1] },
+    { name: 'input_states_1', type: 'float32', shape: [2, 'batch', 640] },
+    { name: 'input_states_2', type: 'float32', shape: [2, -1, 640] }
+  ] };
+  eq(local.describeDecoder(meta), { targets: 'int64', states: [[2, 1, 640], [2, 1, 640]] });
+});
+
+// A tiny stand-in manifest; the real files are hundreds of megabytes.
+const FILES = [
+  { role: 'vocab', name: 'v.txt', bytes: 4 },
+  { role: 'encoder', name: 'e.onnx', bytes: 10 }
+];
+function fakeFetch(sizes, { fail } = {}) {
+  const calls = [];
+  const f = async url => {
+    const name = url.split('/').pop();
+    calls.push(name);
+    if (fail === name) return { ok: false, status: 503 };
+    const n = sizes[name];
+    const chunks = [];
+    for (let i = 0; i < n; i += 3) chunks.push(new Uint8Array(Math.min(3, n - i)).fill(1));
+    let i = 0;
+    return { ok: true, status: 200, body: { getReader: () => ({ read: async () => i < chunks.length ? { value: chunks[i++], done: false } : { value: undefined, done: true } }) } };
+  };
+  return { f, calls };
+}
+
+at('weights are fetched into her folder, streamed, with running totals', async () => {
+  const S = new store.MemoryStore();
+  const { f, calls } = fakeFetch({ 'v.txt': 4, 'e.onnx': 10 });
+  const seen = [];
+  await local.ensureWeights(S, { files: FILES, fetchImpl: f, onProgress: p => seen.push([p.file, p.done, p.overallDone]) });
+  eq(calls, ['v.txt', 'e.onnx']);
+  eq(await local.weightsPresent(S, FILES), true);
+  eq(seen[seen.length - 1], ['e.onnx', 10, 14]);
+  ok(seen.every(([, , o], i) => i === 0 || o >= seen[i - 1][2]), 'the overall count never goes backwards');
+});
+
+at('a file already there at the right size is not fetched again', async () => {
+  const S = new store.MemoryStore();
+  await S.write(`${local.LOCAL.dir}/v.txt`, new Uint8Array(4));
+  const { f, calls } = fakeFetch({ 'v.txt': 4, 'e.onnx': 10 });
+  await local.ensureWeights(S, { files: FILES, fetchImpl: f });
+  eq(calls, ['e.onnx']);
+});
+
+at('a file at the wrong size counts as missing, and a short download is never committed', async () => {
+  const S = new store.MemoryStore();
+  await S.write(`${local.LOCAL.dir}/v.txt`, new Uint8Array(3));
+  eq(await local.weightsPresent(S, FILES), false);
+  const { f } = fakeFetch({ 'v.txt': 4, 'e.onnx': 7 });
+  let err = null;
+  try { await local.ensureWeights(S, { files: FILES, fetchImpl: f }); } catch (e) { err = e; }
+  ok(err && /incomplete/.test(err.message), 'the short file is reported, not accepted');
+  eq(await S.exists(`${local.LOCAL.dir}/e.onnx`), false, 'nothing was written under the encoder\'s name');
+  eq(await S.exists(`${local.LOCAL.dir}/v.txt`), true, 'the earlier file, which came down whole, was kept');
+});
+
+at('a refused download is a sentence she can act on, and stops before anything is written', async () => {
+  const S = new store.MemoryStore();
+  const { f } = fakeFetch({ 'v.txt': 4, 'e.onnx': 10 }, { fail: 'v.txt' });
+  let err = null;
+  try { await local.ensureWeights(S, { files: FILES, fetchImpl: f }); } catch (e) { err = e; }
+  ok(err && /listening model/.test(err.message) && /503/.test(err.message));
+  eq(q.humanError(err), err.message, 'the queue passes it through instead of flattening it');
+  eq(await S.exists(`${local.LOCAL.dir}/v.txt`), false);
+});
+
+at('stopping mid-download leaves nothing behind', async () => {
+  const S = new store.MemoryStore();
+  const { f } = fakeFetch({ 'v.txt': 4, 'e.onnx': 10 });
+  const signal = { aborted: false };
+  let err = null;
+  try {
+    await local.ensureWeights(S, { files: FILES, fetchImpl: f, signal, onProgress: p => { if (p.file === 'e.onnx') signal.aborted = true; } });
+  } catch (e) { err = e; }
+  eq(err && err.name, 'AbortError');
+  eq(await S.exists(`${local.LOCAL.dir}/e.onnx`), false);
+});
+
+t('the download is described in round figures', () => {
+  eq(local.describeDownload(), 'about 670 MB');
+  eq(local.describeDownload(1.4e9), 'about 1.4 GB');
+  eq(local.LOCAL_BYTES, local.LOCAL.files.reduce((n, f) => n + f.bytes, 0));
+});
+
+t('local timed words become the same transcript shape as the cloud models produce', () => {
+  const chunk = { index: 3, start: 100, duration: 30 };
+  const words = [
+    { word: 'Σήμερα', start: 0.5, end: 1.0 }, { word: 'βρέχει.', start: 1.2, end: 1.9 },
+    { word: 'Ήρθε', start: 3.0, end: 3.4 }, { word: 'ο', start: 3.5, end: 3.6 }, { word: 'Κώστας;', start: 3.7, end: 4.2 },
+    { word: 'Ναι', start: 5, end: 5.3 }
+  ];
+  const n = asr.normalizeLocal({ text: 'Σήμερα βρέχει. Ήρθε ο Κώστας; Ναι', words }, chunk);
+  eq([n.chunk, n.hasTimestamps, n.hasConfidence, n.agreement], [3, true, false, null]);
+  eq(n.segments.map(s => [s.id, s.text, s.start, s.end, s.confidence]), [
+    ['c3s0', 'Σήμερα βρέχει.', 100.5, 101.9, null],
+    ['c3s1', 'Ήρθε ο Κώστας;', 103, 104.2, null],
+    ['c3s2', 'Ναι', 105, 105.3, null]
+  ]);
+  eq(asr.normalizeLocal({ text: '', words: [] }, chunk).segments, []);
+});
+
+t('a long unpunctuated stretch is cut at a real pause, and never runs past forty words', () => {
+  const chunk = { index: 0, start: 0, duration: 60 };
+  const words = [];
+  for (let i = 0; i < 50; i++) words.push({ word: 'λέξη', start: i, end: i + 0.5 });
+  words[14].end = 14.5; words[15].start = 16.2;   // a 1.7s pause after the 15th word
+  const n = asr.normalizeLocal({ words }, chunk);
+  eq(n.segments.map(s => s.text.split(' ').length), [15, 35]);
+});
+
+t('modelProgressMessage says what stage the model is at, in a sentence', () => {
+  eq(lib.modelProgressMessage({ phase: 'download', done: 335e6, total: 670e6 }), 'Fetching the listening model, only this once… 50%');
+  eq(lib.modelProgressMessage({ phase: 'download', done: 0, total: 0 }), 'Fetching the listening model, only this once…');
+  eq(lib.modelProgressMessage({ phase: 'load' }), 'Loading the listening model…');
+  eq(lib.modelProgressMessage(null), 'Getting the listening model ready…');
+});
+
+at('transcribeChunk refuses local mode, which belongs to the queue', async () => {
+  let err = null;
+  try { await asr.transcribeChunk({ index: 0, start: 0, duration: 1 }, { mode: asr.MODES.LOCAL }); } catch (e) { err = e; }
+  ok(err && /queue/.test(err.message));
+});
+
+
+// A stand-in for local-client.js's engine: prepare() reports progress, transcribeBlob()
+// returns timed words, and nothing touches the network or a worker.
+function fakeLocal({ failPrepare } = {}) {
+  const seen = { prepared: 0, blobs: [] };
+  return {
+    seen,
+    prepare: async ({ onProgress }) => {
+      seen.prepared++;
+      if (failPrepare) throw new Error(failPrepare);
+      onProgress?.({ phase: 'download', done: 5, total: 10 });
+      onProgress?.({ phase: 'load' });
+    },
+    transcribeBlob: async blob => {
+      seen.blobs.push(blob.size);
+      return { text: 'Καλημέρα. Τι κάνεις;', words: [
+        { word: 'Καλημέρα.', start: 0.5, end: 1.2 }, { word: 'Τι', start: 2, end: 2.2 }, { word: 'κάνεις;', start: 2.3, end: 2.9 }
+      ] };
+    },
+    terminate() {}
+  };
+}
+
+at('listening on this computer runs the same pipeline, with the audio never leaving the store', async () => {
+  const localEngine = fakeLocal();
+  const { Q, st, deps, events } = newQueue({ mode: asr.MODES.LOCAL, deps: { ...qDeps(), local: localEngine } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.DONE);
+  eq(localEngine.seen.prepared, 1, 'the model is made ready once per run');
+  eq(localEngine.seen.blobs, [1, 1], 'both non-silent chunks were handed over as audio, not base64');
+  eq(deps.seen.transcribed, [], 'the cloud transcriber was never asked');
+  const c0 = await st.readJSON(store.paths.chunkText('t1', 0));
+  eq([c0.hasTimestamps, c0.hasConfidence, c0.cost, c0.models], [true, false, 0, [local.LOCAL.id]]);
+  eq(c0.segments.map(s => [s.text, s.start, s.end]), [['Καλημέρα.', 0.5, 1.2], ['Τι κάνεις;', 72, 72.9]].slice(0, 1).concat([['Τι κάνεις;', 2, 2.9]]));
+  eq(Q.spent, 0.01, 'only the translation cost anything');
+  eq(events.filter(e => e[0] === 'model').map(e => e[1].phase), ['download', 'load'], 'the run screen hears about the model');
+});
+
+at('if the model cannot be made ready, nothing about any tape changes and the run says why once', async () => {
+  const localEngine = fakeLocal({ failPrepare: "Couldn't fetch part of the listening model (HTTP 503). It can be tried again." });
+  const { Q, st, events } = newQueue({ mode: asr.MODES.LOCAL, deps: { ...qDeps(), local: localEngine } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  Q.add({ id: 't2', file: { name: 'b.wav' } });
+  await Q.start();
+  eq(Q.tapes.map(t => t.state), [q.STATE.QUEUED, q.STATE.QUEUED], 'still queued, so Continue applies');
+  eq(await st.exists(store.paths.tape('t1')), false, 'nothing was written under either tape');
+  const errs = events.filter(e => e[0] === 'error');
+  eq(errs.length, 1);
+  eq(errs[0][1], null);
+  ok(/listening model/.test(errs[0][2]));
+  eq(events.some(e => e[0] === 'stop'), true, 'the run still ends cleanly');
+});
+
+at('local mode without an engine is reported, not crashed', async () => {
+  const { Q, events } = newQueue({ mode: asr.MODES.LOCAL });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.QUEUED);
+  ok(events.some(e => e[0] === 'error' && /not available/.test(e[2])));
 });
 
 const run = async () => {

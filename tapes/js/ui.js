@@ -11,6 +11,9 @@ import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
 import { buildReviewQueue } from './glossary.js';
 import { translateAll } from './translate.js';
+import { MODES } from './asr.js';
+import { LocalEngine } from './local-client.js';
+import { modelProgressMessage } from './library.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
          makeLevelSmoother, fixStreamedDuration } from './record.js';
 
@@ -884,16 +887,21 @@ async function runQueue(specs) {
   if (!state.key) { toast('The access key is missing. Check Settings.'); return go('settings'); }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
+  // Listening on this computer runs in a worker of its own; everything else in the queue
+  // is unchanged. The engine is created per run and dropped with it.
+  const local = state.quality === MODES.LOCAL ? new LocalEngine(state.store) : null;
   const queue = new Queue({
     store: state.store,
     key: state.key,
     mode: state.quality,
+    deps: local ? { local } : {},
     glossary: state.glossary,
     spendCap: parseFloat(state.cap) || Infinity,
     spent: state.tapes.reduce((n, t) => n + (t.cost || 0), 0),
     on: {
       change: () => renderLibrary(),
       stage: (tape, st) => setRunSaying(SAYING[st] || 'Working…'),
+      model: p => setRunSaying(modelProgressMessage(p)),
       progress: (tape, p) => setRunProgress(tape, p),
       retry: (tape, msg) => setRunSaying(msg),
       spend: total => { state.spent = total; },
@@ -909,7 +917,7 @@ async function runQueue(specs) {
         toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be put into English.`),
       error: (tape, msg) => toast(msg),
       done: async tape => { await refreshLibrary(); await refreshReview(); },
-      stop: async () => { closeRunScreen(); await refreshLibrary(); }
+      stop: async () => { local?.terminate(); closeRunScreen(); await refreshLibrary(); }
     }
   });
 

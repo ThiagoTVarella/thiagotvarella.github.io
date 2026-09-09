@@ -15,7 +15,8 @@
 export const MODES = {
   TEXT:  'text',   // MAI only        -- best words, chunk-level seeking, no confidence
   NAV:   'nav',    // Whisper only    -- sentence seeking + confidence + biasing, rougher words
-  CROSS: 'cross'   // both            -- MAI words, Whisper timing, disagreement as confidence
+  CROSS: 'cross',  // both            -- MAI words, Whisper timing, disagreement as confidence,
+  LOCAL: 'local'    // on her own computer: Parakeet through ONNX Runtime, see local.js
 };
 
 export const MODELS = {
@@ -131,6 +132,36 @@ export function normalizeWhisper(res, chunk) {
   };
 }
 
+// Listening on her own computer gives timed words and nothing else: no confidence, no
+// second opinion. Sentences are cut where the model wrote sentence punctuation, and a
+// long stretch without any is cut at its biggest pause so a line stays clickable.
+const ENDS_SENTENCE = /[.!?;…]["»”)]*$/;
+export function normalizeLocal(res, chunk) {
+  const words = (res && res.words) || [];
+  const groups = [];
+  let cur = [];
+  const flush = () => { if (cur.length) groups.push(cur); cur = []; };
+  for (let i = 0; i < words.length; i++) {
+    cur.push(words[i]);
+    const next = words[i + 1];
+    const gap = next ? next.start - words[i].end : 0;
+    if (ENDS_SENTENCE.test(words[i].word) || (cur.length >= 12 && gap > 1.0) || cur.length >= 40) flush();
+  }
+  flush();
+  return {
+    chunk: chunk.index, start: chunk.start, duration: chunk.duration,
+    hasTimestamps: true, hasConfidence: false, agreement: null,
+    text: (res && res.text) || words.map(w => w.word).join(' '),
+    segments: groups.map((g, i) => ({
+      id: `c${chunk.index}s${i}`,
+      text: g.map(w => w.word).join(' '),
+      start: +(chunk.start + g[0].start).toFixed(3),
+      end: +(chunk.start + g[g.length - 1].end).toFixed(3),
+      logprob: null, confidence: null, suspect: false
+    }))
+  };
+}
+
 // Cross-check: MAI supplies the words, Whisper supplies the clock.
 //
 // The two segment lists don't correspond 1:1, so each MAI sentence is placed by its
@@ -228,6 +259,9 @@ export async function transcribeChunk(chunk, opts = {}) {
              skipped: 'silent', text: '', segments: [], cost: 0 };
   }
 
+  if (mode === MODES.LOCAL) {
+    throw new Error('Listening on this computer is handled by the queue, not by transcribeChunk.');
+  }
   const run = backend || (payload => call(key, payload, fetchImpl));
   const bias = biasPrompt(glossary);
   const whisperExtra = {

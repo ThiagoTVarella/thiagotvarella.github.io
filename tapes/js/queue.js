@@ -14,7 +14,8 @@
 //  * Every stage writes to disk before the next begins, and progress is re-derived from
 //    the directory listing, so a crash costs at most one chunk and can never skip one.
 
-import { transcribeChunk, MODES } from './asr.js';
+import { normalizeLocal, transcribeChunk, MODES } from './asr.js';
+import { LOCAL } from './local.js';
 import { translateAll, DEFAULT_MODEL } from './translate.js';
 import { prepareTape } from './ffmpeg.js';
 import * as store from './store.js';
@@ -40,6 +41,7 @@ export function stepIndex(state) {
 }
 
 const LOCK = 'tapes-queue';
+const LOCAL_MODEL = LOCAL.id;
 
 // Where the preparing stage sits inside a tape's overall 0..1 progress. Reading the file
 // through to find the pauses is the slow part; cutting the chunks afterwards is quick.
@@ -75,6 +77,9 @@ export class Queue {
     // Injectable so the whole queue is testable with no wasm, no network, no key.
     this.deps = {
       prepare: prepareTape, transcribe: transcribeChunk, translate: translateAll,
+      // Listening on this computer: something with prepare() and transcribeBlob(), see
+      // local-client.js. Only consulted when the mode asks for it.
+      local: null,
       ...(opts.deps || {})
     };
     this.tapes = [];
@@ -180,6 +185,7 @@ export class Queue {
     this.emit('start');
 
     try {
+      if (this.mode === MODES.LOCAL && !(await this.#readyToListen())) return;
       // No timers: the loop advances only when real work finishes.
       for (const tape of this.tapes) {
         if (this._abort.aborted || this.paused) break;
@@ -202,6 +208,24 @@ export class Queue {
       this._lockRelease?.();
       this._lockRelease = null;
       this.emit('stop');
+    }
+  }
+
+  // The model has to be on disk and loaded before the first chunk. If that fails, nothing
+  // about any tape has changed, so they stay queued and the usual Continue offer applies;
+  // the failure is reported once rather than stamped onto every tape.
+  async #readyToListen() {
+    if (!this.deps.local) {
+      this.emit('error', null, 'Listening on this computer is not available here.');
+      return false;
+    }
+    try {
+      await this.deps.local.prepare({ signal: this._abort, onProgress: p => this.emit('model', p) });
+      return true;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return false;
+      this.emit('error', null, humanError(e));
+      return false;
     }
   }
 
@@ -294,14 +318,23 @@ export class Queue {
         continue;
       }
 
-      const blob = await S.readBlob?.(store.paths.chunkAudio(tape.id, chunk.index));
-      const b64 = blob ? await toBase64(blob)
-                       : await S.read(store.paths.chunkAudio(tape.id, chunk.index));
-      const result = await withRetry(
-        () => this.deps.transcribe(chunk, {
-          mode: this.mode, key: this.key, b64, glossary: glossaryTerms(this.glossary)
-        }),
-        { onRetry: (e, n) => this.emit('retry', tape, humanError(e), n) });
+      const onRetry = (e, n) => this.emit('retry', tape, humanError(e), n);
+      let result;
+      if (this.mode === MODES.LOCAL) {
+        // The audio stays on this machine: decoded here, listened to in a worker.
+        const blob = await S.readBlob(store.paths.chunkAudio(tape.id, chunk.index));
+        const heard = await withRetry(() => this.deps.local.transcribeBlob(blob), { onRetry });
+        result = { ...normalizeLocal(heard, chunk), cost: 0, models: [LOCAL_MODEL] };
+      } else {
+        const blob = await S.readBlob?.(store.paths.chunkAudio(tape.id, chunk.index));
+        const b64 = blob ? await toBase64(blob)
+                         : await S.read(store.paths.chunkAudio(tape.id, chunk.index));
+        result = await withRetry(
+          () => this.deps.transcribe(chunk, {
+            mode: this.mode, key: this.key, b64, glossary: glossaryTerms(this.glossary)
+          }),
+          { onRetry });
+      }
 
       await store.saveChunkText(S, tape.id, result);
       this.#charge(result.cost, tape);
@@ -386,7 +419,7 @@ export function humanError(e) {
   if (e?.status === 429) return "The service is busy. I'll try again in a moment.";
   if (e?.status >= 500) return "The service had a problem. I'll try again in a moment.";
   if (/NetworkError|Failed to fetch|network/i.test(m)) return "Couldn't reach the internet. I'll retry.";
-  if (/how long/i.test(m)) return m;
+  if (/how long|listening model/i.test(m)) return m;
   if (/quota|insufficient|credit/i.test(m)) return 'NO CREDIT';
   return 'Something went wrong reading this recording. It can be tried again.';
 }

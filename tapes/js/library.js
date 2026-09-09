@@ -222,3 +222,16 @@ export function entryFooter({ flagged = 0, shaded = 0 } = {}) {
   }
   return parts.join(' · ');
 }
+
+// What the run screen says while the listening model is being fetched or loaded. The
+// download happens once and is large, so the first time gets a number and a promise that
+// it is a one-off; loading is quick and gets a plain sentence.
+export function modelProgressMessage(p) {
+  if (p && p.phase === 'download') {
+    const pct = p.total > 0 ? Math.min(100, Math.round(100 * (p.done || 0) / p.total)) : null;
+    return pct == null ? 'Fetching the listening model, only this once…'
+                       : `Fetching the listening model, only this once… ${pct}%`;
+  }
+  if (p && p.phase === 'load') return 'Loading the listening model…';
+  return 'Getting the listening model ready…';
+}
