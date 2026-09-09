@@ -806,6 +806,63 @@ comes from the header when there is one, and otherwise from **how long the recor
 which is known because we timed it (`recordedSeconds`). With neither, it reports the position
 and claims no percentage rather than inventing one.
 
+### Listening on this computer
+
+Thiago wanted a way to run things locally, prompted by Desert Ant's "Voz" announcement. Voz
+turned out to be NVIDIA's Parakeet TDT 0.6B v3 with unchanged weights, wrapped in Core ML
+for Apple silicon only, so it cannot run in a web page. The same weights exist as ONNX, and
+ONNX Runtime Web runs them in any desktop browser with WebAssembly: slower, but nothing to
+install, which was the requirement. No bake-off was run, on his call: the published numbers
+are what we have (NVIDIA: 20.7% of words wrong on clean read Greek; Desert Ant: 39.5% on
+long-form Greek, the worst of their 25 languages), and there are no real tapes yet.
+
+**Shape.** A fourth quality choice, *On this computer*, that says in plain words that it hears
+Greek less well. Transcription becomes a fourth backend producing the same normalised
+transcript (timed words, no confidence) so nothing downstream changes; the Greek text still
+goes to the service to be put into English, and the setting says so. The model runs in a
+worker (`local-worker.js`) so a minute of listening does not freeze the page; `local.js`
+holds everything testable in node (vocabulary, the TDT decode loop, timed words, the weights
+manifest and downloader); `local-client.js` decodes audio on the main thread, where the
+browser's decoder lives.
+
+**Weights live in her folder** (`models/parakeet-tdt-0.6b-v3/`, about 670 MB, fetched once
+from Hugging Face, which sends the CORS headers a page needs). Browsers evict their caches; a
+folder does not, and a copy of the folder carries everything needed to run offline. A file
+counts as present only at its exact expected size, and a short download is aborted rather
+than committed, because a truncated model fails in a way that looks like a broken model
+rather than an incomplete one. The ONNX Runtime itself is vendored (`vendor/ort/`, 14 MB) so
+the worker is same-origin and there is one less CDN to depend on.
+
+**Three things found by running it, not by reading about it.**
+
+- The reference Python decoder and this port produce the same words and the same mistakes
+  on the same audio, so the errors are the model's. On the clean Phase 0a clip it gets most
+  words but mangles the spoken date and some endings; on the simulated cassette it is
+  clearly worse. MAI was word-perfect on both. The setting's wording is not modesty.
+- **The vocabulary cannot spell final sigma.** Not one of its 8192 pieces contains ς, so
+  the model emits `<unk>` wherever a Greek word ends in one, and dropping it turns Κώστας
+  into Κώστα, a different grammatical case. Because ς occurs only word-finally, an unknown
+  piece that closes a Greek word is rendered as ς. This repairs the tokenizer, not the
+  hearing: it never adds a letter the model did not signal, and the accented capitals and
+  dialytika forms the vocabulary also lacks (Ί Ύ Ώ ΐ ΰ ϋ) fall elsewhere in a word and are
+  left alone.
+- The TDT time-advance rule is easy to get subtly wrong. A first version indexed the
+  duration table with the absolute argmax, so every predicted jump silently became 0; the
+  output still read as Greek, because a blank with duration 0 advances one frame anyway.
+  The unit test caught it, and the fix made decoding three times faster.
+
+**Speed.** Single-threaded WebAssembly, the pessimistic case: 0.37× real time on this
+container's CPU, so a 45-minute side in about 17 minutes, plus 11 s to load the model.
+Threads need `SharedArrayBuffer`, which needs COOP/COEP headers that GitHub Pages cannot
+send; a service-worker workaround exists (`coi-serviceworker`) and would also unlock the
+multithreaded ffmpeg core, but it is a separate change with its own reload semantics.
+WebGPU is the other lever, and neither is needed for it to work.
+
+**Memory.** The 652 MB encoder is read into an ArrayBuffer and copied into the WebAssembly
+heap, so expect a peak well over a gigabyte in the worker. A machine with 4 GB of RAM may
+not manage it. Nothing is known about her machine, so this ships and gets fixed if she
+reports it.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.
