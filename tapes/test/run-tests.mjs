@@ -15,6 +15,7 @@ import * as lib from '../js/library.js';
 import * as rec from '../js/record.js';
 import * as rec_ from '../js/record.js';
 import * as local from '../js/local.js';
+import * as tl from '../js/translate-local.js';
 
 let pass = 0, fail = 0;
 const results = [];
@@ -2701,6 +2702,145 @@ at('local mode without an engine is reported, not crashed', async () => {
   await Q.start();
   eq(Q.tapes[0].state, q.STATE.QUEUED);
   ok(events.some(e => e[0] === 'error' && /not available/.test(e[2])));
+});
+
+
+// ------------------------------------------------------------------ translating on this computer
+
+t('dates are found only where he says them plainly, and never given a year he did not say', () => {
+  eq(tl.findDates('Σήμερα είναι Τρίτη, 14 Μαρτίου 1978. Ήρθε ο Κώστας.'), [{ spoken: '14 Μαρτίου 1978', iso: '1978-03-14' }]);
+  eq(tl.findDates('Τον Μάρτιο 1979 πήγαμε Καλαμάτα.'), [{ spoken: 'Μάρτιο 1979', iso: '1979-03' }]);
+  eq(tl.findDates('Στις 3 Μαΐου φύγαμε.'), [], 'a day and month with no year cannot be placed in the calendar');
+  eq(tl.findDates('Η Μαρία ήρθε.'), [], 'a name that starts like a month is not a date');
+  eq(tl.findDates('45 Μαρτίου 1978'), [], 'an impossible day is not a date');
+  eq(tl.findDates('φεβρουαριου 1980'), [{ spoken: 'φεβρουαριου 1980', iso: '1980-02' }], 'accents and case do not matter');
+  eq(tl.findDates(''), []);
+  eq(tl.findDates('δεκατε Μαρτίου 19708.'), [], 'a five-digit number is a slip, not the year 1970');
+  eq(tl.findDates('114 Μαρτίου 1978'), [{ spoken: 'Μαρτίου 1978', iso: '1978-03' }], 'a three-digit day is dropped; the month and year he said plainly are kept');
+});
+
+// A stand-in for the three sessions: the "model" emits a fixed id sequence, and records
+// what it was fed so the past-key plumbing can be checked.
+function fakeSessions(script, { vocab = 8, pad = 7, layers = 2 } = {}) {
+  const seen = { encoder: [], decoder: [], decoderPast: [] };
+  const logitsFor = id => {
+    const data = new Float32Array(vocab).fill(-5); data[id] = 3;
+    // The padding symbol always scores highest so that forbidding it is actually tested.
+    data[pad] = 9;
+    return { dims: [1, 1, vocab], data };
+  };
+  let step = 0;
+  const present = tag => {
+    const out = {};
+    for (let l = 0; l < layers; l++) for (const k of ['key', 'value']) {
+      out[`present.${l}.decoder.${k}`] = { tag: `dec-${tag}` };
+      if (tag === 'first') out[`present.${l}.encoder.${k}`] = { tag: 'enc' };
+    }
+    return out;
+  };
+  const ort = { Tensor: class { constructor(type, data, dims) { this.type = type; this.data = data; this.dims = dims; } } };
+  const sessions = {
+    encoder: { run: async f => { seen.encoder.push(f); return { last_hidden_state: { tag: 'hidden' } }; } },
+    decoder: { run: async f => { seen.decoder.push(f); return { logits: logitsFor(script[step++]), ...present('first') }; } },
+    decoderPast: { run: async f => { seen.decoderPast.push(f); return { logits: logitsFor(script[step++]), ...present('s' + step) }; } }
+  };
+  return { ort, sessions, seen };
+}
+
+at('generation stops at the end symbol, never emits padding, and carries the encoder keys', async () => {
+  const eos = 6, pad = 7, start = 7;
+  const { ort, sessions, seen } = fakeSessions([3, 4, eos, 1], { pad });
+  const out = await tl.generate([10, 11, eos], { ort, sessions, eos, pad, start });
+  eq(out, [3, 4]);
+  eq(seen.decoder.length, 1, 'the full decoder runs once');
+  eq(seen.decoderPast.length, 2, 'then the with-past graph for each further token');
+  eq(Array.from(seen.decoder[0].input_ids.data).map(Number), [start]);
+  eq(Array.from(seen.decoderPast[0].input_ids.data).map(Number), [3]);
+  const last = seen.decoderPast[1];
+  eq(last['past_key_values.0.encoder.key'].tag, 'enc', 'encoder keys from the first call are carried');
+  eq(last['past_key_values.0.decoder.key'].tag, 'dec-s2', 'decoder keys are the latest ones');
+  eq(Array.from(seen.encoder[0].attention_mask.data).map(Number), [1, 1, 1]);
+});
+
+at('generation gives up at maxTokens rather than running forever', async () => {
+  const { ort, sessions } = fakeSessions(Array(50).fill(2));
+  const out = await tl.generate([1, 6], { ort, sessions, eos: 6, pad: 7, start: 7, maxTokens: 5 });
+  eq(out, [2, 2, 2, 2, 2]);
+});
+
+t('pickNext ignores the padding symbol even when it scores highest', () => {
+  const logits = { dims: [1, 2, 4], data: new Float32Array([0, 0, 0, 0, 1, 9, 2, 0]) };
+  eq(tl.pickNext(logits, 1), 2, 'the last position is read, and pad (id 1) is skipped');
+});
+
+at('the local stage has the same shape as the cloud one, with no flags and no cost', async () => {
+  const translator = { translate: async gr => gr === 'boom' ? Promise.reject(new Error('x')) : 'EN(' + gr + ')' };
+  const segs = [{ id: 'a', text: 'Σήμερα 14 Μαρτίου 1978.' }, { id: 'b', text: 'boom' }, { id: 'c', text: 'Καλά.' }];
+  const seen = [];
+  const out = await tl.translateSegments(segs, translator, { onProgress: (a, b) => seen.push([a, b]) });
+  eq(out.translations, [{ id: 'a', en: 'EN(Σήμερα 14 Μαρτίου 1978.)' }, { id: 'c', en: 'EN(Καλά.)' }]);
+  eq(out.unresolved, ['b']);
+  eq(out.flags, []);
+  eq(out.cost, 0);
+  eq(out.dates, [{ id: 'a', spoken: '14 Μαρτίου 1978', iso: '1978-03-14' }]);
+  eq(seen, [[1, 3], [2, 3], [3, 3]]);
+});
+
+at('stopping mid-tape stops translating', async () => {
+  const signal = { aborted: false };
+  const translator = { translate: async () => { signal.aborted = true; return 'x'; } };
+  const out = await tl.translateSegments([{ id: 'a', text: 'α' }, { id: 'b', text: 'β' }], translator, { signal });
+  eq(out.translations.length, 1);
+});
+
+t('the translator manifest is described in round figures and its files add up', () => {
+  eq(tl.describeTranslatorDownload(), 'about 570 MB');
+  eq(tl.TRANSLATOR_BYTES, tl.TRANSLATOR.files.reduce((n, f) => n + f.bytes, 0));
+  ok(tl.TRANSLATOR.files.every(f => f.bytes > 0 && f.name && f.role));
+});
+
+at('weights for a second model go to their own folder under the same rules', async () => {
+  const S = new store.MemoryStore();
+  const files = [{ role: 'tokenizer', name: 't.json', bytes: 2 }, { role: 'encoder', name: 'e.onnx', bytes: 5 }];
+  const { f, calls } = fakeFetch({ 't.json': 2, 'e.onnx': 5 });
+  await local.ensureWeights(S, { files, repo: 'https://x/', dir: 'models/other', fetchImpl: f });
+  eq(calls, ['t.json', 'e.onnx']);
+  eq(await S.exists('models/other/e.onnx'), true);
+  eq(await local.weightsPresent(S, files, 'models/other'), true);
+  eq(await local.weightsPresent(S, files), false, 'the listener\'s folder is untouched');
+  const loaded = await local.loadWeights(S, files, 'models/other');
+  eq(typeof loaded.tokenizer, 'string', 'text files come back as strings');
+  ok(loaded.encoder && typeof loaded.encoder !== 'string', 'models stay blobs');
+});
+
+at('a local translator replaces the cloud one in the queue and needs no key', async () => {
+  const translator = {
+    seen: { prepared: 0, calls: 0 },
+    prepare: async ({ onProgress }) => { translator.seen.prepared++; onProgress?.({ phase: 'load' }); },
+    translateAll: async (segs, o) => { translator.seen.calls++; o.onProgress?.(segs.length, segs.length);
+      return { translations: segs.map(s => ({ id: s.id, en: 'local' })), flags: [], dates: [{ id: segs[0].id, iso: '1978-03-14' }], unresolved: [], cost: 0 }; },
+    terminate() {}
+  };
+  const { Q, st, deps, events } = newQueue({ key: null, deps: { ...qDeps(), localTranslator: translator } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  await Q.start();
+  eq(Q.tapes[0].state, q.STATE.DONE);
+  eq(translator.seen, { prepared: 1, calls: 1 });
+  eq(deps.seen.translated, 0, 'the cloud translator was never asked');
+  const tr = await st.readJSON(store.paths.translation('t1'));
+  eq(tr.translations.map(t => t.en), ['local', 'local']);
+  eq(await st.readJSON(store.paths.flags('t1')), []);
+  eq(events.filter(e => e[0] === 'model').map(e => e[1].what), ['translating']);
+  close(Q.spent, 0.04, 1e-9, 'only the two chunks cost anything');
+});
+
+t('the run screen names which model it is fetching, and the key is only needed for the service', () => {
+  eq(lib.modelProgressMessage({ phase: 'download', done: 1, total: 4, what: 'translating' }), 'Fetching the translating model, only this once… 25%');
+  eq(lib.modelProgressMessage({ phase: 'load', what: 'listening' }), 'Loading the listening model…');
+  eq(lib.needsKey({ listening: 'local', translating: 'local' }), false);
+  eq(lib.needsKey({ listening: 'local', translating: 'cloud' }), true);
+  eq(lib.needsKey({ listening: 'cross', translating: 'local' }), true);
+  eq(lib.needsKey({}), true);
 });
 
 const run = async () => {

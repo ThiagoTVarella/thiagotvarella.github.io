@@ -216,18 +216,21 @@ export function describeDecoder(session) {
 // the network. A file counts as present only at its exact expected size -- an aborted
 // download is worse than none, because it would fail in a way that looks like the model
 // being wrong rather than incomplete.
-export const weightPath = f => `${LOCAL.dir}/${f.name}`;
+// A manifest is { repo, dir, files }; the listener's is LOCAL, the translator's lives in
+// translate-local.js. Both are fetched, checked and loaded the same way.
+export const weightPath = (f, dir = LOCAL.dir) => `${dir}/${f.name}`;
 
-export async function weightsPresent(store, files = LOCAL.files) {
+export async function weightsPresent(store, files = LOCAL.files, dir = LOCAL.dir) {
   for (const f of files) {
-    if (!(await store.exists(weightPath(f)))) return false;
-    const blob = await store.readBlob(weightPath(f));
+    if (!(await store.exists(weightPath(f, dir)))) return false;
+    const blob = await store.readBlob(weightPath(f, dir));
     if (!blob || blob.size !== f.bytes) return false;
   }
   return true;
 }
 
-export async function ensureWeights(store, { fetchImpl, onProgress, signal, files = LOCAL.files } = {}) {
+export async function ensureWeights(store, { fetchImpl, onProgress, signal, files = LOCAL.files,
+                                             repo = LOCAL.repo, dir = LOCAL.dir } = {}) {
   const f = fetchImpl || globalThis.fetch;
   const overallTotal = files.reduce((n, x) => n + x.bytes, 0);
   // The queue's stop flag is a plain object, not an AbortSignal; fetch only accepts the real thing.
@@ -236,11 +239,11 @@ export async function ensureWeights(store, { fetchImpl, onProgress, signal, file
   const report = (file, done) =>
     onProgress?.({ file: file.name, done, total: file.bytes, overallDone: overall + done, overallTotal });
   for (const file of files) {
-    const path = weightPath(file);
+    const path = weightPath(file, dir);
     const have = (await store.exists(path)) ? (await store.readBlob(path))?.size : -1;
     if (have === file.bytes) { overall += file.bytes; report(file, file.bytes); continue; }
     if (signal?.aborted) throw abortError();
-    const res = await f(LOCAL.repo + file.name, realSignal ? { signal: realSignal } : {});
+    const res = await f(repo + file.name, realSignal ? { signal: realSignal } : {});
     if (!res.ok) throw new Error(`Couldn't fetch part of the listening model (HTTP ${res.status}). It can be tried again.`);
     const out = await store.writableStream(path);
     let done = 0;
@@ -276,11 +279,14 @@ export async function ensureWeights(store, { fetchImpl, onProgress, signal, file
   return true;
 }
 
-export async function loadWeights(store) {
+// Small text files (a vocabulary, a tokenizer) come back as strings; models stay Blobs so
+// the worker reads them itself.
+const TEXT_ROLES = new Set(['vocab', 'tokenizer', 'config']);
+export async function loadWeights(store, files = LOCAL.files, dir = LOCAL.dir) {
   const out = {};
-  for (const f of LOCAL.files) {
-    const blob = await store.readBlob(weightPath(f));
-    out[f.role] = f.role === 'vocab' ? await blob.text() : blob;
+  for (const f of files) {
+    const blob = await store.readBlob(weightPath(f, dir));
+    out[f.role] = TEXT_ROLES.has(f.role) ? await blob.text() : blob;
   }
   return out;
 }

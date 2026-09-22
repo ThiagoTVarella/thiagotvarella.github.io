@@ -227,11 +227,18 @@ export function entryFooter({ flagged = 0, shaded = 0 } = {}) {
 // download happens once and is large, so the first time gets a number and a promise that
 // it is a one-off; loading is quick and gets a plain sentence.
 export function modelProgressMessage(p) {
+  const which = (p && p.what === 'translating') ? 'translating' : 'listening';
   if (p && p.phase === 'download') {
     const pct = p.total > 0 ? Math.min(100, Math.round(100 * (p.done || 0) / p.total)) : null;
-    return pct == null ? 'Fetching the listening model, only this once…'
-                       : `Fetching the listening model, only this once… ${pct}%`;
+    return pct == null ? `Fetching the ${which} model, only this once…`
+                       : `Fetching the ${which} model, only this once… ${pct}%`;
   }
-  if (p && p.phase === 'load') return 'Loading the listening model…';
-  return 'Getting the listening model ready…';
+  if (p && p.phase === 'load') return `Loading the ${which} model…`;
+  return `Getting the ${which} model ready…`;
+}
+
+// Whether a run can start without the access key: only when nothing in it talks to the
+// service, which means listening AND translating both happen on this computer.
+export function needsKey({ listening, translating } = {}) {
+  return !(listening === 'local' && translating === 'local');
 }

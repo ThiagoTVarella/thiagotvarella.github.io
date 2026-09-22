@@ -80,6 +80,9 @@ export class Queue {
       // Listening on this computer: something with prepare() and transcribeBlob(), see
       // local-client.js. Only consulted when the mode asks for it.
       local: null,
+      // Translating on this computer: something with prepare() and translateAll(), see
+      // translate-client.js. When set, it replaces `translate` and needs no key.
+      localTranslator: null,
       ...(opts.deps || {})
     };
     this.tapes = [];
@@ -185,7 +188,7 @@ export class Queue {
     this.emit('start');
 
     try {
-      if (this.mode === MODES.LOCAL && !(await this.#readyToListen())) return;
+      if (!(await this.#readyLocal())) return;
       // No timers: the loop advances only when real work finishes.
       for (const tape of this.tapes) {
         if (this._abort.aborted || this.paused) break;
@@ -211,22 +214,30 @@ export class Queue {
     }
   }
 
-  // The model has to be on disk and loaded before the first chunk. If that fails, nothing
-  // about any tape has changed, so they stay queued and the usual Continue offer applies;
-  // the failure is reported once rather than stamped onto every tape.
-  async #readyToListen() {
-    if (!this.deps.local) {
-      this.emit('error', null, 'Listening on this computer is not available here.');
-      return false;
+  // Whatever runs on this computer has to be on disk and loaded before the first chunk.
+  // If that fails, nothing about any tape has changed, so they stay queued and the usual
+  // Continue offer applies; the failure is reported once rather than stamped onto every
+  // tape.
+  async #readyLocal() {
+    const wanted = [];
+    if (this.mode === MODES.LOCAL) {
+      if (!this.deps.local) {
+        this.emit('error', null, 'Listening on this computer is not available here.');
+        return false;
+      }
+      wanted.push(['listening', this.deps.local]);
     }
-    try {
-      await this.deps.local.prepare({ signal: this._abort, onProgress: p => this.emit('model', p) });
-      return true;
-    } catch (e) {
-      if (e && e.name === 'AbortError') return false;
-      this.emit('error', null, humanError(e));
-      return false;
+    if (this.deps.localTranslator) wanted.push(['translating', this.deps.localTranslator]);
+    for (const [what, engine] of wanted) {
+      try {
+        await engine.prepare({ signal: this._abort, onProgress: p => this.emit('model', { ...p, what }) });
+      } catch (e) {
+        if (e && e.name === 'AbortError') return false;
+        this.emit('error', null, humanError(e));
+        return false;
+      }
     }
+    return true;
   }
 
   pause() { this.paused = true; this._abort.aborted = true; this.emit('pause'); }
@@ -351,10 +362,12 @@ export class Queue {
       await this.#persist(tape);
 
       const segments = await collectSegments(S, tape.id, tape.plan || []);
-      const out = await this.deps.translate(segments, {
-        key: this.key, model: this.model, glossary: this.glossary,
-        onProgress: (a, b) => progress(0.85 + (a / b) * 0.15)
-      });
+      const onProgress = (a, b) => progress(0.85 + (a / b) * 0.15);
+      const out = this.deps.localTranslator
+        ? await this.deps.localTranslator.translateAll(segments, { onProgress, signal: this._abort })
+        : await this.deps.translate(segments, {
+            key: this.key, model: this.model, glossary: this.glossary, onProgress
+          });
       this.#charge(out.cost, tape);
 
       await S.writeJSON(store.paths.translation(tape.id), {
@@ -420,7 +433,7 @@ export function humanError(e) {
   if (e?.status === 429) return "The service is busy. I'll try again in a moment.";
   if (e?.status >= 500) return "The service had a problem. I'll try again in a moment.";
   if (/NetworkError|Failed to fetch|network/i.test(m)) return "Couldn't reach the internet. I'll retry.";
-  if (/how long|listening model/i.test(m)) return m;
+  if (/how long|listening model|translating model/i.test(m)) return m;
   if (/quota|insufficient|credit/i.test(m)) return 'NO CREDIT';
   return 'Something went wrong reading this recording. It can be tried again.';
 }

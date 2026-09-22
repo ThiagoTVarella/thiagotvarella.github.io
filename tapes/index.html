@@ -214,15 +214,28 @@
       </div>
       <div class="card">
         <div class="field" style="margin:0">
-          <label>Quality</label>
+          <label>Listening</label>
           <select id="quality">
             <option value="cross">Best: listens twice and shades the lines where the two listenings disagree (recommended)</option>
             <option value="text">Standard: listens once</option>
             <option value="local">Local: your own computer does the listening, not a data center somewhere, but it hears Greek less well</option>
           </select>
           <p class="note-inline">Best is slower. Local fetches its listening model the first
-            time (about 670 MB) and keeps it in your folder. Translating it into English still
-            happens in a data center.</p>
+            time (about 670 MB) and keeps it in your folder.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="field" style="margin:0">
+          <label>Translating</label>
+          <select id="translating">
+            <option value="cloud">Best: a large model in a data center (recommended)</option>
+            <option value="local">Local: your own computer does the translating, no graphics card needed, but the English is plainer</option>
+          </select>
+          <p class="note-inline">Local fetches its translating model the first time (about
+            570 MB) and keeps it in your folder. It translates and nothing more: it cannot ask
+            you about names under Glossary, it does not use your Glossary answers or notes,
+            and it only spots a date he says plainly, like 14 Μαρτίου 1978. The shading of
+            uncertain lines comes from the listening, so that still works.</p>
         </div>
       </div>
     </div>
