@@ -410,7 +410,15 @@ function renderReview() {
     </div>
     ${n.hint ? `<p class="note-inline hint">${n.hint}</p>` : ''}
 
-    <div id="askBlock">
+    ${n.maybe ? `<div id="maybeBlock">
+      <p class="ask">Is this the same as <b>${escapeText(n.maybe.english)}</b> (${escapeText(n.maybe.greek)})?</p>
+      <div class="name-actions">
+        <button class="btn" id="maybeYes">Yes, the same</button>
+        <button class="btn btn-ghost" id="maybeNo">No, something else</button>
+      </div>
+    </div>` : ''}
+
+    <div id="askBlock" ${n.maybe ? 'hidden' : ''}>
       <p class="ask">${kind.ask === 'name'
         ? `We think this is <b>${n.guess}</b>.`
         : `Our best guess is <b>"${n.guess}"</b>. Does that make sense here?`}</p>
@@ -463,6 +471,10 @@ function renderReview() {
   };
   $('#yes').onclick = () => commit(n.guess, true);
   $('#skip').onclick = next;
+  if (n.maybe) {
+    $('#maybeYes').onclick = () => fold(n.maybe.id);
+    $('#maybeNo').onclick = () => { $('#maybeBlock').hidden = true; $('#askBlock').hidden = false; };
+  }
 
   $('#no').onclick = () => {
     $('#askBlock').hidden = true;
@@ -487,6 +499,31 @@ function renderReview() {
   $('#nameIn').onkeydown = e => { if (e.key === 'Enter') $('#save').click(); };
 
   function next() { state.nameIdx++; renderReview(); }
+
+  // She says this spelling is a name she has already confirmed: it becomes another form
+  // of that entry, and the English is corrected the same way a changed answer would be.
+  async function fold(entryId) {
+    const g = state.glossary.find(x => x.id === entryId);
+    if (!g) return toast("Couldn't find that name any more.");
+    const forms = new Set([...(g.observed_forms || []), ...(n.observed_forms || [n.greek])]);
+    g.observed_forms = [...forms];
+    g.heard = (g.heard || 0) + (n.heard || 0);
+    next();
+    if (DEMO) return toast(`Kept as "${g.english}".`);
+    try {
+      await state.store.writeJSON(store.paths.glossary(), state.glossary);
+      if (n.guess === g.english) return toast(`Kept as "${g.english}". Every recording from here on will match.`);
+      const ids = state.tapes.map(t => t.id);
+      const r = await applyCorrectionAcross(state.store, ids, g, n.guess, g.english, {
+        translate: translateAll,
+        translateOpts: { key: state.key, model: state.model, glossary: state.glossary }
+      });
+      toast(`"${g.english}": ${r.summary}`);
+      if (r.failed) toast(`${r.failed} of them couldn't be re-read just now; they're unchanged.`);
+    } catch (e) {
+      toast("Saved the spelling, but couldn't update the recordings just now.");
+    }
+  }
 
   async function commit(value, wasGuessRight) {
     const entry = { id: n.id, english: value, greek: n.greek,
