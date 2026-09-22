@@ -67,6 +67,9 @@ export async function loadEntry(S, tapeId) {
       start: g.start ?? null,
       chunkStart: (tape.plan?.[g.chunk]?.start) ?? 0,
       confidence: g.confidence ?? null,
+      // Either the two listenings disagreed on this chunk, or Whisper judged the sound
+      // to be hiss rather than speech. Shaded, like a low-confidence line.
+      suspect: !!g.suspect,
       unsure: flags.get(g.id) || null
     };
   });

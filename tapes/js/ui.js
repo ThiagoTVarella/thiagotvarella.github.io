@@ -194,6 +194,9 @@ async function openRead(tape) {
     if (!s.untranslated && s.unsure && html.includes(s.unsure)) {
       html = html.replace(s.unsure,
         `<span class="unsure" title="The tape was rough here. This part is a best guess.">${s.unsure}</span>`);
+    } else if (!s.untranslated && s.suspect) {
+      p.classList.add('rough');
+      p.title = 'The two listenings disagreed here. This line is less certain than the rest.';
     } else if (!s.untranslated && s.confidence != null && s.confidence < ROUGH) {
       p.classList.add('rough');
       p.title = 'The tape was rough here. This line is less certain than the rest.';
@@ -207,7 +210,7 @@ async function openRead(tape) {
   // confidence, or one the translator dropped, is shaded and nothing more.
   const flagged = entry.segments.filter(s => s.unsure).length;
   const shaded = entry.segments.filter(s => !s.unsure &&
-    (s.untranslated || (s.confidence != null && s.confidence < ROUGH_LINE))).length;
+    (s.untranslated || s.suspect || (s.confidence != null && s.confidence < ROUGH_LINE))).length;
   $('#entryFoot').textContent = entryFooter({ flagged, shaded });
 }
 
@@ -832,6 +835,13 @@ function renderSettings() {
   $('#keyInput2').value = state.key;
   $('#keyState').textContent = state.key ? 'Saved on this computer.' : 'Not set. Nothing can be read without it.';
   $('#quality').value = state.quality;
+  // A choice that no longer exists in the menu (an old saved value) must not leave the
+  // menu blank and the run using a mode she cannot see.
+  if ($('#quality').value !== state.quality) {
+    state.quality = 'cross';
+    localStorage.setItem('tapes_quality', state.quality);
+    $('#quality').value = state.quality;
+  }
 }
 $('#keyInput2').oninput = e => { state.key = e.target.value.trim(); localStorage.setItem('or_key', state.key); renderSettings(); };
 $('#quality').onchange = e => { state.quality = e.target.value; localStorage.setItem('tapes_quality', state.quality); };
