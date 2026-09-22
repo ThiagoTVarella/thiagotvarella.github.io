@@ -41,7 +41,7 @@ const SAYING = {
   listening:  'Finding where he pauses…',
   splitting:  'Splitting it into pieces…',
   [STATE.READING]:     'Listening to it…',
-  [STATE.TRANSLATING]: 'Putting it into English…',
+  [STATE.TRANSLATING]: 'Translating it into English…',
   [STATE.PREPARING]:   'Getting the recording ready…'
 };
 
@@ -188,7 +188,7 @@ async function openRead(tape) {
     // An id the translator dropped shows the Greek rather than a blank line -- an empty
     // paragraph would read as though he said nothing at all.
     let html = s.untranslated
-      ? `<span class="untranslated" title="This line couldn't be put into English.">${s.gr}</span>`
+      ? `<span class="untranslated" title="This line couldn't be translated into English.">${s.gr}</span>`
       : (s.en || '');
 
     if (!s.untranslated && s.unsure && html.includes(s.unsure)) {
@@ -924,7 +924,7 @@ async function runQueue(specs) {
         toast('This is already running in another window, so nothing was changed here.');
       },
       unresolved: (tape, ids) =>
-        toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be put into English.`),
+        toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be translated into English.`),
       error: (tape, msg) => toast(msg),
       done: async tape => { await refreshLibrary(); await refreshReview(); },
       stop: async () => { local?.terminate(); closeRunScreen(); await refreshLibrary(); }

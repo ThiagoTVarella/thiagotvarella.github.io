@@ -1317,7 +1317,7 @@ at('miniSteps marks done, current, and pending steps distinctly', async () => {
   const html = lib.miniSteps(workingTape({ stepIdx: 1 }));
   ok(html.includes('done">✓ Splitting into pieces'), html);
   ok(html.includes('current">● Listening to it'), html);
-  ok(html.includes('">○ Putting it into English'), html);
+  ok(html.includes('">○ Translating it into English'), html);
 });
 
 at('miniSteps at the very first step has nothing marked done yet', async () => {
@@ -1971,7 +1971,7 @@ t('a failed recording is described by what survived, not by the error', () => {
   const note = lib.mediaNote({ status: 'error', error: 'Couldn\'t work out how long this is.' });
   eq(/audio itself is fine/.test(note), true, note);
   eq(note.includes("Couldn't work out"), false, 'the error is not repeated here');
-  eq(lib.mediaNote({ status: 'done' }), 'Read and put into English');
+  eq(lib.mediaNote({ status: 'done' }), 'Read and translated into English');
   eq(lib.mediaNote({ status: 'queued' }), 'Waiting to be read');
 });
 
