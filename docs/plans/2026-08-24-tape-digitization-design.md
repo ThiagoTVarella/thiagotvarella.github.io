@@ -924,11 +924,14 @@ warehouse. Helen was not well all week." Published FLORES score 33.9 BLEU, respe
 the pair. 1.2 s per sentence single-threaded in the browser, so about eight minutes for a
 45-minute side, plus 20 s to load.
 
-**Shape.** Settings now has two choices, Listening and Translating, each Best or Local.
-Both local means no access key is needed at all (`needsKey`); the queue prepares whichever
-local engines the run wants before the first chunk, and the run screen says which model it
-is fetching. The translator's output has the same shape as the cloud stage's, so the queue,
-the diary and the resume logic cannot tell them apart.
+**Shape.** One choice, not two: Thiago decided mixing (local listening with cloud
+translating, or the reverse) was not worth the extra menu, so *Local* means both stages on
+her computer and needs no access key at all (`needsKey`). The note under the setting lists
+what Local gives up, including the shading of uncertain lines, which needs Best's second
+listening. The queue prepares both local engines before the first chunk, and the run screen
+says which model it is fetching. The translator's output has the same shape as the cloud
+stage's, so the queue, the diary and the resume logic cannot tell them apart. The engines
+stay independent underneath, so mixing is a one-line change if it is ever wanted.
 
 ### Known gaps, deliberately left
 
