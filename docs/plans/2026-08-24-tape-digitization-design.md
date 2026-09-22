@@ -863,6 +863,40 @@ heap, so expect a peak well over a gigabyte in the worker. A machine with 4 GB o
 not manage it. Nothing is known about her machine, so this ships and gets fixed if she
 reports it.
 
+### MAI-Transcribe-2, and what Best actually does with a disagreement
+
+Microsoft shipped MAI-Transcribe-2 on 3 September 2026 and OpenRouter routes it. Verified
+live on the Phase 0a clips: word-perfect on both the clean and the simulated-cassette Greek,
+the same as 1.5; **`verbose_json` accepted, with word-level timestamps** when asked for
+(`timestamp_granularities: ["word"]`), which 1.5 refused with a 400; about $0.10 per hour
+of audio against 1.5's $0.36; still routed under `data_collection: "deny"`. Still no
+confidence scores. Segments come back one per language or speaker, so a whole chunk is one
+segment; the words are what carry the timing.
+
+That removes the trade-off the three modes were built around. "Most accurate words, less
+precise playback" is gone: MAI-2 alone gives the best words and click-to-hear at the line.
+`wordsToSegments()` turns its timed words into timed sentences (the same code the local
+model uses), and in cross-check mode MAI's sentences now keep their own clock, so the
+proportional placement against Whisper's segmentation is only used when the fallback
+answered in plain text. Microsoft labels MAI-2 a preview with no SLA, so 1.5 stays as an
+automatic fallback for the one failure that means "not offered" (a 400 naming the model or
+the format); busy, refused and broken-audio errors are never mistaken for that.
+
+**The disagreement never reached her.** Cross-check compared the two transcripts per chunk
+and, below 50% word agreement, marked every line of the chunk `suspect` on disk, and that
+was the end of it: `collectSegments` carried only `confidence` into the diary, so the one
+signal that caught a confident misrecognition in Phase 0a shaded nothing. It now travels
+through to the reading view and shades the line with its own explanation ("The two
+listenings disagreed here"), and counts in the footer.
+
+**The menu is three plain choices**, since Thiago found the old four confusing (Best was
+described as most accurate, and so was another option) and one of them mentioned money:
+*Best: listens twice and shades the lines where the two listenings disagree*; *Standard:
+listens once*; *Local: your own computer does the listening, not a data center somewhere,
+but it hears Greek less well*. Whisper-only mode still exists in code (his tuning tool) but
+not in the menu; a saved choice that no longer exists falls back to Best rather than leaving
+the menu blank.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.

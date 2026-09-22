@@ -389,7 +389,8 @@ export async function collectSegments(S, tapeId, plan) {
   chunks.forEach((c, i) => {
     for (const seg of (c?.segments || [])) {
       out.push({ id: seg.id, text: seg.text, chunk: i,
-                 start: seg.start ?? c.start, confidence: seg.confidence ?? null });
+                 start: seg.start ?? c.start, confidence: seg.confidence ?? null,
+                 suspect: !!seg.suspect });
     }
   });
   return out;

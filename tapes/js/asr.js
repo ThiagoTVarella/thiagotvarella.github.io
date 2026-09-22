@@ -20,8 +20,12 @@ export const MODES = {
 };
 
 export const MODELS = {
-  mai:     'microsoft/mai-transcribe-1.5',
-  whisper: 'openai/whisper-large-v3'
+  // MAI-Transcribe-2: best Greek in our live tests, word timestamps through verbose_json,
+  // a third of 1.5's price. Microsoft calls it a preview, so 1.5 (plain text only) stays
+  // as the fallback if 2 ever stops being offered.
+  mai:         'microsoft/mai-transcribe-2',
+  maiFallback: 'microsoft/mai-transcribe-1.5',
+  whisper:     'openai/whisper-large-v3'
 };
 
 const API = 'https://openrouter.ai/api/v1/audio/transcriptions';
@@ -95,6 +99,16 @@ export function agreement(a, b) {
 const toConfidence = lp => lp == null ? null : Math.max(0, Math.min(1, (lp + 1.2) / 1.1));
 
 export function normalizeMai(res, chunk) {
+  // MAI-Transcribe-2 returns timed words; 1.5 (the fallback) returns text alone.
+  const words = (res && Array.isArray(res.words) && res.words.length) ? res.words : null;
+  if (words) {
+    return {
+      chunk: chunk.index, start: chunk.start, duration: chunk.duration,
+      hasTimestamps: true, hasConfidence: false, agreement: null,
+      text: (res && res.text) || words.map(w => w.word).join(' '),
+      segments: wordsToSegments(words, chunk)
+    };
+  }
   const sentences = splitGreekSentences(res && res.text);
   return {
     chunk: chunk.index, start: chunk.start, duration: chunk.duration,
@@ -132,12 +146,11 @@ export function normalizeWhisper(res, chunk) {
   };
 }
 
-// Listening on her own computer gives timed words and nothing else: no confidence, no
-// second opinion. Sentences are cut where the model wrote sentence punctuation, and a
-// long stretch without any is cut at its biggest pause so a line stays clickable.
+// Timed words become timed sentences: cut where the model wrote sentence punctuation,
+// and a long stretch without any is cut at its biggest pause so a line stays clickable.
+// Shared by MAI-Transcribe-2 and the local model, which both return words and no more.
 const ENDS_SENTENCE = /[.!?;…]["»”)]*$/;
-export function normalizeLocal(res, chunk) {
-  const words = (res && res.words) || [];
+export function wordsToSegments(words, chunk) {
   const groups = [];
   let cur = [];
   const flush = () => { if (cur.length) groups.push(cur); cur = []; };
@@ -148,17 +161,24 @@ export function normalizeLocal(res, chunk) {
     if (ENDS_SENTENCE.test(words[i].word) || (cur.length >= 12 && gap > 1.0) || cur.length >= 40) flush();
   }
   flush();
+  return groups.map((g, i) => ({
+    id: `c${chunk.index}s${i}`,
+    text: g.map(w => w.word).join(' '),
+    start: +(chunk.start + g[0].start).toFixed(3),
+    end: +(chunk.start + g[g.length - 1].end).toFixed(3),
+    logprob: null, confidence: null, suspect: false
+  }));
+}
+
+// Listening on her own computer gives timed words and nothing else: no confidence, no
+// second opinion.
+export function normalizeLocal(res, chunk) {
+  const words = (res && res.words) || [];
   return {
     chunk: chunk.index, start: chunk.start, duration: chunk.duration,
     hasTimestamps: true, hasConfidence: false, agreement: null,
     text: (res && res.text) || words.map(w => w.word).join(' '),
-    segments: groups.map((g, i) => ({
-      id: `c${chunk.index}s${i}`,
-      text: g.map(w => w.word).join(' '),
-      start: +(chunk.start + g[0].start).toFixed(3),
-      end: +(chunk.start + g[g.length - 1].end).toFixed(3),
-      logprob: null, confidence: null, suspect: false
-    }))
+    segments: wordsToSegments(words, chunk)
   };
 }
 
@@ -171,8 +191,28 @@ export function normalizeLocal(res, chunk) {
 export function crossCheck(mai, whisper, chunk) {
   const score = agreement(mai.text, whisper.text);
   const wsegs = whisper.segments.filter(s => s.start != null);
+  const low = score < 0.5;
 
-  if (!wsegs.length) return { ...mai, agreement: score, lowAgreement: score < 0.5 };
+  if (!wsegs.length) {
+    return { ...mai, agreement: score, lowAgreement: low,
+             segments: mai.segments.map(s => ({ ...s, suspect: s.suspect || low })) };
+  }
+
+  const nearest = (t, key) => wsegs.reduce((best, s) =>
+    Math.abs(s[key] - t) < Math.abs(best[key] - t) ? s : best, wsegs[0]);
+  const covering = t => wsegs.find(s => s.start <= t && s.end >= t) || nearest(t, 'start');
+
+  // MAI-Transcribe-2 times its own words, so its sentences keep their own clock and
+  // Whisper contributes only its acoustic verdict on each moment.
+  if (mai.hasTimestamps) {
+    const segments = mai.segments.map(seg => {
+      const cover = covering(seg.start);
+      return { ...seg, confidence: cover.confidence, logprob: cover.logprob,
+               noSpeechProb: cover.noSpeechProb, suspect: !!cover.suspect || low };
+    });
+    return { ...mai, segments, hasConfidence: true, agreement: score, lowAgreement: low,
+             alt: { model: MODELS.whisper, text: whisper.text } };
+  }
 
   const total = mai.segments.reduce((n, s) => n + s.text.length, 0) || 1;
   let acc = 0;
@@ -184,20 +224,17 @@ export function crossCheck(mai, whisper, chunk) {
     const wantStart = chunk.start + frac * chunk.duration;
     const wantEnd = chunk.start + fracEnd * chunk.duration;
 
-    const near = (t, key) => wsegs.reduce((best, s) =>
-      Math.abs(s[key] - t) < Math.abs(best[key] - t) ? s : best, wsegs[0]);
-
     // Carry the acoustic verdict from whichever Whisper segment covers this moment:
     // MAI cannot tell us a passage was hiss, but Whisper can.
-    const cover = wsegs.find(s => s.start <= wantStart && s.end >= wantStart) || near(wantStart, 'start');
+    const cover = covering(wantStart);
     return {
       ...seg,
-      start: near(wantStart, 'start').start,
-      end: near(wantEnd, 'end').end,
+      start: nearest(wantStart, 'start').start,
+      end: nearest(wantEnd, 'end').end,
       confidence: cover.confidence,
       logprob: cover.logprob,
       noSpeechProb: cover.noSpeechProb,
-      suspect: cover.suspect || score < 0.5,
+      suspect: cover.suspect || low,
       approxTiming: true
     };
   });
@@ -206,7 +243,7 @@ export function crossCheck(mai, whisper, chunk) {
     ...mai, segments,
     hasTimestamps: true, hasConfidence: true,
     agreement: score,
-    lowAgreement: score < 0.5,
+    lowAgreement: low,
     alt: { model: MODELS.whisper, text: whisper.text }
   };
 }
@@ -270,13 +307,24 @@ export async function transcribeChunk(chunk, opts = {}) {
       { order: ['groq'], allow_fallbacks: false },
       bias ? { options: { groq: { prompt: bias } } } : {})
   };
-  const maiExtra = { response_format: 'json' };
+  const maiExtra = { response_format: 'verbose_json', timestamp_granularities: ['word'] };
+  // Only "not offered" failures fall back: a missing model or an unsupported format.
+  // Anything else (bad audio, refused key, busy) is the caller's to see.
+  const notOffered = e => e && e.status === 400 && /model|format|exist|support/i.test(e.message || '');
+  const hearMai = async () => {
+    try { return { r: await run(body(MODELS.mai, b64, format, maiExtra), MODELS.mai), model: MODELS.mai }; }
+    catch (e) {
+      if (!notOffered(e)) throw e;
+      return { r: await run(body(MODELS.maiFallback, b64, format, { response_format: 'json' }), MODELS.maiFallback),
+               model: MODELS.maiFallback };
+    }
+  };
 
   const cost = r => (r && r.usage && typeof r.usage.cost === 'number') ? r.usage.cost : 0;
 
   if (mode === MODES.TEXT) {
-    const r = await run(body(MODELS.mai, b64, format, maiExtra), MODELS.mai);
-    return { ...normalizeMai(r, chunk), cost: cost(r), models: [MODELS.mai] };
+    const { r, model } = await hearMai();
+    return { ...normalizeMai(r, chunk), cost: cost(r), models: [model] };
   }
 
   if (mode === MODES.NAV) {
@@ -285,10 +333,10 @@ export async function transcribeChunk(chunk, opts = {}) {
   }
 
   // CROSS: both models, same chunk, in parallel.
-  const [m, w] = await Promise.all([
-    run(body(MODELS.mai, b64, format, maiExtra), MODELS.mai),
+  const [{ r: m, model }, w] = await Promise.all([
+    hearMai(),
     run(body(MODELS.whisper, b64, format, whisperExtra), MODELS.whisper)
   ]);
   const merged = crossCheck(normalizeMai(m, chunk), normalizeWhisper(w, chunk), chunk);
-  return { ...merged, cost: cost(m) + cost(w), models: [MODELS.mai, MODELS.whisper] };
+  return { ...merged, cost: cost(m) + cost(w), models: [model, MODELS.whisper] };
 }

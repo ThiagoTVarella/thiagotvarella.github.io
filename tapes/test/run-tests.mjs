@@ -27,6 +27,8 @@ function eq(a, b, msg) {
   if (A !== B) throw new Error((msg || 'not equal') + `\n         got:      ${A}\n         expected: ${B}`);
 }
 function ok(c, msg) { if (!c) throw new Error(msg || 'expected truthy'); }
+const asyncTests = [];
+function at(name, fn) { asyncTests.push([name, fn]); }
 function close(a, b, eps, msg) {
   if (Math.abs(a - b) > (eps ?? 1e-6)) throw new Error(`${msg || 'not close'}: ${a} vs ${b}`);
 }
@@ -251,6 +253,79 @@ t('crossCheck surfaces disagreement as the confidence signal MAI lacks', () => {
   ok(c.segments.every(s => s.suspect), 'a divergent chunk must mark its segments suspect');
 });
 
+const MAI2_RES = {
+  text: 'Σήμερα είναι Τρίτη. Πήγα στην Αθήνα.',
+  words: [
+    { word: 'Σήμερα', start: 0.3, end: 0.9 }, { word: 'είναι', start: 1.1, end: 1.4 }, { word: 'Τρίτη.', start: 1.6, end: 2.3 },
+    { word: 'Πήγα', start: 4.0, end: 4.4 }, { word: 'στην', start: 4.5, end: 4.7 }, { word: 'Αθήνα.', start: 4.8, end: 5.4 }
+  ],
+  usage: { cost: 0.0007 }
+};
+
+t('MAI-Transcribe-2 words become timed sentences on the tape\'s own clock', () => {
+  const n = asr.normalizeMai(MAI2_RES, CHUNK);
+  eq([n.hasTimestamps, n.hasConfidence], [true, false]);
+  eq(n.segments.map(s => [s.id, s.text, s.start, s.end]),
+     [['c3s0', 'Σήμερα είναι Τρίτη.', 187.7, 189.7], ['c3s1', 'Πήγα στην Αθήνα.', 191.4, 192.8]]);
+  eq(n.text, MAI2_RES.text);
+});
+
+t('with timed MAI sentences, crossCheck keeps their clock and adds Whisper\'s verdict', () => {
+  const c = asr.crossCheck(asr.normalizeMai(MAI2_RES, CHUNK), asr.normalizeWhisper(WHISPER_RES, CHUNK), CHUNK);
+  eq(c.segments.map(s => [s.start, s.end]), [[187.7, 189.7], [191.4, 192.8]], 'MAI timing untouched');
+  eq(c.hasConfidence, true);
+  ok(c.segments[0].confidence > 0.7, 'the first line sits inside a confident Whisper segment');
+  eq(c.segments[1].suspect, true, 'the second sits where Whisper heard hiss');
+  eq(c.segments[0].suspect, false);
+  eq(c.segments.some(s => s.approxTiming), false);
+});
+
+t('disagreement marks every line of the chunk suspect even without Whisper timing', () => {
+  const bad = { text: 'εντελώς διαφορετικό κείμενο εδώ' };
+  const c = asr.crossCheck(asr.normalizeMai(MAI2_RES, CHUNK), asr.normalizeWhisper(bad, CHUNK), CHUNK);
+  eq(c.lowAgreement, true);
+  ok(c.segments.every(s => s.suspect));
+});
+
+at('MAI-Transcribe-2 is asked for words; if it is not offered, 1.5 answers in plain text', async () => {
+  const chunk = { index: 0, start: 0, duration: 10 };
+  const asked = [];
+  const backend = async (payload, model) => {
+    asked.push([model, JSON.parse(payload).response_format]);
+    if (model === asr.MODELS.mai) { const e = new Error('Model microsoft/mai-transcribe-2 does not exist'); e.status = 400; throw e; }
+    return MAI_RES;
+  };
+  const r = await asr.transcribeChunk(chunk, { mode: asr.MODES.TEXT, backend });
+  eq(asked, [[asr.MODELS.mai, 'verbose_json'], [asr.MODELS.maiFallback, 'json']]);
+  eq(r.models, [asr.MODELS.maiFallback]);
+  eq(r.hasTimestamps, false);
+});
+
+at('a busy or refused service is not mistaken for a missing model', async () => {
+  const chunk = { index: 0, start: 0, duration: 10 };
+  for (const status of [429, 401, 500]) {
+    const asked = [];
+    const backend = async (payload, model) => { asked.push(model); const e = new Error('no'); e.status = status; throw e; };
+    let err = null;
+    try { await asr.transcribeChunk(chunk, { mode: asr.MODES.TEXT, backend }); } catch (e) { err = e; }
+    eq(err && err.status, status);
+    eq(asked, [asr.MODELS.mai], `status ${status} must not fall back`);
+  }
+});
+
+at('the disagreement mark travels from disk to the diary', async () => {
+  const st = new store.MemoryStore();
+  await store.saveChunkText(st, 'tp', { chunk: 0, start: 0, duration: 10, segments: [
+    { id: 'c0s0', text: 'α', start: 0, confidence: 0.9, suspect: true },
+    { id: 'c0s1', text: 'β', start: 5, confidence: 0.9 }
+  ] });
+  const segs = await q.collectSegments(st, 'tp', [{ start: 0, duration: 10 }]);
+  eq(segs.map(s => s.suspect), [true, false]);
+  await store.updateTape(st, 'tp', { label: 'T', plan: [{ start: 0, duration: 10 }] });
+  const e = await entry.loadEntry(st, 'tp');
+  eq(e.segments.map(s => s.suspect), [true, false]);
+});
+
 t('biasPrompt respects the 224-token cap by truncating', () => {
   const many = Array.from({ length: 500 }, (_, i) => 'Όνομα' + i);
   const p = asr.biasPrompt(many, 200);
@@ -270,8 +345,6 @@ function mockBackend(log) {
 }
 const chunkArg = { index: 3, start: 187.4, duration: 74.2 };
 
-const asyncTests = [];
-function at(name, fn) { asyncTests.push([name, fn]); }
 
 at('TEXT mode calls only MAI and returns null timing', async () => {
   const log = [];
