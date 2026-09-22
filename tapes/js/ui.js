@@ -13,7 +13,8 @@ import { buildReviewQueue } from './glossary.js';
 import { translateAll } from './translate.js';
 import { MODES } from './asr.js';
 import { LocalEngine } from './local-client.js';
-import { modelProgressMessage } from './library.js';
+import { LocalTranslator } from './translate-client.js';
+import { modelProgressMessage, needsKey } from './library.js';
 import { Recorder, listInputs, makeFileSink, levelToBar, levelAdvice, formatElapsed,
          makeLevelSmoother, fixStreamedDuration } from './record.js';
 
@@ -54,6 +55,7 @@ const state = {
   folderName: null,
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
+  translating: localStorage.getItem('tapes_translating') || 'cloud',
   model: localStorage.getItem('tapes_model') || undefined,
   // Backstop only, against a runaway loop. The real limit is the one set on the API key
   // itself, which is managed outside this tool.
@@ -842,9 +844,16 @@ function renderSettings() {
     localStorage.setItem('tapes_quality', state.quality);
     $('#quality').value = state.quality;
   }
+  $('#translating').value = state.translating;
+  if ($('#translating').value !== state.translating) {
+    state.translating = 'cloud';
+    localStorage.setItem('tapes_translating', state.translating);
+    $('#translating').value = state.translating;
+  }
 }
 $('#keyInput2').oninput = e => { state.key = e.target.value.trim(); localStorage.setItem('or_key', state.key); renderSettings(); };
 $('#quality').onchange = e => { state.quality = e.target.value; localStorage.setItem('tapes_quality', state.quality); };
+$('#translating').onchange = e => { state.translating = e.target.value; localStorage.setItem('tapes_translating', state.translating); };
 
 // ---------------------------------------------------------------- setup
 
@@ -894,17 +903,20 @@ $('#fileInput').onchange = e => addFiles(e.target.files);
 // abandoned run looks identical from here -- the engine already knows what is left to do.
 async function runQueue(specs) {
   if (!specs.length) return;
-  if (!state.key) { toast('The access key is missing. Check Settings.'); return go('settings'); }
+  if (!state.key && needsKey({ listening: state.quality, translating: state.translating })) {
+    toast('The access key is missing. Check Settings.'); return go('settings');
+  }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
-  // Listening on this computer runs in a worker of its own; everything else in the queue
-  // is unchanged. The engine is created per run and dropped with it.
+  // Whatever runs on this computer runs in a worker of its own; everything else in the
+  // queue is unchanged. The engines are created per run and dropped with it.
   const local = state.quality === MODES.LOCAL ? new LocalEngine(state.store) : null;
+  const localTranslator = state.translating === 'local' ? new LocalTranslator(state.store) : null;
   const queue = new Queue({
     store: state.store,
     key: state.key,
     mode: state.quality,
-    deps: local ? { local } : {},
+    deps: { ...(local ? { local } : {}), ...(localTranslator ? { localTranslator } : {}) },
     glossary: state.glossary,
     spendCap: parseFloat(state.cap) || Infinity,
     spent: state.tapes.reduce((n, t) => n + (t.cost || 0), 0),
@@ -927,7 +939,7 @@ async function runQueue(specs) {
         toast(`${ids.length} line${ids.length > 1 ? 's' : ''} of "${tape.label}" couldn't be translated into English.`),
       error: (tape, msg) => toast(msg),
       done: async tape => { await refreshLibrary(); await refreshReview(); },
-      stop: async () => { local?.terminate(); closeRunScreen(); await refreshLibrary(); }
+      stop: async () => { local?.terminate(); localTranslator?.terminate(); closeRunScreen(); await refreshLibrary(); }
     }
   });
 

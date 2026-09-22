@@ -897,6 +897,39 @@ but it hears Greek less well*. Whisper-only mode still exists in code (his tunin
 not in the menu; a saved choice that no longer exists falls back to Best rather than leaving
 the menu blank.
 
+### Translating on this computer
+
+The second half of a data-center-free path, asked for with "assume no GPU". That rules
+out running a small instruction model in the page (Gemma-class models need a graphics
+card to be usable, and 3-4 GB of memory), so the local translator is a model built for
+exactly one job: Helsinki-NLP's `opus-mt-tc-big-el-en`, Greek into English, about 230M
+parameters, int8 ONNX export by R4kSo1997 (split decoder, 570 MB). It runs through the
+same vendored ONNX Runtime as the listener, with Hugging Face's own tokenizer library
+(`vendor/tokenizers/`, 37 KB) reading its `tokenizer.json`. The generation loop is ours:
+greedy, with the padding symbol forbidden as the export's generation config demands, the
+encoder's key/values carried from the first decoder call into the with-past graph. Verified
+against a Python reference over the same ONNX files: identical output, token for token.
+
+**What it gives up, said in the setting.** It is a translator and nothing more. No flags,
+so no Glossary questions; no prompt, so her Glossary answers and notes cannot reach it;
+no context reasoning, so a garbled word stays garbled ("Today is the third of March
+19708", faithfully). Names come out however the model likes (Costas, Helen). Dates are
+found by pattern instead, because both listeners write them as digits with the month's
+name; a day and month without a year is left alone rather than given one. The shading of
+uncertain lines is unaffected, since it comes from the listening.
+
+**Quality and speed.** On the Phase 0a sentences the English is plain and correct: "Today
+is Tuesday, March 14, 1978. Costas came in at noon and we brought the wood from the
+warehouse. Helen was not well all week." Published FLORES score 33.9 BLEU, respectable for
+the pair. 1.2 s per sentence single-threaded in the browser, so about eight minutes for a
+45-minute side, plus 20 s to load.
+
+**Shape.** Settings now has two choices, Listening and Translating, each Best or Local.
+Both local means no access key is needed at all (`needsKey`); the queue prepares whichever
+local engines the run wants before the first chunk, and the run screen says which model it
+is fetching. The translator's output has the same shape as the cloud stage's, so the queue,
+the diary and the resume logic cannot tell them apart.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.
