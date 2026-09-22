@@ -2837,10 +2837,10 @@ at('a local translator replaces the cloud one in the queue and needs no key', as
 t('the run screen names which model it is fetching, and the key is only needed for the service', () => {
   eq(lib.modelProgressMessage({ phase: 'download', done: 1, total: 4, what: 'translating' }), 'Fetching the translating model, only this once… 25%');
   eq(lib.modelProgressMessage({ phase: 'load', what: 'listening' }), 'Loading the listening model…');
-  eq(lib.needsKey({ listening: 'local', translating: 'local' }), false);
-  eq(lib.needsKey({ listening: 'local', translating: 'cloud' }), true);
-  eq(lib.needsKey({ listening: 'cross', translating: 'local' }), true);
-  eq(lib.needsKey({}), true);
+  eq(lib.needsKey('local'), false);
+  eq(lib.needsKey('cross'), true);
+  eq(lib.needsKey('text'), true);
+  eq(lib.needsKey(undefined), true);
 });
 
 const run = async () => {

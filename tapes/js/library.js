@@ -238,7 +238,7 @@ export function modelProgressMessage(p) {
 }
 
 // Whether a run can start without the access key: only when nothing in it talks to the
-// service, which means listening AND translating both happen on this computer.
-export function needsKey({ listening, translating } = {}) {
-  return !(listening === 'local' && translating === 'local');
+// service, which is the Local choice, where listening and translating both happen here.
+export function needsKey(quality) {
+  return quality !== 'local';
 }

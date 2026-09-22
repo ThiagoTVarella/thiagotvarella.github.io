@@ -55,7 +55,6 @@ const state = {
   folderName: null,
   key: localStorage.getItem('or_key') || '',
   quality: localStorage.getItem('tapes_quality') || 'cross',
-  translating: localStorage.getItem('tapes_translating') || 'cloud',
   model: localStorage.getItem('tapes_model') || undefined,
   // Backstop only, against a runaway loop. The real limit is the one set on the API key
   // itself, which is managed outside this tool.
@@ -844,16 +843,9 @@ function renderSettings() {
     localStorage.setItem('tapes_quality', state.quality);
     $('#quality').value = state.quality;
   }
-  $('#translating').value = state.translating;
-  if ($('#translating').value !== state.translating) {
-    state.translating = 'cloud';
-    localStorage.setItem('tapes_translating', state.translating);
-    $('#translating').value = state.translating;
-  }
 }
 $('#keyInput2').oninput = e => { state.key = e.target.value.trim(); localStorage.setItem('or_key', state.key); renderSettings(); };
 $('#quality').onchange = e => { state.quality = e.target.value; localStorage.setItem('tapes_quality', state.quality); };
-$('#translating').onchange = e => { state.translating = e.target.value; localStorage.setItem('tapes_translating', state.translating); };
 
 // ---------------------------------------------------------------- setup
 
@@ -903,15 +895,16 @@ $('#fileInput').onchange = e => addFiles(e.target.files);
 // abandoned run looks identical from here -- the engine already knows what is left to do.
 async function runQueue(specs) {
   if (!specs.length) return;
-  if (!state.key && needsKey({ listening: state.quality, translating: state.translating })) {
+  if (!state.key && needsKey(state.quality)) {
     toast('The access key is missing. Check Settings.'); return go('settings');
   }
   if (!state.store) { toast('Choose where to keep everything first.'); return go('settings'); }
 
-  // Whatever runs on this computer runs in a worker of its own; everything else in the
-  // queue is unchanged. The engines are created per run and dropped with it.
-  const local = state.quality === MODES.LOCAL ? new LocalEngine(state.store) : null;
-  const localTranslator = state.translating === 'local' ? new LocalTranslator(state.store) : null;
+  // Local means both stages on this computer, each in a worker of its own; everything
+  // else in the queue is unchanged. The engines are created per run and dropped with it.
+  const isLocal = state.quality === MODES.LOCAL;
+  const local = isLocal ? new LocalEngine(state.store) : null;
+  const localTranslator = isLocal ? new LocalTranslator(state.store) : null;
   const queue = new Queue({
     store: state.store,
     key: state.key,
