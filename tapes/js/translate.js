@@ -46,7 +46,9 @@ export function batchSegments(segments, size = BATCH) {
 // The glossary is the only mechanism keeping names stable across 300 tapes. Because ASR
 // biasing does not reach MAI at all, this prompt is also where mangled forms get repaired.
 export function glossaryBlock(entries) {
-  if (!entries || !entries.length) return '';
+  // An entry she set aside has no English and teaches the translator nothing.
+  entries = (entries || []).filter(e => e && e.english && !e.aside);
+  if (!entries.length) return '';
   const lines = entries.map(e => {
     const forms = [e.canonical_greek || e.greek, ...(e.observed_forms || [])].filter(Boolean);
     // `note` is what SHE wrote. Accept the legacy plural spelling too, because reading the

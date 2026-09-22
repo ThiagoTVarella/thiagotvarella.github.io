@@ -933,6 +933,22 @@ says which model it is fetching. The translator's output has the same shape as t
 stage's, so the queue, the diary and the resume logic cannot tell them apart. The engines
 stay independent underneath, so mixing is a one-line change if it is ever wanted.
 
+### Glossary fixes from the code review
+
+Four of the review's glossary findings, fixed without a design decision: a run now reads
+the glossary when it needs it, so a name confirmed mid-run reaches the next tape rather
+than the next run; "Hear this bit" on a review card plays the line the flag came from
+(the flag knows its segment id, the id names its chunk, the chunk's transcript knows
+where the line starts); "I'll never know this one" sets a word aside, kept in
+`glossary.json` with no English so it is never asked again and never reaches the
+translator, and can be brought back from the list; and `undo()` reverses one correction
+on the text as it is now, so corrections made since survive, with a re-read sentence going
+back to what it said just before. Two flagged spans that both boil down to nothing are no
+longer merged into one question.
+
+The one that needs a decision is the stem matching (Μαρία matching Μάρκος); see the
+review document. It is left as is until Thiago chooses how strict to be.
+
 ### Known gaps, deliberately left
 
 - **Skip never retires anything.** A word she genuinely cannot identify will resurface forever.
