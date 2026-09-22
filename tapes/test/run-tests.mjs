@@ -2922,6 +2922,57 @@ at('a re-read sentence remembers what it said before, so it can be walked back t
   eq(now.translations[0].en, 'Kostas came.');
 });
 
+
+// ------------------------------------------------------------------ strict matching, and asking before merging
+
+t('inflections of one name are the same word; near-miss names are not', () => {
+  const same = [['Κώστας', 'Κώστα'], ['Κώστας', 'Κώστᾳ'], ['Ελένη', 'Ελένης'], ['Γιάννης', 'Γιάννη'],
+                ['Μαρία', 'Μαρίας'], ['Γιώργος', 'Γιώργου'], ['Θεσσαλονίκη', 'Θεσσαλονίκης'], ['ΚΩΣΤΑΣ', 'κώστα']];
+  for (const [a, b] of same) ok(gl.sameWord(a, b), `${a} / ${b} should match`);
+  const different = [['Μαρία', 'Μάρκος'], ['Μαρία', 'Μαρίνα'], ['Μαρία', 'Μάρθα'], ['Νίκος', 'Νικολέτα'],
+                     ['καλά', 'καλαμπόκι'], ['Κώστας', 'Κωστάκης'], ['Κώστας', 'Γκόστα'], ['Άννα', 'Αντώνης']];
+  for (const [a, b] of different) ok(!gl.sameWord(a, b), `${a} / ${b} must not match`);
+});
+
+t('resemblance is a question, never a merge', () => {
+  ok(gl.resembles('Κωστάκης', 'Κώστας'), 'the diminutive resembles the name');
+  ok(gl.resembles('Μάρκος', 'Μαρία'), 'and so does the near-miss, which is exactly why it only asks');
+  ok(!gl.resembles('Κώστας', 'Κώστα'), 'a true inflection is the same word, not a resemblance');
+  ok(!gl.resembles('Γκόστα', 'Κώστας'), 'a front-mangled form resembles nothing; it is a separate question');
+  ok(!gl.resembles('', 'Κώστας'));
+});
+
+t('a new spelling that resembles a confirmed name asks about that name first', () => {
+  const glossary = [{ id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας', observed_forms: ['Κώστας'], english: 'Kostas' },
+                    { id: 'x', greek: 'Μαρία', canonical_greek: 'Μαρία', observed_forms: ['Μαρία'], aside: true }];
+  const occ = [{ id: 'c0s0', greek: 'Κωστάκης', guess: 'Kostakis', tape: 't', en: 'Kostakis came' },
+               { id: 'c1s0', greek: 'Μάρκος', guess: 'Markos', tape: 't', en: 'Markos came' },
+               { id: 'c2s0', greek: 'Ελένη', guess: 'Eleni', tape: 't', en: 'Eleni came' }];
+  const q = gl.buildReviewQueue(occ, glossary);
+  const by = Object.fromEntries(q.map(c => [c.greek, c]));
+  eq(by['Κωστάκης'].maybe, { id: 'kostas', english: 'Kostas', greek: 'Κώστας' });
+  eq(by['Μάρκος'].maybe, null, 'a set-aside entry with no English is never offered');
+  eq(by['Ελένη'].maybe, null);
+  eq(q.length, 3, 'three separate questions; nothing merged on resemblance alone');
+});
+
+t('Μαρία and Μάρκος on the same tape are two questions, not one', () => {
+  const q = gl.buildReviewQueue([
+    { id: 'c0s0', greek: 'Μαρία', guess: 'Maria', tape: 't', en: 'Maria came' },
+    { id: 'c0s1', greek: 'Μάρκος', guess: 'Markos', tape: 't', en: 'Markos came' },
+    { id: 'c0s2', greek: 'Μαρίας', guess: 'Maria', tape: 't', en: "Maria's house" }
+  ]);
+  eq(q.map(c => [c.greek, c.heard]).sort(), [['Μάρκος', 1], ['Μαρία', 2]].sort());
+});
+
+t('a correction sweep no longer reaches a different name that merely starts the same way', () => {
+  const entry = { id: 'maria', greek: 'Μαρία', canonical_greek: 'Μαρία', observed_forms: ['Μαρία'], english: 'Mary' };
+  const segs = [{ id: 'a', gr: 'Η Μαρία ήρθε.', en: 'Maria came.' }, { id: 'b', gr: 'Ο Μάρκος ήρθε.', en: 'Markos came.' }];
+  const plan = gl.planCorrection(segs, entry, 'Maria', 'Mary');
+  eq(plan.substitute.map(s => s.id), ['a']);
+  eq(plan.retranslate.map(s => s.id), [], 'the sentence about Markos is left alone');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }

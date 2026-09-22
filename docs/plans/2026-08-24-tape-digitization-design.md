@@ -946,8 +946,16 @@ on the text as it is now, so corrections made since survive, with a re-read sent
 back to what it said just before. Two flagged spans that both boil down to nothing are no
 longer merged into one question.
 
-The one that needs a decision is the stem matching (Μαρία matching Μάρκος); see the
-review document. It is left as is until Thiago chooses how strict to be.
+**Matching is strict now, and resemblance only asks.** The old rule compared the starts
+of words, so Μαρία (μαρ) matched Μάρκος (μαρκ), Μαρίνα and Μάρθα, and Νίκος matched
+Νικολέτα: one card for two people, and a correction sweep that could re-read "Ο Μάρκος
+ήρθε" as "Maria came". Two words are now the same only when identical after a known Greek
+ending is removed (Κώστας, Κώστα, Κώστᾳ all leave κωστ). The looser test survives as
+`resembles()` and is allowed to do one thing: when a new spelling resembles a name she has
+already confirmed (Κωστάκης against Kostas), the card asks "Is this the same as Kostas?"
+first. Yes folds it in as another spelling and corrects the English the way a changed
+answer would; no falls through to the ordinary question. The code never merges on
+resemblance by itself. Pinned against a table of near-miss Greek names.
 
 ### Known gaps, deliberately left
 

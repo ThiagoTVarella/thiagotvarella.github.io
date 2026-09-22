@@ -28,12 +28,20 @@ export function normalizeGreek(s) {
     .trim();
 }
 
-// Greek declines names on the ending: Κώστας / Κώστα / Κώστᾳ / Κώστᾰν. Comparing stems
-// catches that. It does NOT catch ASR manglings (Γκόστα vs Κώστας) -- those differ at the
+// Greek declines names on the ending: Κώστας / Κώστα / Κώστᾳ / Κώστᾰν. Removing a known
+// ending and comparing what is left catches that. Two words are the same only when what is
+// left is identical: Μαρία (μαρι) and Μάρκος (μαρκ) are not, and neither are Νίκος and
+// Νικολέτα. It does NOT catch ASR manglings (Γκόστα vs Κώστας) -- those differ at the
 // front, which is exactly why entries carry observed_forms recorded when the flag was raised.
+// Written with σ, because normalizeGreek has already turned every final ς into σ.
+const ENDINGS = ['ουσ', 'εισ', 'ασ', 'ησ', 'οσ', 'ου', 'ων', 'εσ', 'αν', 'ην', 'ον',
+                 'α', 'η', 'ο', 'ε', 'ι', 'υ', 'ω'];
 export function stem(s) {
   const n = normalizeGreek(s);
-  return n.length > 4 ? n.slice(0, Math.max(3, n.length - 2)) : n;
+  for (const e of ENDINGS) {
+    if (n.length - e.length >= 3 && n.endsWith(e)) return n.slice(0, -e.length);
+  }
+  return n;
 }
 
 export function sameWord(a, b) {
@@ -43,6 +51,17 @@ export function sameWord(a, b) {
   if (!A || !B) return false;
   if (A === B) return true;
   const sa = stem(A), sb = stem(B);
+  return sa.length >= 3 && sa === sb;
+}
+
+// The looser test that used to decide merges: one word's beginning contains the other's.
+// It is what makes Κωστάκης look like Κώστας, and also what made Μαρία look like Μάρκος,
+// so it is never allowed to merge anything on its own. It only raises the question.
+export function resembles(a, b) {
+  const A = normalizeGreek(a), B = normalizeGreek(b);
+  if (!A || !B || sameWord(A, B)) return false;
+  const cut = n => (n.length > 4 ? n.slice(0, Math.max(3, n.length - 2)) : n);
+  const sa = cut(A), sb = cut(B);
   return sa.length >= 3 && sb.length >= 3 && (sa.startsWith(sb) || sb.startsWith(sa));
 }
 
@@ -245,6 +264,14 @@ export function buildReviewQueue(occurrences, glossary = []) {
     c.items.push(o);
   }
 
+  // A confirmed name this card merely resembles. The card asks about it before anything
+  // else; the answer is hers, never the code's.
+  const confirmed = known.filter(g => g && g.english && !g.aside);
+  const maybeFor = greek => {
+    const g = confirmed.find(g => formsOf(g).some(f => resembles(f, greek)));
+    return g ? { id: g.id, english: g.english, greek: g.canonical_greek || g.greek } : null;
+  };
+
   return clusters.map(c => {
     const greek = modeOf(c.items.map(i => i.greek));
     const guess = modeOf(c.items.map(i => i.guess).filter(Boolean)) || '';
@@ -259,6 +286,7 @@ export function buildReviewQueue(occurrences, glossary = []) {
       heard: c.items.length,
       guess, kind,
       context: contextAround(sample.en, guess),
+      maybe: maybeFor(greek),
       tape: sample.tape || null,
       segment: sample.id || null,
       chunk: sample.chunk ?? chunkOfSegment(sample.id),
