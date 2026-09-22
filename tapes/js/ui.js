@@ -858,8 +858,10 @@ function refreshSetup() {
   $('#pickFolder').disabled = !canPickFolder;
 
   $('#step-folder').classList.toggle('done', !!state.folder);
-  $('#step-key').classList.toggle('done', !!state.key);
-  $('#finishSetup').disabled = !(state.folder && state.key);
+  // With Local chosen, nothing talks to the service, so the key step is already done.
+  const keyOk = !!state.key || !needsKey(state.quality);
+  $('#step-key').classList.toggle('done', keyOk);
+  $('#finishSetup').disabled = !(state.folder && keyOk);
 }
 $('#pickFolder').onclick = async () => {
   if (!('showDirectoryPicker' in window)) {
