@@ -30,7 +30,7 @@ export const STATE = {
 export const STEPS = [
   { key: STATE.PREPARING,   label: 'Splitting into pieces' },
   { key: STATE.READING,     label: 'Listening to it' },
-  { key: STATE.TRANSLATING, label: 'Putting it into English' }
+  { key: STATE.TRANSLATING, label: 'Translating it into English' }
 ];
 
 // -1 before any step has started (still STATE.QUEUED), STEPS.length once STATE.DONE.

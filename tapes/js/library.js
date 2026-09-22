@@ -144,7 +144,7 @@ export function formatSize(bytes) {
 // here: the whole reason to reach for this screen after an error is to reassure yourself
 // the audio survived, so say so rather than repeating the error.
 export function mediaNote(tape) {
-  if (tape.status === 'done')    return 'Read and put into English';
+  if (tape.status === 'done')    return 'Read and translated into English';
   if (tape.status === 'working') return 'Being read right now';
   if (tape.status === 'error')   return 'Ran into a problem being read. The audio itself is fine';
   return 'Waiting to be read';
