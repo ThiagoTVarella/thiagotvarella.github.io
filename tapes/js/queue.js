@@ -72,6 +72,8 @@ export class Queue {
     this.mode = opts.mode || MODES.CROSS;
     this.model = opts.model || DEFAULT_MODEL;
     this.spendCap = opts.spendCap ?? Infinity;
+    // An array, or a function returning the current one: names she confirms while a run is
+    // going must reach the next tape, not the next run.
     this.glossary = opts.glossary || [];
     this.on = opts.on || {};
     // Injectable so the whole queue is testable with no wasm, no network, no key.
@@ -107,6 +109,7 @@ export class Queue {
   }
 
   emit(name, ...a) { this.on[name]?.(...a); }
+  glossaryNow() { return typeof this.glossary === 'function' ? (this.glossary() || []) : (this.glossary || []); }
 
   // Unthrottled: called on every stage transition. Rare, and the whole point of a live
   // checklist is that the current step shows up immediately, not after a delay.
@@ -342,7 +345,7 @@ export class Queue {
                          : await S.read(store.paths.chunkAudio(tape.id, chunk.index));
         result = await withRetry(
           () => this.deps.transcribe(chunk, {
-            mode: this.mode, key: this.key, b64, glossary: glossaryTerms(this.glossary)
+            mode: this.mode, key: this.key, b64, glossary: glossaryTerms(this.glossaryNow())
           }),
           { onRetry });
       }
@@ -366,7 +369,7 @@ export class Queue {
       const out = this.deps.localTranslator
         ? await this.deps.localTranslator.translateAll(segments, { onProgress, signal: this._abort })
         : await this.deps.translate(segments, {
-            key: this.key, model: this.model, glossary: this.glossary, onProgress
+            key: this.key, model: this.model, glossary: this.glossaryNow(), onProgress
           });
       this.#charge(out.cost, tape);
 

@@ -38,6 +38,9 @@ export function stem(s) {
 
 export function sameWord(a, b) {
   const A = normalizeGreek(a), B = normalizeGreek(b);
+  // Two spans that boil down to nothing (whitespace, stray punctuation) are not the same
+  // word; they are two different bits of noise from two different tapes.
+  if (!A || !B) return false;
   if (A === B) return true;
   const sa = stem(A), sb = stem(B);
   return sa.length >= 3 && sb.length >= 3 && (sa.startsWith(sb) || sb.startsWith(sa));
@@ -123,19 +126,46 @@ export function applySubstitutions(segments, plan, entry) {
       enOriginal: seg.enOriginal ?? seg.en
     };
   });
+  // What each sentence said just before THIS correction, so undoing it puts back exactly
+  // that, and not the model's first draft from before every other correction too.
+  const before = {};
+  for (const seg of segments) if (byId.has(seg.id)) before[seg.id] = seg.en;
   return {
     segments: edited,
     audit: { entry: entry.id, greek: entry.canonical_greek || entry.greek,
              from: plan.substitute[0]?.from ?? null, to: plan.substitute[0]?.to ?? null,
              segments: plan.substitute.map(s => s.id),
-             retranslated: plan.retranslate.map(s => s.id) }
+             retranslated: plan.retranslate.map(s => s.id),
+             before }
   };
 }
 
+// Walks back one correction and leaves every other one in place. A substitution is
+// reversed on the text as it is now (the new word back to the old), so corrections made
+// since survive; a re-read sentence goes back to what it said just before, since a
+// re-reading cannot be reversed any other way. An older audit without that record falls
+// back to the model's original wording.
+const escapeRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 export function undo(segments, audit) {
-  const ids = new Set([...(audit.segments || []), ...(audit.retranslated || [])]);
-  return segments.map(seg => (ids.has(seg.id) && seg.enOriginal != null)
-    ? { ...seg, en: seg.enOriginal, enOriginal: undefined } : seg);
+  const before = audit.before || {};
+  const swapped = new Set(audit.segments || []);
+  const reread = new Set(audit.retranslated || []);
+  const back = audit.from && audit.to ? new RegExp(`(^|[^\\p{L}])${escapeRe(audit.to)}(?![\\p{L}])`, 'gu') : null;
+  return segments.map(seg => {
+    if (swapped.has(seg.id) && back && back.test(seg.en || '')) {
+      back.lastIndex = 0;
+      return { ...seg, en: seg.en.replace(back, `$1${audit.from}`) };
+    }
+    if (!swapped.has(seg.id) && !reread.has(seg.id)) return seg;
+    if (before[seg.id] != null) return { ...seg, en: before[seg.id] };
+    return seg.enOriginal != null ? { ...seg, en: seg.enOriginal, enOriginal: undefined } : seg;
+  });
+}
+
+// Segment ids are minted as c<chunk>s<n>, so the chunk a line lives in is in its id.
+export function chunkOfSegment(id) {
+  const m = /^c(\d+)s\d+$/.exec(String(id || ''));
+  return m ? +m[1] : null;
 }
 
 // --- what to tell her -----------------------------------------------------
@@ -204,7 +234,8 @@ export function contextAround(english, guess) {
 export function buildReviewQueue(occurrences, glossary = []) {
   const known = (glossary || []).filter(Boolean);
   const fresh = (occurrences || []).filter(o =>
-    o && o.greek && !known.some(g => formsOf(g).some(f => sameWord(f, o.greek))));
+    o && o.greek && normalizeGreek(o.greek) &&
+    !known.some(g => formsOf(g).some(f => sameWord(f, o.greek))));
 
   const clusters = [];
   for (const o of fresh) {
@@ -229,7 +260,8 @@ export function buildReviewQueue(occurrences, glossary = []) {
       guess, kind,
       context: contextAround(sample.en, guess),
       tape: sample.tape || null,
-      chunk: sample.chunk ?? null,
+      segment: sample.id || null,
+      chunk: sample.chunk ?? chunkOfSegment(sample.id),
       at: sample.start ?? null,
       // Mechanical, and deliberately phrased as such: the stems match but the strings differ,
       // so the tape rendered one term more than one way. It says nothing about what it IS.

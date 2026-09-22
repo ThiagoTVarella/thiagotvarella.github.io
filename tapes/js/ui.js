@@ -9,7 +9,7 @@ import { miniSteps, libraryBannerState, tapeClickMessage, stalledMessage,
          tapeErrorNote, downloadName, formatSize, mediaNote, mediaSummary,
          remainingEstimate, formatRemaining, formatLength, entryFooter } from './library.js';
 import { loadEntry, applyCorrectionAcross, makeAudioSource } from './entry.js';
-import { buildReviewQueue } from './glossary.js';
+import { buildReviewQueue, chunkOfSegment } from './glossary.js';
 import { translateAll } from './translate.js';
 import { MODES } from './asr.js';
 import { LocalEngine } from './local-client.js';
@@ -421,6 +421,7 @@ function renderReview() {
       <div class="link-row">
         <button class="linkish" id="note">Add a note</button>
         <button class="linkish" id="skip">Skip this one for now</button>
+        <button class="linkish" id="aside">I'll never know this one</button>
       </div>
     </div>
 
@@ -447,7 +448,8 @@ function renderReview() {
   box.appendChild(card);
 
   let pendingNote = '';
-  $('#hear').onclick = () => toast(DEMO ? "Audio isn't loaded in the demo" : 'Playing…');
+  $('#hear').onclick = () => hearFlag(n).catch(() => toast("Couldn't play that bit. The recording may have moved."));
+  $('#aside').onclick = () => setAside(n);
   $('#note').onclick = () => {
     $('#askBlock').hidden = true; $('#noteBlock').hidden = false;
     $('#noteIn').value = pendingNote; $('#noteIn').focus();
@@ -521,6 +523,47 @@ function renderReview() {
   }
 }
 
+// Plays the bit of tape a flagged span came from. The flag knows its segment id, the
+// segment id names its chunk, and the chunk's transcript knows where the line starts.
+async function hearFlag(n) {
+  if (DEMO) return toast("Audio isn't loaded in the demo");
+  const chunk = n.chunk ?? chunkOfSegment(n.segment);
+  if (!n.tape || chunk == null) return toast("Couldn't find where this was said.");
+  const [tape, text] = await Promise.all([
+    state.store.readJSON(store.paths.tape(n.tape)).catch(() => null),
+    state.store.readJSON(store.paths.chunkText(n.tape, chunk)).catch(() => null)
+  ]);
+  const seg = text?.segments?.find(s => s.id === n.segment);
+  const chunkStart = tape?.plan?.[chunk]?.start ?? text?.start ?? 0;
+  const offset = seg && seg.start != null ? Math.max(0, seg.start - chunkStart) : 0;
+  await playChunk(n.tape, chunk, offset);
+}
+
+// A word she will never be able to identify stops being asked. It is kept, with no
+// English, so it can be brought back from the list below; it teaches the translator
+// nothing and changes no text.
+async function setAside(n) {
+  const entry = { id: n.id, greek: n.greek, canonical_greek: n.greek,
+                  observed_forms: n.observed_forms || [n.greek], kind: n.kind, heard: n.heard,
+                  aside: true };
+  state.glossary.unshift(entry);
+  state.pendingWords = state.pendingWords.filter(w => w.id !== n.id);
+  if (state.nameIdx >= state.pendingWords.length) state.nameIdx = Math.max(0, state.pendingWords.length - 1);
+  renderReview();
+  if (DEMO) return toast('Set aside.');
+  try { await state.store.writeJSON(store.paths.glossary(), state.glossary); toast("Set aside. It won't be asked again unless you bring it back."); }
+  catch (e) { toast("Couldn't save that just now."); }
+}
+
+async function bringBack(id) {
+  state.glossary = state.glossary.filter(g => g.id !== id);
+  if (!DEMO) {
+    try { await state.store.writeJSON(store.paths.glossary(), state.glossary); } catch (e) {}
+    await refreshReview();
+  }
+  renderReview();
+}
+
 function renderGlossList() {
   const box = $('#glossList');
   box.innerHTML = '';
@@ -528,6 +571,17 @@ function renderGlossList() {
   for (const g of state.glossary) {
     const row = el('div', 'gloss-row');
     row.dataset.id = g.id;
+    if (g.aside) {
+      row.innerHTML = `
+        <div class="gloss-main">
+          <span class="muted">Set aside</span>
+          <span class="muted" style="font-size:.82rem"> · ${escapeText(g.greek)}</span>
+          <div class="muted" style="font-size:.78rem">heard ${g.heard} times</div>
+        </div>
+        <button class="linkish" data-back="${g.id}">Ask me again</button>`;
+      box.appendChild(row);
+      continue;
+    }
     row.innerHTML = `
       <div class="gloss-main">
         <b>${g.english}</b>
@@ -541,6 +595,8 @@ function renderGlossList() {
   box.onclick = e => {
     const id = e.target.dataset.edit;
     if (id) return editRow(id);
+    const back = e.target.dataset.back;
+    if (back) return bringBack(back);
   };
 }
 
@@ -912,7 +968,7 @@ async function runQueue(specs) {
     key: state.key,
     mode: state.quality,
     deps: { ...(local ? { local } : {}), ...(localTranslator ? { localTranslator } : {}) },
-    glossary: state.glossary,
+    glossary: () => state.glossary,
     spendCap: parseFloat(state.cap) || Infinity,
     spent: state.tapes.reduce((n, t) => n + (t.cost || 0), 0),
     on: {

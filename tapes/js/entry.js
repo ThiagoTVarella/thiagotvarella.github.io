@@ -115,10 +115,11 @@ export async function applyCorrectionAcross(S, tapeIds, entry, oldEnglish, newEn
 
   for (const [id, { loaded, plan }] of perTape) {
     let segments = loaded.segments;
+    let audit = null;
     if (plan.substitute.length) {
       const applied = applySubstitutions(segments, plan, entry);
       segments = applied.segments;
-      audits.push({ tape: id, ...applied.audit });
+      audit = { tape: id, ...applied.audit };
     }
 
     // Tier 2: the Greek mentions it but the English lost it, so a swap would leave a broken
@@ -126,9 +127,14 @@ export async function applyCorrectionAcross(S, tapeIds, entry, oldEnglish, newEn
     if (plan.retranslate.length && opts.translate) {
       const ids = new Set(plan.retranslate.map(s => s.id));
       const toRedo = segments.filter(s => ids.has(s.id)).map(s => ({ id: s.id, text: s.gr }));
+      const prior = Object.fromEntries(segments.filter(s => ids.has(s.id)).map(s => [s.id, s.en]));
       try {
         const out = await opts.translate(toRedo, opts.translateOpts || {});
         const fresh = new Map((out.translations || []).map(t => [t.id, t.en]));
+        audit = audit || { tape: id, entry: entry.id, greek: entry.canonical_greek || entry.greek,
+                           from: oldEnglish, to: newEnglish, segments: [], retranslated: [], before: {} };
+        audit.retranslated = [...ids];
+        audit.before = { ...(audit.before || {}), ...prior };
         segments = segments.map(s => fresh.get(s.id)
           ? { ...s, en: fresh.get(s.id), enOriginal: s.enOriginal ?? s.en, untranslated: false }
           : s);
@@ -139,6 +145,7 @@ export async function applyCorrectionAcross(S, tapeIds, entry, oldEnglish, newEn
       }
     }
 
+    if (audit) audits.push(audit);
     await saveTranslation(S, id, segments);
   }
 

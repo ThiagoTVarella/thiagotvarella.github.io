@@ -2843,6 +2843,85 @@ t('the run screen names which model it is fetching, and the key is only needed f
   eq(lib.needsKey(undefined), true);
 });
 
+
+// ------------------------------------------------------------------ glossary fixes
+
+t('two spans that boil down to nothing are not the same word', () => {
+  eq(gl.sameWord('   ', '\t'), false);
+  eq(gl.sameWord('', ''), false);
+  const q = gl.buildReviewQueue([
+    { id: 'c0s0', greek: '   ', guess: 'x', tape: 'a', en: 'x here' },
+    { id: 'c1s0', greek: '\t', guess: 'y', tape: 'b', en: 'y here' }
+  ]);
+  eq(q.length, 0, 'noise from two tapes is not one question, nor two');
+});
+
+t('a review card knows the segment and chunk it came from, read off the segment id', () => {
+  eq(gl.chunkOfSegment('c3s7'), 3);
+  eq(gl.chunkOfSegment('nonsense'), null);
+  const [card] = gl.buildReviewQueue([{ id: 'c12s2', greek: 'Κώστας', guess: 'Kostas', tape: 't1', en: 'Kostas came' }]);
+  eq([card.tape, card.segment, card.chunk], ['t1', 'c12s2', 12]);
+});
+
+t('undoing one correction puts back only that correction', () => {
+  const entryA = { id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας', observed_forms: ['Κώστας'], english: 'Kostas' };
+  const entryB = { id: 'eleni', greek: 'Ελένη', canonical_greek: 'Ελένη', observed_forms: ['Ελένη'], english: 'Helen' };
+  let segs = [{ id: 'c0s0', gr: 'Ήρθε ο Κώστας και η Ελένη.', en: 'Costas and Elena came.' }];
+  const a = gl.applySubstitutions(segs, gl.planCorrection(segs, entryA, 'Costas', 'Kostas'), entryA);
+  segs = a.segments;
+  const b = gl.applySubstitutions(segs, gl.planCorrection(segs, entryB, 'Elena', 'Helen'), entryB);
+  segs = b.segments;
+  eq(segs[0].en, 'Kostas and Helen came.');
+  eq(gl.undo(segs, b.audit)[0].en, 'Kostas and Elena came.', 'undoing B keeps A');
+  eq(gl.undo(segs, a.audit)[0].en, 'Costas and Helen came.', 'undoing A keeps B');
+  eq(segs[0].enOriginal, 'Costas and Elena came.', 'the true original is still kept');
+  const old = { segments: ['c0s0'] };   // an audit written before this change
+  eq(gl.undo(segs, old)[0].en, 'Costas and Elena came.', 'an old audit falls back to the original');
+});
+
+t('a set-aside word never reaches the translator, and is not asked again', () => {
+  const aside = { id: 'g_x', greek: 'Γκόστα', canonical_greek: 'Γκόστα', observed_forms: ['Γκόστα'], aside: true };
+  eq(tr.glossaryBlock([aside]), '');
+  ok(tr.glossaryBlock([aside, { greek: 'Ελένη', english: 'Eleni' }]).includes('Ελένη => Eleni'));
+  const q = gl.buildReviewQueue([{ id: 'c0s0', greek: 'Γκόστα', guess: 'the cost', tape: 't', en: 'the cost came' }], [aside]);
+  eq(q.length, 0);
+});
+
+at('names confirmed during a run reach the next tape, not the next run', async () => {
+  const glossary = [];
+  const seenGlossaries = [];
+  const deps = qDeps();
+  const innerTranslate = deps.translate;
+  deps.translate = async (segs, o) => { seenGlossaries.push((o.glossary || []).map(g => g.english)); return innerTranslate(segs, o); };
+  const st = new store.MemoryStore();
+  const Q = new q.Queue({ store: st, key: 'k', deps, glossary: () => glossary,
+    on: { done: () => { if (!glossary.length) glossary.push({ greek: 'Κώστας', english: 'Kostas' }); } } });
+  Q.add({ id: 't1', file: { name: 'a.wav' } });
+  Q.add({ id: 't2', file: { name: 'b.wav' } });
+  await Q.start();
+  eq(seenGlossaries, [[], ['Kostas']]);
+  const Q2 = new q.Queue({ store: new store.MemoryStore(), key: 'k', deps: qDeps(), glossary: [{ english: 'Eleni' }], on: {} });
+  eq(Q2.glossaryNow().map(g => g.english), ['Eleni'], 'a plain array still works');
+});
+
+at('a re-read sentence remembers what it said before, so it can be walked back too', async () => {
+  const st = new store.MemoryStore();
+  await store.updateTape(st, 'tp', { label: 'T', plan: [{ start: 0, duration: 10 }] });
+  await store.saveChunkText(st, 'tp', { chunk: 0, start: 0, duration: 10, segments: [
+    { id: 'c0s0', text: 'Ήρθε ο Γκόστα.', start: 0 }
+  ] });
+  await st.writeJSON(store.paths.translation('tp'), { translations: [{ id: 'c0s0', en: 'It came.' }], unresolved: [] });
+  const entryX = { id: 'kostas', greek: 'Κώστας', canonical_greek: 'Κώστας', observed_forms: ['Κώστας', 'Γκόστα'], english: 'Kostas' };
+  const r = await entry.applyCorrectionAcross(st, ['tp'], entryX, 'the cost', 'Kostas',
+    { translate: async segs => ({ translations: segs.map(s => ({ id: s.id, en: 'Kostas came.' })), cost: 0 }) });
+  const log = await st.readJSON('corrections.json');
+  eq(log.length, 1);
+  eq(log[0].retranslated, ['c0s0']);
+  eq(log[0].before, { c0s0: 'It came.' });
+  const now = await st.readJSON(store.paths.translation('tp'));
+  eq(now.translations[0].en, 'Kostas came.');
+});
+
 const run = async () => {
   for (const [name, fn] of asyncTests) {
     try { await fn(); pass++; results.push('  ok   ' + name); }
