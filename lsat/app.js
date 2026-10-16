@@ -118,38 +118,68 @@ const sides = (c, answerWith) => answerWith === 'definition'
 /* ---------------- written-answer grading ---------------- */
 function norm(s) {
   return String(s).toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '')
-    .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim().replace(/^(the|a|an) /, '');
+    .replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim()
+    // Drop a leading article, but not the logic variable in "A -> B".
+    .replace(/^(the|an) /, '').replace(/^a (?=[a-z0-9]{2})/, '');
 }
-function lev(a, b) {
-  if (a === b) return 0;
-  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) {
-    const cur = [i];
-    for (let j = 1; j <= b.length; j++)
-      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
-    prev = cur;
-  }
-  return prev[b.length];
+/* Optimal-string-alignment distance: Levenshtein plus adjacent swaps ("strenghten"). */
+function dist(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++) {
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+  return d[a.length][b.length];
 }
-/* Accepted forms of an answer: the whole thing, the thing without (parentheticals) or quoted
-   stems, and the pieces either side of "/", ";" or a " - " label separator. So the card
-   "Strengthen - 'Which ... strengthens the argument?'" accepts "strengthen". */
-function accepted(answer) {
+/* Accepted forms of a TERM: the whole thing, plus its short name. So the card
+   "Strengthen - 'Which ... strengthens the argument?'" accepts "strengthen", and
+   "'A if and only if B' (biconditional)" accepts "A if and only if B" and "biconditional".
+   Definitions (long answers) are only ever accepted whole. */
+function termForms(term) {
   const out = new Set();
-  const add = s => { const n = norm(s); if (n) out.add(n); };
-  const base = String(answer);
-  const stripped = base.replace(/\([^)]*\)/g, ' ').replace(/["“][^"”]*["”]/g, ' ').replace(/(^|\s)'[^']*'(?=\s|$|[.,;:?!])/g, ' ');
-  [base, stripped].forEach(s => {
-    add(s);
-    s.split(/\s+[-–—:]\s+|:\s/)[0] && add(s.split(/\s+[-–—:]\s+|:\s/)[0]);
-    s.split(/\s*[\/;]\s*/).forEach(add);
-  });
-  return [...out];
+  const add = s => { const n = norm(s); if (n.length >= 2 && n !== 'vs') out.add(n); };
+  const base = String(term);
+  add(base);
+  const noParen = base.replace(/\([^)]*\)/g, ' ');
+  add(noParen);
+  (base.match(/\(([^)]*)\)/g) || []).forEach(p => add(p.slice(1, -1)));
+  // The name before a " - 'stem'" or ": explanation".
+  add(noParen.split(/\s+[-–—]\s+|:\s/)[0]);
+  // Alternatives written "x / y" or "x; y", but not slashes inside a quoted stem.
+  const unquoted = noParen.replace(/["“][^"”]*["”]/g, ' ').replace(/(^|\s)'[^']*'(?=\s|$|[.,;:?!])/g, ' ');
+  if (norm(unquoted)) { add(unquoted); unquoted.split(/\s*[\/;]\s*/).forEach(add); }
+  return out;
 }
-function isCorrect(given, answer) {
+const formCache = new WeakMap();
+function formsFor(card, answerWith, all) {
+  // Forms another card in the same set also produces are ambiguous, so they don't count
+  // (typing just "principle" can't tell the two Principle cards apart).
+  const key = answerWith + '|' + all.length;
+  let cache = formCache.get(all);
+  if (!cache || cache.key !== key || cache.sig !== all.map(c => c.term).join('\u0000')) {
+    const per = new Map(), freq = new Map();
+    all.forEach(c => { const f = termForms(c.term); per.set(c.id, f); f.forEach(x => freq.set(x, (freq.get(x) || 0) + 1)); });
+    cache = { key, sig: all.map(c => c.term).join('\u0000'), per, freq };
+    formCache.set(all, cache);
+  }
+  const whole = norm(sides(card, answerWith).answer);
+  if (answerWith === 'definition') return { mine: [whole], others: [] };
+  const mine = [...(cache.per.get(card.id) || [])].filter(f => f === whole || cache.freq.get(f) === 1);
+  if (!mine.includes(whole)) mine.push(whole);
+  const others = [];
+  cache.per.forEach((f, id) => { if (id !== card.id) f.forEach(x => others.push(x)); });
+  return { mine, others };
+}
+function isCorrect(given, card, all, answerWith) {
   const g = norm(given);
   if (!g) return false;
-  return accepted(answer).some(a => g === a || (a.length >= 4 && lev(g, a) <= Math.max(1, Math.floor(a.length / 7))));
+  const { mine, others } = formsFor(card, answerWith, all);
+  if (mine.includes(g)) return true;
+  if (others.includes(g)) return false;
+  // Typo tolerance only on longer answers, so "must" never passes for "most".
+  return mine.some(a => a.length >= 6 && Math.abs(a.length - g.length) <= 2 && dist(g, a) <= Math.max(1, Math.floor(a.length / 7)));
 }
 
 /* ---------------- router ---------------- */
@@ -163,6 +193,7 @@ function route() {
     if (!leaveGuard()) { history.replaceState(null, '', currentHash || '#/'); return; }
   }
   leaveGuard = null; currentHash = location.hash;
+  $$('.petal').forEach(p => p.remove());
   if (teardown) { try { teardown(); } catch {} }
   teardown = null; keyHandler = null; app.onchange = null;
   const [a, id, mode] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -483,13 +514,13 @@ function viewFlashcards(set) {
       const c = deck[i];
       const front = P.front === 'definition' ? c.definition : c.term, back = P.front === 'definition' ? c.term : c.definition;
       const fl = P.front === 'definition' ? ['Definition', 'Term'] : ['Term', 'Definition'];
-      const star = `<button class="icon-btn star ${c.starred ? 'on' : ''}" data-star title="Star (S)">${c.starred ? '★' : '☆'}</button>`;
+      const star = `<button class="icon-btn star ${c.starred ? 'on' : ''}" data-star title="Star (S)" aria-label="Star term" aria-pressed="${c.starred}">${c.starred ? '★' : '☆'}</button>`;
       body = `<div class="counter">${i + 1} / ${total}</div>
         <div class="progress-line"><span style="width:${i / total * 100}%"></span></div>
         <div class="flip ${flipped ? 'flipped' : ''}" id="card" role="button" tabindex="0" aria-label="Flashcard, click to flip">
           <div class="flip-inner">
-            <div class="face front"><span class="side-tag">${fl[0]}</span>${star}<div class="content ${fsClass(front)}">${esc(front) || '<span class="faint">(blank)</span>'}</div></div>
-            <div class="face back"><span class="side-tag">${fl[1]}</span>${star}<div class="content ${fsClass(back)}">${esc(back) || '<span class="faint">(blank)</span>'}</div></div>
+            <div class="face front" ${flipped ? 'inert' : ''}><span class="side-tag">${fl[0]}</span>${star}<div class="content ${fsClass(front)}">${esc(front) || '<span class="faint">(blank)</span>'}</div></div>
+            <div class="face back" ${flipped ? '' : 'inert'}><span class="side-tag">${fl[1]}</span>${star}<div class="content ${fsClass(back)}">${esc(back) || '<span class="faint">(blank)</span>'}</div></div>
           </div></div>
         <div class="fc-controls">${P.track ? `
           <button class="round-btn" id="undo" title="Undo (Ctrl+Z)" ${history.length ? '' : 'disabled'}>↶</button>
@@ -531,7 +562,11 @@ function viewFlashcards(set) {
       });
     }
   }
-  function flip() { flipped = !flipped; const c = $('#card'); if (c) c.classList.toggle('flipped', flipped); }
+  function flip() {
+    flipped = !flipped; const c = $('#card'); if (!c) return;
+    c.classList.toggle('flipped', flipped);
+    $('.face.front', c).inert = flipped; $('.face.back', c).inert = !flipped;
+  }
   function star() { const c = deck[i]; if (!c) return; c.starred = !c.starred; save(); render(); }
   function go(d) { if (done) return; const n = i + d; if (n < 0) return; flipped = false; if (n >= deck.length) { done = true; } else i = n; render(); }
   function mark(knew) {
@@ -557,6 +592,7 @@ function viewFlashcards(set) {
     if (e.ctrlKey) return;
     if (e.key === 'Escape') return escBack(set)(e);
     if (done) return;
+    if (e.key === 'Enter' && e.target.id === 'card') { e.preventDefault(); flip(); return; }
     if (e.target.closest && e.target.closest('button, summary, a, details') && (e.key === ' ' || e.key === 'Enter')) return;
     if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); flip(); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); P.track ? mark(true) : go(1); }
@@ -606,6 +642,7 @@ function viewLearn(set) {
   function next() {
     clearTimeout(autoTimer);
     if (!queue.length) return renderCheckpoint();
+    window.scrollTo(0, 0);
     cur = queue.shift(); state = 'q'; chosen = null; typed = ''; qLevel = level(cur);
     const all = set.cards;
     const canMC = distractors(cur, all, P.answerWith, 1).length > 0;
@@ -676,7 +713,12 @@ function viewLearn(set) {
     $('#qstar').onclick = () => { cur.starred = !cur.starred; save(); const b = $('#qstar'); b.classList.toggle('on', cur.starred); b.textContent = cur.starred ? '★' : '☆'; };
     $$('.choice[data-k]').forEach(b => b.onclick = () => answerMC(+b.dataset.k));
     const f = $('#wform');
-    if (f) { const inp = $('#wans'); inp.focus(); f.onsubmit = e => { e.preventDefault(); answerWritten(inp.value); }; $('#dunno').onclick = () => answerWritten(''); }
+    if (f) {
+      const inp = $('#wans'), shown = performance.now(); inp.focus();
+      // An empty Enter (e.g. a held key carrying over from the last question) is not an answer; "Don't know?" is the way to skip.
+      f.onsubmit = e => { e.preventDefault(); if (inp.value.trim() && performance.now() - shown > 250) answerWritten(inp.value); };
+      $('#dunno').onclick = () => answerWritten('');
+    }
     if ($('#cont')) { $('#cont').onclick = next; $('#cont').focus({ preventScroll: true }); }
     if ($('#override')) $('#override').onclick = () => {
       // Undo the miss: take the card out of the re-ask queue and credit it.
@@ -695,12 +737,12 @@ function viewLearn(set) {
   function answerWritten(v) {
     if (state !== 'q') return;
     typed = v.trim();
-    const ok = isCorrect(typed, sides(cur, P.answerWith).answer);
+    const ok = isCorrect(typed, cur, set.cards, P.answerWith);
     grade(ok); state = ok ? 'right' : 'wrong'; renderQ();
     if (ok) autoTimer = setTimeout(next, 1400);
   }
   function renderCheckpoint() {
-    state = 'checkpoint';
+    state = 'checkpoint'; window.scrollTo(0, 0);
     const cards = pool();
     const left = cards.filter(c => (level(c) ?? -1) < 2).length;
     if (!left) return renderDone(cards);
@@ -761,7 +803,7 @@ function viewTest(set) {
     </div>`;
     $('#tstar').onchange = e => { P.starred = e.target.checked; save(); setup(); };
     $('#go').onclick = () => {
-      P.count = Math.max(1, Math.min(max, parseInt($('#tcount').value, 10) || 1));
+      P.count = Math.max(1, parseInt($('#tcount').value, 10) || 1);
       P.answerWith = $('#tans').value;
       $$('[data-type]').forEach(b => { P.types[b.dataset.type] = b.checked; });
       if (!Object.values(P.types).some(Boolean)) P.types.mc = true;
@@ -806,7 +848,7 @@ function viewTest(set) {
   function itemCorrect(q, c) {
     if (q.type === 'tf') return q.resp === q.truth;
     if (q.type === 'mc') return q.resp === q.correct;
-    if (q.type === 'written') return q.override || isCorrect(q.resp, sides(q.card, P.answerWith).answer);
+    if (q.type === 'written') return q.override || isCorrect(q.resp, q.card, set.cards, P.answerWith);
     if (q.type === 'match') return q.resp[c.id] !== undefined && q.options[q.resp[c.id]].id === c.id;
   }
   function score() {
@@ -855,13 +897,13 @@ function viewTest(set) {
         return head + `<div class="test-q ${cls}">${qn}<div class="opt-label">${sd.promptLabel}</div><div class="prompt">${esc(sd.prompt)}</div>
           <div class="opt-label">Matches this ${sd.answerLabel}?</div><div class="tf-shown">${esc(q.shown)}</div>
           <div class="tf-row">${[true, false].map(v => `<label class="choice ${q.resp === v ? 'picked' : ''} ${submitted && v === q.truth ? 'right' : ''} ${submitted && q.resp === v && v !== q.truth ? 'wrong' : ''}">
-            <input type="radio" name="q${n}" value="${v}" ${q.resp === v ? 'checked' : ''} ${dis} hidden>${v ? 'True' : 'False'}</label>`).join('')}</div>
+            <input class="vh" type="radio" name="q${n}" value="${v}" ${q.resp === v ? 'checked' : ''} ${dis}>${v ? 'True' : 'False'}</label>`).join('')}</div>
           ${submitted && !q.truth ? `<div class="correction"><span class="lbl ok">Correct ${sd.answerLabel}</span><div class="prewrap">${esc(sd.answer)}</div></div>` : ''}</div>`;
       }
       if (q.type === 'mc') {
         return head + `<div class="test-q ${cls}">${qn}<div class="prompt">${esc(sd.prompt)}</div><div class="choices">${q.options.map((o, k) => `
           <label class="choice ${q.resp === k ? 'picked' : ''} ${submitted && k === q.correct ? 'right' : ''} ${submitted && q.resp === k && k !== q.correct ? 'wrong' : ''}">
-            <input type="radio" name="q${n}" value="${k}" ${q.resp === k ? 'checked' : ''} ${dis} hidden><span class="k">${L[k]}</span><span>${esc(o)}</span></label>`).join('')}</div></div>`;
+            <input class="vh" type="radio" name="q${n}" value="${k}" ${q.resp === k ? 'checked' : ''} ${dis}><span class="k">${L[k]}</span><span>${esc(o)}</span></label>`).join('')}</div></div>`;
       }
       return head + `<div class="test-q ${cls}">${qn}<div class="prompt">${esc(sd.prompt)}</div>
         <input class="input" id="q${n}" value="${esc(q.resp)}" placeholder="Type the answer" autocomplete="off" autocapitalize="off" spellcheck="false" ${dis}>
@@ -873,7 +915,7 @@ function viewTest(set) {
     app.innerHTML = `<div class="page" style="max-width:760px">${studyHead(set, 'Test')}${note ? `<div class="note">${note}</div>` : ''}
       ${submitted ? `<div class="panel score-card"><div class="ring" style="--p:${s.pct}"><span>${s.pct}%</span></div>
         <div style="flex:1;min-width:200px"><h2>${s.pct >= 90 ? 'Excellent! 🎉' : s.pct >= 70 ? 'Good work, keep it up' : 'Keep practicing, you\'ll get there'}</h2>
-          <p class="muted"><span class="ok">${s.right} correct</span> · <span class="no">${s.total - s.right} incorrect</span> · ${Math.max(1, Math.round(elapsed / 60000))} min</p>
+          <p class="muted"><span class="ok">${s.right} correct</span> · <span class="no">${s.total - s.right} incorrect</span> · ${elapsed < 60000 ? Math.max(1, Math.round(elapsed / 1000)) + ' sec' : Math.round(elapsed / 60000) + ' min'}</p>
           <div class="row" style="margin-top:12px"><button class="btn primary" id="newTest">New test</button>
           ${missed.length ? `<button class="btn" id="starMissed">Star the ${plural(missed.length, 'missed term')}</button>` : ''}</div></div></div>`
         : `<p class="muted">${plural(totalItems, 'question')}</p>`}
@@ -916,38 +958,49 @@ function viewMatch(set) {
   title('Match');
   const P = db.prefs.match;
   const PAIRS = 6;
-  let tiles = [], sel = null, t0 = 0, penalty = 0, timer = null, left = 0, busy = false, note = '';
+  let tiles = [], sel = null, t0 = 0, penalty = 0, timer = null, finTimer = null, left = 0, busy = false, note = '', pairs = 0;
+  // Bests are kept per board size, so a quick 2-pair starred game can't erase a full-board record.
+  if (typeof set.matchBest === 'number') set.matchBest = { 6: set.matchBest };
+  set.matchBest ||= {};
+  const narrow = () => innerWidth < 520;
+  const boardSize = cards => Math.min(narrow() ? 4 : PAIRS, playable(cards).length);
+  /* Starter-deck terms read "Strengthen - 'Which one of the following...'"; a tile only needs the name. */
+  const label = t => { const m = String(t).match(/^(.+?)\s+[-\u2013\u2014]\s+['"\u201c]/); return m ? m[1] : t; };
+  function playable(cards) {
+    const out = [], seenT = new Set(), seenD = new Set();
+    for (const c of cards) {
+      const t = norm(label(c.term)), d = norm(c.definition);
+      if (!t || !d || seenT.has(t) || seenD.has(d)) continue;
+      seenT.add(t); seenD.add(d); out.push(c);
+    }
+    return out;
+  }
   const now = () => (performance.now() - t0) / 1000 + penalty;
   function intro() {
     clearInterval(timer);
     const p = pick(set, P.starred); note = p.note;
-    const enough = p.cards.length >= 2;
+    const size = boardSize(p.cards), enough = size >= 2, best = set.matchBest[size];
     app.innerHTML = `<div class="page">${studyHead(set, 'Match', toggleOpt('starred', 'Study starred terms only', P.starred))}${note ? `<div class="note">${note}</div>` : ''}
       <div class="done-card"><h2>Ready to play?</h2>
         <p class="muted">Match each term with its definition as fast as you can. Wrong matches add 1 second.</p>
-        ${set.matchBest ? `<p style="margin-top:10px">Your best: <b>${set.matchBest.toFixed(1)}s</b></p>` : ''}
-        <div class="actions">${enough ? '<button class="btn primary big" id="start">Start game</button>' : '<p class="muted">You need at least 2 terms to play.</p>'}</div></div></div>`;
+        ${enough ? `<p class="faint small" style="margin-top:6px">${size} pairs per game</p>` : ''}
+        ${enough && best ? `<p style="margin-top:10px">Your best: <b>${best.toFixed(1)}s</b></p>` : ''}
+        <div class="actions">${enough ? '<button class="btn primary big" id="start">Start game</button>' : '<p class="muted">You need at least 2 terms, each with a definition, to play.</p>'}</div></div></div>`;
     bindOpts(app, P, intro);
     if (enough) $('#start').onclick = () => play(p.cards);
   }
   function play(cards) {
-    // Prefer distinct answers so two tiles never read the same.
-    const chosen = [], seenT = new Set(), seenD = new Set();
-    for (const c of shuffle(cards)) {
-      const t = norm(c.term), d = norm(c.definition);
-      if (seenT.has(t) || seenD.has(d)) continue;
-      seenT.add(t); seenD.add(d); chosen.push(c);
-      if (chosen.length >= PAIRS) break;
-    }
-    tiles = shuffle(chosen.flatMap(c => [{ id: c.id, kind: 'term', text: c.term }, { id: c.id, kind: 'def', text: c.definition }]));
-    left = chosen.length; sel = null; penalty = 0; busy = false;
+    // Distinct, non-blank pairs only, so two tiles never read the same.
+    const chosen = playable(shuffle(cards)).slice(0, boardSize(cards));
+    tiles = shuffle(chosen.flatMap(c => [{ id: c.id, kind: 'term', text: label(c.term) }, { id: c.id, kind: 'def', text: c.definition }]));
+    pairs = left = chosen.length; sel = null; penalty = 0; busy = false;
     app.innerHTML = `<div class="page">${studyHead(set, 'Match')}
       <div class="match-top"><span class="timer" id="timer">0.0</span><span class="penalty" id="pen"></span></div>
       <div class="match-grid" id="grid">${tiles.map((t, k) => `<button class="tile ${t.kind === 'term' ? 'term' : ''}" data-k="${k}"><span>${esc(t.text)}</span></button>`).join('')}</div></div>`;
     t0 = performance.now();
     timer = setInterval(() => { const el = $('#timer'); if (el) el.textContent = now().toFixed(1); }, 100);
     $('#grid').onclick = e => {
-      const b = e.target.closest('.tile'); if (!b || busy) return;
+      const b = e.target.closest('.tile'); if (!b || busy || b.classList.contains('good')) return;
       const k = +b.dataset.k, t = tiles[k];
       if (sel === null) { sel = k; b.classList.add('sel'); return; }
       if (sel === k) { sel = null; b.classList.remove('sel'); return; }
@@ -969,10 +1022,10 @@ function viewMatch(set) {
   function finish() {
     clearInterval(timer);
     const time = now();
-    const record = !set.matchBest || time < set.matchBest;
-    const prevBest = set.matchBest;
-    if (record) { set.matchBest = time; save(); }
-    setTimeout(() => {
+    const prevBest = set.matchBest[pairs];
+    const record = !prevBest || time < prevBest;
+    if (record) { set.matchBest[pairs] = time; save(); }
+    finTimer = setTimeout(() => {
       app.innerHTML = `<div class="page">${studyHead(set, 'Match')}<div class="done-card">
         <h2>${record ? 'New record! 🏆' : 'Nice matching!'}</h2>
         <div class="done-stats"><div><b>${time.toFixed(1)}s</b>Your time</div>${prevBest ? `<div class="faint"><b>${Math.min(prevBest, time).toFixed(1)}s</b>Best</div>` : ''}</div>
@@ -983,7 +1036,7 @@ function viewMatch(set) {
     }, 400);
   }
   keyHandler = e => { if (e.key === 'Escape') escBack(set)(e); };
-  teardown = () => clearInterval(timer);
+  teardown = () => { clearInterval(timer); clearTimeout(finTimer); };
   intro();
 }
 

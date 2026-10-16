@@ -5,17 +5,17 @@
   --surface-2: #fdf0da;
   --ink:       #3b2a1c;
   --ink-soft:  #6e5643;
-  --ink-faint: #a08a75;
+  --ink-faint: #876f5a;
   --rule:      #f1e2c9;
   --sun:       #ffc83d;
-  --accent:    #d4640e;
+  --accent:    #b4520a;
   --accent-ink:#3b2a1c;
   --accent-soft: rgba(255, 184, 46, .22);
-  --good:      #4e9a3c;
+  --good:      #3d7f2e;
   --good-soft: rgba(78, 154, 60, .13);
   --bad:       #d9473a;
   --bad-soft:  rgba(217, 71, 58, .10);
-  --warn:      #e0608a;
+  --warn:      #c43f6c;
   --shadow:    0 2px 12px rgba(150, 95, 30, .10);
   --shadow-lg: 0 10px 34px rgba(150, 95, 30, .15);
   --radius: 16px;
@@ -242,7 +242,7 @@ select.input { padding: 8px 10px; }
 .track-btn.learning { color: var(--warn); border-color: var(--warn); }
 .track-btn.know { color: var(--good); border-color: var(--good); }
 .track-btn:hover { filter: brightness(1.05); background: var(--surface-2); }
-.track-btn .cnt { display: inline-block; min-width: 1.6em; margin-left: 6px; padding: 0 6px; border-radius: 99px; font-size: .8rem; color: #fff; }
+.track-btn .cnt { display: inline-block; min-width: 1.6em; margin-left: 6px; padding: 0 6px; border-radius: 99px; font-size: .8rem; color: var(--surface); }
 .track-btn.learning .cnt { background: var(--warn); }
 .track-btn.know .cnt { background: var(--good); }
 .counter { text-align: center; color: var(--ink-soft); font-weight: 700; font-family: var(--ui); margin-bottom: 10px; font-size: .92rem; }
@@ -254,8 +254,11 @@ select.input { padding: 8px 10px; }
   .round-btn { width: 48px; height: 48px; }
 }
 .flip:focus { outline: none; }
-.flip:focus-visible .face { box-shadow: 0 0 0 3px var(--sun), var(--shadow-lg); }
-:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
+.flip:focus-visible .face { box-shadow: 0 0 0 3px var(--accent), var(--shadow-lg); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.vh { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.choice:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+.tf-row .choice, .choices label.choice { position: relative; cursor: pointer; }
 .kbd-hint { text-align: center; color: var(--ink-faint); font-size: .8rem; margin-top: 14px; }
 kbd { font-family: var(--text); font-size: .76rem; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--rule); background: var(--surface); }
 
@@ -335,12 +338,11 @@ kbd { font-family: var(--text); font-size: .76rem; padding: 1px 6px; border-radi
 .match-top { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
 .timer { font-family: var(--ui); font-weight: 700; font-size: 1.5rem; font-variant-numeric: tabular-nums; min-width: 5ch; text-align: center; }
 .penalty { color: var(--bad); font-weight: 700; font-size: .9rem; min-width: 3ch; }
-.match-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.match-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(120px, auto); gap: 12px; }
 @media (max-width: 720px) { .match-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 460px) { .match-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
 .tile {
-  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 12px; height: 150px;
-  overflow: auto; font-size: .85rem; line-height: 1.35; text-align: center; display: flex; border: 2.5px solid transparent;
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 12px; min-height: 120px; font-size: .85rem; line-height: 1.35; text-align: center; display: flex; border: 2.5px solid transparent;
   transition: opacity .25s, transform .25s, border-color .12s;
 }
 .tile > span { margin: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -351,7 +353,8 @@ kbd { font-family: var(--text); font-size: .76rem; padding: 1px 6px; border-radi
 .tile.good { border-color: var(--good); background: var(--good-soft); }
 .tile.gone { opacity: 0; transform: scale(.9); pointer-events: none; }
 @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-@media (max-width: 460px) { .tile { height: 120px; font-size: .78rem; padding: 8px; } }
+@media (max-width: 460px) { .tile { min-height: 96px; font-size: .78rem; padding: 8px; } .match-grid { grid-auto-rows: minmax(96px, auto); } }
+.tile.good { pointer-events: none; }
 
 #toast {
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 100;
