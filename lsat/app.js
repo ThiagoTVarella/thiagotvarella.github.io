@@ -95,14 +95,14 @@ const getSet = id => db.sets.find(s => s.id === id);
 /* progress: undefined = not studied, 0 = still learning, 1 = familiar, 2 = mastered */
 const lvl = (set, c) => set.progress[c.id];
 function counts(set) {
-  const r = { fresh: 0, learning: 0, mastered: 0, total: set.cards.length };
-  set.cards.forEach(c => { const l = lvl(set, c); if (l === undefined) r.fresh++; else if (l >= 2) r.mastered++; else r.learning++; });
+  const r = { fresh: 0, learning: 0, familiar: 0, mastered: 0, total: set.cards.length };
+  set.cards.forEach(c => { const l = lvl(set, c); if (l === undefined) r.fresh++; else if (l >= 2) r.mastered++; else if (l === 1) r.familiar++; else r.learning++; });
   return r;
 }
 function bar(set) {
   const p = counts(set), t = p.total || 1;
-  return `<div class="bar" title="${p.mastered} mastered, ${p.learning} learning, ${p.fresh} not studied">
-    <span class="m" style="width:${p.mastered / t * 100}%"></span><span class="l" style="width:${p.learning / t * 100}%"></span></div>`;
+  return `<div class="bar" title="${p.mastered} mastered, ${p.familiar} familiar, ${p.learning} still learning, ${p.fresh} not studied">
+    <span class="m" style="width:${p.mastered / t * 100}%"></span><span class="f" style="width:${p.familiar / t * 100}%"></span><span class="l" style="width:${p.learning / t * 100}%"></span></div>`;
 }
 /* Cards for a mode, honouring "starred only" (falls back to all if nothing is starred). */
 function pick(set, starredOnly) {
@@ -155,8 +155,14 @@ function isCorrect(given, answer) {
 /* ---------------- router ---------------- */
 let teardown = null;
 let keyHandler = null;
+let leaveGuard = null;
+let currentHash = location.hash;
 document.addEventListener('keydown', e => { if (keyHandler) keyHandler(e); });
 function route() {
+  if (leaveGuard && location.hash !== currentHash) {
+    if (!leaveGuard()) { history.replaceState(null, '', currentHash || '#/'); return; }
+  }
+  leaveGuard = null; currentHash = location.hash;
   if (teardown) { try { teardown(); } catch {} }
   teardown = null; keyHandler = null; app.onchange = null;
   const [a, id, mode] = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -175,7 +181,12 @@ function route() {
 window.addEventListener('hashchange', route);
 const title = t => { document.title = t ? `${t} · LSAT Cards` : 'LSAT Cards'; };
 /* Esc leaves a study mode for the set page. */
-const escBack = set => e => { if (e.key === 'Escape' && !$('details.opts[open]')) location.hash = `#/set/${set.id}`; };
+const escBack = set => e => {
+  if (e.key !== 'Escape') return;
+  const open = $('details.opts[open]');
+  if (open) { open.open = false; $('summary', open).focus(); return; }
+  location.hash = `#/set/${set.id}`;
+};
 
 function studyHead(set, label, optsHtml = '') {
   return `<div class="study-head">
@@ -195,6 +206,8 @@ function bindOpts(root, prefs, onChange) {
   $$('[data-opt]', root).forEach(el => el.addEventListener('change', () => {
     prefs[el.dataset.opt] = el.type === 'checkbox' ? el.checked : el.value;
     save(); onChange(el.dataset.opt);
+    // The view re-rendered; reopen its options so several can be changed in a row.
+    const d = $('details.opts', app); if (d) { d.open = true; const same = $(`[data-opt="${el.dataset.opt}"]`, d); if (same) same.focus(); }
   }));
 }
 
@@ -209,7 +222,7 @@ function viewLibrary() {
       const p = counts(s);
       return `<a class="set-tile" href="#/set/${s.id}"><h3>${esc(s.title)}</h3>
         <p class="muted small">${plural(s.cards.length, 'term')}</p>${bar(s)}
-        <p class="small faint">${p.mastered} of ${p.total} mastered</p></a>`;
+        <p class="small faint">${p.mastered} of ${p.total} mastered${p.familiar ? ` · ${p.familiar} familiar` : ''}</p></a>`;
     }).join('')}</div>` : `<div class="empty"><h2>No sets yet</h2><p class="muted" style="margin:6px 0 16px">Make one, or bring back the starter LSAT decks below.</p><a class="btn primary" href="#/new">Create a set</a></div>`}
     <section class="tools">
       <h2>Backup &amp; devices</h2>
@@ -230,9 +243,11 @@ function viewLibrary() {
       const incoming = Array.isArray(data) ? data : data.sets;
       if (!Array.isArray(incoming)) throw new Error('no sets in that file');
       let added = 0, replaced = 0;
-      incoming.forEach(s => {
+      incoming.filter(s => s && typeof s === 'object').forEach(s => {
         normalizeSet(s);
-        const i = db.sets.findIndex(x => x.id === s.id);
+        // Starter decks get fresh ids on every device, so match those by which deck they are.
+        let i = db.sets.findIndex(x => x.id === s.id);
+        if (i < 0 && s.seed) i = db.sets.findIndex(x => x.seed === s.seed);
         if (i >= 0) { db.sets[i] = s; replaced++; } else { db.sets.push(s); added++; }
       });
       save(); toast(`Restored: ${added} added, ${replaced} updated.`); viewLibrary();
@@ -256,7 +271,7 @@ function viewSet(set) {
     const starredN = set.cards.filter(c => c.starred).length;
     const list = filter === 'starred' ? set.cards.filter(c => c.starred) : set.cards;
     const lvlTag = c => { const l = lvl(set, c);
-      return l === undefined ? '' : l >= 2 ? '<div class="lvl ok">Mastered</div>' : `<div class="lvl" style="color:var(--warn)">${l === 1 ? 'Familiar' : 'Still learning'}</div>`; };
+      return l === undefined ? '' : l >= 2 ? '<div class="lvl ok">Mastered</div>' : l === 1 ? '<div class="lvl" style="color:var(--accent)">Familiar</div>' : '<div class="lvl" style="color:var(--warn)">Still learning</div>'; };
     app.innerHTML = `<div class="page">
       <a class="crumb" href="#/">← All sets</a>
       <div class="page-head"><div><h1>${esc(set.title)}</h1>${set.description ? `<p class="muted prewrap" style="margin-top:4px">${esc(set.description)}</p>` : ''}</div>
@@ -275,6 +290,7 @@ function viewSet(set) {
       <div class="stats">
         <span><span class="dot" style="background:var(--surface-2);border:1px solid var(--rule)"></span>Not studied <b>${p.fresh}</b></span>
         <span><span class="dot" style="background:var(--warn)"></span>Still learning <b>${p.learning}</b></span>
+        <span><span class="dot" style="background:var(--sun)"></span>Familiar <b>${p.familiar}</b></span>
         <span><span class="dot" style="background:var(--good)"></span>Mastered <b>${p.mastered}</b></span>
       </div>
       <div style="margin:10px 0 30px">${bar(set)}</div>
@@ -353,7 +369,8 @@ function viewEdit(set) {
   const rows = $('#rows');
   const grow = t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; };
   const renumber = () => $$('.erow .num', rows).forEach((n, i) => n.textContent = i + 1);
-  const growAll = () => $$('textarea', rows).forEach(grow);
+  const growAll = () => [...$$('textarea', rows), $('#desc')].forEach(grow);
+  $('#desc').addEventListener('input', e => grow(e.target));
   requestAnimationFrame(growAll);
   rows.addEventListener('input', e => { if (e.target.tagName === 'TEXTAREA') grow(e.target); });
   rows.addEventListener('click', e => {
@@ -418,8 +435,19 @@ function viewEdit(set) {
     const keep = new Set(target.cards.map(c => c.id));
     Object.keys(target.progress).forEach(k => { if (!keep.has(k)) delete target.progress[k]; });
     target.title = t; target.description = d; target.updated = Date.now();
-    save(); toast('Saved.'); location.hash = `#/set/${target.id}`;
+    save(); toast('Saved.'); leaveGuard = null; location.hash = `#/set/${target.id}`;
   };
+  // Warn before leaving with unsaved edits.
+  let dirty = false;
+  app.addEventListener('input', () => { dirty = true; }, { once: true });
+  $('#doImport').addEventListener('click', () => { dirty = true; });
+  $('#swap').addEventListener('click', () => { dirty = true; });
+  rows.addEventListener('click', e => { if (e.target.closest('.del')) dirty = true; });
+  $('#addRow').addEventListener('click', () => { dirty = true; });
+  const before = e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } };
+  window.addEventListener('beforeunload', before);
+  leaveGuard = () => !dirty || confirm('Leave without saving your changes?');
+  teardown = () => { window.removeEventListener('beforeunload', before); };
   if (isNew) $('#title').focus();
 }
 
@@ -466,8 +494,7 @@ function viewFlashcards(set) {
         <div class="fc-controls">${P.track ? `
           <button class="round-btn" id="undo" title="Undo (Ctrl+Z)" ${history.length ? '' : 'disabled'}>↶</button>
           <button class="track-btn learning" id="learning">✕ Still learning<span class="cnt">${learning.length}</span></button>
-          <button class="track-btn know" id="know">✓ Know<span class="cnt">${known.length}</span></button>
-          <span style="width:56px"></span>` : `
+          <button class="track-btn know" id="know">✓ Know<span class="cnt">${known.length}</span></button>` : `
           <button class="round-btn" id="prev" title="Previous (←)" ${i ? '' : 'disabled'}>←</button>
           <button class="btn" id="flipBtn">Flip</button>
           <button class="round-btn" id="next" title="Next (→)">→</button>`}</div>
@@ -530,6 +557,7 @@ function viewFlashcards(set) {
     if (e.ctrlKey) return;
     if (e.key === 'Escape') return escBack(set)(e);
     if (done) return;
+    if (e.target.closest && e.target.closest('button, summary, a, details') && (e.key === ' ' || e.key === 'Enter')) return;
     if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); flip(); }
     else if (e.key === 'ArrowRight') { e.preventDefault(); P.track ? mark(true) : go(1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); P.track ? mark(false) : go(-1); }
@@ -603,9 +631,9 @@ function viewLearn(set) {
   }
   function progressHtml() {
     const cards = pool(), t = cards.length || 1;
-    const m = cards.filter(c => level(c) >= 2).length, l = cards.filter(c => level(c) !== undefined && level(c) < 2).length;
-    return `<div class="learn-progress"><span class="ok">${m}</span>
-      <div class="bar"><span class="m" style="width:${m / t * 100}%"></span><span class="l" style="width:${l / t * 100}%"></span></div>
+    const m = cards.filter(c => level(c) >= 2).length, f = cards.filter(c => level(c) === 1).length, l = cards.filter(c => level(c) === 0).length;
+    return `<div class="learn-progress" title="${m} mastered, ${f} familiar, ${l} still learning"><span class="ok">${m}</span>
+      <div class="bar"><span class="m" style="width:${m / t * 100}%"></span><span class="f" style="width:${f / t * 100}%"></span><span class="l" style="width:${l / t * 100}%"></span></div>
       <span>${cards.length}</span></div>`;
   }
   function shell(inner) {

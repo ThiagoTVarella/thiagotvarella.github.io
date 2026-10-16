@@ -73,6 +73,7 @@ h3 { font-size: 1.02rem; }
 .page { max-width: 880px; margin: 0 auto; padding: 24px 16px 80px; }
 .page-head { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
 .page-head > :first-child { flex: 1; min-width: 0; }
+@media (max-width: 640px) { .page-head > :first-child { flex-basis: 100%; } }
 .crumb { display: inline-block; font-size: .85rem; color: var(--ink-soft); margin-bottom: 6px; font-weight: 600; }
 .crumb:hover { color: var(--accent); }
 
@@ -119,6 +120,7 @@ h3 { font-size: 1.02rem; }
 .bar > span { display: block; height: 100%; }
 .bar .m { background: var(--good); }
 .bar .l { background: var(--warn); }
+.bar .f { background: var(--sun); }
 .bar .p { background: var(--accent); }
 
 /* ---------- set page ---------- */
@@ -246,6 +248,14 @@ select.input { padding: 8px 10px; }
 .counter { text-align: center; color: var(--ink-soft); font-weight: 700; font-family: var(--ui); margin-bottom: 10px; font-size: .92rem; }
 .progress-line { height: 4px; border-radius: 9px; background: var(--surface-2); margin-bottom: 14px; overflow: hidden; }
 .progress-line > span { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+@media (max-width: 640px) {
+  .fc-controls { gap: 8px; flex-wrap: nowrap; }
+  .track-btn { min-width: 0; flex: 1; padding: 12px 10px; font-size: .92rem; }
+  .round-btn { width: 48px; height: 48px; }
+}
+.flip:focus { outline: none; }
+.flip:focus-visible .face { box-shadow: 0 0 0 3px var(--sun), var(--shadow-lg); }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 2px; }
 .kbd-hint { text-align: center; color: var(--ink-faint); font-size: .8rem; margin-top: 14px; }
 kbd { font-family: var(--text); font-size: .76rem; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--rule); background: var(--surface); }
 
