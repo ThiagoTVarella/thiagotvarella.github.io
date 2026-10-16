@@ -26,6 +26,28 @@ function toast(msg) {
   const t = $('#toast'); t.textContent = msg; t.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600);
 }
+/* A shower of petals for the big moments. */
+function celebrate(n = 28) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const kinds = ['🌸', '🌼', '🌻', '🌷', '☀️', '🌺'];
+  for (let k = 0; k < n; k++) {
+    const p = document.createElement('span');
+    p.className = 'petal'; p.textContent = kinds[k % kinds.length];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = 18 + Math.random() * 18 + 'px';
+    p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
+    p.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+    p.style.animationDuration = 2.4 + Math.random() * 2.2 + 's';
+    p.style.animationDelay = Math.random() * .7 + 's';
+    document.body.append(p);
+    setTimeout(() => p.remove(), 5600);
+  }
+}
+function greeting() {
+  const h = new Date().getHours();
+  return h < 5 ? 'Up late? The sun is on its way 🌙' : h < 12 ? 'Good morning, sunshine ☀️'
+    : h < 17 ? 'Good afternoon 🌻' : h < 21 ? 'Good evening 🌷' : 'One more set before bed? 🌙';
+}
 function download(name, text, type = 'text/plain') {
   const url = URL.createObjectURL(new Blob([text], { type }));
   const a = Object.assign(document.createElement('a'), { href: url, download: name });
@@ -181,7 +203,7 @@ function viewLibrary() {
   title('');
   const sets = [...db.sets].sort((a, b) => Math.max(b.studied, b.updated) - Math.max(a.studied, a.updated));
   app.innerHTML = `<div class="page">
-    <div class="page-head"><div><h1>Your study sets</h1><p class="muted">${plural(sets.length, 'set')} · ${plural(sets.reduce((n, s) => n + s.cards.length, 0), 'term')}</p></div>
+    <div class="page-head"><div><p class="greet">${greeting()}</p><h1>Your study sets</h1><p class="muted">${plural(sets.length, 'set')} · ${plural(sets.reduce((n, s) => n + s.cards.length, 0), 'term')}</p></div>
       <a class="btn primary" href="#/new">+ New set</a></div>
     ${sets.length ? `<div class="grid">${sets.map(s => {
       const p = counts(s);
@@ -405,10 +427,10 @@ function viewEdit(set) {
 function viewFlashcards(set) {
   title('Flashcards');
   const P = db.prefs.fc;
-  let deck, i, flipped, known, learning, history, done, note, swiped = false;
+  let deck, i, flipped, known, learning, history, done, note, swiped = false, celebrated = false;
   const start = cards => {
     deck = P.shuffle ? shuffle(cards) : [...cards];
-    i = 0; flipped = false; known = []; learning = []; history = []; done = !deck.length; render();
+    i = 0; flipped = false; known = []; learning = []; history = []; done = !deck.length; celebrated = false; render();
   };
   const fresh = () => { const p = pick(set, P.starred); note = p.note; start(p.cards); };
   const opts = () => toggleOpt('track', 'Track progress', P.track) + toggleOpt('shuffle', 'Shuffle', P.shuffle)
@@ -452,6 +474,7 @@ function viewFlashcards(set) {
         <p class="kbd-hint"><kbd>Space</kbd> flip · ${P.track ? '<kbd>←</kbd> still learning · <kbd>→</kbd> know' : '<kbd>←</kbd><kbd>→</kbd> navigate'} · <kbd>S</kbd> star${P.track ? ' · swipe on phones' : ''}</p>`;
     }
     app.innerHTML = `<div class="page">${studyHead(set, 'Flashcards', opts())}${note ? `<div class="note">${note}</div>` : ''}${body}</div>`;
+    if (done && P.track && total && !learning.length && !celebrated) { celebrated = true; celebrate(); }
     bindOpts(app, P, k => { if (k === 'front') { flipped = false; render(); } else fresh(); });
     const on = (id, fn) => { const el = $('#' + id); if (el) el.onclick = fn; };
     on('again', () => start(learning.slice()));
@@ -533,7 +556,7 @@ function viewLearn(set) {
   title('Learn');
   const P = db.prefs.learn;
   const ROUND = 7;
-  let round = 0, queue = [], results = [], requeued = new Set(), cur = null, state = 'q', qtype = 'mc', options = [], chosen = null, typed = '', note = '', autoTimer = null;
+  let round = 0, queue = [], results = [], requeued = new Set(), cur = null, state = 'q', qtype = 'mc', options = [], chosen = null, typed = '', note = '', autoTimer = null, qLevel;
   const pool = () => { const p = pick(set, P.starred); note = p.note; return p.cards; };
   const level = c => set.progress[c.id];
   const opts = () => selectOpt('answerWith', 'Answer with', P.answerWith, [['term', 'Term (shown the definition)'], ['definition', 'Definition (shown the term)']])
@@ -555,7 +578,7 @@ function viewLearn(set) {
   function next() {
     clearTimeout(autoTimer);
     if (!queue.length) return renderCheckpoint();
-    cur = queue.shift(); state = 'q'; chosen = null; typed = '';
+    cur = queue.shift(); state = 'q'; chosen = null; typed = ''; qLevel = level(cur);
     const all = set.cards;
     const canMC = distractors(cur, all, P.answerWith, 1).length > 0;
     const l = level(cur) ?? 0;
@@ -595,7 +618,7 @@ function viewLearn(set) {
   }
   function renderQ() {
     const s = sides(cur, P.answerWith);
-    const l = level(cur);
+    const l = qLevel;
     const tag = l === undefined ? 'New term' : l === 0 ? 'Still learning' : 'Familiar';
     const star = `<button class="icon-btn star ${cur.starred ? 'on' : ''}" id="qstar" title="Star">${cur.starred ? '★' : '☆'}</button>`;
     let body;
@@ -668,6 +691,7 @@ function viewLearn(set) {
       <p class="muted">Test yourself to lock it in, or start Learn again from scratch.</p>
       <div class="actions"><a class="btn primary big" href="#/set/${set.id}/test">Take a practice test</a>
         <button class="btn" id="restartLearn">Restart Learn</button><a class="btn ghost" href="#/set/${set.id}">Back to set</a></div></div>`);
+    celebrate(40);
     $('#restartLearn').onclick = () => { cards.forEach(c => delete set.progress[c.id]); save(); round = 0; startRound(); };
   }
   keyHandler = e => {
@@ -842,6 +866,7 @@ function viewTest(set) {
         submitted = true; elapsed = Date.now() - started;
         set.tests.push({ at: Date.now(), score: score().pct }); set.tests = set.tests.slice(-30); save();
         render(); window.scrollTo(0, 0);
+        if (score().pct >= 90) celebrate();
       };
     } else {
       $$('#newTest, #newTest2').forEach(b => b.onclick = setup);
@@ -926,6 +951,7 @@ function viewMatch(set) {
         ${penalty ? `<p class="muted" style="margin-top:8px">Includes ${penalty}s of penalties</p>` : ''}
         <div class="actions"><button class="btn primary big" id="again">Play again</button><a class="btn" href="#/set/${set.id}">Back to set</a></div></div></div>`;
       $('#again').onclick = intro; $('#again').focus({ preventScroll: true });
+      if (record) celebrate(prevBest ? 30 : 16);
     }, 400);
   }
   keyHandler = e => { if (e.key === 'Escape') escBack(set)(e); };
