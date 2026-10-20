@@ -69,8 +69,15 @@ def canon(name):
     return CANON.get(key, name.strip())
 
 
+# ballot name -> other names pollsters use for the same candidate
+ALIAS = {"dilma": {"rousseff"}, "lula": {"lula"}, "aecio": {"neves"}}
+
+
 def tokens(name):
-    return {t for t in norm(name).split() if len(t) >= 4 and t not in STOP}
+    toks = {t for t in norm(name).split() if len(t) >= 4 and t not in STOP}
+    for t in list(toks):
+        toks |= ALIAS.get(t, set())
+    return toks
 
 
 def load_results():

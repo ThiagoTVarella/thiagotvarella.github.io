@@ -9,344 +9,344 @@
    48.67,
    49.48
   ],
-  "n_eff": 37.1,
+  "n_eff": 37.2,
   "poll_sd": 1.26
  },
  "series": [
   {
    "date": "2026-08-15",
    "lula": 51.06,
-   "weight": 1.03
+   "weight": 1.04
   },
   {
    "date": "2026-08-16",
    "lula": 51.06,
-   "weight": 0.95
+   "weight": 0.96
   },
   {
    "date": "2026-08-17",
    "lula": 51.06,
-   "weight": 0.87
+   "weight": 0.88
   },
   {
    "date": "2026-08-18",
    "lula": 51.18,
-   "weight": 1.88
+   "weight": 1.93
   },
   {
    "date": "2026-08-19",
    "lula": 51.18,
-   "weight": 1.73
+   "weight": 1.77
   },
   {
    "date": "2026-08-20",
    "lula": 51.18,
-   "weight": 1.58
+   "weight": 1.62
   },
   {
    "date": "2026-08-21",
-   "lula": 51.55,
-   "weight": 2.4
+   "lula": 51.54,
+   "weight": 2.44
   },
   {
    "date": "2026-08-22",
    "lula": 51.11,
-   "weight": 3.05
+   "weight": 3.09
   },
   {
    "date": "2026-08-23",
    "lula": 50.68,
-   "weight": 3.83
+   "weight": 3.87
   },
   {
    "date": "2026-08-24",
-   "lula": 50.7,
-   "weight": 4.51
+   "lula": 50.71,
+   "weight": 4.55
   },
   {
    "date": "2026-08-25",
-   "lula": 50.7,
-   "weight": 4.13
+   "lula": 50.71,
+   "weight": 4.17
   },
   {
    "date": "2026-08-26",
-   "lula": 50.4,
-   "weight": 4.94
+   "lula": 50.41,
+   "weight": 4.97
   },
   {
    "date": "2026-08-27",
    "lula": 50.83,
-   "weight": 6.28
+   "weight": 6.3
   },
   {
    "date": "2026-08-28",
    "lula": 50.83,
-   "weight": 5.76
+   "weight": 5.78
   },
   {
    "date": "2026-08-29",
    "lula": 50.6,
-   "weight": 8.27
+   "weight": 8.3
   },
   {
    "date": "2026-08-30",
    "lula": 50.6,
-   "weight": 7.58
+   "weight": 7.61
   },
   {
    "date": "2026-08-31",
    "lula": 50.4,
-   "weight": 8.92
+   "weight": 8.95
   },
   {
    "date": "2026-09-01",
    "lula": 50.38,
-   "weight": 9.25
+   "weight": 9.31
   },
   {
    "date": "2026-09-02",
    "lula": 50.16,
-   "weight": 9.91
+   "weight": 9.97
   },
   {
    "date": "2026-09-03",
    "lula": 50.16,
-   "weight": 9.09
+   "weight": 9.14
   },
   {
    "date": "2026-09-04",
    "lula": 50.06,
-   "weight": 9.2
+   "weight": 9.25
   },
   {
    "date": "2026-09-05",
-   "lula": 49.82,
-   "weight": 12.92
+   "lula": 49.83,
+   "weight": 12.97
   },
   {
    "date": "2026-09-06",
    "lula": 49.77,
-   "weight": 13.28
+   "weight": 13.31
   },
   {
    "date": "2026-09-07",
-   "lula": 49.78,
-   "weight": 14.13
+   "lula": 49.79,
+   "weight": 14.16
   },
   {
    "date": "2026-09-08",
-   "lula": 49.78,
-   "weight": 12.95
+   "lula": 49.79,
+   "weight": 12.99
   },
   {
    "date": "2026-09-09",
    "lula": 49.81,
-   "weight": 12.75
+   "weight": 12.82
   },
   {
    "date": "2026-09-10",
    "lula": 49.81,
-   "weight": 11.69
+   "weight": 11.75
   },
   {
    "date": "2026-09-11",
    "lula": 49.86,
-   "weight": 13.53
+   "weight": 13.58
   },
   {
    "date": "2026-09-12",
    "lula": 49.86,
-   "weight": 13.26
+   "weight": 13.3
   },
   {
    "date": "2026-09-13",
    "lula": 49.68,
-   "weight": 15.77
+   "weight": 15.81
   },
   {
    "date": "2026-09-14",
    "lula": 49.65,
-   "weight": 15.37
+   "weight": 15.4
   },
   {
    "date": "2026-09-15",
    "lula": 49.57,
-   "weight": 15.13
+   "weight": 15.16
   },
   {
    "date": "2026-09-16",
    "lula": 49.54,
-   "weight": 16.22
+   "weight": 16.29
   },
   {
    "date": "2026-09-17",
-   "lula": 49.53,
-   "weight": 15.82
+   "lula": 49.54,
+   "weight": 15.89
   },
   {
    "date": "2026-09-18",
    "lula": 49.48,
-   "weight": 15.38
+   "weight": 15.43
   },
   {
    "date": "2026-09-19",
    "lula": 49.51,
-   "weight": 16.19
+   "weight": 16.24
   },
   {
    "date": "2026-09-20",
    "lula": 49.48,
-   "weight": 15.81
+   "weight": 15.86
   },
   {
    "date": "2026-09-21",
    "lula": 49.36,
-   "weight": 18.59
+   "weight": 18.64
   },
   {
    "date": "2026-09-22",
    "lula": 49.39,
-   "weight": 17.8
+   "weight": 17.88
   },
   {
    "date": "2026-09-23",
    "lula": 49.39,
-   "weight": 16.33
+   "weight": 16.39
   },
   {
    "date": "2026-09-24",
    "lula": 49.39,
-   "weight": 14.97
+   "weight": 15.03
   },
   {
    "date": "2026-09-25",
    "lula": 49.42,
-   "weight": 17.11
+   "weight": 17.16
   },
   {
    "date": "2026-09-26",
-   "lula": 49.47,
-   "weight": 18.68
+   "lula": 49.48,
+   "weight": 18.73
   },
   {
    "date": "2026-09-27",
    "lula": 49.38,
-   "weight": 19.11
+   "weight": 19.16
   },
   {
    "date": "2026-09-28",
    "lula": 49.38,
-   "weight": 19.34
+   "weight": 19.38
   },
   {
    "date": "2026-09-29",
    "lula": 49.39,
-   "weight": 18.96
+   "weight": 19.0
   },
   {
    "date": "2026-09-30",
    "lula": 49.41,
-   "weight": 20.25
+   "weight": 20.31
   },
   {
    "date": "2026-10-01",
    "lula": 49.43,
-   "weight": 22.6
+   "weight": 22.64
   },
   {
    "date": "2026-10-02",
    "lula": 49.35,
-   "weight": 24.02
+   "weight": 24.1
   },
   {
    "date": "2026-10-03",
    "lula": 49.35,
-   "weight": 22.03
+   "weight": 22.1
   },
   {
    "date": "2026-10-04",
    "lula": 49.35,
-   "weight": 20.2
+   "weight": 20.26
   },
   {
    "date": "2026-10-05",
    "lula": 49.18,
-   "weight": 19.76
+   "weight": 19.81
   },
   {
    "date": "2026-10-06",
    "lula": 49.08,
-   "weight": 20.57
+   "weight": 20.65
   },
   {
    "date": "2026-10-07",
    "lula": 49.02,
-   "weight": 19.57
+   "weight": 19.65
   },
   {
    "date": "2026-10-08",
    "lula": 48.9,
-   "weight": 19.99
+   "weight": 20.06
   },
   {
    "date": "2026-10-09",
    "lula": 48.9,
-   "weight": 18.33
+   "weight": 18.4
   },
   {
    "date": "2026-10-10",
    "lula": 48.84,
-   "weight": 17.66
+   "weight": 17.72
   },
   {
    "date": "2026-10-11",
    "lula": 48.91,
-   "weight": 20.84
+   "weight": 20.9
   },
   {
    "date": "2026-10-12",
    "lula": 48.91,
-   "weight": 19.11
+   "weight": 19.17
   },
   {
    "date": "2026-10-13",
    "lula": 48.81,
-   "weight": 19.67
+   "weight": 19.78
   },
   {
    "date": "2026-10-14",
-   "lula": 49.0,
-   "weight": 23.21
+   "lula": 48.99,
+   "weight": 23.29
   },
   {
    "date": "2026-10-15",
    "lula": 48.97,
-   "weight": 24.06
+   "weight": 24.14
   },
   {
    "date": "2026-10-16",
    "lula": 49.09,
-   "weight": 25.41
+   "weight": 25.47
   },
   {
    "date": "2026-10-17",
    "lula": 49.07,
-   "weight": 25.24
+   "weight": 25.31
   },
   {
    "date": "2026-10-18",
    "lula": 49.07,
-   "weight": 23.14
+   "weight": 23.21
   },
   {
    "date": "2026-10-19",
    "lula": 49.07,
-   "weight": 21.22
+   "weight": 21.28
   },
   {
    "date": "2026-10-20",
    "lula": 49.07,
-   "weight": 19.46
+   "weight": 19.52
   }
  ],
  "anchored": {
@@ -367,19 +367,19 @@
    },
    {
     "date": "2026-08-18",
-    "lula": 51.23
+    "lula": 51.24
    },
    {
     "date": "2026-08-19",
-    "lula": 51.23
+    "lula": 51.24
    },
    {
     "date": "2026-08-20",
-    "lula": 51.23
+    "lula": 51.24
    },
    {
     "date": "2026-08-21",
-    "lula": 51.63
+    "lula": 51.62
    },
    {
     "date": "2026-08-22",
@@ -387,7 +387,7 @@
    },
    {
     "date": "2026-08-23",
-    "lula": 50.1
+    "lula": 50.11
    },
    {
     "date": "2026-08-24",
@@ -399,7 +399,7 @@
    },
    {
     "date": "2026-08-26",
-    "lula": 49.94
+    "lula": 49.95
    },
    {
     "date": "2026-08-27",
@@ -427,15 +427,15 @@
    },
    {
     "date": "2026-09-02",
-    "lula": 49.69
+    "lula": 49.7
    },
    {
     "date": "2026-09-03",
-    "lula": 49.69
+    "lula": 49.7
    },
    {
     "date": "2026-09-04",
-    "lula": 49.65
+    "lula": 49.66
    },
    {
     "date": "2026-09-05",
@@ -455,11 +455,11 @@
    },
    {
     "date": "2026-09-09",
-    "lula": 49.3
+    "lula": 49.31
    },
    {
     "date": "2026-09-10",
-    "lula": 49.3
+    "lula": 49.31
    },
    {
     "date": "2026-09-11",
@@ -487,7 +487,7 @@
    },
    {
     "date": "2026-09-17",
-    "lula": 49.08
+    "lula": 49.09
    },
    {
     "date": "2026-09-18",
@@ -495,15 +495,15 @@
    },
    {
     "date": "2026-09-19",
-    "lula": 49.14
+    "lula": 49.15
    },
    {
     "date": "2026-09-20",
-    "lula": 49.11
+    "lula": 49.12
    },
    {
     "date": "2026-09-21",
-    "lula": 48.94
+    "lula": 48.95
    },
    {
     "date": "2026-09-22",
@@ -519,7 +519,7 @@
    },
    {
     "date": "2026-09-25",
-    "lula": 49.03
+    "lula": 49.04
    },
    {
     "date": "2026-09-26",
@@ -531,7 +531,7 @@
    },
    {
     "date": "2026-09-28",
-    "lula": 48.97
+    "lula": 48.98
    },
    {
     "date": "2026-09-29",
@@ -543,7 +543,7 @@
    },
    {
     "date": "2026-10-01",
-    "lula": 49.06
+    "lula": 49.07
    },
    {
     "date": "2026-10-02",
@@ -603,7 +603,7 @@
    },
    {
     "date": "2026-10-16",
-    "lula": 48.64
+    "lula": 48.63
    },
    {
     "date": "2026-10-17",
@@ -653,7 +653,7 @@
    "first_round_polls": 6
   },
   "Veritá": {
-   "effect": -1.81,
+   "effect": -1.8,
    "polls": 2,
    "first_round_polls": 6
   },
@@ -663,7 +663,7 @@
    "first_round_polls": 6
   },
   "Futura": {
-   "effect": -0.73,
+   "effect": -0.72,
    "polls": 9,
    "first_round_polls": 6
   },
@@ -770,7 +770,7 @@
    "flavio": 46.5,
    "lula_two_party": 49.68,
    "adjusted": 49.09,
-   "weight": 0.041,
+   "weight": 0.0412,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -785,8 +785,8 @@
    "lula": 47.6,
    "flavio": 49.8,
    "lula_two_party": 48.87,
-   "adjusted": 48.29,
-   "weight": 0.0583,
+   "adjusted": 48.3,
+   "weight": 0.0579,
    "mode": "online-rdd",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -802,7 +802,7 @@
    "flavio": 44.6,
    "lula_two_party": 50.99,
    "adjusted": 50.73,
-   "weight": 0.0419,
+   "weight": 0.0417,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -818,7 +818,7 @@
    "flavio": 48.3,
    "lula_two_party": 49.58,
    "adjusted": 50.31,
-   "weight": 0.038,
+   "weight": 0.0379,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -834,7 +834,7 @@
    "flavio": 49,
    "lula_two_party": 48.42,
    "adjusted": 48.55,
-   "weight": 0.0414,
+   "weight": 0.0413,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "unverified",
@@ -850,7 +850,7 @@
    "flavio": 49.7,
    "lula_two_party": 48.97,
    "adjusted": 50.78,
-   "weight": 0.0499,
+   "weight": 0.0497,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -866,7 +866,7 @@
    "flavio": 50,
    "lula_two_party": 47.37,
    "adjusted": 49.69,
-   "weight": 0.0346,
+   "weight": 0.0345,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -898,7 +898,7 @@
    "flavio": 46.8,
    "lula_two_party": 49.51,
    "adjusted": 47.44,
-   "weight": 0.0304,
+   "weight": 0.0299,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -930,7 +930,7 @@
    "flavio": 49.0,
    "lula_two_party": 49.22,
    "adjusted": 49.95,
-   "weight": 0.032,
+   "weight": 0.0319,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -945,7 +945,7 @@
    "lula": 42,
    "flavio": 44,
    "lula_two_party": 48.84,
-   "adjusted": 48.07,
+   "adjusted": 48.08,
    "weight": 0.0266,
    "mode": "phone-live",
    "phase": "post_first_round",
@@ -962,7 +962,7 @@
    "flavio": 47,
    "lula_two_party": 48.91,
    "adjusted": 47.96,
-   "weight": 0.0336,
+   "weight": 0.0348,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -977,8 +977,8 @@
    "lula": 44,
    "flavio": 46,
    "lula_two_party": 48.89,
-   "adjusted": 48.02,
-   "weight": 0.026,
+   "adjusted": 48.01,
+   "weight": 0.0258,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -994,7 +994,7 @@
    "flavio": 50,
    "lula_two_party": 49.49,
    "adjusted": 50.57,
-   "weight": 0.0427,
+   "weight": 0.0425,
    "mode": "online-panel",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1026,7 +1026,7 @@
    "flavio": 48,
    "lula_two_party": 48.39,
    "adjusted": 47.8,
-   "weight": 0.0244,
+   "weight": 0.0245,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1041,8 +1041,8 @@
    "lula": 44,
    "flavio": 53,
    "lula_two_party": 45.36,
-   "adjusted": 47.68,
-   "weight": 0.0183,
+   "adjusted": 47.69,
+   "weight": 0.0182,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1058,7 +1058,7 @@
    "flavio": 50.0,
    "lula_two_party": 48.24,
    "adjusted": 48.97,
-   "weight": 0.0165,
+   "weight": 0.0164,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1106,7 +1106,7 @@
    "flavio": 51.1,
    "lula_two_party": 47.21,
    "adjusted": 46.64,
-   "weight": 0.0173,
+   "weight": 0.0172,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1122,7 +1122,7 @@
    "flavio": 42.7,
    "lula_two_party": 50.86,
    "adjusted": 50.61,
-   "weight": 0.0125,
+   "weight": 0.0124,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1154,7 +1154,7 @@
    "flavio": 49,
    "lula_two_party": 47.87,
    "adjusted": 46.92,
-   "weight": 0.0129,
+   "weight": 0.0134,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1170,7 +1170,7 @@
    "flavio": 44,
    "lula_two_party": 48.84,
    "adjusted": 47.96,
-   "weight": 0.0128,
+   "weight": 0.0127,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1186,7 +1186,7 @@
    "flavio": 49,
    "lula_two_party": 47.31,
    "adjusted": 48.39,
-   "weight": 0.0127,
+   "weight": 0.0126,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1218,7 +1218,7 @@
    "flavio": 46,
    "lula_two_party": 50.54,
    "adjusted": 49.58,
-   "weight": 0.0115,
+   "weight": 0.012,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1250,7 +1250,7 @@
    "flavio": 43.1,
    "lula_two_party": 52.32,
    "adjusted": 50.24,
-   "weight": 0.0099,
+   "weight": 0.0097,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1265,8 +1265,8 @@
    "lula": 45.88,
    "flavio": 45.01,
    "lula_two_party": 50.48,
-   "adjusted": 49.85,
-   "weight": 0.0098,
+   "adjusted": 49.86,
+   "weight": 0.0097,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1314,7 +1314,7 @@
    "flavio": 48.2,
    "lula_two_party": 48.39,
    "adjusted": 48.14,
-   "weight": 0.0086,
+   "weight": 0.0085,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1330,7 +1330,7 @@
    "flavio": 45,
    "lula_two_party": 51.61,
    "adjusted": 50.66,
-   "weight": 0.0077,
+   "weight": 0.008,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1362,7 +1362,7 @@
    "flavio": 42,
    "lula_two_party": 50.59,
    "adjusted": 49.83,
-   "weight": 0.0072,
+   "weight": 0.0073,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1410,7 +1410,7 @@
    "flavio": 48,
    "lula_two_party": 50.26,
    "adjusted": 50.28,
-   "weight": 0.0059,
+   "weight": 0.0058,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1426,7 +1426,7 @@
    "flavio": 50,
    "lula_two_party": 46.24,
    "adjusted": 48.56,
-   "weight": 0.0067,
+   "weight": 0.0066,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1442,7 +1442,7 @@
    "flavio": 47.7,
    "lula_two_party": 49.95,
    "adjusted": 49.37,
-   "weight": 0.0073,
+   "weight": 0.0072,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1490,7 +1490,7 @@
    "flavio": 44,
    "lula_two_party": 51.11,
    "adjusted": 50.52,
-   "weight": 0.0066,
+   "weight": 0.0067,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1521,7 +1521,7 @@
    "lula": 45,
    "flavio": 46,
    "lula_two_party": 49.45,
-   "adjusted": 49.68,
+   "adjusted": 49.69,
    "weight": 0.0038,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
@@ -1554,7 +1554,7 @@
    "flavio": 49.4,
    "lula_two_party": 46.94,
    "adjusted": 47.66,
-   "weight": 0.0044,
+   "weight": 0.0043,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1570,7 +1570,7 @@
    "flavio": 45,
    "lula_two_party": 51.09,
    "adjusted": 50.13,
-   "weight": 0.0034,
+   "weight": 0.0036,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2146,7 +2146,7 @@
    "flavio": 47,
    "lula_two_party": 47.19,
    "adjusted": 49.52,
-   "weight": 0.0004,
+   "weight": 0.0003,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-secondary",

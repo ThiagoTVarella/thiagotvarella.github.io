@@ -5,13 +5,15 @@
  "poll_average_lula": 49.07,
  "inputs": {
   "shared_error_sd": 2.0,
-  "empirical_rmse": 1.54,
+  "empirical_rmse": 1.16,
   "floor_sd": 2.0,
   "t_df": 4,
   "drift_sd": 0.45,
   "average_se": 0.21,
   "simulations": 200000,
   "past_runoff_final_week_error_margin_pts": {
+   "2010-president-BR-r2": 0.96,
+   "2014-president-BR-r2": 1.32,
    "2018-president-BR-r2": 4.34,
    "2022-president-BR-r2": -0.39
   },
