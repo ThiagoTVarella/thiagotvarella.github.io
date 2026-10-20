@@ -1,0 +1,17 @@
+{
+ "relative_slope": 0.325,
+ "pairs": 28,
+ "industry_pt_margin_bias": {
+  "2006-r1": 10.91,
+  "2010-r1": 12.74,
+  "2010-r2": 0.33,
+  "2014-r1": 14.7,
+  "2014-r2": -0.0,
+  "2018-r1": 5.29,
+  "2018-r2": -4.88,
+  "2022-r1": 2.04,
+  "2022-r2": 0.24,
+  "2026-r1": 3.73
+ },
+ "note": "Signed error on the PT candidate's margin (points), presidential polls in the final 14 days. relative_slope: share of a pollster's first-round bias relative to its peers that reappears in the runoff."
+}

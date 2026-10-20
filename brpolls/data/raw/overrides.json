@@ -1,0 +1,78 @@
+[
+ {
+  "match": {
+   "pollster": "IFP (possibly Instituto França de Pesquisa)"
+  },
+  "drop": true,
+  "why": "Superseded by the verified-primary IFP record in verified_G.json, read from IFP's own report."
+ },
+ {
+  "match": {
+   "pollster": "Datafolha",
+   "tse_registration": "BR-01708/2026"
+  },
+  "set": {
+   "verification": "verified-primary"
+  },
+  "why": "Field dates differ between Datafolha's release (2-3 Oct) and g1 (3 Oct); the TSE registry plans 3 Oct only. Numbers agree everywhere; kept the pollster's dates."
+ },
+ {
+  "match": {
+   "pollster": "Datafolha",
+   "tse_registration": "BR-04029/2026"
+  },
+  "set": {
+   "verification": "verified-primary"
+  },
+  "why": "Datafolha's release says 15-17 Sep, n=2,001; g1 says 15-16 Sep, n=2,002. The TSE registry plans 15-17 Sep. Kept the pollster's values."
+ },
+ {
+  "match": {
+   "pollster": "Datafolha",
+   "tse_registration": "BR-04496/2026"
+  },
+  "set": {
+   "verification": "verified-primary"
+  },
+  "why": "Datafolha's release says 18-19 Aug; g1 says 18-20 Aug (the registered plan). Kept the pollster's dates."
+ },
+ {
+  "match": {
+   "pollster": "Vox Brasil",
+   "field_end": "2026-09-28"
+  },
+  "set": {
+   "tse_registration": "BR-00895/2026"
+  },
+  "why": "Registration matched in the TSE registry by pollster, national scope, field dates and sample size; the number in the outlet coverage (BR-07553/2026) is not in the registry."
+ },
+ {
+  "match": {
+   "pollster": "American Analytics"
+  },
+  "set": {
+   "tse_registration": "BR-02587/2026"
+  },
+  "why": "Registration matched in the TSE registry by pollster, national scope, field dates and sample size; the outlet printed it as BR-032587/26."
+ },
+ {
+  "match": {
+   "pollster": "AtlasIntel",
+   "field_end": "2026-08-30"
+  },
+  "set": {
+   "tse_registration": "BR-07972/2026"
+  },
+  "why": "Registration matched in the TSE registry by pollster, national scope, field dates and sample size."
+ },
+ {
+  "match": {
+   "pollster": "DataTrends",
+   "field_end": "2026-09-14"
+  },
+  "set": {
+   "tse_registration": "BR-08691/2026"
+  },
+  "why": "Registration matched in the TSE registry by pollster, national scope, field dates and sample size."
+ }
+]
