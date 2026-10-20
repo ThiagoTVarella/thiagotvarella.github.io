@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="no-js">
+<html lang="pt-BR" class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <meta name="author" content="ThiagoTVarella">
-    <meta name="description" content="Interactive poll aggregator for the 2026 Brazilian presidential runoff: Lula vs Flávio Bolsonaro">
-    <title>Brazil 2026 runoff poll average</title>
+    <meta name="description" content="Agregador interativo de pesquisas para o segundo turno de 2026: Lula x Flávio Bolsonaro">
+    <title>Agregador do 2º turno 2026</title>
     <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
@@ -30,7 +30,7 @@
         .custom { display:none; background:#eef5ff; border:1px solid #c8dcf5; border-radius:6px; padding:8px 12px; font-size:13px; margin-bottom:14px; }
         .warn { background:#fff8e6; border:1px solid #f0d58c; border-radius:6px; padding:8px 12px; font-size:12px; margin-bottom:14px; }
         .toolbar { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; margin-bottom:8px; }
-        .seg { display:inline-flex; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
+        .seg { display:inline-flex; flex-wrap:wrap; max-width:100%; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
         .seg button { border:0; background:#fff; padding:6px 10px; font-size:12px; min-height:32px; cursor:pointer; font-family:inherit; }
         .seg button + button { border-left:1px solid #ccc; }
         .seg button.on { background:#333; color:#fff; }
@@ -80,6 +80,8 @@
             .toggles { grid-template-columns: 1fr; }
             .wrap { padding-left: 4px; padding-right: 4px; }
             .container { margin: 2%; width: 96%; }
+            .seg button { padding:6px 8px; }
+            label.tg { white-space:normal; }
         }
     </style>
 </head>
@@ -88,146 +90,155 @@
     <div id="header"></div>
     <div class="col-lg-1"></div>
     <div class="col-lg-10 col-md-12 wrap">
-        <h3>Brazil 2026 runoff: Lula vs Flávio Bolsonaro</h3>
-        <p class="sub" id="asofLine">Loading…</p>
-        <div class="warn"><b>Preliminary.</b> Poll data are checked against pollsters and the TSE registry; the ratings and forecast rest
-            on thin history and judgement calls (see methodology). Everything below is recomputed in your browser, so you can change the model.</div>
+        <h3>Segundo turno de 2026: Lula x Flávio Bolsonaro</h3>
+        <p class="sub" id="asofLine">Carregando…</p>
+        <div class="warn"><b>Versão preliminar.</b> Conferi as pesquisas uma a uma nos sites dos institutos e no registro do TSE, então nos
+            dados eu confio. Já as notas dos institutos e a previsão se apoiam num histórico curtinho e em algumas escolhas minhas (explico
+            tudo lá embaixo, na metodologia). Tudo aqui é recalculado no seu navegador, então fique à vontade para mexer no modelo e discordar de mim.</div>
         <div class="custom" id="custom"></div>
 
         <div class="card">
             <div class="kpis">
                 <div class="kpi">
-                    <div class="sub">Poll average (two-candidate vote)</div>
+                    <div class="sub">Média das pesquisas (só entre os dois candidatos)</div>
                     <div class="row2"><div class="n lula" id="kLula">–</div><div class="n flavio" id="kFlavio">–</div></div>
                     <div class="bar" id="avgBar"></div>
                     <div class="sub" id="kNote"></div>
                 </div>
                 <div class="kpi">
-                    <div class="sub">Chance of winning on 25 October</div>
+                    <div class="sub">Chance de vitória em 25 de outubro</div>
                     <div class="row2"><div class="n lula" id="kPL">–</div><div class="n flavio" id="kPF">–</div></div>
                     <div class="bar" id="pBar"></div>
-                    <div class="sub">Lula (red) · Flávio (blue)</div>
+                    <div class="sub">Lula (vermelho) · Flávio (azul)</div>
                 </div>
             </div>
         </div>
 
         <div class="card" id="chartCard">
             <div class="toolbar">
-                <div class="seg" role="group" aria-label="Measure">
-                    <button data-metric="share">Lula share</button><button data-metric="margin">Margin</button>
+                <div class="seg" role="group" aria-label="Medida">
+                    <button data-metric="share">% do Lula</button><button data-metric="margin">Diferença</button>
                 </div>
-                <div class="seg" role="group" aria-label="Time window">
-                    <button data-win="14">14 days</button><button data-win="30">30 days</button><button data-win="r2">Since 1st round</button><button data-win="all">All</button>
+                <div class="seg" role="group" aria-label="Período">
+                    <button data-win="14">14 dias</button><button data-win="30">30 dias</button><button data-win="r2">Desde o 1º turno</button><button data-win="all">Tudo</button>
                 </div>
-                <label class="tg">Color by
-                    <select id="colorBy" aria-label="Color dots by">
-                        <option value="lean">Pollster lean</option><option value="pollster">Pollster</option>
-                        <option value="mode">Survey mode</option><option value="phase">Before/after 1st round</option>
+                <label class="tg">Colorir por
+                    <select id="colorBy" aria-label="Colorir os pontos por">
+                        <option value="lean">Viés do instituto</option><option value="pollster">Instituto</option>
+                        <option value="mode">Método da pesquisa</option><option value="phase">Antes/depois do 1º turno</option>
                     </select></label>
             </div>
             <div class="toolbar">
-                <label class="tg"><input type="checkbox" id="adjusted">Show dots after house-effect correction</label>
-                <label class="tg"><input type="checkbox" id="band">Uncertainty band</label>
-                <label class="tg"><input type="checkbox" id="sized">Dot size = weight</label>
+                <label class="tg"><input type="checkbox" id="adjusted">Mostrar pontos já corrigidos pelo viés do instituto</label>
+                <label class="tg"><input type="checkbox" id="band">Faixa de incerteza</label>
+                <label class="tg"><input type="checkbox" id="sized">Tamanho do ponto = peso</label>
             </div>
             <div id="chartWrap"><div id="chart"></div><div id="tip"></div></div>
             <div id="legend"></div>
             <div class="slider" style="margin-top:4px">
-                <span>Time window</span>
-                <div class="dual"><div class="track"></div><input type="range" id="win0" step="1" aria-label="Window start"><input type="range" id="win1" step="1" aria-label="Window end"></div>
+                <span>Período</span>
+                <div class="dual"><div class="track"></div><input type="range" id="win0" step="1" aria-label="Início do período"><input type="range" id="win1" step="1" aria-label="Fim do período"></div>
                 <span class="v" id="winV"></span>
             </div>
             <div id="detail"></div>
         </div>
 
         <div class="card">
-            <h4>Time machine</h4>
-            <p class="sub">Rewind to any day and see the average and forecast using only the polls published by then.</p>
+            <h4>Máquina do tempo</h4>
+            <p class="sub">Volte para qualquer dia e veja como estavam a média e a previsão, usando só as pesquisas que já tinham saído até ali.</p>
             <div class="slider">
-                <span>Polls up to</span><input type="range" id="asOf" step="1" aria-label="Use polls up to this date"><span class="v" id="asOfV"></span>
+                <span>Pesquisas até</span><input type="range" id="asOf" step="1" aria-label="Usar pesquisas até esta data"><span class="v" id="asOfV"></span>
             </div>
-            <button class="btn dark" id="play">▶ Play the campaign</button>
-            <h4 style="margin-top:18px">Chance of winning over time</h4>
+            <button class="btn dark" id="play">▶ Rever a campanha</button>
+            <h4 style="margin-top:18px">Chance de vitória ao longo do tempo</h4>
             <div id="pChart"></div>
-            <p class="sub">Solid: your settings. Dashed grey (when you change settings): the published model.</p>
+            <p class="sub">Linha cheia: com os seus ajustes. Tracejado cinza (quando você muda algo): o modelo que eu publiquei.</p>
         </div>
 
         <div class="card">
-            <h4>Model settings</h4>
-            <p class="sub">The defaults are the published model. Changes update every number and chart on this page and the link in your address bar.</p>
-            <div class="slider"><span>Smoothing (half-life)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Half-life in days"><span class="v" id="halfLifeV"></span></div>
-            <div class="slider"><span>House-effect shrinkage</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="House-effect shrinkage"><span class="v" id="shrinkV"></span></div>
-            <div class="slider"><span>Shared polling error</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Shared polling error"><span class="v" id="errSdV"></span></div>
-            <div class="slider"><span>Assume polls are off by</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Assumed polling bias"><span class="v" id="shiftV"></span></div>
+            <h4>Ajustes do modelo</h4>
+            <p class="sub">Os valores iniciais são o modelo que eu publiquei. Qualquer mudança atualiza todos os números e gráficos da página, e também o link na barra de endereço.</p>
+            <div class="slider"><span>Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Meia-vida em dias"><span class="v" id="halfLifeV"></span></div>
+            <div class="slider"><span>Encolhimento do viés</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="Encolhimento do viés dos institutos"><span class="v" id="shrinkV"></span></div>
+            <div class="slider"><span>Erro comum das pesquisas</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Erro comum das pesquisas"><span class="v" id="errSdV"></span></div>
+            <div class="slider"><span>Supor que as pesquisas erram</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Viés suposto das pesquisas"><span class="v" id="shiftV"></span></div>
             <div class="toggles">
-                <label class="tg"><input type="checkbox" id="house">Correct pollster house effects</label>
-                <label class="tg"><input type="checkbox" id="useR1">Use first-round polls to estimate house effects</label>
-                <label class="tg"><input type="checkbox" id="rating">Weight by pollster rating</label>
-                <label class="tg"><input type="checkbox" id="size">Weight by sample size</label>
-                <label class="tg"><input type="checkbox" id="freq">Down-weight pollsters that publish very often</label>
-                <label class="tg"><input type="checkbox" id="pre">Include polls from before the first round</label>
-                <label class="tg"><input type="checkbox" id="unverified">Include the 2 unconfirmed polls</label>
+                <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
+                <label class="tg"><input type="checkbox" id="useR1">Usar pesquisas do 1º turno para estimar o viés</label>
+                <label class="tg"><input type="checkbox" id="rating">Pesar pela nota do instituto</label>
+                <label class="tg"><input type="checkbox" id="size">Pesar pelo tamanho da amostra</label>
+                <label class="tg"><input type="checkbox" id="freq">Reduzir o peso de quem publica com muita frequência</label>
+                <label class="tg"><input type="checkbox" id="pre">Incluir pesquisas de antes do 1º turno</label>
+                <label class="tg"><input type="checkbox" id="unverified">Incluir as 2 pesquisas que não consegui confirmar</label>
             </div>
-            <div class="sub" style="margin-top:6px">Survey modes used (tap to exclude):</div>
+            <div class="sub" style="margin-top:6px">Métodos de pesquisa usados (toque para tirar):</div>
             <div id="modes"></div>
             <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
-                <button class="btn" id="reset">Reset to published model</button>
-                <button class="btn" id="share">Copy link to this view</button>
+                <button class="btn" id="reset">Voltar ao modelo publicado</button>
+                <button class="btn" id="share">Copiar link desta visualização</button>
             </div>
         </div>
 
         <div class="card">
-            <h4>Pollsters</h4>
-            <p class="sub">Tap a row to spotlight its polls on the chart; untick to drop the pollster from the model. Sort by any column.
-                <button class="btn" id="inflBtn" style="margin-left:6px">Compute each pollster's influence</button></p>
+            <h4>Institutos</h4>
+            <p class="sub">Toque numa linha para destacar as pesquisas daquele instituto no gráfico; desmarque para tirá-lo do modelo. Dá para ordenar por qualquer coluna.
+                <button class="btn" id="inflBtn" style="margin-left:6px">Calcular a influência de cada instituto</button></p>
             <div class="scroll"><table class="t" id="pollsterTbl"></table></div>
         </div>
 
         <div class="card">
-            <h4>All polls</h4>
-            <p class="sub"><span id="pollFilter"></span>Tap a row to find the poll on the chart.</p>
+            <h4>Todas as pesquisas</h4>
+            <p class="sub"><span id="pollFilter"></span>Toque numa linha para achar a pesquisa no gráfico.</p>
             <div class="scroll"><table class="t" id="pollTbl"></table></div>
         </div>
 
         <div class="card">
-            <h4>How the pollsters did in the 2026 first round</h4>
+            <h4>Como os institutos se saíram no 1º turno de 2026</h4>
             <div class="scroll"><table class="t" id="cycTbl"></table></div>
-            <p class="sub">Error of the Flávio-minus-Lula margin in each pollster's final-10-day polls against the official result
-                (Flávio 47.0%, Lula 45.2% of valid votes). Negative = understated Flávio. Few polls each, so read loosely.</p>
+            <p class="sub">Erro na diferença Flávio menos Lula nas pesquisas dos últimos 10 dias, comparado ao resultado oficial
+                (Flávio 47,0%, Lula 45,2% dos votos válidos). Negativo = subestimou o Flávio. São poucas pesquisas por instituto, então não leve muito a sério.</p>
         </div>
 
         <div class="card">
-            <h4>Methodology</h4>
-            <details open><summary>Data</summary>
-                <p>Every national poll of Lula vs Flávio with fieldwork from 14 Aug 2026, checked against the pollster's own release or a
-                    major outlet and matched to its TSE registration number. Seeded from Wikipedia; polls Wikipedia lacks were found
-                    through the TSE registry. Two polls remain unconfirmed (you can exclude them above).</p></details>
-            <details><summary>Average</summary>
-                <p>Each poll's weight = pollster rating × √(sample size, capped at 5,000) × recency (halves every <i>half-life</i> days)
-                    × a penalty for pollsters publishing many polls close together. Pollster house effects are estimated jointly with the
-                    trend and removed; they are measured against the consensus, not the truth, so a miss shared by all pollsters is
-                    invisible to the average. The quantity is Lula's share of the two-candidate vote from total-vote figures, so
-                    undecided voters drop out.</p></details>
-            <details><summary>Pollster ratings</summary>
-                <p>Final-three-weeks polls from 2010–2026 presidential races and 2014/2018/2022/2026 governor races, scored on the error of
-                    the margin between the top two finishers against official TSE results. Presidential races count fully, the eight
-                    largest states 0.8, the rest 0.4. Ratings are shrunk toward the average; pollsters with a short record are unrated.
-                    Ibope is treated as Ipec and FSB as Nexus.</p>
-                <p id="robRatings" class="sub"></p></details>
-            <details><summary>Does the first-round miss carry over?</summary>
-                <p>In every election since 2010 final first-round polls overstated the PT candidate's margin (by 13, 15, 5, 2 and 4 points
-                    in 2010, 2014, 2018, 2022 and 2026), yet runoff polls were close to unbiased (+0.3, 0.0, −4.9 and +0.2 in 2010–2022).
-                    First-round misses come largely from late switching between candidates, which a two-way runoff lacks. About a third of
-                    a pollster's miss <i>relative to its peers</i> reappears in the runoff, which moves the 2026 average by only a few
-                    hundredths of a point. Use “Assume polls are off by” above to stress-test a repeat of the full miss (−1.7 pts).</p>
-                <p id="robHouse" class="sub"></p></details>
-            <details><summary>Forecast and backtest</summary>
-                <p>Lula's share on election day = the average + a shared, fat-tailed polling error (Student t, 4 degrees of freedom,
-                    standard deviation 2 points by default) + drift for the days left + the average's own noise. The browser uses a
-                    closed-form version of the published 200,000-draw simulation, so it can differ from it by about a point of probability.</p>
-                <p>The same average, rebuilt for past runoffs five days out, called all four winners:</p>
+            <h4>Metodologia</h4>
+            <details open><summary>Os dados</summary>
+                <p>Juntei todas as pesquisas nacionais de Lula x Flávio com campo a partir de 14 de agosto de 2026. Cada uma foi conferida no
+                    material do próprio instituto ou num veículo grande, e casada com o número de registro no TSE. Comecei pela lista da
+                    Wikipédia e achei as que faltavam olhando o registro do TSE. Duas eu não consegui confirmar direito (você pode tirá-las
+                    nos ajustes, se preferir).</p></details>
+            <details><summary>A média</summary>
+                <p>O peso de cada pesquisa é: nota do instituto × raiz do tamanho da amostra (com teto de 5.000) × quão recente ela é
+                    (o peso cai pela metade a cada <i>meia-vida</i>) × uma penalidade para quem publica muitas pesquisas em sequência.
+                    O viés de cada instituto é estimado junto com a tendência e depois descontado. Um detalhe importante: esse viés é medido
+                    em relação ao consenso dos institutos, não em relação à verdade. Se todo mundo errar junto, a média erra junto.
+                    A conta é feita sobre a fatia do Lula no total dos dois candidatos (usando votos totais), então indecisos, brancos e nulos ficam de fora.</p></details>
+            <details><summary>As notas dos institutos</summary>
+                <p>Peguei as pesquisas das três últimas semanas antes de cada eleição: presidente de 2010 a 2026 e governador em 2014, 2018,
+                    2022 e 2026. Comparei a diferença entre os dois primeiros colocados com o resultado oficial do TSE. Eleição presidencial
+                    conta peso cheio, os oito maiores estados contam 0,8 e os demais 0,4. As notas são puxadas para a média, e quem tem pouco
+                    histórico fica sem nota. Tratei o Ibope como Ipec e a FSB como Nexus.</p>
+                <p class="sub">Testei a robustez: incluir ou não as eleições para governador muda bastante a ordem dos institutos, mas a forma
+                    de pesar os estados quase não muda nada (correlação de 0,88 entre os esquemas com governador). Na média final, o peso de um
+                    instituto varia no máximo 0,29, então isso mexe mais nas notas do que no resultado.</p></details>
+            <details><summary>O erro do 1º turno se repete no 2º?</summary>
+                <p>Essa foi a pergunta que mais me preocupou. Em toda eleição desde 2010, as pesquisas finais do 1º turno exageraram a
+                    vantagem do candidato do PT (em 13, 15, 5, 2 e 4 pontos em 2010, 2014, 2018, 2022 e 2026). Só que no 2º turno elas
+                    ficaram praticamente sem viés (+0,3, 0,0, −4,9 e +0,2 de 2010 a 2022). Minha leitura é que o erro do 1º turno vem
+                    muito do voto que migra de última hora entre candidatos, e isso não existe num segundo turno de dois. O que persiste é
+                    o erro de cada instituto <i>em relação aos outros</i>: mais ou menos um terço dele reaparece no 2º turno. Corrigindo
+                    isso, a média de 2026 muda só alguns centésimos. Se você quiser testar o cenário pessimista para o Lula, use
+                    “Supor que as pesquisas erram” nos ajustes (o erro cheio do 1º turno daria −1,7 ponto).</p>
+                <p class="sub">Também olhei se o método da pesquisa (presencial, telefone, internet) faz diferença: depois de descontar o
+                    viés de cada instituto, não vi efeito claro. O viés dos institutos mudou um pouco entre antes e depois do 1º turno,
+                    então isso é algo que ainda quero melhorar.</p></details>
+            <details><summary>A previsão e o teste com eleições passadas</summary>
+                <p>A fatia do Lula no dia da eleição = a média + um erro comum a todas as pesquisas (distribuição t de Student com 4 graus
+                    de liberdade, desvio padrão de 2 pontos por padrão) + um pouco de oscilação pelos dias que faltam + o ruído da própria
+                    média. O navegador usa uma versão simplificada da simulação com 200 mil sorteios que eu rodo no computador, então os
+                    números podem diferir em cerca de um ponto percentual.</p>
+                <p>Refazendo a mesma média para os segundos turnos passados, cinco dias antes da eleição, ela acertou os quatro vencedores:</p>
                 <div class="scroll"><table class="t" id="btTbl"></table></div></details>
-            <p class="sub" style="margin-top:10px">Code and data: <code>brpolls/</code> in this site's repository.</p>
+            <p class="sub" style="margin-top:10px">Código e dados: pasta <code>brpolls/</code> no repositório deste site. Qualquer erro é meu; se achar algum, me avise.</p>
         </div>
     </div>
 </div>
