@@ -164,9 +164,13 @@
                 <select id="smoother" aria-label="Tipo de suavização">
                     <option value="exp">Exponencial (só olha para trás)</option>
                     <option value="gauss">Gaussiana (centrada no dia)</option>
-                    <option value="window">Janela móvel (média simples)</option>
+                    <option value="window">Janela móvel (média simples dos últimos dias)</option>
                 </select><span class="v" id="smootherV"></span></div>
             <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
+            <div id="winPresets" style="display:none; margin:-2px 0 6px">
+                <span class="sub">Atalhos:</span>
+                <button class="chip" data-wlen="7">7 dias</button><button class="chip" data-wlen="15">15 dias</button><button class="chip" data-wlen="30">30 dias</button>
+            </div>
             <div class="slider"><span>Força da correção do viés</span><input type="range" id="houseStrength" min="0" max="1.5" step="0.05" aria-label="Força da correção do viés"><span class="v" id="houseStrengthV"></span></div>
             <div class="slider"><span>Peso do 1º turno no viés</span><input type="range" id="r1Weight" min="0" max="1" step="0.05" aria-label="Peso das pesquisas do 1º turno na estimativa do viés"><span class="v" id="r1WeightV"></span></div>
             <div class="slider"><span>Encolhimento do viés</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="Encolhimento do viés dos institutos"><span class="v" id="shrinkV"></span></div>
@@ -174,6 +178,7 @@
             <div class="slider"><span>Supor que as pesquisas erram</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Viés suposto das pesquisas"><span class="v" id="shiftV"></span></div>
             <div class="toggles">
                 <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
+                <label class="tg"><input type="checkbox" id="useR1">Usar pesquisas do 1º turno para estimar o viés</label>
                 <label class="tg"><input type="checkbox" id="rating">Pesar pela nota do instituto</label>
                 <label class="tg"><input type="checkbox" id="size">Pesar pelo tamanho da amostra</label>
                 <label class="tg"><input type="checkbox" id="freq">Reduzir o peso de quem publica com muita frequência</label>
