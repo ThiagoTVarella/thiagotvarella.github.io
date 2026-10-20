@@ -116,6 +116,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of", default="2026-10-20")
     ap.add_argument("--ratings")
+    ap.add_argument("--use-r1", action="store_true",
+                    help="also use first-round polls to estimate house effects")
     args = ap.parse_args()
     as_of = d(args.as_of)
     ratings = {}
@@ -124,7 +126,10 @@ def main():
     polls = load(as_of, ratings)
     for p in polls:
         p["series"] = "runoff"
-    r1 = load_r1(ratings)
+    # First-round polls are optional (--use-r1): house effects shifted after the first round,
+    # and using them overcorrected some pollsters' runoff polls (e.g. Quaest, Real Time).
+    r1_all = load_r1(ratings)          # always exported so the page can switch them on
+    r1 = r1_all if args.use_r1 else []
     everything = polls + r1
 
     house = defaultdict(float)
@@ -213,8 +218,8 @@ def main():
                    "url": p["primary_url"]}
                   for i, p in enumerate(polls)],
         "first_round_polls": [{"pollster": p["pollster"], "start": p["start"], "end": p["end"],
-                               "n": p["n"], "y": round(p["y"], 3), "rating": p["rating"]} for p in r1],
-        "params": {"start": START.isoformat(), "half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
+                               "n": p["n"], "y": round(p["y"], 3), "rating": p["rating"]} for p in r1_all],
+        "params": {"start": START.isoformat(), "use_r1": args.use_r1, "half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
                    "shrink_k": SHRINK_K, "ratings_used": bool(ratings),
                    "first_round_polls_in_house_effects": len(r1)},
     }
