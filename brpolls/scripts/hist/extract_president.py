@@ -160,6 +160,9 @@ def split_params(body):
 
 def expand_templates(text):
     """Inline the few templates that hide numbers or headers from the table parser."""
+    # en 2010: {{usurped|1=[url Ibope]}} / {{usurped|1={{Deprecated archive|url=U|title=Ibope}}}}
+    text = re.sub(r"\{\{Deprecated archive\|url=([^|}]*)\|title=([^|}]*)[^{}]*\}\}", r"[\1 \2]", text)
+    text = re.sub(r"\{\{usurped\|1=(\[[^\]]*\])\}\}", r"\1", text)
     # {{yes2|40%}}, {{no2|21%}}, {{no1|24%}} -> 40% ...
     text = re.sub(r"\{\{\s*(?:yes2|no2|no1|yes|no|won)\s*\|([^{}|]*)\}\}", r"\1", text)
     # pt 2022 2nd round: {{Pesquisa eleitoral/cabeçalho|f1|n1|p1|a1|f2|n2|p2|a2}}
@@ -371,7 +374,7 @@ def split_pollster(raw_):
     t = ctext(s)
     t = REG_RE.sub("", t)
     t = re.sub(r"\(exit poll\)", "", t, flags=re.I)
-    t = re.sub(r"\s+", " ", t).strip(" ,;")
+    t = re.sub(r"\s+", " ", t).strip(" ,;'")
     t = t.replace(" / ", "/")
     if "/" in t:
         sponsor, pollster = t.rsplit("/", 1)
