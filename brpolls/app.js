@@ -368,6 +368,10 @@ if (typeof document !== "undefined") (function () {
         $("avgBar").innerHTML = `<div style="width:${lw}%;background:${LULA}">Lula ${pct(lw)}</div><div style="width:${100 - lw}%;background:${FLAVIO}">Flávio ${pct(100 - lw)}</div>`;
         $("pBar").innerHTML = `<div style="width:${100 * c.p}%;background:${LULA}">${pct(100 * c.p, 0)}</div><div style="width:${100 - 100 * c.p}%;background:${FLAVIO}">${pct(100 - 100 * c.p, 0)}</div>`;
         $("asofLine").textContent = `Pesquisas até ${fdl(R.asOf)} · ${R.runoff.length} pesquisas de 2º turno · faltam ${R.daysLeft} dias para a eleição (25/10/2026)`;
+        const gap = 50 - (c.v + opt.shift);
+        $("probExplain").textContent = `Como calculo: a média deixa o Lula ${fmt(Math.abs(gap))} ponto ${gap >= 0 ? "abaixo" : "acima"} de 50%. ` +
+            `Somo a ela um erro que todas as pesquisas podem cometer juntas (${fmt(opt.errSd)} pontos, com caudas largas), a oscilação até a eleição ` +
+            `e o ruído da própria média, e conto em que fração dos cenários o Lula passa de 50%.`;
         $("kNote").textContent = `±${fmt(1.96 * c.se)} ponto só pelo ruído das pesquisas; a previsão ainda soma um erro comum de ${fmt(opt.errSd)} pontos.`;
         const changed = !isDefault();
         $("custom").style.display = changed ? "block" : "none";
