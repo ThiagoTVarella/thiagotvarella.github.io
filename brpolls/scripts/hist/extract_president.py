@@ -261,10 +261,14 @@ def special_of(label):
 
 def column_roles(t):
     roles = []
-    ncol = max((len(r) for r in t.header_cells), default=0)
+    # '!'-formatted result rows (e.g. "Eleições de 2014") land among the header rows; drop
+    # header rows that carry percentages.
+    hrows = [r for r in t.header_cells
+             if not any(re.search(r"\d\s*%", ctext(c.raw)) for c in r)]
+    ncol = max((len(r) for r in hrows), default=0)
     for j in range(ncol):
         cells, seen = [], set()
-        for row in t.header_cells:
+        for row in hrows:
             if j < len(row) and id(row[j]) not in seen:
                 seen.add(id(row[j]))
                 cells.append(row[j])
@@ -451,7 +455,18 @@ def table_polls(t, ctx, index):
             g = {"pc": pc, "dc": dc, "cells": cells, "scen": []}
             groups.append(g)
         key = tuple(id(cells[j]) if cells[j] is not None else None for j in key_cols)
-        if g["scen"] and g["scen"][-1]["key"] == key:
+        cont = False
+        if g["scen"] and g["scen"][-1]["key"] != key:
+            # Continuation row listing one more named minor candidate ("0% Santos Cruz
+            # (PODE)") whose cell landed outside the Outros column because a neighbour
+            # cell's rowspan was malformed: all non-carried cells are named or empty.
+            prev = g["scen"][-1]["key"]
+            new_js = [j for k, j in enumerate(key_cols) if key[k] != prev[k]]
+            carried = len(key_cols) - len(new_js)
+            if carried > len(key_cols) / 2 and all(
+                    j not in vals or vals[j][1][0] is None or vals[j][1][1] for j in new_js):
+                cont = True
+        if g["scen"] and (g["scen"][-1]["key"] == key or cont):
             sc = g["scen"][-1]
         else:
             sc = {"key": key, "opts": [], "seen": set()}
@@ -464,6 +479,9 @@ def table_polls(t, ctx, index):
                 continue
             sc["seen"].add(id(c))
             r = roles[j]
+            if cont and ename:
+                sc["opts"].append((ename, eparty or "", pct))
+                continue
             if r[0] == "special":
                 if r[1] == "OTHERS" and ename:
                     sc["opts"].append((ename, eparty or "", pct))
@@ -472,8 +490,13 @@ def table_polls(t, ctx, index):
             else:
                 name = ename or r[1]
                 party = r[2] or ""
+                if ename and r[1] and re.fullmatch(r"[A-Z][A-Za-z]{1,9}|PC do B|PCdoB", r[1]):
+                    party = r[1]  # pt 2018: columns are parties, the name is in the cell
                 if ename and eparty:
                     party = eparty
+                if name and ", apoiado por" in name:
+                    name = name.split(",")[0].strip()  # "Haddad, apoiado por Lula"
+                    sc.setdefault("notes", []).append("Haddad presented as supported by Lula")
                 if not name:
                     continue
                 sc["opts"].append((name, party, pct))
@@ -507,6 +530,7 @@ def table_polls(t, ctx, index):
             "pollster": pollster, "sponsor": sponsor, "start": d[0], "end": d[1],
             "sample": sample, "moe": moe, "url": first_url(g["pc"].raw, index),
             "scenarios": [s["opts"] for s in g["scen"] if s["opts"]], "notes": [],
+            "scen_notes": {id(s["opts"]): s.get("notes", []) for s in g["scen"]},
         }
 
 
@@ -661,7 +685,7 @@ def main():
             continue
         base = f"{year}-president-BR-r{rnd}-{slug(p['pollster'])}-{p['end'].isoformat()}"
         for k, sc in enumerate(scen, 1):
-            notes = list(p["notes"])
+            notes = list(p["notes"]) + sorted(set(p.get("scen_notes", {}).get(id(sc), [])))
             pid = base
             if len(scen) > 1:
                 pid = f"{base}-s{k}"

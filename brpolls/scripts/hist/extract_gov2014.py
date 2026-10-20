@@ -165,7 +165,7 @@ def role(lbl):
     if re.search(r"^others?$|^outros", l):
         return "OTHERS"
     bn = re.search(r"branc|nul|blank|null", l)
-    und = re.search(r"sabe|\bns\b|\bnr\b|indec|undec|absent|abst|respond", l)
+    und = re.search(r"sabe|souber|opina|\bns\b|\bnr\b|indec|undec|absent|abst|respond", l)
     if "sem candidato" in l or (bn and und):
         return "BLANK_NULL_UNDECIDED"
     if bn:
@@ -199,7 +199,9 @@ def split_pollster(s, hint_first):
 
 def parse_table(tb, text_raw, uf, rnd, lang, title):
     idx = ref_index(text_raw)
-    ncol = max([len(h) for h in tb.header] + [0])
+    # table width = most common body-row length (header rows can claim extra colspan)
+    lens = [len(r.cells) for r in tb.rows if len(set(c.text for c in r.cells)) > 1]
+    ncol = max(set(lens), key=lens.count) if lens else 0
     # header rows as raw-ish labels: recompute from tb.header text, but SP en needs raw links,
     # so take labels from tb.header and fix '[[' leftovers via label_of on the text.
     labels = []
@@ -210,6 +212,9 @@ def parse_table(tb, text_raw, uf, rnd, lang, title):
                 lab = h[c]
                 break
         labels.append(lab)
+    # GO r2 quirk: last column has no label in the inner header row; use the outer row's last label
+    if labels and labels[-1] == "" and tb.header:
+        labels[-1] = max(tb.header, key=len)[-1]
     hdr_raw = header_raw_labels(text_raw, tb)
     for c, lab in enumerate(labels):
         if "[[" in lab and c in hdr_raw:
@@ -230,8 +235,7 @@ def parse_table(tb, text_raw, uf, rnd, lang, title):
             continue
         if len(cells) < ncol:
             # RN quirk: row with fewer cells; candidates first, the rest go to the last columns
-            fixed = list(cells[:roles.index('cand') + 0])
-            n_lead = len([r for r in roles[:cand_cols[0]]])
+            n_lead = cand_cols[0]
             vals = cells[n_lead:]
             k = len(vals)
             ncand_present = k - len([r for r in roles if r not in ("cand", "date", "pollster", "moe", "sample", "skip")])
@@ -260,9 +264,8 @@ def parse_table(tb, text_raw, uf, rnd, lang, title):
             continue
         if pubdate:
             notes.append("only publication date given; used as field dates")
-        elif start == end and not re.search(r"\d\s*(a|e|à|–|-)\s*\d", strip_acc(dcell.text)):
-            if lang == "pt" and not re.search(r"\d{1,2}/\d{1,2}/\d{4}", dcell.text) is None:
-                pass
+        elif start == end:
+            notes.append("single date on Wikipedia (may be publication date)")
         pollster, sponsor = split_pollster(ptxt, hint_first)
         mc, sc = get("moe"), get("sample")
         moe = num(mc.raw.replace("±", "")) if mc else None
@@ -342,8 +345,13 @@ def top3(p):
     return tuple(sorted((round(o[2], 1) for o in p["opts"] if o[0] not in SPECIAL), reverse=True)[:3])
 
 
+def pkey(p):
+    # "Babesp" (en) and "Bapesp" (pt) are the same Bahia institute
+    return slug(p["pollster"]).split("-")[0].replace("babesp", "bapesp")
+
+
 def is_dup(a, b):
-    if slug(a["pollster"]).split("-")[0] != slug(b["pollster"]).split("-")[0]:
+    if pkey(a) != pkey(b):
         return False
     dd = abs((a["end"] - b["end"]).days)
     if top3(a) == top3(b) and dd <= 10:
@@ -354,7 +362,9 @@ def is_dup(a, b):
 def merge(primary, extra):
     out = list(primary)
     for e in extra:
-        hit = next((i for i, p in enumerate(out) if p["page"] != e["page"] and is_dup(p, e)), None)
+        cands = [i for i, p in enumerate(out) if p["page"] != e["page"] and is_dup(p, e)
+                 and f"also on {e['page']}" not in p["notes"]]
+        hit = min(cands, key=lambda i: abs((out[i]["end"] - e["end"]).days)) if cands else None
         if hit is None:
             out.append(e)
             continue

@@ -388,6 +388,9 @@ def load_ballot():
 
 ALIASES = {  # wiki short name -> TSE ballot name (only where tokens don't overlap)
     ("SP", "freitas"): "TARCÍSIO", ("SP", "tarcisio de freitas"): "TARCÍSIO",
+    ("SP", "prazeres"): "ALTINO", ("PI", "fontelles"): "RAFAEL FONTELES",
+    ("RJ", "pantoja"): "JULIETE", ("GO", "martins"): "PROFESSORA HELGA",
+    ("PR", "machado"): "PROFESSORA ANGELA",
 }
 
 
@@ -402,11 +405,6 @@ def match(uf, name, party, cands):
         ct = set(re.findall(r"[a-z]+", norm(cname)))
         if toks and toks & ct:
             return cname
-    if party:
-        cp = canon_party(party)
-        for cname, cparty in cands:
-            if cp and cp == canon_party(cparty):
-                return cname
     return None
 
 
@@ -557,6 +555,20 @@ def select_scenarios(polls):
         groups[(p["round"],) + p["rawkey"]].append(p)
     kept = []
     for key, ps in groups.items():
+        # Rows of one poll that have no blank/undecided figure and sum to ~100 are the
+        # valid-vote version (en/pt tables often show total and valid votes as two rows);
+        # drop them when a total-vote row exists, otherwise keep and flag.
+        def specials(p):
+            return [o for o in p["opts"] if o[0] in ("BLANK_NULL", "UNDECIDED", "BLANK_NULL_UNDECIDED")]
+
+        def looks_valid(p):
+            tot = sum(o[2] for o in p["opts"])
+            return not specials(p) and 97 <= tot <= 103
+        if any(looks_valid(p) for p in ps) and not all(looks_valid(p) for p in ps):
+            ps = [p for p in ps if not looks_valid(p)]
+        for p in ps:
+            if looks_valid(p):
+                p["notes"].append("no blank/undecided figure and shares sum to ~100: possibly valid votes")
         # identical duplicates (same numbers) collapse to one
         uniq = []
         for p in ps:
