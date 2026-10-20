@@ -235,7 +235,7 @@ def header_candidate(cells):
         if pm:
             party = party or pm.group(1).strip()
             t = t[:pm.start()].strip()
-        if t and not name:
+        if t and not name and norm(t) not in ("candidato", "candidate", "candidatos"):
             name = t
     return name, party
 
@@ -274,7 +274,7 @@ def column_roles(t):
             roles.append(("skip",))
         elif re.search(r"\b(periodo|data|date|polling period|conducted)", l) and "registro" not in l:
             roles.append(("date",))
-        elif re.search(r"(instituto|pollster|contratante|publica)", l):
+        elif re.search(r"(instituto|pollster|polling firm|contratante|publica)", l):
             roles.append(("pollster",))
         elif re.search(r"(amostra|sample|entrevistados)", l):
             roles.append(("sample",))
@@ -333,7 +333,13 @@ def parse_dates(text, default_year=None):
         res[0][2] = res[1][2]
     try:
         end = date(res[1][2], res[1][1], res[1][0])
-        start = date(res[0][2], res[0][1], res[0][0])
+        try:
+            start = date(res[0][2], res[0][1], res[0][0])
+        except ValueError:  # "31–5 Abr": day 31 can only be in the previous month
+            m, y = res[0][1] - 1, res[0][2]
+            if m == 0:
+                m, y = 12, y - 1
+            start = date(y, m, res[0][0])
         if start > end:  # "30–1 Set": start is in the previous month
             m, y = res[0][1] - 1, res[0][2]
             if m == 0:
@@ -415,7 +421,8 @@ def table_polls(t, ctx, index):
         pc, dc = cells[col["pollster"]], cells[col["date"]]
         if pc is None or dc is None:
             continue
-        rowtext = norm(" ".join(ctext(c.raw) for c in cells if c is not None))
+        uniq = list({id(c): c for c in cells if c is not None}.values())
+        rowtext = norm(" ".join(ctext(c.raw) for c in uniq))
         if pc is dc:
             # colspan marker rows: event rows, or "Valid votes"/"Total votes" switches
             if re.fullmatch(r"valid votes|votos validos", rowtext):
@@ -569,42 +576,74 @@ def pick_r2(year, scenarios):
     return keep
 
 
+PT14 = "Predefinição:Pesquisas de opinião da Eleição presidencial no Brasil em 2014 ({}º turno)"
+
+
+def pt14_pre(text):
+    # rows start with a '! 44' index header cell, which would make the parser treat the
+    # whole row as a header row; turn it into a plain cell.
+    return re.sub(r"^!\s*(\d+)\s*$", r"| \1", text, flags=re.M)
+
+
+ANY = lambda sec: True  # noqa: E731
+
+# Each source: year, round, lang, title, table filter (section path), and optionally
+#   pre: text preprocessor; supplement: (min_end) -> only polls not already present from
+#   the primary source (same pollster slug, end date within 1 day) and ending >= min_end.
 SOURCES = [
-    # (year, round, lang, title, table filter on section path)
-    (2022, 1, "pt", "Pesquisas de opinião para a eleição presidencial no Brasil em 2022",
-     lambda sec: sec and sec[0] == "Primeiro turno" and not any("Agrega" in s or "Gráfico" in s for s in sec)),
-    (2022, 2, "pt", "Pesquisas de opinião para a eleição presidencial no Brasil em 2022",
-     lambda sec: sec[:2] == ["Segundo turno", "Bolsonaro x Lula"] and not any("Agrega" in s for s in sec)),
-    (2018, 1, "pt", "Pesquisas de opinião para a eleição presidencial no Brasil em 2018",
-     lambda sec: sec[:2] == ["Primeiro turno", "Pesquisas"]),
-    (2018, 2, "pt", "Pesquisas de opinião para a eleição presidencial no Brasil em 2018",
-     lambda sec: sec[:2] == ["Segundo turno", "Pesquisas"] and not any("boca" in s for s in sec)),
-    (2014, 1, "en", "2014 Brazilian general election",
-     lambda sec: sec[-1:] == ["First round"]),
-    (2014, 2, "en", "2014 Brazilian general election",
-     lambda sec: sec[-1:] == ["Second round"]),
-    (2010, 1, "en", "Opinion polling for the 2010 Brazilian presidential election",
-     lambda sec: sec[-1:] == ["First round"]),
-    (2010, 2, "en", "Opinion polling for the 2010 Brazilian presidential election",
-     lambda sec: sec[-1:] == ["Second round"]),
+    dict(year=2022, rnd=1, lang="pt", title="Pesquisas de opinião para a eleição presidencial no Brasil em 2022",
+         filt=lambda sec: sec and sec[0] == "Primeiro turno"),
+    dict(year=2022, rnd=2, lang="pt", title="Pesquisas de opinião para a eleição presidencial no Brasil em 2022",
+         filt=lambda sec: sec[:2] == ["Segundo turno", "Bolsonaro x Lula"]),
+    dict(year=2018, rnd=1, lang="pt", title="Pesquisas de opinião para a eleição presidencial no Brasil em 2018",
+         filt=lambda sec: sec[:2] == ["Primeiro turno", "Pesquisas"]),
+    dict(year=2018, rnd=2, lang="pt", title="Pesquisas de opinião para a eleição presidencial no Brasil em 2018",
+         filt=lambda sec: sec[:2] == ["Segundo turno", "Pesquisas"] and not any("boca" in x for x in sec)),
+    dict(year=2014, rnd=1, lang="en", title="2014 Brazilian general election",
+         filt=lambda sec: sec[-1:] == ["First round"]),
+    dict(year=2014, rnd=2, lang="en", title="2014 Brazilian general election",
+         filt=lambda sec: sec[-1:] == ["Second round"]),
+    # The pt 2014 template lists more polls, but omits Eduardo Campos from pre-August
+    # polls, so it only supplements the en table from Campos's death (13 Aug) onwards.
+    dict(year=2014, rnd=1, lang="pt", title=PT14.format(1), filt=ANY, pre=pt14_pre,
+         supplement=date(2014, 8, 14)),
+    dict(year=2014, rnd=2, lang="pt", title=PT14.format(2), filt=ANY, pre=pt14_pre,
+         supplement=date(2014, 1, 1)),
+    dict(year=2010, rnd=1, lang="en", title="Opinion polling for the 2010 Brazilian presidential election",
+         filt=lambda sec: sec[-1:] == ["First round"]),
+    dict(year=2010, rnd=2, lang="en", title="Opinion polling for the 2010 Brazilian presidential election",
+         filt=lambda sec: sec[-1:] == ["Second round"]),
 ]
+
+
+def same_poll(a, b):
+    sa, sb = slug(a["pollster"]), slug(b["pollster"])
+    return (sa == sb or sa in sb or sb in sa) and abs((a["end"] - b["end"]).days) <= 1
 
 
 def main():
     rows, seen_ids = [], {}
     raw_polls = []  # (year, round, lang, title, poll)
-    for year, rnd, lang, title, filt in SOURCES:
+    for src in SOURCES:
+        year, rnd, lang, title = src["year"], src["rnd"], src["lang"], src["title"]
         text = raw(lang, title)
         if text is None:
             print(f"missing page {lang}:{title}", file=sys.stderr)
             continue
         index = ref_index(text)
+        if src.get("pre"):
+            text = src["pre"](text)
         text = expand_templates(text)
         n = 0
+        prior = [p for (y, r, _, _, p) in raw_polls if y == year and r == rnd]
         for t in tables(text):
-            if not filt(t.section):
+            if not src["filt"](t.section):
                 continue
             for p in table_polls(t, {"year": year, "page": title}, index):
+                if src.get("supplement"):
+                    if p["end"] < src["supplement"] or any(same_poll(p, q) for q in prior):
+                        continue
+                    p["notes"].append("not in the primary (en) table; added from pt page")
                 raw_polls.append((year, rnd, lang, title, p))
                 n += 1
         print(f"{lang}:{title} r{rnd}: {n} raw polls", file=sys.stderr)

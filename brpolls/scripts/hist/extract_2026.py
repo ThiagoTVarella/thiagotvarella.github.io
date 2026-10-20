@@ -567,6 +567,17 @@ def row_to_poll(cells, colmap, idx):
         return None
     if re.search(r"resultado|eleic|elei[cç]", norm(pollster)):
         return None
+    # footnotes ({{Nre|...}}) outside refs sometimes flag a row as spontaneous / valid votes
+    seen, notes_txt = set(), ""
+    for cell in cells:
+        if id(cell) not in seen:
+            seen.add(id(cell))
+            notes_txt += " " + re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", cell.raw, flags=re.S)
+    nt = norm(notes_txt)
+    if "espontane" in nt:
+        return None
+    if re.search(r"votos validos|valid votes", nt):
+        p["notes"].append("valid votes (per Wikipedia footnote)")
     urls = []
     for cell in cells:
         urls += refs(cell.raw, idx)
@@ -648,6 +659,10 @@ def main():
             notes = list(p["notes"])
             if "votos v" in norm(p["section"]) or "valid" in norm(p["section"]):
                 notes.append("valid votes")
+            elif (98.5 <= sum(p["pcts"]) <= 101.5 and not any(
+                    k == "special" and o != "OTHERS" for o, k, _ in p["options"])):
+                # not marked on Wikipedia, but this pattern is typical of valid-vote releases
+                notes.append("sums to ~100 with no blank/undecided share: possibly valid votes")
             for (opt, kind, party), v in zip(p["options"], p["pcts"]):
                 out.append({
                     "poll_id": pid, "year": YEAR, "office": office, "state": state,
