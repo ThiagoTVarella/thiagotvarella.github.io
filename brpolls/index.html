@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <meta name="author" content="ThiagoTVarella">
-    <meta name="description" content="Poll aggregator for the 2026 Brazilian presidential runoff: Lula vs Flávio Bolsonaro">
+    <meta name="description" content="Interactive poll aggregator for the 2026 Brazilian presidential runoff: Lula vs Flávio Bolsonaro">
     <title>Brazil 2026 runoff poll average</title>
     <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
@@ -12,229 +12,226 @@
     <link rel="stylesheet" href="../css/main.css">
     <script src="../js/main.js"></script>
     <style>
-        .wrap { padding-top: 16px; padding-bottom: 64px; }
-        .card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,.07);
-                padding:20px 24px; margin-bottom:20px; }
+        /* the site footer is absolutely positioned at the bottom of the first screen, where it would sit on top of the
+           chart; on this long page let it flow after the content instead */
+        footer { position: static; margin-top: 1em; }
+        .container { padding-bottom: 1em; }
+        .wrap { padding-top: 8px; padding-bottom: 24px; }
+        .card { background:#fff; border:1px solid #e0e0e0; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+                padding:18px 20px; margin-bottom:18px; }
         .card h4 { margin-top:0; }
-        .big { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end; }
-        .big .n { font-size:44px; line-height:1.1; font-weight:bold; }
-        .lula { color:#c0392b; } .flavio { color:#1f5fa8; }
         .sub { color:#777; font-size:12px; }
-        .bar { height:22px; border-radius:4px; overflow:hidden; display:flex; margin:8px 0; }
-        .bar div { color:#fff; font-size:12px; line-height:22px; text-align:center; }
-        table.t { width:100%; border-collapse:collapse; font-size:12px; }
-        table.t th, table.t td { padding:4px 8px; border-bottom:1px solid #eee; text-align:right; white-space:nowrap; }
-        table.t th:first-child, table.t td:first-child { text-align:left; }
-        .scroll { overflow-x:auto; max-height:420px; overflow-y:auto; }
+        .lula { color:#c0392b; } .flavio { color:#1f5fa8; }
+        .kpis { display:grid; grid-template-columns: 1fr 1fr; gap:18px; }
+        .kpi .n { font-size:40px; line-height:1.1; font-weight:bold; }
+        .kpi .row2 { display:flex; gap:22px; align-items:flex-end; flex-wrap:wrap; }
+        .bar { height:24px; border-radius:5px; overflow:hidden; display:flex; margin:10px 0 4px; }
+        .bar div { color:#fff; font-size:12px; line-height:24px; text-align:center; white-space:nowrap; overflow:hidden; transition: width .25s; }
+        .custom { display:none; background:#eef5ff; border:1px solid #c8dcf5; border-radius:6px; padding:8px 12px; font-size:13px; margin-bottom:14px; }
+        .warn { background:#fff8e6; border:1px solid #f0d58c; border-radius:6px; padding:8px 12px; font-size:12px; margin-bottom:14px; }
+        .toolbar { display:flex; flex-wrap:wrap; gap:6px 14px; align-items:center; margin-bottom:8px; }
+        .seg { display:inline-flex; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
+        .seg button { border:0; background:#fff; padding:6px 10px; font-size:12px; min-height:32px; cursor:pointer; font-family:inherit; }
+        .seg button + button { border-left:1px solid #ccc; }
+        .seg button.on { background:#333; color:#fff; }
+        .chip { border:1px solid #ccc; background:#f6f6f6; color:#999; border-radius:16px; padding:4px 11px; font-size:12px;
+                margin:3px 4px 3px 0; cursor:pointer; min-height:30px; font-family:inherit; }
+        .chip.on { background:#333; color:#fff; border-color:#333; }
+        label.tg { font-size:12px; font-weight:normal; margin:0; cursor:pointer; white-space:nowrap; }
+        label.tg input { margin-right:4px; vertical-align:-1px; }
+        select { font-size:12px; padding:4px; border-radius:4px; border:1px solid #ccc; min-height:30px; }
+        #chartWrap { position:relative; }
+        #chart svg, #pChart svg { display:block; touch-action: pan-y; user-select:none; }
         svg text { font-family:'Comfortaa', cursive; font-size:10px; fill:#666; }
-        .warn { background:#fff8e6; border-color:#f0d58c; }
+        #tip { position:absolute; display:none; pointer-events:none; background:rgba(255,255,255,.97); border:1px solid #ccc;
+               border-radius:6px; padding:7px 9px; font-size:12px; box-shadow:0 2px 10px rgba(0,0,0,.12); z-index:5; max-width:260px; }
+        #legend { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:11px; color:#555; margin:6px 0 2px; }
+        #legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px; }
+        #detail { border-top:1px solid #eee; margin-top:10px; padding-top:10px; font-size:13px; min-height:40px; }
+        .detail-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+        .dgrid { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px 14px; }
+        .slider { display:grid; grid-template-columns: 170px 1fr 150px; gap:10px; align-items:center; margin:8px 0; font-size:13px; }
+        .slider input[type=range] { width:100%; }
+        .slider .v { font-size:12px; color:#555; text-align:right; }
+        .dual { position:relative; height:30px; }
+        .dual input[type=range] { position:absolute; left:0; top:6px; width:100%; pointer-events:none; -webkit-appearance:none; appearance:none; background:transparent; }
+        .dual input[type=range]::-webkit-slider-thumb { pointer-events:auto; -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#333; cursor:pointer; position:relative; z-index:2; }
+        .dual input[type=range]::-moz-range-thumb { pointer-events:auto; width:18px; height:18px; border-radius:50%; background:#333; cursor:pointer; border:0; }
+        .dual .track { position:absolute; left:0; right:0; top:14px; height:4px; background:#ddd; border-radius:2px; }
+        .toggles { display:grid; grid-template-columns: repeat(2, 1fr); gap:6px 18px; margin:10px 0; }
+        .btn { border:1px solid #333; background:#fff; border-radius:6px; padding:6px 12px; font-size:12px; cursor:pointer; min-height:34px; font-family:inherit; }
+        .btn.dark { background:#333; color:#fff; }
+        table.t { width:100%; border-collapse:collapse; font-size:12px; }
+        table.t th, table.t td { padding:6px 8px; border-bottom:1px solid #eee; text-align:right; white-space:nowrap; }
+        table.t th:first-child, table.t td:first-child { text-align:left; }
+        table.t th[data-k] { cursor:pointer; user-select:none; }
+        table.t tr[data-p], table.t tr[data-id] { cursor:pointer; }
+        table.t tr.on td { background:#fff4d6; }
+        table.t tr.off td { color:#bbb; }
+        .scroll { overflow-x:auto; max-height:460px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+        details summary { cursor:pointer; font-weight:bold; margin:6px 0; }
+        @media (max-width: 700px) {
+            .card { padding:14px 12px; }
+            .kpis { grid-template-columns: 1fr; gap:8px; }
+            .kpi .n { font-size:32px; }
+            .dgrid { grid-template-columns: 1fr 1fr; }
+            .slider { grid-template-columns: 1fr 1fr; }
+            .slider input[type=range], .slider .dual { grid-column: 1 / span 2; grid-row: 2; }
+            .toggles { grid-template-columns: 1fr; }
+            .wrap { padding-left: 4px; padding-right: 4px; }
+            .container { margin: 2%; width: 96%; }
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div id="header"></div>
-    <div class="col-lg-2 col-md-1"></div>
-    <div class="col-lg-8 col-md-10 wrap">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10 col-md-12 wrap">
         <h3>Brazil 2026 runoff: Lula vs Flávio Bolsonaro</h3>
-        <p class="sub" id="asof">Loading…</p>
+        <p class="sub" id="asofLine">Loading…</p>
+        <div class="warn"><b>Preliminary.</b> Poll data are checked against pollsters and the TSE registry; the ratings and forecast rest
+            on thin history and judgement calls (see methodology). Everything below is recomputed in your browser, so you can change the model.</div>
+        <div class="custom" id="custom"></div>
 
-        <div class="card warn">
-            <b>Preliminary.</b> A first version built in one overnight session. The polling data are checked against
-            pollsters and the TSE registry; the ratings and the forecast rest on thin history and rough assumptions
-            (details in the methodology below). Treat the probabilities as a sketch, not a prediction.
+        <div class="card">
+            <div class="kpis">
+                <div class="kpi">
+                    <div class="sub">Poll average (two-candidate vote)</div>
+                    <div class="row2"><div class="n lula" id="kLula">–</div><div class="n flavio" id="kFlavio">–</div></div>
+                    <div class="bar" id="avgBar"></div>
+                    <div class="sub" id="kNote"></div>
+                </div>
+                <div class="kpi">
+                    <div class="sub">Chance of winning on 25 October</div>
+                    <div class="row2"><div class="n lula" id="kPL">–</div><div class="n flavio" id="kPF">–</div></div>
+                    <div class="bar" id="pBar"></div>
+                    <div class="sub">Lula (red) · Flávio (blue)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" id="chartCard">
+            <div class="toolbar">
+                <div class="seg" role="group" aria-label="Measure">
+                    <button data-metric="share">Lula share</button><button data-metric="margin">Margin</button>
+                </div>
+                <div class="seg" role="group" aria-label="Time window">
+                    <button data-win="14">14 days</button><button data-win="30">30 days</button><button data-win="r2">Since 1st round</button><button data-win="all">All</button>
+                </div>
+                <label class="tg">Color by
+                    <select id="colorBy" aria-label="Color dots by">
+                        <option value="lean">Pollster lean</option><option value="pollster">Pollster</option>
+                        <option value="mode">Survey mode</option><option value="phase">Before/after 1st round</option>
+                    </select></label>
+            </div>
+            <div class="toolbar">
+                <label class="tg"><input type="checkbox" id="adjusted">Show dots after house-effect correction</label>
+                <label class="tg"><input type="checkbox" id="band">Uncertainty band</label>
+                <label class="tg"><input type="checkbox" id="sized">Dot size = weight</label>
+            </div>
+            <div id="chartWrap"><div id="chart"></div><div id="tip"></div></div>
+            <div id="legend"></div>
+            <div class="slider" style="margin-top:4px">
+                <span>Time window</span>
+                <div class="dual"><div class="track"></div><input type="range" id="win0" step="1" aria-label="Window start"><input type="range" id="win1" step="1" aria-label="Window end"></div>
+                <span class="v" id="winV"></span>
+            </div>
+            <div id="detail"></div>
         </div>
 
         <div class="card">
-            <h4>Poll average</h4>
-            <div class="big">
-                <div><div class="n lula" id="avgL">–</div><div class="sub">Lula, share of the two-candidate vote</div></div>
-                <div><div class="n flavio" id="avgF">–</div><div class="sub">Flávio Bolsonaro</div></div>
-                <div class="sub" id="avgNote"></div>
+            <h4>Time machine</h4>
+            <p class="sub">Rewind to any day and see the average and forecast using only the polls published by then.</p>
+            <div class="slider">
+                <span>Polls up to</span><input type="range" id="asOf" step="1" aria-label="Use polls up to this date"><span class="v" id="asOfV"></span>
             </div>
-            <div class="bar" id="avgBar"></div>
-        </div>
-
-        <div class="card">
-            <h4>Chance of winning on 25 October</h4>
-            <div class="big">
-                <div><div class="n lula" id="pL">–</div><div class="sub">Lula</div></div>
-                <div><div class="n flavio" id="pF">–</div><div class="sub">Flávio Bolsonaro</div></div>
-            </div>
-            <div class="bar" id="pBar"></div>
+            <button class="btn dark" id="play">▶ Play the campaign</button>
+            <h4 style="margin-top:18px">Chance of winning over time</h4>
             <div id="pChart"></div>
-            <p class="sub" id="scen"></p>
-
+            <p class="sub">Solid: your settings. Dashed grey (when you change settings): the published model.</p>
         </div>
 
         <div class="card">
-            <h4>Trend</h4>
-            <div id="chart"></div>
-            <p class="sub">Dots: each poll's Lula share of the two-candidate vote (total votes, undecided removed). Solid line: weighted
-            average after correcting each pollster's lean relative to the others. 50% = tie.</p>
+            <h4>Model settings</h4>
+            <p class="sub">The defaults are the published model. Changes update every number and chart on this page and the link in your address bar.</p>
+            <div class="slider"><span>Smoothing (half-life)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Half-life in days"><span class="v" id="halfLifeV"></span></div>
+            <div class="slider"><span>House-effect shrinkage</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="House-effect shrinkage"><span class="v" id="shrinkV"></span></div>
+            <div class="slider"><span>Shared polling error</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Shared polling error"><span class="v" id="errSdV"></span></div>
+            <div class="slider"><span>Assume polls are off by</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Assumed polling bias"><span class="v" id="shiftV"></span></div>
+            <div class="toggles">
+                <label class="tg"><input type="checkbox" id="house">Correct pollster house effects</label>
+                <label class="tg"><input type="checkbox" id="useR1">Use first-round polls to estimate house effects</label>
+                <label class="tg"><input type="checkbox" id="rating">Weight by pollster rating</label>
+                <label class="tg"><input type="checkbox" id="size">Weight by sample size</label>
+                <label class="tg"><input type="checkbox" id="freq">Down-weight pollsters that publish very often</label>
+                <label class="tg"><input type="checkbox" id="pre">Include polls from before the first round</label>
+                <label class="tg"><input type="checkbox" id="unverified">Include the 2 unconfirmed polls</label>
+            </div>
+            <div class="sub" style="margin-top:6px">Survey modes used (tap to exclude):</div>
+            <div id="modes"></div>
+            <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
+                <button class="btn" id="reset">Reset to published model</button>
+                <button class="btn" id="share">Copy link to this view</button>
+            </div>
         </div>
 
         <div class="card">
-            <h4>Pollster lean and rating</h4>
-            <div class="scroll"><table class="t" id="houseTbl"></table></div>
-            <p class="sub">Lean: how far a pollster runs from the consensus, in points of Lula's share (negative = favours Flávio).
-            Rating: accuracy against official results in past elections (lower plus-minus is better).</p>
-        </div>
-
-        <div class="card">
-            <h4>Robustness checks</h4>
-            <p id="robRatings"></p>
-            <p id="robHouse"></p>
-        </div>
-
-        <div class="card">
-            <h4>How pollsters did in the 2026 first round</h4>
-            <div class="scroll"><table class="t" id="cycTbl"></table></div>
-            <p class="sub">Error of the Flávio-minus-Lula margin in each pollster's final-10-day polls against the official result
-            (Flávio 47.0%, Lula 45.2% of valid votes). Negative = the poll understated Flávio. Few polls per pollster, so read loosely.</p>
+            <h4>Pollsters</h4>
+            <p class="sub">Tap a row to spotlight its polls on the chart; untick to drop the pollster from the model. Sort by any column.
+                <button class="btn" id="inflBtn" style="margin-left:6px">Compute each pollster's influence</button></p>
+            <div class="scroll"><table class="t" id="pollsterTbl"></table></div>
         </div>
 
         <div class="card">
             <h4>All polls</h4>
+            <p class="sub"><span id="pollFilter"></span>Tap a row to find the poll on the chart.</p>
             <div class="scroll"><table class="t" id="pollTbl"></table></div>
         </div>
 
         <div class="card">
+            <h4>How the pollsters did in the 2026 first round</h4>
+            <div class="scroll"><table class="t" id="cycTbl"></table></div>
+            <p class="sub">Error of the Flávio-minus-Lula margin in each pollster's final-10-day polls against the official result
+                (Flávio 47.0%, Lula 45.2% of valid votes). Negative = understated Flávio. Few polls each, so read loosely.</p>
+        </div>
+
+        <div class="card">
             <h4>Methodology</h4>
-            <p><b>Data.</b> Every national poll of Lula vs Flávio with fieldwork from 14 Aug 2026, checked against the
-            pollster's own release or a major outlet and matched to its TSE registration number. Seeded from Wikipedia; a few
-            polls Wikipedia lacks were found through the TSE registry. Two polls remain unconfirmed. Field dates differ by a day
-            in places between sources.</p>
-            <p><b>Average.</b> Each poll is weighted by pollster rating, sample size (square root, capped at 5,000), recency
-            (halves every 8 days) and a penalty for pollsters that publish many polls close together. Pollster lean is estimated
-            jointly with the trend and removed. Lean is measured against the consensus, not the truth, so a miss shared by all
-            pollsters is invisible to the average.</p>
-            <p><b>Ratings.</b> Final-3-weeks polls from 2014-2026 presidential races and 2014/2018/2022/2026 governor races,
-            scored on the error of the margin between the top two finishers against official TSE results, with presidential
-            races at full weight, the eight largest states at 0.8, and the rest at 0.4. Ratings are shrunk toward the average
-            and are rough: no usable 2002/2006 polls, thin 2014 data, some Wikipedia tables are inconsistent, and
-            pollsters with a short record are marked unrated. Ibope is treated as Ipec and FSB as Nexus.</p>
-            <p><b>Does the first-round miss carry over?</b> In every election since 2010, final first-round polls overstated
-            the PT candidate's margin over the runner-up (by 13, 15, 5, 2 and 4 points in 2010, 2014, 2018, 2022 and 2026),
-            yet runoff polls were close to unbiased (+0.3, 0.0, −4.9 and +0.2 in 2010-2022; the 2018 miss favoured Bolsonaro).
-            First-round misses come largely from late switching between candidates, which a two-way runoff does not have.
-            What does persist is a pollster's miss <i>relative to its peers</i>: about a third of it reappears in the runoff
-            (28 pollster pairs). Correcting each pollster for that moves the 2026 average by only a few hundredths of a point,
-            so the headline uses it but it changes nothing visible. The stress test shows what happens if the full first-round
-            miss repeated anyway.</p>
-            <p><b>Backtest.</b> The same average, rebuilt for the 2010, 2014, 2018 and 2022 runoffs as of five days before
-            each election, called every winner and missed the PT candidate's share by −0.5, −0.9, −1.0 and +1.5 points
-            (root-mean-square 1.0). Four races is a small test.</p>
-            <div class="scroll"><table class="t" id="btTbl"></table></div>
-            <p><b>Forecast.</b> 200,000 simulations of Lula's share: the average plus a shared polling error (fat-tailed, standard
-            deviation 2 points of share, about the upper 90% bound of what four backtested runoffs allow, so deliberately cautious) plus a little drift.
-            </p>
-            <p class="sub">Code and data: <code>brpolls/</code> in this repository.</p>
+            <details open><summary>Data</summary>
+                <p>Every national poll of Lula vs Flávio with fieldwork from 14 Aug 2026, checked against the pollster's own release or a
+                    major outlet and matched to its TSE registration number. Seeded from Wikipedia; polls Wikipedia lacks were found
+                    through the TSE registry. Two polls remain unconfirmed (you can exclude them above).</p></details>
+            <details><summary>Average</summary>
+                <p>Each poll's weight = pollster rating × √(sample size, capped at 5,000) × recency (halves every <i>half-life</i> days)
+                    × a penalty for pollsters publishing many polls close together. Pollster house effects are estimated jointly with the
+                    trend and removed; they are measured against the consensus, not the truth, so a miss shared by all pollsters is
+                    invisible to the average. The quantity is Lula's share of the two-candidate vote from total-vote figures, so
+                    undecided voters drop out.</p></details>
+            <details><summary>Pollster ratings</summary>
+                <p>Final-three-weeks polls from 2010–2026 presidential races and 2014/2018/2022/2026 governor races, scored on the error of
+                    the margin between the top two finishers against official TSE results. Presidential races count fully, the eight
+                    largest states 0.8, the rest 0.4. Ratings are shrunk toward the average; pollsters with a short record are unrated.
+                    Ibope is treated as Ipec and FSB as Nexus.</p>
+                <p id="robRatings" class="sub"></p></details>
+            <details><summary>Does the first-round miss carry over?</summary>
+                <p>In every election since 2010 final first-round polls overstated the PT candidate's margin (by 13, 15, 5, 2 and 4 points
+                    in 2010, 2014, 2018, 2022 and 2026), yet runoff polls were close to unbiased (+0.3, 0.0, −4.9 and +0.2 in 2010–2022).
+                    First-round misses come largely from late switching between candidates, which a two-way runoff lacks. About a third of
+                    a pollster's miss <i>relative to its peers</i> reappears in the runoff, which moves the 2026 average by only a few
+                    hundredths of a point. Use “Assume polls are off by” above to stress-test a repeat of the full miss (−1.7 pts).</p>
+                <p id="robHouse" class="sub"></p></details>
+            <details><summary>Forecast and backtest</summary>
+                <p>Lula's share on election day = the average + a shared, fat-tailed polling error (Student t, 4 degrees of freedom,
+                    standard deviation 2 points by default) + drift for the days left + the average's own noise. The browser uses a
+                    closed-form version of the published 200,000-draw simulation, so it can differ from it by about a point of probability.</p>
+                <p>The same average, rebuilt for past runoffs five days out, called all four winners:</p>
+                <div class="scroll"><table class="t" id="btTbl"></table></div></details>
+            <p class="sub" style="margin-top:10px">Code and data: <code>brpolls/</code> in this site's repository.</p>
         </div>
     </div>
 </div>
 <div id="footer"></div>
-<script>
-const pct = x => x.toFixed(1) + "%";
-const sel = id => document.getElementById(id);
-function bar(el, l, f) {
-    sel(el).innerHTML = `<div style="width:${l}%;background:#c0392b">${pct(l)}</div><div style="width:${f}%;background:#1f5fa8">${pct(f)}</div>`;
-}
-function chart(avg) {
-    const W = 760, H = 300, m = {l: 38, r: 10, t: 10, b: 24};
-    const days = avg.series.map(s => new Date(s.date).getTime());
-    const t0 = new Date("2026-08-14").getTime(), t1 = new Date(avg.as_of).getTime();
-    const x = t => m.l + (t - t0) / (t1 - t0) * (W - m.l - m.r);
-    const lo = 42, hi = 56;
-    const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
-    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Poll trend">`;
-    for (let v = lo; v <= hi; v += 2) {
-        s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 50 ? '#888' : '#eee'}"/>` +
-             `<text x="${m.l - 4}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
-    }
-    for (const d of ["2026-08-15", "2026-09-01", "2026-09-15", "2026-10-04", "2026-10-20"]) {
-        const t = new Date(d).getTime();
-        s += `<text x="${x(t)}" y="${H - 6}" text-anchor="middle">${d.slice(5)}</text>`;
-    }
-    const fr = new Date("2026-10-04").getTime();
-    s += `<line x1="${x(fr)}" x2="${x(fr)}" y1="${m.t}" y2="${H - m.b}" stroke="#bbb" stroke-dasharray="3 3"/>` +
-         `<text x="${x(fr) + 3}" y="${m.t + 9}">1st round</text>`;
-    for (const p of avg.polls) {
-        const t = (new Date(p.start).getTime() + new Date(p.end).getTime()) / 2;
-        s += `<circle cx="${x(t)}" cy="${y(p.lula_two_party)}" r="3" fill="#c0392b" fill-opacity=".28"><title>${p.pollster} ${p.start}–${p.end}: Lula ${p.lula} Flávio ${p.flavio}</title></circle>`;
-    }
-    s += `<polyline fill="none" stroke="#c0392b" stroke-width="2.2" points="` +
-         avg.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/></svg>`;
-    sel("chart").innerHTML = s;
-}
-function pchart(hist) {
-    const W = 760, H = 150, m = {l: 38, r: 10, t: 8, b: 20};
-    const pts = hist.series;
-    const t0 = new Date(pts[0].date).getTime(), t1 = new Date(pts[pts.length - 1].date).getTime();
-    const x = t => m.l + (t - t0) / (t1 - t0) * (W - m.l - m.r);
-    const y = v => m.t + (1 - v) * (H - m.t - m.b);
-    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Win probability over time">`;
-    for (const v of [0, 0.25, 0.5, 0.75, 1]) {
-        s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0.5 ? '#888' : '#eee'}"/>` +
-             `<text x="${m.l - 4}" y="${y(v) + 3}" text-anchor="end">${v * 100}%</text>`;
-    }
-    for (const d of [pts[0].date, "2026-09-15", "2026-10-04", pts[pts.length - 1].date]) {
-        s += `<text x="${x(new Date(d).getTime())}" y="${H - 5}" text-anchor="middle">${d.slice(5)}</text>`;
-    }
-    const line = k => pts.map(p => `${x(new Date(p.date).getTime())},${y(k(p))}`).join(" ");
-    s += `<polyline fill="none" stroke="#1f5fa8" stroke-width="2" points="${line(p => 1 - p.p_lula)}"/>`;
-    s += `<polyline fill="none" stroke="#c0392b" stroke-width="2" points="${line(p => p.p_lula)}"/></svg>`;
-    sel("pChart").innerHTML = s + `<p class="sub">Chance of winning as it would have been estimated each day (red Lula, blue Flávio).</p>`;
-}
-fetch("data/forecast_history.json").then(r => r.json()).then(pchart).catch(() => {});
-fetch("data/ratings_sensitivity.json").then(r => r.json()).then(d => {
-    sel("robRatings").innerHTML = "<b>Ratings.</b> " + d.summary;
-}).catch(() => {});
-fetch("data/house_diagnostics.json").then(r => r.json()).then(d => {
-    sel("robHouse").innerHTML = "<b>House effects.</b> " + d.summary;
-}).catch(() => {});
-Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.json"].map(u => fetch(u).then(r => r.json())))
-.then(([avg, fc, rat]) => {
-    const c = avg.current;
-    sel("asof").textContent = `Polls through ${avg.as_of}. Runoff on 25 October 2026.`;
-    sel("avgL").textContent = pct(c.lula); sel("avgF").textContent = pct(c.flavio);
-    sel("avgNote").textContent = `Average uncertainty ±${(1.96 * c.se).toFixed(1)} points (excludes any shared polling error); ${avg.polls.length} polls.`;
-    bar("avgBar", c.lula, c.flavio);
-    sel("pL").textContent = pct(100 * fc.base.p_lula); sel("pF").textContent = pct(100 * fc.base.p_flavio);
-    bar("pBar", 100 * fc.base.p_lula, 100 * fc.base.p_flavio);
-    sel("scen").textContent = `Shared polling error assumed: ${fc.inputs.shared_error_sd} points of Lula's share. ` +
-        `Stress test: if the full first-round polling miss repeated (${fc.stress.shift_pts} points), Lula's chance would be ` +
-        `${pct(100 * fc.stress.p_lula)}. Runoff polls have not repeated first-round misses in past elections.`;
-    chart(avg);
-    let h = `<tr><th>Pollster</th><th>Polls</th><th>Lean (Lula pts)</th><th>Grade</th><th>Plus-minus</th><th>Past polls scored</th></tr>`;
-    for (const [k, v] of Object.entries(avg.house_effects)) {
-        const r = rat[k];
-        h += `<tr><td>${k}</td><td>${v.polls}</td><td>${v.effect > 0 ? "+" : ""}${v.effect.toFixed(1)}</td>` +
-             `<td>${r ? r.grade.split(" ")[0] : "–"}</td><td>${r ? r.plus_minus.toFixed(2) : "–"}</td><td>${r ? r.polls : 0}</td></tr>`;
-    }
-    sel("houseTbl").innerHTML = h;
-    fetch("data/cycle2026_first_round.json").then(r => r.json()).then(cy => {
-        let t = `<tr><th>Pollster</th><th>Polls</th><th>Margin error</th><th>Absolute error</th></tr>`;
-        for (const q of cy.pollsters) {
-            t += `<tr><td>${q.pollster}</td><td>${q.polls}</td><td>${q.mean_margin_error > 0 ? "+" : ""}${q.mean_margin_error.toFixed(1)}</td><td>${q.mean_abs_error.toFixed(1)}</td></tr>`;
-        }
-        sel("cycTbl").innerHTML = t;
-    });
-    let p = `<tr><th>Pollster</th><th>Field dates</th><th>n</th><th>Lula</th><th>Flávio</th><th>Weight</th><th>Check</th></tr>`;
-    for (const q of [...avg.polls].sort((a, b) => b.end.localeCompare(a.end))) {
-        p += `<tr><td>${q.pollster}</td><td>${q.start.slice(5)} – ${q.end.slice(5)}</td><td>${q.n ?? ""}</td><td>${q.lula}</td><td>${q.flavio}</td>` +
-             `<td>${(100 * q.weight).toFixed(1)}%</td><td>${q.url ? `<a href="${q.url}">${q.verification.replace("verified-", "")}</a>` : q.verification}</td></tr>`;
-    }
-    sel("pollTbl").innerHTML = p;
-    fetch("data/backtest.json").then(r => r.json()).then(bt => {
-        let t = `<tr><th>Runoff</th><th>Average (PT share)</th><th>Actual</th><th>Error</th><th>Forecast P(PT win)</th></tr>`;
-        for (const r of bt.races) {
-            t += `<tr><td>${r.year} ${r.pt_candidate} vs ${r.opponent}</td><td>${r.average_pt_share.toFixed(1)}</td>` +
-                 `<td>${r.actual_pt_share.toFixed(1)}</td><td>${r.error > 0 ? "+" : ""}${r.error.toFixed(1)}</td>` +
-                 `<td>${pct(100 * r.p_pt_win)} (${r.pt_won ? "won" : "lost"})</td></tr>`;
-        }
-        sel("btTbl").innerHTML = t;
-    });
-}).catch(e => { sel("asof").textContent = "Could not load data: " + e; });
-</script>
+<script src="app.js"></script>
 </body>
 </html>

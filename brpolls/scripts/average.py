@@ -90,6 +90,7 @@ def load_r1(ratings):
         name = canon(r["pollster"])
         n = min(int(float(r["sample_size"])) if r["sample_size"] else 1500, 5000)
         polls.append({"poll_id": pid, "pollster": name, "series": "r1", "t": a + (b - a) / 2,
+                      "start": r["field_start"], "end": r["field_end"], "n": n,
                       "y": 100 * o["Lula"] / (o["Lula"] + o["Flávio"]),
                       "rating": ratings.get(name, 1.0), "w_size": math.sqrt(n / 2000)})
     for p in polls:
@@ -198,16 +199,22 @@ def main():
                               "polls": sum(1 for p in polls if p["pollster"] == k),
                               "first_round_polls": sum(1 for p in r1 if p["pollster"] == k)}
                           for k, v in sorted(house.items(), key=lambda kv: kv[1])},
-        "polls": [{"id": p["poll_id"], "pollster": p["pollster"],
-                   "start": p["field_start"], "end": p["field_end"], "n": p["sample_size"],
+        "polls": [{"id": p["poll_id"], "pollster": p["pollster"], "sponsor": p.get("sponsor"),
+                   "start": p["field_start"], "end": p["field_end"], "release": p.get("release_date"),
+                   "n": p["sample_size"], "moe": p.get("margin_of_error"),
+                   "tse": p.get("tse_registration"), "rating": p["rating"],
                    "lula": p["lula_total"], "flavio": p["flavio_total"],
+                   "blank": p.get("blank_null_total"), "undecided": p.get("undecided_total"),
+                   "lula_valid": p.get("lula_valid"), "flavio_valid": p.get("flavio_valid"),
                    "lula_two_party": round(p["y"], 2),
                    "adjusted": round(p["y"] - house[p["pollster"]], 2),
                    "weight": round(ws[i] / sum(ws), 4), "mode": p["mode"],
                    "phase": p["phase"], "verification": p["verification"],
                    "url": p["primary_url"]}
                   for i, p in enumerate(polls)],
-        "params": {"half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
+        "first_round_polls": [{"pollster": p["pollster"], "start": p["start"], "end": p["end"],
+                               "n": p["n"], "y": round(p["y"], 3), "rating": p["rating"]} for p in r1],
+        "params": {"start": START.isoformat(), "half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
                    "shrink_k": SHRINK_K, "ratings_used": bool(ratings),
                    "first_round_polls_in_house_effects": len(r1)},
     }
