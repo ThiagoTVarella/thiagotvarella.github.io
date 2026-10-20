@@ -30,6 +30,7 @@ R1_END = dt.date(2026, 10, 3)   # last day of first-round fieldwork
 HALF_LIFE = 8.0        # days; weight halves every 8 days
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
+R1_WEIGHT = 0.5        # first-round polls count half when estimating house effects
 PRIOR_POLLS = 2.0      # first-round bias shrinks as if each pollster had 2 extra polls with no miss
 START = dt.date(2026, 8, 14)
 
@@ -116,8 +117,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of", default="2026-10-20")
     ap.add_argument("--ratings")
-    ap.add_argument("--use-r1", action="store_true",
-                    help="also use first-round polls to estimate house effects")
+    ap.add_argument("--r1-weight", type=float, default=R1_WEIGHT,
+                    help="weight of first-round polls when estimating house effects (0 = runoff only)")
     args = ap.parse_args()
     as_of = d(args.as_of)
     ratings = {}
@@ -126,24 +127,29 @@ def main():
     polls = load(as_of, ratings)
     for p in polls:
         p["series"] = "runoff"
-    # First-round polls are optional (--use-r1): house effects shifted after the first round,
-    # and using them overcorrected some pollsters' runoff polls (e.g. Quaest, Real Time).
-    r1_all = load_r1(ratings)          # always exported so the page can switch them on
-    r1 = r1_all if args.use_r1 else []
+    # First-round polls inform house effects at reduced weight: leans shifted after the first
+    # round, and at full weight they overcorrected some pollsters (e.g. Quaest, Real Time).
+    r1_all = load_r1(ratings)          # always exported so the page can change the weight
+    r1 = r1_all if args.r1_weight > 0 else []
+    for p in r1:
+        p["hw"] = args.r1_weight
+    for p in polls:
+        p["hw"] = 1.0
     everything = polls + r1
 
     house = defaultdict(float)
     for _ in range(40):
-        resid = defaultdict(list)
+        rsum, rwt = defaultdict(float), defaultdict(float)
         for p in everything:
             same = [q for q in everything if q["series"] == p["series"] and q is not p]
             tr, _ = trend_at(p["t"], same, house)
             if tr is not None:
-                resid[p["pollster"]].append(p["y"] - tr)
-        new = {k: sum(v) / (len(v) + SHRINK_K) for k, v in resid.items()}
+                rsum[p["pollster"]] += p["hw"] * (p["y"] - tr)
+                rwt[p["pollster"]] += p["hw"]
+        new = {k: rsum[k] / (rwt[k] + SHRINK_K) for k in rsum}
         # centre on the poll-weighted mean so the average stays anchored to the consensus
-        total = sum(len(v) for v in resid.values())
-        mean = sum(new[k] * len(resid[k]) for k in new) / total
+        total = sum(rwt.values())
+        mean = sum(new[k] * rwt[k] for k in new) / total
         house = defaultdict(float, {k: v - mean for k, v in new.items()})
 
     # First-round-informed estimate. History (bias_persistence.json) says the industry-wide
@@ -219,7 +225,7 @@ def main():
                   for i, p in enumerate(polls)],
         "first_round_polls": [{"pollster": p["pollster"], "start": p["start"], "end": p["end"],
                                "n": p["n"], "y": round(p["y"], 3), "rating": p["rating"]} for p in r1_all],
-        "params": {"start": START.isoformat(), "use_r1": args.use_r1, "half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
+        "params": {"start": START.isoformat(), "r1_weight": args.r1_weight, "half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
                    "shrink_k": SHRINK_K, "ratings_used": bool(ratings),
                    "first_round_polls_in_house_effects": len(r1)},
     }
