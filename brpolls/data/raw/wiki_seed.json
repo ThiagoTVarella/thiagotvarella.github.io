@@ -1,0 +1,1504 @@
+[
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "PoderData",
+  "field_start": "2026-10-16",
+  "field_end": "2026-10-18",
+  "lula": 46.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 5.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/pesquisa-poderdata-aya-leia-os-resultados-de-lula-e-flavio-no-2o-turno-19out2026/",
+    "title": "PoderData/Aya poll: read the results for Lula and Flávio in the second round",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "16–18 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Nexus",
+  "field_start": "2026-10-16",
+  "field_end": "2026-10-18",
+  "lula": 45.9,
+  "flavio": 46.5,
+  "blank_null_undecided": 7.6,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://www.nexus.fsb.com.br/estudos-divulgados/pesquisa-btg-nexus-de-intencao-de-votos-para-presidente-do-brasil-19-de-outubro-de-2026/",
+    "title": "BTG/Nexus poll on voting intentions for the Brazilian presidential election – October 19, 2026",
+    "site": "NEXUS"
+   }
+  ],
+  "raw_dates": "16–18 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-18",
+  "lula": 47.6,
+  "flavio": 49.8,
+  "blank_null_undecided": 2.6,
+  "moe": "±1 pp",
+  "sample_size": 4998.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/atlas-flavio-tem-511-dos-votos-validos-no-2o-turno-lula-489/",
+    "title": "Atlas: Flávio tem 51,1% dos votos válidos no 2º turno; Lula, 48,9%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "13–18 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "DataTrends",
+  "field_start": "2026-10-15",
+  "field_end": "2026-10-17",
+  "lula": 46.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 5.0,
+  "moe": "±2.19 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://robsonpiresxerife.com/pesquisa-datatrends-flavio-bolsonaro-tem-515-dos-votos-validos-contra-485-de-lula/",
+    "title": "PESQUISA DATATRENDS: Flávio Bolsonaro tem 51,5% dos votos válidos, contra 48,5% de Lula",
+    "site": "robsonpiresxerife.com"
+   }
+  ],
+  "raw_dates": "15–17 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Vox Brasil",
+  "field_start": "2026-10-15",
+  "field_end": "2026-10-17",
+  "lula": 46.4,
+  "flavio": 44.6,
+  "blank_null_undecided": 8.9,
+  "moe": "±2.15 pp",
+  "sample_size": 2100.0,
+  "refs": [
+   {
+    "url": "https://www.metropoles.com/brasil/vox-brasil-com-empate-tecnico-lula-tem-464-e-flavio-bolsonaro-446",
+    "title": "Vox Brasil: com empate técnico, Lula tem 46,4% e Flávio Bolsonaro 44,6%",
+    "site": "Metrópoles"
+   }
+  ],
+  "raw_dates": "15–17 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Gerp",
+  "field_start": "2026-10-14",
+  "field_end": "2026-10-16",
+  "lula": 45.0,
+  "flavio": 50.0,
+  "blank_null_undecided": 5.0,
+  "moe": "±2 pp",
+  "sample_size": 2400.0,
+  "refs": [
+   {
+    "url": "https://tmc.com.br/politica/pesquisa-gerp-flavio-bolsonaro-lidera-com-50-contra-45-de-lula/",
+    "title": "Pesquisa Gerp: Flávio Bolsonaro lidera com 50% contra 45% de Lula",
+    "site": "TMC"
+   }
+  ],
+  "raw_dates": "14–16 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Verita",
+  "field_start": "2026-10-12",
+  "field_end": "2026-10-16",
+  "lula": 47.7,
+  "flavio": 49.7,
+  "blank_null_undecided": 2.6,
+  "moe": "±1 pp",
+  "sample_size": 15554.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/verita-flavio-tem-511-dos-votos-validos-no-2o-turno-lula-489/?utm_source=whatsapp&utm_medium=-link",
+    "title": "Veritá: Flávio has 51.1% of the valid votes in the second round; Lula, 48.9%.",
+    "site": null
+   }
+  ],
+  "raw_dates": "12–16 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Futura",
+  "field_start": "2026-10-14",
+  "field_end": "2026-10-15",
+  "lula": 47.5,
+  "flavio": 49.0,
+  "blank_null_undecided": 3.6,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-508-dos-votos-validos-no-2o-turno-lula-492/",
+    "title": "Futura: Flávio tem 50,8% dos votos válidos no 2º turno; Lula, 49,2%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "14–15 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Ipespe",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-15",
+  "lula": 46.0,
+  "flavio": 48.0,
+  "blank_null_undecided": 6.0,
+  "moe": "±2.6 pp",
+  "sample_size": 1500.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/ipespe-abrapel-flavio-tem-512-dos-votos-validos-no-2o-turno-lula-488/?utm_source=whatsapp&utm_medium=-link",
+    "title": "Ipespe/Abrapel: Flávio tem 51,2% dos votos válidos no 2º turno; Lula, 48,8%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "13–15 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "MDA",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-15",
+  "lula": 45.9,
+  "flavio": 46.8,
+  "blank_null_undecided": 7.3,
+  "moe": "±2.2 pp",
+  "sample_size": 2014.0,
+  "refs": [
+   {
+    "url": "https://noticias.uol.com.br/eleicoes/2026/10/16/cntmda-pesquisa-presidencial-2-turno.ghtm",
+    "title": "CNT/MDA: Flávio aparece com 50,5%, e Lula tem 49,5% em votos válidos",
+    "site": "UOL"
+   }
+  ],
+  "raw_dates": "13–15 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "PoderData",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-15",
+  "lula": 47.0,
+  "flavio": 47.0,
+  "blank_null_undecided": 6.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://noticias.uol.com.br/eleicoes/2026/10/16/poderdata-lula-flavio-bolsonaro-presidencia-republica-segundo-turno.ghtm",
+    "title": "Flávio e Lula empatam em 50% dos votos válidos, diz pesquisa PoderData",
+    "site": "UOL"
+   }
+  ],
+  "raw_dates": "13–15 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Datafolha",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-15",
+  "lula": 45.0,
+  "flavio": 47.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2 pp",
+  "sample_size": 2520.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/15/datafolha-presidente-segundo-turno-15-outubro.ghtml?utm_source=twitter&utm_medium=social&utm_campaign=g1",
+    "title": "Datafolha poll, second round: Flávio Bolsonaro, 47%; Lula, 45%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "13–15 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Indexa",
+  "field_start": "2026-10-13",
+  "field_end": "2026-10-14",
+  "lula": 42.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 4.0,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://viva.com.br/politica/indexabroadcast-no-2-turno-flavio-bolsonaro-tem-44-ante-42-de-lula.html",
+    "title": "Indexa/Broadcast: no 2º turno, Flávio Bolsonaro tem 44% ante 42% de Lula",
+    "site": "VIVA"
+   }
+  ],
+  "raw_dates": "13–14 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Palver",
+  "field_start": "2026-10-10",
+  "field_end": "2026-10-13",
+  "lula": 49.0,
+  "flavio": 50.0,
+  "blank_null_undecided": 1.0,
+  "moe": "±2.3 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://viva.com.br/politica/palver-flavio-bolsonaro-tem-50-e-lula-49-em-empate-tecnico-no-2-turno.html",
+    "title": "Palver: Flávio Bolsonaro tem 50% e Lula, 49% em empate técnico no 2º turno",
+    "site": "VIVA"
+   }
+  ],
+  "raw_dates": "10–13 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Quaest",
+  "field_start": "2026-10-10",
+  "field_end": "2026-10-13",
+  "lula": 44.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 10.0,
+  "moe": "±2 pp",
+  "sample_size": 2154.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/14/quaest-presidente-14-outubro.ghtml",
+    "title": "Quaest aponta empate técnico entre Flávio Bolsonaro e Lula",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "10–13 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "PoderData",
+  "field_start": "2026-10-10",
+  "field_end": "2026-10-12",
+  "lula": 46.0,
+  "flavio": 48.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/poderdata-aya-flavio-tem-51-dos-votos-validos-no-2o-turno-lula-49/",
+    "title": "PoderData/AYA: Flávio tem 51% dos votos válidos no 2º turno; Lula, 49%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "10–12 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Nexus",
+  "field_start": "2026-10-10",
+  "field_end": "2026-10-12",
+  "lula": 45.0,
+  "flavio": 48.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://noticias.uol.com.br/eleicoes/2026/10/13/btgnexus-pesquisa-presidencial-segundo-turno.ghtm",
+    "title": "Flávio tem 52% dos votos válidos, e Lula, 48%, diz pesquisa BTG/Nexus",
+    "site": "UOL"
+   }
+  ],
+  "raw_dates": "10–12 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Gerp",
+  "field_start": "2026-10-08",
+  "field_end": "2026-10-12",
+  "lula": 44.0,
+  "flavio": 53.0,
+  "blank_null_undecided": 3.0,
+  "moe": "±2 pp",
+  "sample_size": 2400.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/gerp-flavio-tem-55-dos-votos-validos-no-2o-turno-lula-45/?utm_source=social&utm_medium=twitter-canal&utm_campaign=politica-cnn-brasil&utm_content=link#goog_rewarded",
+    "title": "Gerp: Flávio tem 55% dos votos válidos no 2º turno; Lula, 45%",
+    "site": "CNN Brazil"
+   }
+  ],
+  "raw_dates": "8–12 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Futura",
+  "field_start": "2026-10-07",
+  "field_end": "2026-10-10",
+  "lula": 46.6,
+  "flavio": 50.0,
+  "blank_null_undecided": 3.4,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-518-dos-votos-validos-no-2o-turno-lula-482/",
+    "title": "Futura: Flávio tem 51,8% dos votos válidos no 2º turno; Lula, 48,2%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "7–10 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Ipespe",
+  "field_start": "2026-10-06",
+  "field_end": "2026-10-08",
+  "lula": 44.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±2.6 pp",
+  "sample_size": 1500.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/ipespe-flavio-tem-527-dos-votos-validos-no-2o-turno-lula-473/",
+    "title": "Ipespe: Flávio tem 52,7% dos votos válidos no 2º turno; Lula, 47,3%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "6–8 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-10-03",
+  "field_end": "2026-10-08",
+  "lula": 45.7,
+  "flavio": 51.1,
+  "blank_null_undecided": 3.2,
+  "moe": "±1 pp",
+  "sample_size": 5026.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/atlas-flavio-tem-528-dos-votos-validos-no-2o-turno-lula-472/",
+    "title": "Atlas: Flávio tem 52,8% dos votos válidos no 2º turno; Lula, 47,2%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "3–8 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Datafolha",
+  "field_start": "2026-10-06",
+  "field_end": "2026-10-07",
+  "lula": 45.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 6.0,
+  "moe": "±2 pp",
+  "sample_size": 2520.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/08/datafolha-presidente-8-outubro.ghtml",
+    "title": "Datafolha: Flávio Bolsonaro, 49%; Lula, 45%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "6–7 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "PoderData",
+  "field_start": "2026-10-05",
+  "field_end": "2026-10-07",
+  "lula": 44.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/flavio-tem-53-contra-47-de-lula-no-2o-turno-diz-pesquisa-poderdata-aya/",
+    "title": "Flávio tem 53% contra 47% de Lula no 2º turno, diz pesquisa PoderData/Aya",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "5–7 Oct"
+ },
+ {
+  "wiki_section": "October (after 1st round)",
+  "pollster": "Vox Brasil",
+  "field_start": "2026-10-05",
+  "field_end": "2026-10-07",
+  "lula": 44.2,
+  "flavio": 42.7,
+  "blank_null_undecided": 13.1,
+  "moe": "±2.15 pp",
+  "sample_size": 2100.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/vox-lula-tem-442-das-intencoes-de-voto-no-2o-turno-flavio-427/",
+    "title": "Vox: Lula tem 44,2% das intenções de voto no 2º turno; Flávio, 42,7%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "5–7 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-10-03",
+  "field_end": "2026-10-03",
+  "lula": 47.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2 pp",
+  "sample_size": 4006.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/03/datafolha-presidente-3-outubro.ghtml",
+    "title": "Datafolha: Lula tem 45% e Flávio Bolsonaro 42% dos votos válidos",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "3 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-10-02",
+  "field_end": "2026-10-03",
+  "lula": 42.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 14.0,
+  "moe": "±2 pp",
+  "sample_size": 3702.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/03/quaest-2o-turno-flavio-bolsonaro-44percent-lula-42percent.ghtml",
+    "title": "Quaest, 2º turno: Flávio Bolsonaro, 44%; Lula 42%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "2–3 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-10-02",
+  "field_end": "2026-10-03",
+  "lula": 45.1,
+  "flavio": 48.0,
+  "blank_null_undecided": 6.9,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://docs.google.com/viewerng/viewer?url=https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2026/10/Relatorio_Tracking_Nacional_1_Turno_Final_Votos_Validos-3-1.pdf",
+    "title": "Relatorio_Tracking_Nacional_1_Turno_Final_Votos_Validos-3-1.pdf",
+    "site": "docs.google.com"
+   }
+  ],
+  "raw_dates": "2–3 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Palver",
+  "field_start": "2026-09-30",
+  "field_end": "2026-10-03",
+  "lula": 44.0,
+  "flavio": 49.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±2.4 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://exame.com/brasil/pesquisa-palver-para-presidente-flavio-bolsonaro-tem-47-e-lula-43-no-1o-turno/",
+    "title": "Pesquisa para presidente Palver: Flávio Bolsonaro tem 47% e Lula, 43%, no 1º turno",
+    "site": "Exame"
+   }
+  ],
+  "raw_dates": "30 Sep–3 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-09-30",
+  "field_end": "2026-10-02",
+  "lula": 46.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±1.5 pp",
+  "sample_size": 4000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/lula-e-flavio-tem-46-cada-um-no-2o-turno-diz-poderdata-aya/",
+    "title": "Lula e Flávio têm 46% cada um no 2º turno, diz PoderData/Aya",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "30 Sep–2 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "MDA",
+  "field_start": "2026-09-29",
+  "field_end": "2026-10-02",
+  "lula": 47.0,
+  "flavio": 43.0,
+  "blank_null_undecided": 10.0,
+  "moe": "±2.2 pp",
+  "sample_size": 2007.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/cnt-mda-lula-tem-478-dos-votos-validos-no-1o-turno-flavio-421/",
+    "title": "CNT/MDA: Lula tem 47,8% dos votos válidos no 1º turno; Flávio, 42,1%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "29 Sep–2 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-09-27",
+  "field_end": "2026-10-02",
+  "lula": 47.6,
+  "flavio": 47.4,
+  "blank_null_undecided": 5.0,
+  "moe": "±1 pp",
+  "sample_size": 4945.0,
+  "refs": [
+   {
+    "url": "https://docs.google.com/viewerng/viewer?url=https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2026/10/Pesquisa-Atlas_Bloomberg-Nacional-261003.pdf",
+    "title": "Pesquisa-Atlas_Bloomberg-Nacional-261003.pdf",
+    "site": "docs.google.com"
+   }
+  ],
+  "raw_dates": "27 Sep–2 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Vox Brasil",
+  "field_start": "2026-09-29",
+  "field_end": "2026-10-01",
+  "lula": 45.2,
+  "flavio": 48.2,
+  "blank_null_undecided": 6.6,
+  "moe": "±2.15 pp",
+  "sample_size": 2100.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/vox-flavio-registra-482-no-2o-turno-lula-452/",
+    "title": "Vox: Flávio registra 48,2% no 2º turno; Lula, 45,2%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "29 Sep–1 Oct"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-09-28",
+  "field_end": "2026-09-30",
+  "lula": 48.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±2 pp",
+  "sample_size": 2506.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/10/01/datafolha-presidente-1-outubro.ghtml",
+    "title": "Datafolha: Lula, 42%; Flávio Bolsonaro, 38%; Cury, 4%; Caiado, 3%; Renan, 3%; Zema, 1%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "28–30 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Real Time",
+  "field_start": "2026-09-26",
+  "field_end": "2026-09-30",
+  "lula": 45.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-tem-46-no-2o-turno-lula-45/",
+    "title": "Real Time Big Data: Flávio tem 46% no 2º turno; Lula, 45%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "26–30 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Indexa",
+  "field_start": "2026-09-27",
+  "field_end": "2026-09-29",
+  "lula": 43.0,
+  "flavio": 42.0,
+  "blank_null_undecided": 15.0,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/indexa-broadcast-no-2o-turno-lula-tem-43-flavio-42/",
+    "title": "Indexa/Broadcast: No 2º turno, Lula tem 43%; Flávio, 42%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "27–29 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-09-25",
+  "field_end": "2026-09-29",
+  "lula": 43.5,
+  "flavio": 49.0,
+  "blank_null_undecided": 7.5,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-49-das-intencoes-de-voto-no-2o-turno-lula-435/",
+    "title": "Futura: Flávio tem 49% das intenções de voto no 2º turno; Lula, 43,5%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "25–29 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Vox Brasil",
+  "field_start": "2026-09-26",
+  "field_end": "2026-09-28",
+  "lula": 44.7,
+  "flavio": 45.2,
+  "blank_null_undecided": 10.1,
+  "moe": "±2.15 pp",
+  "sample_size": 2100.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/vox-flavio-tem-452-das-intencoes-de-voto-no-2o-turno-lula-447/",
+    "title": "Vox: Flávio tem 45,2% das intenções de voto no 2º turno; Lula, 44,7%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "26–28 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Ideia",
+  "field_start": "2026-09-25",
+  "field_end": "2026-09-28",
+  "lula": 48.5,
+  "flavio": 48.0,
+  "blank_null_undecided": 3.6,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [],
+  "raw_dates": "25–28 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-09-23",
+  "field_end": "2026-09-28",
+  "lula": 47.6,
+  "flavio": 47.7,
+  "blank_null_undecided": 4.8,
+  "moe": "±1 pp",
+  "sample_size": 5005.0,
+  "refs": [
+   {
+    "url": "https://noticias.uol.com.br/eleicoes/2026/09/29/atlasbloomberg-lula-e-flavio-tem-empate-tecnico-no-2-turno.ghtm",
+    "title": "Pesquisa Atlas: Lula tem 45,3%, e Flávio, 42,2% no 1° turno; no 2°, empatam",
+    "site": "UOL"
+   }
+  ],
+  "raw_dates": "23–28 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-09-25",
+  "field_end": "2026-09-27",
+  "lula": 46.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2000.0,
+  "refs": [],
+  "raw_dates": "25–27 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-09-24",
+  "field_end": "2026-09-27",
+  "lula": 42.0,
+  "flavio": 42.0,
+  "blank_null_undecided": 16.0,
+  "moe": "±2 pp",
+  "sample_size": 2004.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/09/28/quaest-presidente-1o-turno-28-setembro.ghtml",
+    "title": "Quaest, 1º turno:Lula, 39%; Flávio Bolsonaro, 34%; Caiado, 4%; Cury, 4%; Renan, 3%; Zema, 1%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "24–27 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Palver",
+  "field_start": "2026-09-24",
+  "field_end": "2026-09-27",
+  "lula": 45.0,
+  "flavio": 47.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2.4 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/palver-flavio-tem-47-das-intencoes-de-voto-no-2o-turno-lula-45/",
+    "title": "Palver: Flávio tem 47% das intenções de voto no 2º turno; Lula, 45%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "24–27 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-09-22",
+  "field_end": "2026-09-24",
+  "lula": 47.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/datafolha-lula-tem-47-no-2o-turno-flavio-45/",
+    "title": "Datafolha: Lula tem 47% no 2º turno; Flávio, 45%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "22–24 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-09-18",
+  "field_end": "2026-09-24",
+  "lula": 43.7,
+  "flavio": 49.4,
+  "blank_null_undecided": 6.9,
+  "moe": "±2.4 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-494-no-2o-turno-lula-437/",
+    "title": "Futura: Flávio tem 49,4% no 2º turno; Lula, 43,7%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "18–24 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-09-20",
+  "field_end": "2026-09-23",
+  "lula": 45.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/em-votos-validos-lula-tem-43-contra-42-de-flavio-no-1o-turno/",
+    "title": "Em votos válidos, Lula tem 43% contra 42% de Flávio no 1º turno",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "20–23 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Palver",
+  "field_start": "2026-09-20",
+  "field_end": "2026-09-23",
+  "lula": 45.0,
+  "flavio": 48.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±3 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/palver-flavio-tem-48-das-intencoes-de-voto-no-2o-turno-lula-45/",
+    "title": "Palver: Flávio tem 48% das intenções de voto no 2º turno; Lula, 45%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "20–23 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Real Time",
+  "field_start": "2026-09-19",
+  "field_end": "2026-09-23",
+  "lula": 44.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 11.0,
+  "moe": "±2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/real-time-big-data-flavio-tem-45-no-2o-turno-lula-44/",
+    "title": "Real Time Big Data: Flávio tem 45% no 2º turno; Lula, 44%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "19–23 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-09-17",
+  "field_end": "2026-09-22",
+  "lula": 47.7,
+  "flavio": 47.4,
+  "blank_null_undecided": 4.9,
+  "moe": "±1 pp",
+  "sample_size": 5015.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/atlas-bloomberg-lula-tem-477-no-2o-turno-flavio-474/",
+    "title": "Atlas/Bloomberg: Lula tem 47,7% no 2º turno; Flávio, 47,4%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "17–22 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-09-18",
+  "field_end": "2026-09-20",
+  "lula": 46.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2 pp",
+  "sample_size": 2006.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/nexus-btg-2o-turno-lula-empata-com-caiado-e-tem-empate-tecnico-com-flavio/",
+    "title": "Nexus/BTG 2º turno: Lula empata com Caiado e tem empate técnico com Flávio",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "18–20 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-09-17",
+  "field_end": "2026-09-20",
+  "lula": 41.0,
+  "flavio": 42.0,
+  "blank_null_undecided": 17.0,
+  "moe": "±2 pp",
+  "sample_size": 2004.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/09/21/quaest-presidente-1o-turno-21-setembro.ghtml",
+    "title": "Quaest, 1º turno: Lula, 37%; Flávio Bolsonaro, 33%; Cury, 6%; Caiado, 4%; Renan, 3%; Zema, 1%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "17–20 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Palver",
+  "field_start": "2026-09-15",
+  "field_end": "2026-09-20",
+  "lula": 43.0,
+  "flavio": 47.0,
+  "blank_null_undecided": 10.0,
+  "moe": "±3 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://www.jota.info/eleicoes/eleicoes-2026/palver-mostra-flavio-bolsonaro-numericamente-a-frente-de-lula-no-1o-turno-em-empate-tecnico",
+    "title": "Palver mostra Flávio Bolsonaro numericamente à frente de Lula no 1º turno, em empate técnico",
+    "site": "JOTA Jornalismo"
+   }
+  ],
+  "raw_dates": "15–20 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-09-15",
+  "field_end": "2026-09-16",
+  "lula": 46.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/09/17/datafolha-segundo-turno-presidente-17-setembro.ghtml",
+    "title": "Datafolha, 2º turno: Lula, 46%; Flávio Bolsonaro, 44%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "15–16 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-09-13",
+  "field_end": "2026-09-16",
+  "lula": 44.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 10.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/poderdata-aya-lula-tem-37-contra-36-de-flavio-no-1o-turno/",
+    "title": "PoderData/Aya: Lula tem 37% contra 36% de Flávio no 1º turno",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "13–16 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-09-11",
+  "field_end": "2026-09-16",
+  "lula": 46.8,
+  "flavio": 47.2,
+  "blank_null_undecided": 6.0,
+  "moe": "±1 pp",
+  "sample_size": 5018.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/flavio-tem-472-no-2o-turno-lula-468-diz-atlas/",
+    "title": "Flávio tem 47,2% no 2º turno; Lula, 46,8%, diz Atlas",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "11–16 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-09-11",
+  "field_end": "2026-09-15",
+  "lula": 43.7,
+  "flavio": 48.1,
+  "blank_null_undecided": 8.2,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-481-no-2o-turno-lula-437/",
+    "title": "Futura: Flávio tem 48,1% no 2º turno; Lula, 43,7%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "11–15 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-09-11",
+  "field_end": "2026-09-13",
+  "lula": 47.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 7.0,
+  "moe": "±2 pp",
+  "sample_size": 2003.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/nexus-btg-lula-empata-com-flavio-e-cury-no-2-turno/",
+    "title": "Nexus/BTG: Lula empata com Flávio e Cury no 2° turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "11–13 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-09-10",
+  "field_end": "2026-09-13",
+  "lula": 40.0,
+  "flavio": 42.0,
+  "blank_null_undecided": 18.0,
+  "moe": "±2 pp",
+  "sample_size": 2004.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poder-eleicoes-2026/flavio-tem-42-contra-40-de-lula-no-2o-turno-diz-quaest/",
+    "title": "Flávio tem 42% contra 40% de Lula no 2º turno, diz Quaest",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "10–13 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Indexa",
+  "field_start": "2026-09-10",
+  "field_end": "2026-09-13",
+  "lula": 43.0,
+  "flavio": 42.0,
+  "blank_null_undecided": 15.0,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.jota.info/eleicoes/eleicoes-2026/lula-recua-no-1o-turno-e-perde-vantagem-sobre-flavio-no-2o-mostra-indexa-broadcast",
+    "title": "Lula recua no 1º turno e perde vantagem sobre Flávio no 2º, mostra Indexa Broadcast",
+    "site": "JOTA Jornalismo"
+   }
+  ],
+  "raw_dates": "10–13 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "MDA",
+  "field_start": "2026-09-09",
+  "field_end": "2026-09-13",
+  "lula": 47.3,
+  "flavio": 40.0,
+  "blank_null_undecided": 12.7,
+  "moe": "±2.2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/cnt-mda-lula-tem-473-e-flavio-40-no-2o-turno/",
+    "title": "CNT/MDA: Lula tem 47,3% e Flávio, 40% no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "9–13 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-09-08",
+  "field_end": "2026-09-10",
+  "lula": 46.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/datafolha-lula-tem-46-no-2o-turno-flavio-44/",
+    "title": "Datafolha: Lula tem 46% no 2º turno; Flávio, 44%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "8–10 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-09-04",
+  "field_end": "2026-09-10",
+  "lula": 45.0,
+  "flavio": 45.4,
+  "blank_null_undecided": 9.6,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-454-contra-45-de-lula-no-2o-turno/",
+    "title": "Futura: Flávio tem 45,4% contra 45% de Lula no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "4–10 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-09-06",
+  "field_end": "2026-09-09",
+  "lula": 45.0,
+  "flavio": 47.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/flavio-tem-47-e-lula-45-no-2o-turno-diz-poderdata-aya/",
+    "title": "Flávio tem 47% e Lula 45% no 2º turno, diz PoderData/Aya",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "6–9 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-09-04",
+  "field_end": "2026-09-09",
+  "lula": 46.2,
+  "flavio": 46.4,
+  "blank_null_undecided": 7.4,
+  "moe": "±1 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/atlasintel-bloomberg-flavio-tem-464-no-2o-turno-lula-462/",
+    "title": "AtlasIntel/Bloomberg: Flávio tem 46,4% no 2º turno; Lula, 46,2%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "4–9 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Palver",
+  "field_start": "2026-09-04",
+  "field_end": "2026-09-07",
+  "lula": 44.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 10.0,
+  "moe": "±3 pp",
+  "sample_size": 5000.0,
+  "refs": [
+   {
+    "url": "https://docs.google.com/viewerng/viewer?url=https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2026/09/Pesquisa-Eleitoral-Palver-Onda-2-1.pdf",
+    "title": "Pesquisa-Eleitoral-Palver-Onda-2-1.pdf",
+    "site": "docs.google.com"
+   }
+  ],
+  "raw_dates": "4–7 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Ideia",
+  "field_start": "2026-09-04",
+  "field_end": "2026-09-07",
+  "lula": 46.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 8.0,
+  "moe": "±2.5 pp",
+  "sample_size": 1500.0,
+  "refs": [],
+  "raw_dates": "4–7 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-09-04",
+  "field_end": "2026-09-07",
+  "lula": 45.0,
+  "flavio": 46.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/nexus-btg-lula-tem-empate-tecnico-com-flavio-caiado-e-cury-no-2o-turno/",
+    "title": "Nexus/BTG: Flávio e Cury ficam numericamente à frente de Lula no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "4–7 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-09-03",
+  "field_end": "2026-09-06",
+  "lula": 41.0,
+  "flavio": 41.0,
+  "blank_null_undecided": 18.0,
+  "moe": "±2 pp",
+  "sample_size": 2004.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/quaest-segundo-turno-setembro/",
+    "title": "Quaest: Lula e Flávio empatam em 41% no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "3–6 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-09-01",
+  "field_end": "2026-09-02",
+  "lula": 46.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 11.0,
+  "moe": "±2 pp",
+  "sample_size": 2002.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/09/03/datafolha-2o-turno-presidente-3-setembro.ghtml",
+    "title": "Datafolha, 2º turno: Lula, 46%; Flávio Bolsonaro, 44%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "1–2 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-08-30",
+  "field_end": "2026-09-02",
+  "lula": 44.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 11.0,
+  "moe": "±1.8 pp",
+  "sample_size": 3000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/flavio-tem-45-e-lula-registra-44-no-2o-turno-diz-poderdata-aya/",
+    "title": "Flávio tem 45% e Lula registra 44% no 2º turno, diz PoderData/Aya",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "30 Aug – 2 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Quaest",
+  "field_start": "2026-08-30",
+  "field_end": "2026-09-01",
+  "lula": 42.0,
+  "flavio": 41.0,
+  "blank_null_undecided": 17.0,
+  "moe": "±2 pp",
+  "sample_size": 2005.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/09/02/quaest-presidente-2-setembro.ghtml",
+    "title": "Quaest, 1º turno: Lula, 37%; Flávio Bolsonaro, 29%; Augusto Cury, 10%",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "30 Aug – 1 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Futura",
+  "field_start": "2026-08-27",
+  "field_end": "2026-09-01",
+  "lula": 45.6,
+  "flavio": 45.2,
+  "blank_null_undecided": 9.2,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/futura-lula-tem-456-contra-452-de-flavio-no-2o-turno/",
+    "title": "Futura: Lula tem 45,6% contra 45,2% de Flávio no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "27 Aug – 1 Sep"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Real Time",
+  "field_start": "2026-08-27",
+  "field_end": "2026-08-31",
+  "lula": 44.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 12.0,
+  "moe": "±2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poder-eleicoes-2026/lula-e-flavio-bolsonaro-empatam-com-44-no-2o-turno-diz-pesquisa/",
+    "title": "Lula e Flávio Bolsonaro empatam com 44% no 2º turno, diz pesquisa",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "27–31 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-08-28",
+  "field_end": "2026-08-30",
+  "lula": 46.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2005.0,
+  "refs": [
+   {
+    "url": "https://noticias.uol.com.br/eleicoes/2026/08/31/pesquisa-presidencial-btgnexus-31-agosto.ghtm",
+    "title": "BTG/Nexus: Lula lidera no 1° turno, Flávio cai 4 pontos, e Cury sobe 9",
+    "site": "UOL"
+   }
+  ],
+  "raw_dates": "28–30 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "AtlasIntel",
+  "field_start": "2026-08-25",
+  "field_end": "2026-08-30",
+  "lula": 47.1,
+  "flavio": 42.6,
+  "blank_null_undecided": 10.3,
+  "moe": "±1.0 pp",
+  "sample_size": 5014.0,
+  "refs": [
+   {
+    "url": "https://veja.abril.com.br/politica/atlasintel-pesquisa-mostra-disputa-presidencial-apos-primeiros-debates-e-sabatinas/",
+    "title": "Nova pesquisa AtlasIntel mostra disputa presidencial após primeiros debates e sabatinas",
+    "site": "Veja"
+   }
+  ],
+  "raw_dates": "25–30 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Vox Brasil",
+  "field_start": "2026-08-25",
+  "field_end": "2026-08-27",
+  "lula": 44.5,
+  "flavio": 45.1,
+  "blank_null_undecided": 10.4,
+  "moe": "±2.15 pp",
+  "sample_size": 2100.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poder-eleicoes-2026/flavio-e-lula-empatam-no-2o-turno-diz-pesquisa-3/",
+    "title": "Flávio e Lula empatam no 2º turno, diz pesquisa",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "25–27 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "PoderData",
+  "field_start": "2026-08-23",
+  "field_end": "2026-08-26",
+  "lula": 45.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 11.0,
+  "moe": "±2 pp",
+  "sample_size": 2400.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poderdata/lula-tem-45-contra-44-de-flavio-no-2o-turno-diz-poderdata-aya/",
+    "title": "Lula tem 45% contra 44% de Flávio no 2º turno, diz PoderData/Aya",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "23–26 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-08-21",
+  "field_end": "2026-08-23",
+  "lula": 46.0,
+  "flavio": 45.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2006.0,
+  "refs": [
+   {
+    "url": "https://www.poder360.com.br/poder-eleicoes-2026/lula-tem-46-contra-45-de-flavio-no-2o-turno-diz-btg-nexus/",
+    "title": "Lula tem 46% contra 45% de Flávio no 2º turno, diz BTG/Nexus",
+    "site": "Poder360"
+   }
+  ],
+  "raw_dates": "21–23 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Indexa",
+  "field_start": "2026-08-20",
+  "field_end": "2026-08-23",
+  "lula": 46.0,
+  "flavio": 41.0,
+  "blank_null_undecided": 13.0,
+  "moe": "±2.2 pp",
+  "sample_size": 2000.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/indexa-lula-tem-46-no-2o-turno-flavio-41/",
+    "title": "Indexa: Lula tem 46% no 2º turno; Flávio, 41%",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "20–23 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Datafolha",
+  "field_start": "2026-08-18",
+  "field_end": "2026-08-20",
+  "lula": 47.0,
+  "flavio": 43.0,
+  "blank_null_undecided": 11.0,
+  "moe": "±2 pp",
+  "sample_size": 2058.0,
+  "refs": [
+   {
+    "url": "https://g1.globo.com/politica/eleicoes/2026/pesquisa-eleitoral/noticia/2026/08/21/datafolha-primeiro-turno-21-agosto.ghtml",
+    "title": "Datafolha: veja os resultados da pesquisa para a Presidência",
+    "site": "G1"
+   }
+  ],
+  "raw_dates": "18–20 Aug"
+ },
+ {
+  "wiki_section": "Aug–Oct (Campaign period)",
+  "pollster": "Nexus",
+  "field_start": "2026-08-14",
+  "field_end": "2026-08-16",
+  "lula": 47.0,
+  "flavio": 44.0,
+  "blank_null_undecided": 9.0,
+  "moe": "±2 pp",
+  "sample_size": 2003.0,
+  "refs": [
+   {
+    "url": "https://www.cnnbrasil.com.br/eleicoes/nexus-btg-lula-empata-com-flavio-e-caiado-no-2o-turno-3/",
+    "title": "Nexus/BTG: Lula empata com Flávio e Caiado no 2º turno",
+    "site": "CNN Brasil"
+   }
+  ],
+  "raw_dates": "14–16 Aug"
+ }
+]

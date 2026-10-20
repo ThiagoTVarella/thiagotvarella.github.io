@@ -1,9 +1,13 @@
 """Merge the verified poll records into the clean database and run sanity checks.
 
-    python build_database.py verified_*.json
+    python build_database.py [--registry pesquisa_eleitoral_2026_BRASIL.csv]
 
-Writes ../data/polls_runoff_lula_flavio.{csv,json} and prints any check failures.
+Reads ../data/raw/verified_*.json plus the manual decisions in
+../data/raw/overrides.json, writes ../data/polls_runoff_lula_flavio.{csv,json}
+and prints any check failures. With --registry, each poll is joined to its TSE
+registration (registrant company, planned field dates and sample size).
 """
+import glob
 import csv
 import json
 import os
@@ -12,7 +16,7 @@ import sys
 import unicodedata
 
 FIRST_ROUND = "2026-10-04"
-OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
 FIELDS = [
     "poll_id", "pollster", "sponsor", "phase", "field_start", "field_end",
@@ -20,7 +24,8 @@ FIELDS = [
     "confidence_level", "mode", "population", "lula_total", "flavio_total",
     "blank_null_total", "undecided_total", "lula_valid", "flavio_valid",
     "lula_two_party", "verification", "wiki_matches", "scenario_note",
-    "primary_url", "secondary_urls", "notes", "checks",
+    "primary_url", "secondary_urls", "notes", "tse_registrant",
+    "tse_planned_start", "tse_planned_end", "tse_planned_sample", "checks",
 ]
 
 MODES = {"face-to-face", "phone-live", "phone-ivr", "online-panel",
@@ -60,10 +65,29 @@ def check(p):
     return issues
 
 
-def main(paths):
+def load_registry(path):
+    with open(path, encoding="latin1") as f:
+        rows = csv.DictReader(f, delimiter=";")
+        return {f"{r['NR_PROTOCOLO_REGISTRO'][:2]}-{r['NR_PROTOCOLO_REGISTRO'][2:7]}/"
+                f"{r['NR_PROTOCOLO_REGISTRO'][7:]}": r for r in rows}
+
+
+def apply_overrides(polls, path):
+    for o in json.load(open(path, encoding="utf-8")):
+        hits = [p for p in polls
+                if all(p.get(k) == v for k, v in o["match"].items())]
+        if len(hits) != 1:
+            sys.exit(f"override matched {len(hits)} polls: {o['match']}")
+        hits[0].update(o["set"])
+        hits[0]["notes"] = f"{hits[0].get('notes') or ''} [Override: {o['why']}]".strip()
+
+
+def main(args):
+    registry = load_registry(args[1]) if args[:1] == ["--registry"] else {}
     polls = []
-    for path in paths:
+    for path in sorted(glob.glob(os.path.join(DATA_DIR, "raw", "verified_*.json"))):
         polls.extend(json.load(open(path, encoding="utf-8")))
+    apply_overrides(polls, os.path.join(DATA_DIR, "raw", "overrides.json"))
 
     # drop exact duplicates (same pollster and field window), keeping the better-verified one
     rank = {"verified-primary": 0, "verified-secondary": 1, "conflict": 2, "unverified": 3}
@@ -79,15 +103,22 @@ def main(paths):
         p["phase"] = "post_first_round" if p["field_start"] > FIRST_ROUND else "pre_first_round"
         lt, ft = p.get("lula_total"), p.get("flavio_total")
         p["lula_two_party"] = round(100 * lt / (lt + ft), 2) if lt and ft else None
+        reg = registry.get((p.get("tse_registration") or "").strip())
+        if reg:
+            p["tse_registrant"] = reg["NM_EMPRESA"]
+            p["tse_planned_start"] = reg["DT_INICIO_PESQUISA"][:10]
+            p["tse_planned_end"] = reg["DT_FIM_PESQUISA"][:10]
+            p["tse_planned_sample"] = int(reg["QT_ENTREVISTADO"])
         p["checks"] = "; ".join(check(p))
+        if registry and p.get("tse_registration") and not reg:
+            p["checks"] = "; ".join(filter(None, [p["checks"], "registration not found in TSE registry"]))
     ids = [p["poll_id"] for p in polls]
     dupes = {i for i in ids if ids.count(i) > 1}
     for p in polls:
         if p["poll_id"] in dupes:
             p["poll_id"] += "-" + p["field_start"][5:].replace("-", "")
 
-    os.makedirs(OUT_DIR, exist_ok=True)
-    base = os.path.join(OUT_DIR, "polls_runoff_lula_flavio")
+    base = os.path.join(DATA_DIR, "polls_runoff_lula_flavio")
     with open(base + ".json", "w", encoding="utf-8") as f:
         json.dump([{k: p.get(k) for k in FIELDS} for p in polls], f,
                   ensure_ascii=False, indent=1)
