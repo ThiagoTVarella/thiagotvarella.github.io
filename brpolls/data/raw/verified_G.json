@@ -1,0 +1,57 @@
+[
+  {
+    "pollster": "Futura",
+    "sponsor": null,
+    "field_start": "2026-10-16",
+    "field_end": "2026-10-17",
+    "release_date": "2026-10-19",
+    "tse_registration": "BR-06715/2026",
+    "sample_size": 2000,
+    "margin_of_error": 2.2,
+    "confidence_level": 95,
+    "mode": "phone-live",
+    "population": "eleitores do Brasil com 16 anos ou mais",
+    "scenario_note": null,
+    "lula_total": 47.5,
+    "flavio_total": 48.3,
+    "blank_null_total": 2.4,
+    "undecided_total": 1.9,
+    "lula_valid": 49.6,
+    "flavio_valid": 50.4,
+    "primary_url": "https://admin.cnnbrasil.com.br/wp-content/uploads/sites/12/2026/10/Relatorio_BR_Out_3.pdf",
+    "secondary_urls": [
+      "https://www.cnnbrasil.com.br/eleicoes/futura-flavio-tem-504-dos-votos-validos-no-2o-turno-lula-496/",
+      "https://www.jota.info/eleicoes/eleicoes-2026/pesquisa-futura-flavio-bolsonaro-tem-504-dos-votos-validos-ante-496-de-lula"
+    ],
+    "verification": "verified-primary",
+    "wiki_matches": null,
+    "notes": "Futura Inteligencia 'terceira rodada de outubro', released as Futura/100% Cidades. TSE registrant is 100% CIDADES PARTICIPACOES LTDA (every '100 CIDADES' BR registration is a Futura poll). Numbers read from Futura's own 18-page PDF report (embedded in the CNN article): CATI phone, 2,000 interviews, field 16-17 Oct, registration BR-06715/2026 on every page. Stimulated: Flavio 48.3, Lula 47.5, Ninguem/Branco/Nulo 2.4, NS/NR/Indeciso 1.9; valid: Flavio 50.4, Lula 49.6. Spontaneous: Flavio 46.5, Lula 46.1. The CNN article (19 Oct) has copy-paste errors: its subtitle says field 14-15 Oct and it cites protocol BR-03764/2026, which belongs to the previous round (14-15 Oct, released 16 Oct, Flavio 50.8 / Lula 49.2 valid). Its methodology paragraph does say 16-17 Oct. CNN says the poll used the institute's own funds ('recursos proprios'), so sponsor is null. Not in the Wikipedia seed as of 20 Oct 04:35 UTC."
+  },
+  {
+    "pollster": "Instituto França (IFP)",
+    "sponsor": null,
+    "field_start": "2026-09-28",
+    "field_end": "2026-10-02",
+    "release_date": "2026-10-03",
+    "tse_registration": "BR-02928/2026",
+    "sample_size": 2000,
+    "margin_of_error": 2.2,
+    "confidence_level": 95,
+    "mode": "phone-live",
+    "population": "eleitoras e eleitores com 16 anos ou mais (Brasil)",
+    "scenario_note": "Pre-1st-round hypothetical runoff (stimulated Lula vs Flávio scenario)",
+    "lula_total": 45.88,
+    "flavio_total": 45.01,
+    "blank_null_total": 3.54,
+    "undecided_total": 5.57,
+    "lula_valid": null,
+    "flavio_valid": null,
+    "primary_url": "https://static.poder360.com.br/uploads/2026/10/Pesquisa-Franca_Brasil_Presidente_1o-turno.pdf",
+    "secondary_urls": [
+      "https://www.poder360.com.br/poder-eleicoes-2026/lula-tem-4588-contra-4501-de-flavio-no-2o-turno-diz-pesquisa/"
+    ],
+    "verification": "verified-primary",
+    "wiki_matches": null,
+    "notes": "Supersedes the unverified BR-02928 record in verified_F.json. Numbers read from Instituto França's own 8-page national report, hosted by Poder360: 'Abrangência Nacional, Registro BR-02928/2026, Campo de 28/09/2026 a 02/10/2026', 2,000 interviews, MoE ±2.2, 95% confidence. 2nd round, stimulated: Lula 45.88, Flávio 45.01, NS 5.57, BR/NL 3.54 (NS + BR/NL = 9.11, matching pt-wiki's 9.11% 'others'). No valid-vote figures were published. Field start is 28 Sep, not 29 Sep as on pt-wiki. TSE registry: CATI phone, self-funded ('sem contratante externo'), allowed release date 2 Oct. Release date 3 Oct is taken from the Poder360 article date in the verified_F notes; the PDF itself is undated. 1st round: Lula 40.62, Flávio 37.49."
+  }
+]

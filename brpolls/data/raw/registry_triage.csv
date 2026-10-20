@@ -1,0 +1,45 @@
+tse_registration,pollster,national(yes/no/unknown),published(yes/no/unknown),has_lula_flavio(yes/no/unknown),note
+BR-06614/2026,100 CIDADES - Futura (not yet released),yes,no,unknown,Futura/100% Cidades round with field 19-20 Oct and planned release 21 Oct. Not published as of 20 Oct. Re-check on 21 Oct (CNN Brasil publishes Futura releases).
+BR-07896/2026,INSTITUTO FRANCA (IFP),yes,unknown,unknown,"Registry: CATI phone, sample 'Brasil', 3000 interviews, self-funded, field 16-20 Oct, release 20 Oct. No publication found yet; earlier rounds were posted as PDFs on static.poder360.com.br."
+BR-09858/2026,DATA TEMPO,no,unknown,unknown,Minas Gerais state sample (1000 face-to-face interviews). Out of scope.
+BR-00820/2026,ALFA INTELIGENCIA,yes,unknown,unknown,"Registry: phone, sample 'eleitorado do Brasil', 2700 interviews, MoE 1.9, field 15-19 Oct, release 20 Oct. No publication found yet."
+BR-06715/2026,"100 CIDADES - Futura (NEW round, not in seed)",yes,yes,yes,"RECORDED in verified_G.json. Futura 16-17 Oct, released 19 Oct. Valid: Flavio 50.4, Lula 49.6. The CNN article wrongly cites BR-03764; the Futura PDF says BR-06715."
+BR-00152/2026,INSTITUTO RANKING,yes,unknown,unknown,"Registry: face-to-face, 'panorama politico Nacional', 'realizada no Brasil', 2100 interviews, field 14-16 Oct, release 19 Oct. Nothing found in 3 searches."
+BR-03326/2026,INSTITUTO FRANCA (IFP),no,unknown,unknown,Distrito Federal sample (1141 phone interviews). Out of scope.
+BR-08809/2026,INSTITUTO PHOENIX & ASSOCIADOS,yes,unknown,unknown,"Registry: phone, 'amostra representativa do eleitorado brasileiro', 3999 interviews, field 13-16 Oct, release 18 Oct, company J J COELHO. Nothing found in 3 searches."
+BR-03764/2026,Futura (already recorded),yes,yes,yes,"ALREADY IN DB as the Futura seed row 14-15 Oct (registry says 13-15 Oct). CNN 16 Oct cites BR-03764/2026, field 14-15 Oct, valid Flavio 50.8 / Lula 49.2. Fill in tse_registration on that row."
+BR-02367/2026,DATAVERO,no,unknown,unknown,Rio Grande do Norte state sample. Out of scope.
+BR-01953/2026,IGAPE,no,unknown,unknown,Distrito Federal sample. Out of scope.
+BR-06778/2026,CORREIO DO POVO TOCANTINENSE,no,unknown,unknown,Tocantins state sample (52 municipalities). Out of scope.
+BR-00650/2026,Futura (already recorded),yes,yes,yes,ALREADY IN DB as the Futura seed row 7-10 Oct. CNN cites BR-00650/2026. Fill in tse_registration on that row.
+BR-02431/2026,Futura (already recorded),yes,yes,unknown,"Probably the Futura seed row 2-3 Oct (registry says 29 Sep-3 Oct, release 3 Oct). The registration number was not confirmed in an article."
+BR-02928/2026,INSTITUTO FRANCA (IFP),yes,yes,yes,"RECORDED IN FULL in verified_G.json from the IFP primary PDF (Poder360 static): Lula 45.88, Flávio 45.01, NS 5.57, BR/NL 3.54. Supersedes the unverified record in verified_F.json."
+BR-07844/2026,DATAVERO,no,unknown,unknown,Rio Grande do Norte state sample. Out of scope.
+BR-08474/2026,BADRA COMUNICACAO,no,unknown,unknown,Baixada Santista (SP region) sample. Out of scope.
+BR-09385/2026,CLENIX COMUNICACAO,no,unknown,unknown,Planalto Norte region of Santa Catarina (13 municipalities). Out of scope.
+BR-04074/2026,PIMENTEL & CARPENTIERI,no,unknown,unknown,City of Santos-SP sample. Out of scope.
+BR-05847/2026,INSTITUTO FRANCA (IFP),no,unknown,unknown,Distrito Federal sample. Out of scope.
+BR-01122/2026,Futura (already recorded),yes,yes,yes,ALREADY IN DB as the Futura seed row 25-29 Sep. CNN cites BR-01122/2026. Fill in tse_registration on that row.
+BR-05869/2026,JOTA JORNALISMO,yes,unknown,unknown,"Registry: web questionnaire, sample 'Brasil', 6000 interviews, MoE about 1.6, field 3-28 Sep, release 29 Sep. No JOTA-branded poll results found on jota.info in 2 searches."
+BR-04527/2026,DATA TEMPO,no,unknown,unknown,Minas Gerais state sample. Out of scope.
+BR-06389/2026,IGAPE,no,unknown,unknown,Distrito Federal sample. Out of scope.
+BR-00745/2026,CLENIX COMUNICACAO,no,unknown,unknown,Planalto Norte region of Santa Catarina. Out of scope.
+BR-05941/2026,INSIGHT BRASIL,no,unknown,unknown,Minas Gerais state online sample. Out of scope.
+BR-05268/2026,Futura (already recorded),yes,yes,yes,ALREADY IN DB as the Futura seed row 18-24 Sep. CNN cites BR-05268/2026 with field 19-23 Sep. Fill in tse_registration and check the field dates.
+BR-06571/2026,SECTRAL NEGOCIOS,no,unknown,unknown,Juiz de Fora-MG city sample. Out of scope.
+BR-02512/2026,ALFA INTELIGENCIA,yes,yes,yes,ALREADY RECORDED in verified_F.json (18-23 Sep). Skipped.
+BR-09027/2026,IPAT A TRIBUNA,no,unknown,unknown,Five Baixada Santista municipalities. Out of scope.
+BR-05169/2026,CONSULTE INTELIGENCIA,no,unknown,unknown,Teresina-PI city sample. Out of scope.
+BR-03142/2026,E P P,no,unknown,unknown,19 municipalities in the Araguaia region of Mato Grosso. Out of scope.
+BR-00749/2026,Futura (already recorded),yes,yes,yes,"ALREADY IN DB as the Futura seed row 11-15 Sep (registry says 11-17 Sep). CNN cites BR-00749/2026, field 11-15 Sep, Flavio 48.1 / Lula 43.7. Fill in tse_registration."
+BR-02903/2026,SECTRAL NEGOCIOS,no,unknown,unknown,Juiz de Fora-MG city sample. Out of scope.
+BR-04254/2026,IGAPE,no,unknown,unknown,Distrito Federal sample. Out of scope.
+BR-02329/2026,DATA TEMPO,no,unknown,unknown,Minas Gerais state sample. Out of scope.
+BR-02142/2026,BADRA COMUNICACAO,no,unknown,unknown,Baixada Santista sample. Out of scope.
+BR-02322/2026,Futura (already recorded),yes,yes,yes,"ALREADY IN DB as the Futura seed row 4-10 Sep (registry says 4-9 Sep). CNN cites BR-02322/2026, field 4-10 Sep. Fill in tse_registration."
+BR-02793/2026,Futura (already recorded),yes,yes,yes,"ALREADY IN DB as the Futura seed row 27 Aug-1 Sep (registry says 28 Aug-1 Sep). CNN cites BR-02793/2026, field 27 Aug-1 Sep. Fill in tse_registration."
+BR-00530/2026,INSTITUTO PERFIL,no,unknown,unknown,Espirito Santo state sample. Out of scope.
+BR-03453/2026,IGAPE,no,unknown,unknown,Distrito Federal sample. Out of scope.
+BR-02772/2026,SECTRAL NEGOCIOS,no,unknown,unknown,Juiz de Fora-MG city sample. Out of scope.
+BR-03515/2026,IPAT A TRIBUNA,no,unknown,unknown,Five Baixada Santista municipalities. Out of scope.
+BR-08757/2026,INSTITUTO PERFIL,no,unknown,unknown,Vila Velha-ES city sample. Out of scope.

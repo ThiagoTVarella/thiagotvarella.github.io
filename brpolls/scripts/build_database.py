@@ -28,6 +28,11 @@ FIELDS = [
     "tse_planned_start", "tse_planned_end", "tse_planned_sample", "checks",
 ]
 
+# Canonical pollster names, so one institute is not split across spellings.
+ALIASES = {
+    "Futura Inteligência (Futura/100% Cidades)": "Futura",
+}
+
 MODES = {"face-to-face", "phone-live", "phone-ivr", "online-panel",
          "online-rdd", "mixed", "unknown"}
 
@@ -78,6 +83,9 @@ def apply_overrides(polls, path):
                 if all(p.get(k) == v for k, v in o["match"].items())]
         if len(hits) != 1:
             sys.exit(f"override matched {len(hits)} polls: {o['match']}")
+        if o.get("drop"):
+            polls.remove(hits[0])
+            continue
         hits[0].update(o["set"])
         hits[0]["notes"] = f"{hits[0].get('notes') or ''} [Override: {o['why']}]".strip()
 
@@ -88,6 +96,8 @@ def main(args):
     for path in sorted(glob.glob(os.path.join(DATA_DIR, "raw", "verified_*.json"))):
         polls.extend(json.load(open(path, encoding="utf-8")))
     apply_overrides(polls, os.path.join(DATA_DIR, "raw", "overrides.json"))
+    for p in polls:
+        p["pollster"] = ALIASES.get(p["pollster"], p["pollster"])
 
     # drop exact duplicates (same pollster and field window), keeping the better-verified one
     rank = {"verified-primary": 0, "verified-secondary": 1, "conflict": 2, "unverified": 3}

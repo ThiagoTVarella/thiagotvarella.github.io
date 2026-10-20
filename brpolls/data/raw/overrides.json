@@ -1,6 +1,13 @@
 [
  {
   "match": {
+   "pollster": "IFP (possibly Instituto França de Pesquisa)"
+  },
+  "drop": true,
+  "why": "Superseded by the verified-primary IFP record in verified_G.json, read from IFP's own report."
+ },
+ {
+  "match": {
    "pollster": "Datafolha",
    "tse_registration": "BR-01708/2026"
   },
@@ -28,16 +35,6 @@
    "verification": "verified-primary"
   },
   "why": "Datafolha's release says 18-19 Aug; g1 says 18-20 Aug (the registered plan). Kept the pollster's dates."
- },
- {
-  "match": {
-   "tse_registration": "BR-02928/2026"
-  },
-  "set": {
-   "pollster": "Instituto França (IFP)",
-   "field_start": "2026-09-28"
-  },
-  "why": "The TSE registry confirms BR-02928/2026 is Instituto França de Pesquisas, national, planned field 28 Sep-2 Oct, n=2,000. Numbers still only seen in a headline."
  },
  {
   "match": {
