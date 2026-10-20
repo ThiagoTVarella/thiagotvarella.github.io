@@ -418,6 +418,8 @@ def extract_page(uf, lang, title, text, ballot):
     src = f"{lang}:{title}"
     out = []
     for tno, (section, rows) in enumerate(tables_inorder(text)):
+        if title.startswith("Predefinição:"):  # transcluded poll template: no headings
+            section = ["Pesquisas"] + section
         sec = " / ".join(section)
         if not any(POLL_SECTIONS.search(s) for s in section):
             continue
@@ -573,6 +575,23 @@ def select_scenarios(polls):
     return kept
 
 
+def _top(p):
+    c = sorted((o[2] for o in p["opts"] if o[0] not in (
+        "BLANK_NULL", "UNDECIDED", "BLANK_NULL_UNDECIDED", "OTHERS")), reverse=True)
+    return tuple(c[:2])
+
+
+def same_poll(a, b):
+    import datetime
+    da = datetime.date.fromisoformat(a["field_end"])
+    db = datetime.date.fromisoformat(b["field_end"])
+    if abs((da - db).days) > 2:
+        return False
+    ka = slug(a["pollster"]).replace("-", "")[:4]
+    kb = slug(b["pollster"]).replace("-", "")[:4]
+    return ka == kb or _top(a) == _top(b)
+
+
 def main():
     ballot = load_ballot()
     pages = []  # (uf, lang, title)
@@ -611,8 +630,23 @@ def main():
             if not counts:
                 report.append((uf, rnd, 0, "", "", "", counts))
                 continue
-            src = max(counts, key=lambda s: (counts[s], s.startswith("pt:")))
-            ps = sorted(srcs[src], key=lambda p: (p["field_end"], p["pollster"], p.get("scen", 0)))
+            order = sorted(counts, key=lambda s: (counts[s], s.startswith("pt:")), reverse=True)
+            src = order[0]
+            # Primary = richest page. Polls only present on the other page (e.g. en has the
+            # early-2022 polls, pt the September ones) are added; duplicates are dropped.
+            ps = list(srcs[src])
+            added = defaultdict(int)
+            for other in order[1:]:
+                groups = defaultdict(list)
+                for p in srcs[other]:
+                    groups[p["rawkey"]].append(p)
+                for g in groups.values():
+                    if not any(same_poll(g[0], q) for q in ps):
+                        ps += g
+                        added[other] += 1
+            counts = {s: (counts[s] if s == src else f"{counts[s]} (+{added[s]} added)")
+                      for s in counts}
+            ps = sorted(ps, key=lambda p: (p["field_end"], p["pollster"], p.get("scen", 0)))
             used_pages |= {p["source_page"] for p in ps}
             ids = set()
             for p in ps:
@@ -639,7 +673,8 @@ def main():
                         "source_url": p["source_url"], "notes": "; ".join(notes),
                     })
             dates = [p["field_end"] for p in ps]
-            report.append((uf, rnd, len(ids), min(dates), max(dates), src, counts))
+            report.append((uf, rnd, len({(p["source_page"],) + p["rawkey"] for p in ps}),
+                           min(dates), max(dates), src, counts))
 
     cols = ["poll_id", "year", "office", "state", "round", "pollster", "sponsor", "field_start",
             "field_end", "sample_size", "moe", "option", "party", "pct", "source_page",
