@@ -188,7 +188,11 @@
             <div class="slider"><span>Peso do 1º turno no viés</span><input type="range" id="r1Weight" min="0" max="1" step="0.05" aria-label="Peso das pesquisas do 1º turno na estimativa do viés"><span class="v" id="r1WeightV"></span></div>
             <div class="slider"><span>Encolhimento do viés</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="Encolhimento do viés dos institutos"><span class="v" id="shrinkV"></span></div>
             <div class="slider"><span>Erro comum das pesquisas</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Erro comum das pesquisas"><span class="v" id="errSdV"></span></div>
-            <div class="slider"><span>Supor que as pesquisas erram</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Viés suposto das pesquisas"><span class="v" id="shiftV"></span></div>
+            <div class="slider"><span>Teste de estresse</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Teste de estresse: deslocar a média"><span class="v" id="shiftV"></span></div>
+            <div style="margin:-2px 0 6px">
+                <span class="sub">Desloca a média para simular um erro de todas as pesquisas. Atalhos:</span>
+                <button class="chip" data-shift="0">Nenhum</button><button class="chip" data-shift="r1">Erro do 1º turno de novo</button>
+            </div>
             <div class="toggles">
                 <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
                 <label class="tg"><input type="checkbox" id="useR1">Usar pesquisas do 1º turno para estimar o viés</label>
@@ -267,8 +271,8 @@
                     ficaram praticamente sem viés (+0,3, 0,0, −4,9 e +0,2 de 2010 a 2022). Minha leitura é que o erro do 1º turno vem
                     muito do voto que migra de última hora entre candidatos, e isso não existe num segundo turno de dois. O que persiste é
                     o erro de cada instituto <i>em relação aos outros</i>: mais ou menos um terço dele reaparece no 2º turno. Corrigindo
-                    isso, a média de 2026 muda só alguns centésimos. Se você quiser testar o cenário pessimista para o Lula, use
-                    “Supor que as pesquisas erram” nos ajustes (o erro cheio do 1º turno daria −1,7 ponto).</p>
+                    isso, a média de 2026 muda só alguns centésimos. Para ver o que acontece se o erro do 1º turno se repetir, use o
+                    “Teste de estresse” na visão detalhada (o erro cheio do 1º turno tira 1,7 ponto do Lula).</p>
                 <p class="sub">Também olhei se o método da pesquisa (presencial, telefone, internet) faz diferença: depois de descontar o
                     viés de cada instituto, não vi efeito claro. O viés dos institutos mudou um pouco entre antes e depois do 1º turno,
                     e por isso as pesquisas do 1º turno entram na estimativa do viés com peso pela metade. Com peso cheio, alguns institutos
