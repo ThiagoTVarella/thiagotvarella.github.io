@@ -166,19 +166,21 @@ if (typeof module !== "undefined") {
 
 if (typeof document !== "undefined") (function () {
     const $ = id => document.getElementById(id);
-    const fmt = (x, d = 1) => (x == null || isNaN(x)) ? "–" : x.toFixed(d);
+    const fmt = (x, d = 1) => (x == null || isNaN(x)) ? "–" : x.toFixed(d).replace(".", ",");
     const pct = (x, d = 1) => fmt(x, d) + "%";
     const sign = (x, d = 1) => (x > 0 ? "+" : "") + fmt(x, d);
+    const fd = d => { const s = fromDay(d); return s.slice(8, 10) + "/" + s.slice(5, 7); };   // dd/mm
+    const fdl = d => { const s = fromDay(d); return s.slice(8, 10) + "/" + s.slice(5, 7) + "/" + s.slice(0, 4); };
     const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
     const LULA = "#c0392b", FLAVIO = "#1f5fa8";
     const PALETTE = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc948", "#b07aa1", "#ff9da7",
         "#9c755f", "#bab0ac", "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d",
         "#666666", "#17becf", "#bcbd22", "#8c564b", "#393b79"];
-    const MODE_LABEL = {"face-to-face": "Face-to-face", "phone-live": "Phone (live)", "phone-ivr": "Phone (robot)",
-        "online-panel": "Online panel", "online-rdd": "Online (random)", "mixed": "Mixed", "unknown": "Unknown"};
+    const MODE_LABEL = {"face-to-face": "Presencial", "phone-live": "Telefone (entrevistador)", "phone-ivr": "Telefone (robô)",
+        "online-panel": "Painel online", "online-rdd": "Online (aleatório)", "mixed": "Misto", "unknown": "Não informado"};
     const MODE_COLOR = {"face-to-face": "#59a14f", "phone-live": "#4e79a7", "phone-ivr": "#f28e2b",
         "online-panel": "#b07aa1", "online-rdd": "#76b7b2", "mixed": "#9c755f", "unknown": "#999"};
-    const EVENTS = [{d: FIRST_ROUND, label: "1st round"}, {d: toDay("2026-10-18"), label: "Debate"}];
+    const EVENTS = [{d: FIRST_ROUND, label: "1º turno"}, {d: toDay("2026-10-18"), label: "Debate"}];
 
     let DATA, OFFICIAL, FC, FH, RAT, CYC, opt, R, view = {metric: "share", color: "lean", adjusted: false,
         band: true, sized: true, w0: null, w1: null}, sel = {poll: null, pollster: null}, hover = null,
@@ -242,7 +244,7 @@ if (typeof document !== "undefined") (function () {
     }
 
     const metricVal = share => view.metric === "share" ? share : 2 * share - 100;
-    const metricLabel = () => view.metric === "share" ? "Lula's share of the two-candidate vote (%)" : "Lula minus Flávio, points (negative = Flávio ahead)";
+    const metricLabel = () => view.metric === "share" ? "Fatia do Lula entre os dois candidatos (%)" : "Lula menos Flávio, em pontos (negativo = Flávio na frente)";
 
     function renderKpis() {
         const c = R.current;
@@ -253,13 +255,13 @@ if (typeof document !== "undefined") (function () {
         const lw = c.v + opt.shift;
         $("avgBar").innerHTML = `<div style="width:${lw}%;background:${LULA}">Lula ${pct(lw)}</div><div style="width:${100 - lw}%;background:${FLAVIO}">Flávio ${pct(100 - lw)}</div>`;
         $("pBar").innerHTML = `<div style="width:${100 * c.p}%;background:${LULA}">${pct(100 * c.p, 0)}</div><div style="width:${100 - 100 * c.p}%;background:${FLAVIO}">${pct(100 - 100 * c.p, 0)}</div>`;
-        $("asofLine").textContent = `Polls through ${fromDay(R.asOf)} · ${R.runoff.length} runoff polls · ${R.daysLeft} days to the runoff (25 Oct 2026)`;
-        $("kNote").textContent = `±${fmt(1.96 * c.se)} pts from poll noise alone; the forecast adds a shared polling error of ${fmt(opt.errSd)} pts.`;
+        $("asofLine").textContent = `Pesquisas até ${fdl(R.asOf)} · ${R.runoff.length} pesquisas de 2º turno · faltam ${R.daysLeft} dias para a eleição (25/10/2026)`;
+        $("kNote").textContent = `±${fmt(1.96 * c.se)} ponto só pelo ruído das pesquisas; a previsão ainda soma um erro comum de ${fmt(opt.errSd)} pontos.`;
         const changed = !isDefault();
         $("custom").style.display = changed ? "block" : "none";
         if (changed) {
-            $("custom").innerHTML = `You are looking at <b>your own settings</b>. The published model says Lula ${pct(OFFICIAL.current.lula)} and a ` +
-                `${pct(100 * FC.base.p_lula, 0)} chance for Lula. <a href="#" id="resetLink">Reset</a>`;
+            $("custom").innerHTML = `Você está vendo <b>os seus próprios ajustes</b>. No modelo que eu publiquei, o Lula tem ${pct(OFFICIAL.current.lula)} da média e ` +
+                `${pct(100 * FC.base.p_lula, 0)} de chance. <a href="#" id="resetLink">Voltar ao original</a>`;
             $("resetLink").onclick = e => { e.preventDefault(); resetAll(); };
         }
     }
@@ -295,15 +297,15 @@ if (typeof document !== "undefined") (function () {
         const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
         geom = {x, y, W, H, m, w0, w1, vis, yv, small};
 
-        let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" id="mainSvg" role="img" aria-label="Poll trend chart">`;
+        let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" id="mainSvg" role="img" aria-label="Gráfico da tendência das pesquisas">`;
         const step = niceStep(hi - lo, small ? 5 : 7);
         for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) {
             const isMid = Math.abs(v - mid) < 1e-9;
             s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${isMid ? "#777" : "#eee"}" ${isMid ? 'stroke-dasharray="4 3"' : ""}/>` +
-                `<text x="${m.l - 5}" y="${y(v) + 3}" text-anchor="end">${+v.toFixed(1)}</text>`;
+                `<text x="${m.l - 5}" y="${y(v) + 3}" text-anchor="end">${String(+v.toFixed(1)).replace(".", ",")}</text>`;
         }
         const span = w1 - w0, tick = span > 50 ? 14 : span > 20 ? 7 : span > 8 ? 3 : 1;
-        for (let d = w1; d >= w0; d -= tick) s += `<text x="${x(d)}" y="${H - 7}" text-anchor="middle">${fromDay(d).slice(5).replace("-", "/")}</text>`;
+        for (let d = w1; d >= w0; d -= tick) s += `<text x="${x(d)}" y="${H - 7}" text-anchor="middle">${fd(d)}</text>`;
         for (const e of EVENTS) if (e.d >= w0 && e.d <= w1) {
             s += `<line x1="${x(e.d)}" x2="${x(e.d)}" y1="${m.t}" y2="${H - m.b}" stroke="#bbb" stroke-dasharray="3 3"/>` +
                 `<text x="${x(e.d) + 3}" y="${m.t + 9}">${e.label}</text>`;
@@ -352,10 +354,10 @@ if (typeof document !== "undefined") (function () {
     function legendHtml() {
         if (view.color === "mode") return Object.keys(MODE_LABEL).filter(k => R.runoff.some(p => p.mode === k))
             .map(k => `<span><i style="background:${MODE_COLOR[k]}"></i>${MODE_LABEL[k]}</span>`).join("");
-        if (view.color === "phase") return `<span><i style="background:#b2abd2"></i>Before 1st round (hypothetical matchup)</span><span><i style="background:#6a3d9a"></i>After 1st round</span>`;
+        if (view.color === "phase") return `<span><i style="background:#b2abd2"></i>Antes do 1º turno (cenário hipotético)</span><span><i style="background:#6a3d9a"></i>Depois do 1º turno</span>`;
         if (view.color === "pollster") return [...new Set(R.runoff.map(p => p.pollster))].map(n =>
             `<span class="lg" data-p="${esc(n)}"><i style="background:${PALETTE[DATA.pollsters.indexOf(n) % PALETTE.length]}"></i>${esc(n)}</span>`).join("");
-        return `<span><i style="background:${FLAVIO}"></i>Pollster leans Flávio</span><span><i style="background:#bbb"></i>Neutral</span><span><i style="background:${LULA}"></i>Leans Lula</span>`;
+        return `<span><i style="background:${FLAVIO}"></i>Instituto puxa para o Flávio</span><span><i style="background:#bbb"></i>Neutro</span><span><i style="background:${LULA}"></i>Puxa para o Lula</span>`;
     }
 
     function nearestPoll(px, py, radius) {
@@ -378,8 +380,8 @@ if (typeof document !== "undefined") (function () {
             const p = nearestPoll(px, py, 12);
             if (p) {
                 hover = {kind: "poll", p};
-                showTip(e, `<b>${esc(p.pollster)}</b> · ${fromDay(p.a).slice(5)} – ${fromDay(p.b).slice(5)}<br>Lula ${p.lula} · Flávio ${p.flavio}<br>` +
-                    `Two-candidate: ${fmt(p.y)}% · adjusted ${fmt(p.adj)}%<br><span class="sub">Click for details</span>`);
+                showTip(e, `<b>${esc(p.pollster)}</b> · ${fd(p.a)} a ${fd(p.b)}<br>Lula ${fmt(p.lula)} · Flávio ${fmt(p.flavio)}<br>` +
+                    `Entre os dois: ${fmt(p.y)}% · corrigido ${fmt(p.adj)}%<br><span class="sub">Clique para ver detalhes</span>`);
                 svg.style.cursor = "pointer";
             } else {
                 svg.style.cursor = "crosshair";
@@ -389,7 +391,7 @@ if (typeof document !== "undefined") (function () {
                     const prev = hover && hover.kind === "x" && hover.d === d;
                     hover = {kind: "x", d};
                     if (!prev) renderChartKeepTip();
-                    showTip(e, `<b>${fromDay(d)}</b><br>Average: Lula ${pct(pt.v + opt.shift)} · Flávio ${pct(100 - pt.v - opt.shift)}<br>Chance Lula wins: ${pct(100 * pt.p, 0)}`);
+                    showTip(e, `<b>${fdl(d)}</b><br>Média: Lula ${pct(pt.v + opt.shift)} · Flávio ${pct(100 - pt.v - opt.shift)}<br>Chance do Lula: ${pct(100 * pt.p, 0)}`);
                 } else hideTip();
             }
         });
@@ -421,26 +423,26 @@ if (typeof document !== "undefined") (function () {
         const el = $("detail");
         const p = sel.poll ? R.runoff.find(q => q.id === sel.poll.id) : null;
         const name = sel.pollster;
-        if (!p && !name) { el.innerHTML = `<span class="sub">Tap or click a dot to inspect a poll. Each dot is one poll; bigger dots count more in today's average.</span>`; return; }
+        if (!p && !name) { el.innerHTML = `<span class="sub">Toque ou clique num ponto para ver a pesquisa. Cada ponto é uma pesquisa; os maiores pesam mais na média de hoje.</span>`; return; }
         const rat = RAT[name] || {}, cyc = (CYC.pollsters || []).find(c => c.pollster === name);
         const mine = R.runoff.filter(q => q.pollster === name);
-        let h = `<div class="detail-head"><b>${esc(name)}</b> <button class="chip" id="clearSel">Clear ✕</button></div>`;
+        let h = `<div class="detail-head"><b>${esc(name)}</b> <button class="chip" id="clearSel">Limpar ✕</button></div>`;
         if (p) {
-            const other = p.blank != null || p.undecided != null ? `blank/null ${p.blank ?? "–"} · undecided ${p.undecided ?? "–"}` : `other/undecided ${fmt(100 - p.lula - p.flavio)}`;
+            const other = p.blank != null || p.undecided != null ? `brancos/nulos ${fmt(p.blank)} · indecisos ${fmt(p.undecided)}` : `outros/indecisos ${fmt(100 - p.lula - p.flavio)}`;
             h += `<div class="dgrid">
-                <div><span class="sub">Fieldwork</span><br>${fromDay(p.a)} – ${fromDay(p.b)}</div>
-                <div><span class="sub">Sample</span><br>${p.n ? p.n.toLocaleString() : "–"}${p.moe ? ` (±${p.moe})` : ""}</div>
-                <div><span class="sub">Mode</span><br>${MODE_LABEL[p.mode] || p.mode}</div>
-                <div><span class="sub">Total votes</span><br><span style="color:${LULA}">Lula ${p.lula}</span> · <span style="color:${FLAVIO}">Flávio ${p.flavio}</span><br><span class="sub">${other}</span></div>
-                <div><span class="sub">Two-candidate share</span><br>Lula ${fmt(p.y)}% → ${fmt(p.adj)}% after house effect</div>
-                <div><span class="sub">Weight today</span><br>${pct(100 * p.wn)} of the average</div>
-                <div><span class="sub">Phase</span><br>${p.phase === "post_first_round" ? "After the 1st round" : "Before the 1st round (hypothetical)"}</div>
-                <div><span class="sub">Source</span><br>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.verification.replace("verified-", "verified, "))}</a>` : esc(p.verification)}${p.tse ? `<br><span class="sub">TSE ${esc(p.tse)}</span>` : ""}</div>
+                <div><span class="sub">Campo</span><br>${fdl(p.a)} a ${fdl(p.b)}</div>
+                <div><span class="sub">Amostra</span><br>${p.n ? p.n.toLocaleString("pt-BR") : "–"}${p.moe ? ` (±${fmt(p.moe)})` : ""}</div>
+                <div><span class="sub">Método</span><br>${MODE_LABEL[p.mode] || p.mode}</div>
+                <div><span class="sub">Votos totais</span><br><span style="color:${LULA}">Lula ${fmt(p.lula)}</span> · <span style="color:${FLAVIO}">Flávio ${fmt(p.flavio)}</span><br><span class="sub">${other}</span></div>
+                <div><span class="sub">Fatia entre os dois</span><br>Lula ${fmt(p.y)}% → ${fmt(p.adj)}% depois de corrigir o viés</div>
+                <div><span class="sub">Peso hoje</span><br>${pct(100 * p.wn)} da média</div>
+                <div><span class="sub">Fase</span><br>${p.phase === "post_first_round" ? "Depois do 1º turno" : "Antes do 1º turno (cenário hipotético)"}</div>
+                <div><span class="sub">Fonte</span><br>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${verif(p.verification)}</a>` : verif(p.verification)}${p.tse ? `<br><span class="sub">TSE ${esc(p.tse)}</span>` : ""}</div>
             </div>`;
         }
-        h += `<div class="sub" style="margin-top:8px">This pollster: ${mine.length} runoff polls · lean ${sign(R.house[name] || 0)} pts (${(R.house[name] || 0) >= 0 ? "toward Lula" : "toward Flávio"}) · ` +
-            `rating ${esc((rat.grade || "–").split(" ")[0])}${rat.polls ? ` from ${rat.polls} past polls` : ""}` +
-            `${cyc ? ` · 1st-round miss ${sign(cyc.mean_margin_error)} pts of margin` : ""}. Its other polls are highlighted on the chart.</div>`;
+        h += `<div class="sub" style="margin-top:8px">Este instituto: ${mine.length} pesquisas de 2º turno · viés de ${sign(R.house[name] || 0)} ponto (${(R.house[name] || 0) >= 0 ? "puxa para o Lula" : "puxa para o Flávio"}) · ` +
+            `${grade(rat.grade) === "sem nota" ? "ainda sem nota (histórico curto demais" : `nota ${grade(rat.grade)} (`}${rat.polls ? `${grade(rat.grade) === "sem nota" ? ", " : ""}${rat.polls} pesquisas antigas)` : ")"}` +
+            `${cyc ? ` · erro no 1º turno de ${sign(cyc.mean_margin_error)} pontos na diferença` : ""}. As outras pesquisas dele estão destacadas no gráfico.</div>`;
         el.innerHTML = h;
         $("clearSel").onclick = () => { sel.poll = null; sel.pollster = null; render(); };
     }
@@ -453,10 +455,10 @@ if (typeof document !== "undefined") (function () {
         if (!ser.length) { box.innerHTML = ""; return; }
         const d0 = ser[0].d, d1 = ser[ser.length - 1].d;
         const x = d => m.l + (d - d0) / Math.max(1, d1 - d0) * (W - m.l - m.r), y = v => m.t + (1 - v) * (H - m.t - m.b);
-        let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Win probability over time">`;
+        let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Chance de vitória ao longo do tempo">`;
         for (const v of [0, .25, .5, .75, 1]) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === .5 ? "#888" : "#eee"}"/><text x="${m.l - 5}" y="${y(v) + 3}" text-anchor="end">${v * 100}%</text>`;
         const span = d1 - d0, tick = span > 40 ? 14 : 7;
-        for (let d = d1; d >= d0; d -= tick) s += `<text x="${x(d)}" y="${H - 6}" text-anchor="middle">${fromDay(d).slice(5).replace("-", "/")}</text>`;
+        for (let d = d1; d >= d0; d -= tick) s += `<text x="${x(d)}" y="${H - 6}" text-anchor="middle">${fd(d)}</text>`;
         if (!isDefault() && FH) s += `<polyline fill="none" stroke="#999" stroke-dasharray="5 4" points="${FH.series.filter(p => toDay(p.date) <= d1).map(p => `${x(toDay(p.date))},${y(p.p_lula)}`).join(" ")}"/>`;
         s += `<polyline fill="none" stroke="${FLAVIO}" stroke-width="2.2" points="${ser.map(p => `${x(p.d)},${y(1 - p.p)}`).join(" ")}"/>`;
         s += `<polyline fill="none" stroke="${LULA}" stroke-width="2.2" points="${ser.map(p => `${x(p.d)},${y(p.p)}`).join(" ")}"/>`;
@@ -468,23 +470,25 @@ if (typeof document !== "undefined") (function () {
 
     /* ---------- tables */
     let pSort = {k: "lean", dir: 1}, tSort = {k: "end", dir: -1};
+    const grade = g => !g ? "–" : g.startsWith("unrated") ? "sem nota" : g;
+    const verif = v => ({"verified-primary": "conferida na fonte", "verified-secondary": "conferida na imprensa", "unverified": "não confirmada"}[v] || esc(v));
     function renderPollsterTable() {
         const names = [...new Set(DATA.runoff.map(p => p.pollster))];
         const rows = names.map(n => {
             const mine = R.runoff.filter(p => p.pollster === n), cyc = (CYC.pollsters || []).find(c => c.pollster === n), r = RAT[n] || {};
-            return {n, polls: mine.length, lean: R.house[n], grade: (r.grade || "–").split(" ")[0], pm: r.plus_minus, past: r.polls || 0,
+            return {n, polls: mine.length, lean: R.house[n], grade: grade(r.grade), pm: r.plus_minus, past: r.polls || 0,
                 r1: cyc ? cyc.mean_margin_error : null, wt: mine.reduce((s, p) => s + p.wn, 0), infl: infl ? infl[n] : null,
                 excluded: opt.exclude.includes(n)};
         });
         const key = pSort.k;
         rows.sort((a, b) => ((a[key] ?? -1e9) > (b[key] ?? -1e9) ? 1 : (a[key] ?? -1e9) < (b[key] ?? -1e9) ? -1 : 0) * pSort.dir);
         const th = (k, l, t) => `<th data-k="${k}" title="${t || ""}">${l}${pSort.k === k ? (pSort.dir > 0 ? " ▲" : " ▼") : ""}</th>`;
-        let h = `<tr>${th("n", "Pollster")}<th>Use</th>${th("polls", "Polls")}${th("lean", "Lean", "Points of Lula's share vs the consensus; negative leans Flávio")}${th("wt", "Weight", "Share of today's average")}` +
-            `${th("grade", "Grade")}${th("pm", "Plus-minus", "Past accuracy vs other pollsters; lower is better")}${th("r1", "1st-round miss", "Flávio-minus-Lula margin error in the final first-round polls; negative understated Flávio")}` +
-            `${th("infl", "Moves avg", "How much the average moves if this pollster is removed")}</tr>`;
+        let h = `<tr>${th("n", "Instituto")}<th>Usar</th>${th("polls", "Pesquisas")}${th("lean", "Viés", "Pontos na fatia do Lula em relação ao consenso; negativo puxa para o Flávio")}${th("wt", "Peso", "Fatia na média de hoje")}` +
+            `${th("grade", "Nota")}${th("pm", "Mais-menos", "Acerto histórico comparado aos outros institutos; quanto menor, melhor")}${th("r1", "Erro no 1º turno", "Erro na diferença Flávio menos Lula nas últimas pesquisas do 1º turno; negativo subestimou o Flávio")}` +
+            `${th("infl", "Mexe na média", "Quanto a média muda se este instituto sair")}</tr>`;
         for (const r of rows) {
             h += `<tr class="${sel.pollster === r.n ? "on" : ""} ${r.excluded ? "off" : ""}" data-p="${esc(r.n)}"><td>${esc(r.n)}</td>` +
-                `<td><input type="checkbox" class="use" data-p="${esc(r.n)}" ${r.excluded ? "" : "checked"} aria-label="Use ${esc(r.n)}"></td>` +
+                `<td><input type="checkbox" class="use" data-p="${esc(r.n)}" ${r.excluded ? "" : "checked"} aria-label="Usar ${esc(r.n)}"></td>` +
                 `<td>${r.polls}</td><td style="color:${(r.lean || 0) >= 0 ? LULA : FLAVIO}">${r.lean == null ? "–" : sign(r.lean)}</td><td>${pct(100 * r.wt)}</td>` +
                 `<td>${esc(r.grade)}</td><td>${r.pm == null ? "–" : sign(r.pm, 2)}</td><td>${r.r1 == null ? "–" : sign(r.r1)}</td>` +
                 `<td>${r.infl == null ? "–" : sign(-r.infl, 2)}</td></tr>`;
@@ -512,15 +516,15 @@ if (typeof document !== "undefined") (function () {
         const k = tSort.k;
         rows.sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * tSort.dir);
         const th = (k, l) => `<th data-k="${k}">${l}${tSort.k === k ? (tSort.dir > 0 ? " ▲" : " ▼") : ""}</th>`;
-        let h = `<tr>${th("pollster", "Pollster")}${th("end", "Fieldwork")}${th("n", "Sample")}${th("lula", "Lula")}${th("flavio", "Flávio")}${th("lead", "Flávio lead")}${th("w", "Weight")}<th>Source</th></tr>`;
+        let h = `<tr>${th("pollster", "Instituto")}${th("end", "Campo")}${th("n", "Amostra")}${th("lula", "Lula")}${th("flavio", "Flávio")}${th("lead", "Vantagem do Flávio")}${th("w", "Peso")}<th>Fonte</th></tr>`;
         for (const r of rows) {
             const p = r.p;
-            h += `<tr data-id="${esc(p.id)}" class="${sel.poll && sel.poll.id === p.id ? "on" : ""} ${r.live ? "" : "off"}"><td>${esc(p.pollster)}</td><td>${fromDay(p.a).slice(5)} – ${fromDay(p.b).slice(5)}</td>` +
-                `<td>${p.n ? p.n.toLocaleString() : "–"}</td><td>${p.lula}</td><td>${p.flavio}</td><td style="color:${r.lead > 0 ? FLAVIO : LULA}">${sign(r.lead)}</td>` +
-                `<td>${r.live ? pct(100 * r.w) : "not used"}</td><td>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${p.verification.replace("verified-", "")}</a>` : p.verification}</td></tr>`;
+            h += `<tr data-id="${esc(p.id)}" class="${sel.poll && sel.poll.id === p.id ? "on" : ""} ${r.live ? "" : "off"}"><td>${esc(p.pollster)}</td><td>${fd(p.a)} a ${fd(p.b)}</td>` +
+                `<td>${p.n ? p.n.toLocaleString("pt-BR") : "–"}</td><td>${fmt(p.lula)}</td><td>${fmt(p.flavio)}</td><td style="color:${r.lead > 0 ? FLAVIO : LULA}">${sign(r.lead)}</td>` +
+                `<td>${r.live ? pct(100 * r.w) : "fora"}</td><td>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${verif(p.verification)}</a>` : verif(p.verification)}</td></tr>`;
         }
         $("pollTbl").innerHTML = h;
-        $("pollFilter").textContent = sel.pollster ? `Showing ${sel.pollster} only. ` : "";
+        $("pollFilter").textContent = sel.pollster ? `Mostrando só ${sel.pollster}. ` : "";
         $("pollTbl").querySelectorAll("th[data-k]").forEach(t => t.onclick = () => { tSort = {k: t.dataset.k, dir: tSort.k === t.dataset.k ? -tSort.dir : 1}; renderPollTable(); });
         $("pollTbl").querySelectorAll("tr[data-id]").forEach(t => t.onclick = e => {
             if (e.target.tagName === "A") return;
@@ -535,21 +539,21 @@ if (typeof document !== "undefined") (function () {
 
     /* ---------- controls */
     function syncControls() {
-        $("halfLife").value = opt.halfLife; $("halfLifeV").textContent = `${opt.halfLife} days`;
-        $("shrink").value = opt.shrink; $("shrinkV").textContent = opt.shrink;
-        $("errSd").value = opt.errSd; $("errSdV").textContent = `${fmt(opt.errSd)} pts`;
-        $("shift").value = opt.shift; $("shiftV").textContent = opt.shift === 0 ? "none" : `${sign(opt.shift)} pts ${opt.shift < 0 ? "(polls overstate Lula)" : "(polls understate Lula)"}`;
+        $("halfLife").value = opt.halfLife; $("halfLifeV").textContent = `${opt.halfLife} dias`;
+        $("shrink").value = opt.shrink; $("shrinkV").textContent = fmt(opt.shrink);
+        $("errSd").value = opt.errSd; $("errSdV").textContent = `${fmt(opt.errSd)} pontos`;
+        $("shift").value = opt.shift; $("shiftV").textContent = opt.shift === 0 ? "nada" : `${sign(opt.shift)} ponto ${opt.shift < 0 ? "(exageram o Lula)" : "(subestimam o Lula)"}`;
         for (const k of ["house", "useR1", "rating", "size", "freq", "pre", "unverified"]) $(k).checked = opt[k];
         $("shrink").disabled = !opt.house; $("useR1").disabled = !opt.house;
         const asOf = R.asOf;
-        $("asOf").value = asOf - DATA.start; $("asOfV").textContent = asOf === DATA.lastDay ? "latest" : fromDay(asOf);
+        $("asOf").value = asOf - DATA.start; $("asOfV").textContent = asOf === DATA.lastDay ? "hoje" : fdl(asOf);
         document.querySelectorAll("[data-metric]").forEach(b => b.classList.toggle("on", b.dataset.metric === view.metric));
         document.querySelectorAll("[data-win]").forEach(b => b.classList.toggle("on", b.dataset.win === currentWin()));
         $("colorBy").value = view.color;
         $("adjusted").checked = view.adjusted; $("band").checked = view.band; $("sized").checked = view.sized;
         const w0 = view.w0 != null ? view.w0 : DATA.start, w1 = view.w1 != null ? view.w1 : DATA.lastDay;
         $("win0").value = w0 - DATA.start; $("win1").value = w1 - DATA.start;
-        $("winV").textContent = `${fromDay(w0)} → ${fromDay(Math.min(w1, R.asOf))}`;
+        $("winV").textContent = `${fdl(w0)} → ${fdl(Math.min(w1, R.asOf))}`;
         $("modes").innerHTML = Object.keys(MODE_LABEL).filter(k => DATA.runoff.some(p => p.mode === k)).map(k =>
             `<button class="chip ${opt.excludeModes.includes(k) ? "" : "on"}" data-mode="${k}">${MODE_LABEL[k]}</button>`).join("");
         document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => {
@@ -590,13 +594,13 @@ if (typeof document !== "undefined") (function () {
         $("reset").onclick = resetAll;
         $("share").onclick = () => {
             writeHash();
-            const done = () => { $("share").textContent = "Link copied ✓"; setTimeout(() => $("share").textContent = "Copy link to this view", 1800); };
-            if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, () => prompt("Copy this link:", location.href));
-            else prompt("Copy this link:", location.href);
+            const done = () => { $("share").textContent = "Link copiado ✓"; setTimeout(() => $("share").textContent = "Copiar link desta visualização", 1800); };
+            if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, () => prompt("Copie este link:", location.href));
+            else prompt("Copie este link:", location.href);
         };
         $("inflBtn").onclick = () => {
-            $("inflBtn").textContent = "Computing…";
-            setTimeout(() => { infl = influence(DATA, opt); renderPollsterTable(); $("inflBtn").textContent = "Recompute influence"; pSort = {k: "infl", dir: 1}; renderPollsterTable(); }, 20);
+            $("inflBtn").textContent = "Calculando…";
+            setTimeout(() => { infl = influence(DATA, opt); renderPollsterTable(); $("inflBtn").textContent = "Recalcular a influência"; pSort = {k: "infl", dir: 1}; renderPollsterTable(); }, 20);
         };
         let rt;
         window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(render, 120); });
@@ -609,7 +613,7 @@ if (typeof document !== "undefined") (function () {
         recompute();
     }
     function startPlay() {
-        $("play").textContent = "❚❚ Pause";
+        $("play").textContent = "❚❚ Pausar";
         let d = opt.asOf == null || opt.asOf >= DATA.lastDay ? DATA.start + 10 : opt.asOf;
         playing = setInterval(() => {
             d += 1;
@@ -617,20 +621,18 @@ if (typeof document !== "undefined") (function () {
             opt.asOf = d; recompute();
         }, 140);
     }
-    function stopPlay() { if (playing) clearInterval(playing); playing = null; $("play").textContent = "▶ Play the campaign"; }
+    function stopPlay() { if (playing) clearInterval(playing); playing = null; $("play").textContent = "▶ Rever a campanha"; }
 
     /* ---------- static extras */
     function renderExtras(bt, sens, diag) {
         if (bt) {
-            let t = `<tr><th>Runoff</th><th>Average 5 days out (PT share)</th><th>Actual</th><th>Error</th><th>P(PT win)</th></tr>`;
-            for (const r of bt.races) t += `<tr><td>${r.year} ${esc(r.pt_candidate)} vs ${esc(r.opponent)}</td><td>${fmt(r.average_pt_share)}</td><td>${fmt(r.actual_pt_share)}</td><td>${sign(r.error)}</td><td>${pct(100 * r.p_pt_win, 0)} (${r.pt_won ? "won" : "lost"})</td></tr>`;
+            let t = `<tr><th>2º turno</th><th>Média 5 dias antes (fatia do PT)</th><th>Resultado</th><th>Erro</th><th>Chance do PT</th></tr>`;
+            for (const r of bt.races) t += `<tr><td>${r.year} ${esc(r.pt_candidate)} x ${esc(r.opponent)}</td><td>${fmt(r.average_pt_share)}</td><td>${fmt(r.actual_pt_share)}</td><td>${sign(r.error)}</td><td>${pct(100 * r.p_pt_win, 0)} (${r.pt_won ? "venceu" : "perdeu"})</td></tr>`;
             $("btTbl").innerHTML = t;
         }
-        let c = `<tr><th>Pollster</th><th>Polls</th><th>Margin error</th><th>Absolute error</th></tr>`;
+        let c = `<tr><th>Instituto</th><th>Pesquisas</th><th>Erro na diferença</th><th>Erro absoluto</th></tr>`;
         for (const q of CYC.pollsters || []) c += `<tr><td>${esc(q.pollster)}</td><td>${q.polls}</td><td>${sign(q.mean_margin_error)}</td><td>${fmt(q.mean_abs_error)}</td></tr>`;
         $("cycTbl").innerHTML = c;
-        if (sens) $("robRatings").innerHTML = "<b>Ratings.</b> " + esc(sens.summary);
-        if (diag) $("robHouse").innerHTML = "<b>House effects.</b> " + esc(diag.summary);
     }
 
     /* ---------- boot */
@@ -649,5 +651,5 @@ if (typeof document !== "undefined") (function () {
             renderExtras(bt, sens, diag);
             recompute();
         })
-        .catch(e => { $("asofLine").textContent = "Could not load data: " + e; });
+        .catch(e => { $("asofLine").textContent = "Não consegui carregar os dados: " + e; });
 })();

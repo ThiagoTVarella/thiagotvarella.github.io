@@ -1,0 +1,1282 @@
+{
+ "n_scored": 1000,
+ "top": [
+  {
+   "race": "2018-governor-MG-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-MG-r1-ibope-2018-09-26",
+   "matched_poll_id": "2018-governor-MG-r1-ibope-2018-09-26",
+   "end": "2018-09-26",
+   "dte": "11",
+   "err": -55.86,
+   "pm": "13.31",
+   "bias_pt": "",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Anastasia",
+     "party": "PSDB",
+     "pct": 35.0
+    },
+    {
+     "option": "Pimentel",
+     "party": "PT",
+     "pct": 21.0
+    },
+    {
+     "option": "Zema",
+     "party": "NOVO",
+     "pct": 8.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 8.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 27.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-RJ-r1-datafolha-2018-09-28",
+   "matched_poll_id": "2018-governor-RJ-r1-datafolha-2018-09-28",
+   "end": "2018-09-28",
+   "dte": "9",
+   "err": -50.1,
+   "pm": "4.98",
+   "bias_pt": "",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 25.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 14.0
+    },
+    {
+     "option": "Garotinho PRP/PR",
+     "party": "",
+     "pct": 15.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 6.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 8.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 2.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 4.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 6.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 19.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-RJ-r1-ibope-2018-09-24",
+   "matched_poll_id": "2018-governor-RJ-r1-ibope-2018-09-24",
+   "end": "2018-09-24",
+   "dte": "13",
+   "err": -49.5,
+   "pm": "3.63",
+   "bias_pt": "",
+   "options_sum": 101.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 24.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 16.0
+    },
+    {
+     "option": "Garotinho PRP/PR",
+     "party": "",
+     "pct": 16.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 4.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 6.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 2.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 4.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 7.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 22.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-RJ-r1-datafolha-2018-09-19",
+   "matched_poll_id": "2018-governor-RJ-r1-datafolha-2018-09-19",
+   "end": "2018-09-19",
+   "dte": "18",
+   "err": -48.59,
+   "pm": "1.79",
+   "bias_pt": "",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 22.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 14.0
+    },
+    {
+     "option": "Garotinho PRP/PR",
+     "party": "",
+     "pct": 12.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 6.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 7.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 2.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 4.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 5.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 27.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-RJ-r1-ibope-2018-10-02",
+   "matched_poll_id": "2018-governor-RJ-r1-ibope-2018-10-02",
+   "end": "2018-10-02",
+   "dte": "5",
+   "err": -48.48,
+   "pm": "4.12",
+   "bias_pt": "",
+   "options_sum": 101.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 26.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 19.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 6.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 10.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 3.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 7.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 10.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 20.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-RJ-r1-ibope-2018-10-06",
+   "matched_poll_id": "2018-governor-RJ-r1-ibope-2018-10-06",
+   "end": "2018-10-06",
+   "dte": "1",
+   "err": -43.05,
+   "pm": "-0.56",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 26.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 17.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 7.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 10.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 5.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 10.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 8.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 17.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-RJ-r1-datafolha-2018-10-04",
+   "matched_poll_id": "2018-governor-RJ-r1-datafolha-2018-10-04",
+   "end": "2018-10-04",
+   "dte": "3",
+   "err": -40.39,
+   "pm": "-3.6",
+   "bias_pt": "",
+   "options_sum": 101.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 24.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 16.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 9.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 10.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 6.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 10.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 8.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 18.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-MG-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-MG-r1-datafolha-2018-10-04",
+   "matched_poll_id": "2018-governor-MG-r1-datafolha-2018-10-04",
+   "end": "2018-10-04",
+   "dte": "3",
+   "err": -38.67,
+   "pm": "-2.38",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Anastasia",
+     "party": "PSDB",
+     "pct": 32.0
+    },
+    {
+     "option": "Pimentel",
+     "party": "PT",
+     "pct": 21.0
+    },
+    {
+     "option": "Zema",
+     "party": "NOVO",
+     "pct": 15.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 10.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 22.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Ipespe",
+   "poll_id": "2022-governor-CE-r1-ipespe-2022-09-11",
+   "matched_poll_id": "2022-governor-CE-r1-ipespe-2022-09-11",
+   "end": "2022-09-11",
+   "dte": "21",
+   "err": -38.15,
+   "pm": "11.64",
+   "bias_pt": "-38.15",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 36.0
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 22.0
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 23.0
+    },
+    {
+     "option": "Leal",
+     "party": "UP",
+     "pct": 0.0
+    },
+    {
+     "option": "Batista",
+     "party": "PSTU",
+     "pct": 1.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 1.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 17.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Invox Brasil",
+   "poll_id": "2022-governor-CE-r1-invox-brasil-2022-09-12",
+   "matched_poll_id": "2022-governor-CE-r1-invox-brasil-2022-09-12",
+   "end": "2022-09-12",
+   "dte": "20",
+   "err": -38.15,
+   "pm": "11.83",
+   "bias_pt": "-38.15",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 34.0
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 26.0
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 21.0
+    },
+    {
+     "option": "Batista",
+     "party": "PSTU",
+     "pct": 1.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 18.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Paraná Pesquisas",
+   "poll_id": "2022-governor-CE-r1-parana-pesquisas-2022-09-12",
+   "matched_poll_id": "2022-governor-CE-r1-parana-pesquisas-2022-09-12",
+   "end": "2022-09-12",
+   "dte": "20",
+   "err": -38.01,
+   "pm": "11.69",
+   "bias_pt": "-38.01",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 36.8
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 24.4
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 23.3
+    },
+    {
+     "option": "Leal",
+     "party": "UP",
+     "pct": 0.1
+    },
+    {
+     "option": "Batista",
+     "party": "PSTU",
+     "pct": 1.3
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 0.4
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 13.7
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2014-governor-BA-r1",
+   "pollster": "Ipec",
+   "poll_id": "2014-governor-BA-r1-ibope-2014-09-23",
+   "matched_poll_id": "2014-governor-BA-r1-ibope-2014-09-23",
+   "end": "2014-09-23",
+   "dte": "12",
+   "err": -37.39,
+   "pm": "11.11",
+   "bias_pt": "-37.39",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Rui Costa",
+     "party": "PT",
+     "pct": 27.0
+    },
+    {
+     "option": "Paulo Souto",
+     "party": "DEM",
+     "pct": 43.0
+    },
+    {
+     "option": "Lídice da Mata",
+     "party": "PSB",
+     "pct": 7.0
+    },
+    {
+     "option": "Marcos Mendes",
+     "party": "PSOL",
+     "pct": 1.0
+    },
+    {
+     "option": "Renata Mallet",
+     "party": "PSTU",
+     "pct": 1.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 21.0
+    }
+   ],
+   "flags": [],
+   "notes": "also on pt:Eleições estaduais na Bahia em 2014"
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Invox Brasil",
+   "poll_id": "2022-governor-CE-r1-invox-brasil-2022-09-18",
+   "matched_poll_id": "2022-governor-CE-r1-invox-brasil-2022-09-18",
+   "end": "2022-09-18",
+   "dte": "14",
+   "err": -35.88,
+   "pm": "10.68",
+   "bias_pt": "-35.88",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 33.0
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 26.0
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 22.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 1.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 17.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2026-governor-MT-r1",
+   "pollster": "Quaest",
+   "poll_id": "2026-governor-MT-r1-quaest-2026-09-24",
+   "matched_poll_id": "2026-governor-MT-r1-quaest-2026-09-24",
+   "end": "2026-09-24",
+   "dte": "10",
+   "err": -34.6,
+   "pm": "13.7",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wellington Fagundes",
+     "party": "PL",
+     "pct": 27.0
+    },
+    {
+     "option": "Otaviano Pivetta",
+     "party": "Republicanos",
+     "pct": 29.0
+    },
+    {
+     "option": "Doutora Natasha",
+     "party": "PSD",
+     "pct": 11.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 5.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 28.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Real Time Big Data",
+   "poll_id": "2022-governor-CE-r1-real-time-big-data-2022-09-12",
+   "matched_poll_id": "2022-governor-CE-r1-real-time-big-data-2022-09-12",
+   "end": "2022-09-12",
+   "dte": "20",
+   "err": -34.2,
+   "pm": "7.88",
+   "bias_pt": "-34.2",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 36.0
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 22.0
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 26.0
+    },
+    {
+     "option": "Leal",
+     "party": "UP",
+     "pct": 0.0
+    },
+    {
+     "option": "Batista",
+     "party": "PSTU",
+     "pct": 0.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 16.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RJ-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-RJ-r1-datafolha-2018-10-06",
+   "matched_poll_id": "2018-governor-RJ-r1-datafolha-2018-10-06",
+   "end": "2018-10-06",
+   "dte": "1",
+   "err": -33.26,
+   "pm": "-10.36",
+   "bias_pt": "",
+   "options_sum": 97.0,
+   "options": [
+    {
+     "option": "Paes",
+     "party": "DEM",
+     "pct": 23.0
+    },
+    {
+     "option": "Romário",
+     "party": "PODE",
+     "pct": 15.0
+    },
+    {
+     "option": "Motta",
+     "party": "PSOL",
+     "pct": 10.0
+    },
+    {
+     "option": "Indio",
+     "party": "PSD",
+     "pct": 11.0
+    },
+    {
+     "option": "Fernandes",
+     "party": "PDT",
+     "pct": 5.0
+    },
+    {
+     "option": "Witzel",
+     "party": "PSC",
+     "pct": 14.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 5.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 14.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-CE-r1",
+   "pollster": "Ipespe",
+   "poll_id": "2022-governor-CE-r1-ipespe-2022-09-20",
+   "matched_poll_id": "2022-governor-CE-r1-ipespe-2022-09-20",
+   "end": "2022-09-20",
+   "dte": "12",
+   "err": -33.01,
+   "pm": "8.18",
+   "bias_pt": "-33.01",
+   "options_sum": 101.0,
+   "options": [
+    {
+     "option": "Wagner",
+     "party": "UNIÃO",
+     "pct": 37.0
+    },
+    {
+     "option": "Cláudio",
+     "party": "PDT",
+     "pct": 19.0
+    },
+    {
+     "option": "Elmano",
+     "party": "PT",
+     "pct": 28.0
+    },
+    {
+     "option": "Leal",
+     "party": "UP",
+     "pct": 0.0
+    },
+    {
+     "option": "Batista",
+     "party": "PSTU",
+     "pct": 0.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 1.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 16.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-PA-r1",
+   "pollster": "Destak",
+   "poll_id": "2022-governor-PA-r1-destak-2022-09-23",
+   "matched_poll_id": "2022-governor-PA-r1-destak-2022-09-23",
+   "end": "2022-09-23",
+   "dte": "9",
+   "err": 32.28,
+   "pm": "13.16",
+   "bias_pt": "",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Helder",
+     "party": "MDB",
+     "pct": 76.0
+    },
+    {
+     "option": "Zequinha",
+     "party": "PL",
+     "pct": 8.0
+    },
+    {
+     "option": "Marcony",
+     "party": "Solidariedade",
+     "pct": 2.0
+    },
+    {
+     "option": "Adolfo",
+     "party": "PSOL",
+     "pct": 0.0
+    },
+    {
+     "option": "Sofia",
+     "party": "PMB",
+     "pct": 1.0
+    },
+    {
+     "option": "Cleber",
+     "party": "PSTU",
+     "pct": 2.0
+    },
+    {
+     "option": "Felipe",
+     "party": "PRTB",
+     "pct": 1.0
+    },
+    {
+     "option": "Paulo",
+     "party": "Agir",
+     "pct": 0.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 0.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 9.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2022-governor-ES-r1",
+   "pollster": "Ipec",
+   "poll_id": "2022-governor-ES-r1-ipec-2022-09-21",
+   "matched_poll_id": "2022-governor-ES-r1-ipec-2022-09-21",
+   "end": "2022-09-21",
+   "dte": "11",
+   "err": 32.24,
+   "pm": "7.99",
+   "bias_pt": "",
+   "options_sum": 101.0,
+   "options": [
+    {
+     "option": "Casagrande",
+     "party": "PSB",
+     "pct": 53.0
+    },
+    {
+     "option": "Manato",
+     "party": "PL",
+     "pct": 18.0
+    },
+    {
+     "option": "Audifax",
+     "party": "REDE",
+     "pct": 7.0
+    },
+    {
+     "option": "Guerino",
+     "party": "PSD",
+     "pct": 7.0
+    },
+    {
+     "option": "Aridelmo",
+     "party": "NOVO",
+     "pct": 0.0
+    },
+    {
+     "option": "Vinicius",
+     "party": "PSTU",
+     "pct": 1.0
+    },
+    {
+     "option": "Claudio",
+     "party": "PRTB",
+     "pct": 0.0
+    },
+    {
+     "option": "BLANK_NULL",
+     "party": "",
+     "pct": 7.0
+    },
+    {
+     "option": "UNDECIDED",
+     "party": "",
+     "pct": 8.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-RO-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-RO-r1-ibope-2018-09-16",
+   "matched_poll_id": "2018-governor-RO-r1-ibope-2018-09-16",
+   "end": "2018-09-16",
+   "dte": "21",
+   "err": 31.84,
+   "pm": "0.0",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Expedito",
+     "party": "PSDB",
+     "pct": 32.0
+    },
+    {
+     "option": "Gurgacz",
+     "party": "PDT",
+     "pct": 14.0
+    },
+    {
+     "option": "Maurão",
+     "party": "MDB",
+     "pct": 12.0
+    },
+    {
+     "option": "Rocha",
+     "party": "PSL",
+     "pct": 4.0
+    },
+    {
+     "option": "Pimenta",
+     "party": "PSOL",
+     "pct": 3.0
+    },
+    {
+     "option": "Charlon",
+     "party": "PRTB",
+     "pct": 3.0
+    },
+    {
+     "option": "Miguel",
+     "party": "REDE",
+     "pct": 2.0
+    },
+    {
+     "option": "Nazareno",
+     "party": "PSTU",
+     "pct": 1.0
+    },
+    {
+     "option": "Queiroz",
+     "party": "PMB",
+     "pct": 0.0
+    },
+    {
+     "option": "BLANK_NULL",
+     "party": "",
+     "pct": 16.0
+    },
+    {
+     "option": "UNDECIDED",
+     "party": "",
+     "pct": 13.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2014-governor-PE-r1",
+   "pollster": "Ipec",
+   "poll_id": "2014-governor-PE-r1-ibope-2014-09-22",
+   "matched_poll_id": "2014-governor-PE-r1-ibope-2014-09-22",
+   "end": "2014-09-22",
+   "dte": "13",
+   "err": -31.6,
+   "pm": "6.26",
+   "bias_pt": "",
+   "options_sum": 99.0,
+   "options": [
+    {
+     "option": "Paulo Câmara",
+     "party": "PSB",
+     "pct": 39.0
+    },
+    {
+     "option": "Armando Monteiro",
+     "party": "PTB",
+     "pct": 35.0
+    },
+    {
+     "option": "BLANK_NULL",
+     "party": "",
+     "pct": 10.0
+    },
+    {
+     "option": "UNDECIDED",
+     "party": "",
+     "pct": 15.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-MG-r1",
+   "pollster": "Datafolha",
+   "poll_id": "2018-governor-MG-r1-datafolha-2018-09-28",
+   "matched_poll_id": "2018-governor-MG-r1-datafolha-2018-09-28",
+   "end": "2018-09-28",
+   "dte": "9",
+   "err": -31.24,
+   "pm": "-10.93",
+   "bias_pt": "",
+   "options_sum": 102.0,
+   "options": [
+    {
+     "option": "Anastasia",
+     "party": "PSDB",
+     "pct": 32.0
+    },
+    {
+     "option": "Pimentel",
+     "party": "PT",
+     "pct": 23.0
+    },
+    {
+     "option": "Zema",
+     "party": "NOVO",
+     "pct": 19.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 7.0
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 21.0
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2026-governor-SE-r1",
+   "pollster": "INOR",
+   "poll_id": "2026-governor-SE-r1-inor-2026-09-13",
+   "matched_poll_id": "2026-governor-SE-r1-inor-2026-09-13",
+   "end": "2026-09-13",
+   "dte": "21",
+   "err": -30.97,
+   "pm": "19.39",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Fábio",
+     "party": "PSD",
+     "pct": 37.29
+    },
+    {
+     "option": "Valmir de Francisquinho",
+     "party": "Republicanos",
+     "pct": 44.67
+    },
+    {
+     "option": "Ricardo Marques",
+     "party": "PL",
+     "pct": 4.86
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 2.06
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 11.12
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  },
+  {
+   "race": "2018-governor-DF-r1",
+   "pollster": "Ipec",
+   "poll_id": "2018-governor-DF-r1-ibope-2018-09-17",
+   "matched_poll_id": "2018-governor-DF-r1-ibope-2018-09-17",
+   "end": "2018-09-17",
+   "dte": "20",
+   "err": -30.85,
+   "pm": "1.79",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Eliana",
+     "party": "PROS",
+     "pct": 22.0
+    },
+    {
+     "option": "Fraga",
+     "party": "DEM",
+     "pct": 14.0
+    },
+    {
+     "option": "Ibaneis",
+     "party": "MDB",
+     "pct": 9.0
+    },
+    {
+     "option": "Rollemberg",
+     "party": "PSB",
+     "pct": 11.0
+    },
+    {
+     "option": "Rosso",
+     "party": "PSD",
+     "pct": 10.0
+    },
+    {
+     "option": "Chagas",
+     "party": "PRP",
+     "pct": 5.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 8.0
+    },
+    {
+     "option": "BLANK_NULL",
+     "party": "",
+     "pct": 13.0
+    },
+    {
+     "option": "UNDECIDED",
+     "party": "",
+     "pct": 8.0
+    }
+   ],
+   "flags": [
+    "single-date poll"
+   ],
+   "notes": "only publication date given; used for field_start/end"
+  },
+  {
+   "race": "2026-governor-MT-r1",
+   "pollster": "Veritá",
+   "poll_id": "2026-governor-MT-r1-verita-2026-09-24",
+   "matched_poll_id": "2026-governor-MT-r1-verita-2026-09-24",
+   "end": "2026-09-24",
+   "dte": "10",
+   "err": -29.71,
+   "pm": "8.81",
+   "bias_pt": "",
+   "options_sum": 100.0,
+   "options": [
+    {
+     "option": "Wellington Fagundes",
+     "party": "PL",
+     "pct": 32.3
+    },
+    {
+     "option": "Otaviano Pivetta",
+     "party": "Republicanos",
+     "pct": 39.1
+    },
+    {
+     "option": "Doutora Natasha",
+     "party": "PSD",
+     "pct": 15.0
+    },
+    {
+     "option": "OTHERS",
+     "party": "",
+     "pct": 2.5
+    },
+    {
+     "option": "BLANK_NULL_UNDECIDED",
+     "party": "",
+     "pct": 11.1
+    }
+   ],
+   "flags": [],
+   "notes": ""
+  }
+ ]
+}
