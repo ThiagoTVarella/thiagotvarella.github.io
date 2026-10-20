@@ -165,6 +165,7 @@
                     <option value="exp">Exponencial (só olha para trás)</option>
                     <option value="gauss">Gaussiana (centrada no dia)</option>
                     <option value="window">Janela móvel (média simples dos últimos dias)</option>
+                    <option value="spline">Spline cúbica de suavização (tipo csaps)</option>
                 </select><span class="v" id="smootherV"></span></div>
             <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
             <div id="winPresets" style="display:none; margin:-2px 0 6px">
@@ -225,7 +226,13 @@
                     (o peso cai pela metade a cada <i>meia-vida</i>) × uma penalidade para quem publica muitas pesquisas em sequência.
                     O viés de cada instituto é estimado junto com a tendência e depois descontado. Um detalhe importante: esse viés é medido
                     em relação ao consenso dos institutos, não em relação à verdade. Se todo mundo errar junto, a média erra junto.
-                    A conta é feita sobre a fatia do Lula no total dos dois candidatos (usando votos totais), então indecisos, brancos e nulos ficam de fora.</p></details>
+                    A conta é feita sobre a fatia do Lula no total dos dois candidatos (usando votos totais), então indecisos, brancos e nulos ficam de fora.</p>
+                <p>Nos ajustes dá para trocar o jeito de suavizar: exponencial (o padrão, que só olha para trás), gaussiana (centrada no dia),
+                    janela móvel simples (7, 15, 30 dias…) ou uma spline cúbica de suavização, igual à do <i>csaps</i>. Na spline, a
+                    rigidez λ troca fidelidade às pesquisas por suavidade da curva (p = 1/(1+λ) na convenção do csaps; p perto de 1 passa
+                    por todos os pontos, p perto de 0 vira uma reta). Ela usa os mesmos pesos das pesquisas e fica plana depois da última
+                    pesquisa, porque prolongar a curva seria fazer uma previsão que eu não quero fazer. O viés dos institutos continua
+                    estimado do jeito padrão; a spline só desenha a tendência.</p></details>
             <details><summary>As notas dos institutos</summary>
                 <p>Peguei as pesquisas das três últimas semanas antes de cada eleição: presidente de 2010 a 2026 e governador em 2014, 2018,
                     2022 e 2026. Comparei a diferença entre os dois primeiros colocados com o resultado oficial do TSE. Eleição presidencial

@@ -24,6 +24,7 @@ const DEFAULTS = {
     useR1: true,        // let first-round polls inform house effects
     r1Weight: 0.5,      // ...and how much each of them counts relative to a runoff poll
     window: 15,         // length in days of the simple moving window
+    splineLog: 3.5,     // cubic smoothing spline stiffness, log10(lambda); csaps p = 1 / (1 + lambda)
     houseStrength: 1,   // how much of each estimated house effect to remove (1 = all of it)
     smoother: "exp",    // exp: exponential decay, past only · gauss: centred Gaussian · window: simple moving window
     rating: true,       // weight by pollster rating
@@ -81,8 +82,81 @@ function trendAt(day, list, house, H, skip, smoother = "exp", strength = 1) {
     return den ? {v: num / den, den, nEff: den * den / den2} : {v: null, den: 0, nEff: 0};
 }
 
+/* Weighted cubic smoothing spline (what MATLAB's / Python's csaps fits), via the Reinsch
+ * algorithm as in Green & Silverman (1994): minimise sum w_i (y_i - f(x_i))^2 + lambda * int f''^2.
+ * Polls on the same day are merged first. Returns f evaluated at any day, held flat outside the data
+ * (a natural spline would extrapolate linearly, which is a forecast we do not want to make). */
+function splineFit(pts, lambda) {
+    const by = new Map();
+    for (const p of pts) {
+        const e = by.get(p.x) || {x: p.x, sw: 0, swy: 0};
+        e.sw += p.w; e.swy += p.w * p.y;
+        by.set(p.x, e);
+    }
+    const k = [...by.values()].sort((a, b) => a.x - b.x);
+    const n = k.length;
+    if (n === 0) return () => null;
+    const x = k.map(e => e.x), w = k.map(e => e.sw), y = k.map(e => e.swy / e.sw);
+    const wm = w.reduce((s, v) => s + v, 0) / n;
+    for (let i = 0; i < n; i++) w[i] /= wm;               // so lambda does not depend on the weight scale
+    if (n < 3) { const m = y.reduce((s, v, i) => s + v * w[i], 0) / w.reduce((s, v) => s + v, 0); return () => m; }
+    const h = [];
+    for (let i = 0; i < n - 1; i++) h.push(x[i + 1] - x[i]);
+    // Q (n x n-2) is tridiagonal by columns, R (n-2 x n-2) tridiagonal
+    const m = n - 2, A = Array.from({length: m}, () => new Float64Array(m)), rhs = new Float64Array(m);
+    const q = (i, j) => {            // entry Q[i][j], column j corresponds to interior knot j+1
+        if (i === j) return 1 / h[j];
+        if (i === j + 1) return -1 / h[j] - 1 / h[j + 1];
+        if (i === j + 2) return 1 / h[j + 1];
+        return 0;
+    };
+    for (let j = 0; j < m; j++) {
+        A[j][j] += (h[j] + h[j + 1]) / 3;
+        if (j + 1 < m) { A[j][j + 1] += h[j + 1] / 6; A[j + 1][j] += h[j + 1] / 6; }
+        for (let i = j; i <= j + 2; i++) rhs[j] += q(i, j) * y[i];
+        for (let l = Math.max(0, j - 2); l <= Math.min(m - 1, j + 2); l++) {   // lambda * Q' W^-1 Q (pentadiagonal)
+            let sum = 0;
+            for (let i = Math.max(j, l); i <= Math.min(j, l) + 2; i++) sum += q(i, j) * q(i, l) / w[i];
+            A[j][l] += lambda * sum;
+        }
+    }
+    // symmetric positive definite: Gaussian elimination without pivoting is safe
+    for (let c = 0; c < m; c++) {
+        for (let r = c + 1; r < Math.min(m, c + 3); r++) {
+            const f = A[r][c] / A[c][c];
+            if (!f) continue;
+            for (let cc = c; cc < Math.min(m, c + 3); cc++) A[r][cc] -= f * A[c][cc];
+            rhs[r] -= f * rhs[c];
+        }
+    }
+    const gam = new Float64Array(n);                       // second derivatives; zero at both ends
+    for (let c = m - 1; c >= 0; c--) {
+        let sum = rhs[c];
+        for (let cc = c + 1; cc < Math.min(m, c + 3); cc++) sum -= A[c][cc] * gam[cc + 1];
+        gam[c + 1] = sum / A[c][c];
+    }
+    const g = y.slice();
+    for (let i = 0; i < n; i++) {
+        let qg = 0;
+        for (let j = Math.max(0, i - 2); j <= Math.min(m - 1, i); j++) qg += q(i, j) * gam[j + 1];
+        g[i] = y[i] - lambda * qg / w[i];
+    }
+    return t => {
+        if (t <= x[0]) return g[0];
+        if (t >= x[n - 1]) return g[n - 1];
+        let i = 0;
+        while (x[i + 1] < t) i++;
+        const hi = h[i], a = t - x[i], b = x[i + 1] - t;
+        return (a * g[i + 1] + b * g[i]) / hi - a * b / 6 * ((1 + a / hi) * gam[i + 1] + (1 + b / hi) * gam[i]);
+    };
+}
+
 // smoothing width: the half-life (exponential), the spread (Gaussian) or the window length
-const width = opt => opt.smoother === "window" ? opt.window : opt.halfLife;
+const width = opt => opt.smoother === "window" ? opt.window
+    : opt.smoother === "spline" ? Math.min(40, Math.max(1, Math.pow(Math.pow(10, opt.splineLog), 0.25)))
+    : opt.halfLife;
+// the spline only draws the trend; house effects, noise and dot weights use its nearest kernel cousin
+const kernelSmoother = opt => opt.smoother === "spline" ? "gauss" : opt.smoother;
 
 function estimateHouse(runoff, r1, opt, iters = 40) {
     let house = {};
@@ -92,7 +166,8 @@ function estimateHouse(runoff, r1, opt, iters = 40) {
     for (let it = 0; it < iters; it++) {
         const sum = {}, wt = {};
         for (const p of all) {
-            const tr = trendAt(p.t, p.series === "runoff" ? runoff : r1, house, width(opt), p, opt.smoother);
+            const tr = trendAt(p.t, p.series === "runoff" ? runoff : r1, house, opt.smoother === "spline" ? opt.halfLife : width(opt), p,
+                opt.smoother === "spline" ? "exp" : opt.smoother);
             if (tr.v === null) continue;
             const w = p.series === "r1" ? r1w : 1;
             sum[p.pollster] = (sum[p.pollster] || 0) + w * (p.y - tr.v);
@@ -140,26 +215,32 @@ function compute(data, opt) {
     let res = [];
     for (const p of runoff) {
         if (asOf - p.t > 21) continue;
-        const tr = trendAt(p.t, runoff, house, width(opt), p, opt.smoother, opt.houseStrength);
+        const tr = trendAt(p.t, runoff, house, width(opt), p, kernelSmoother(opt), opt.houseStrength);
         if (tr.v !== null) res.push(p.y - opt.houseStrength * (house[p.pollster] || 0) - tr.v);
     }
     const sd = res.length > 1 ? Math.sqrt(res.reduce((s, r) => s + r * r, 0) / (res.length - 1)) : 1.5;
 
+    let spl = null, splRaw = null;
+    if (opt.smoother === "spline") {
+        const lam = Math.pow(10, opt.splineLog);
+        spl = splineFit(runoff.map(p => ({x: p.t, y: p.y - opt.houseStrength * (house[p.pollster] || 0), w: p.bw})), lam);
+        splRaw = splineFit(runoff.map(p => ({x: p.t, y: p.y, w: p.bw})), lam);
+    }
     const series = [], raw = [];
     for (let d = data.start; d <= asOf; d++) {
-        const tr = trendAt(d, runoff, house, width(opt), null, opt.smoother, opt.houseStrength);
+        const tr = trendAt(d, runoff, house, width(opt), null, kernelSmoother(opt), opt.houseStrength);
         if (tr.v === null) continue;
+        const v = spl ? spl(d) : tr.v;
         const se = sd / Math.sqrt(Math.max(1, tr.nEff));
-        const c = tr.v + opt.shift;
-        series.push({d, v: tr.v, se, p: winProb(c, se, ELECTION - d, opt.errSd)});
-        const r = trendAt(d, runoff, {}, width(opt), null, opt.smoother);   // same trend, no house-effect correction
+        series.push({d, v, se, p: winProb(v + opt.shift, se, ELECTION - d, opt.errSd)});
+        const r = splRaw ? {v: splRaw(d)} : trendAt(d, runoff, {}, width(opt), null, opt.smoother);   // no house-effect correction
         if (r.v !== null) raw.push({d, v: r.v});
     }
     const last = series[series.length - 1] || {v: NaN, se: NaN, p: NaN};
 
     let wsum = 0;
     for (const p of runoff) {
-        p.w = p.t <= asOf ? p.bw * kernel(asOf - p.t, width(opt), opt.smoother) : 0;
+        p.w = p.t <= asOf ? p.bw * kernel(asOf - p.t, width(opt), kernelSmoother(opt)) : 0;
         wsum += p.w;
         p.adj = p.y - opt.houseStrength * (house[p.pollster] || 0);
     }
@@ -179,7 +260,7 @@ function influence(data, opt) {
 }
 
 if (typeof module !== "undefined") {
-    module.exports = {prepare, compute, influence, DEFAULTS, toDay, fromDay, winProb, t4cdf};
+    module.exports = {prepare, compute, influence, DEFAULTS, toDay, fromDay, winProb, t4cdf, splineFit};
 }
 
 /* ---------------------------------------------------------------------- UI */
@@ -566,15 +647,18 @@ if (typeof document !== "undefined") (function () {
 
     /* ---------- controls */
     function syncControls() {
-        const win = opt.smoother === "window";
-        $("halfLife").min = win ? 3 : 2; $("halfLife").max = win ? 45 : 30;
-        $("halfLife").value = win ? opt.window : opt.halfLife;
+        const win = opt.smoother === "window", sp = opt.smoother === "spline";
+        $("halfLife").min = sp ? 1 : win ? 3 : 2; $("halfLife").max = sp ? 6 : win ? 45 : 30; $("halfLife").step = sp ? 0.1 : 1;
+        $("halfLife").value = sp ? opt.splineLog : win ? opt.window : opt.halfLife;
         $("smoother").value = opt.smoother;
-        $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Tamanho da janela"}[opt.smoother];
-        $("halfLifeV").textContent = `${win ? opt.window : opt.halfLife} dias`;
+        $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Tamanho da janela", spline: "Rigidez da spline"}[opt.smoother];
+        if (sp) {
+            const lam = Math.pow(10, opt.splineLog), pp = 1 / (1 + lam);
+            $("halfLifeV").textContent = `λ = ${lam >= 100 ? Math.round(lam).toLocaleString("pt-BR") : fmt(lam)} · p = ${pp.toExponential(1).replace(".", ",")} · ~${fmt(width(opt), 0)} dias`;
+        } else $("halfLifeV").textContent = `${win ? opt.window : opt.halfLife} dias`;
         $("winPresets").style.display = win ? "block" : "none";
         document.querySelectorAll("[data-wlen]").forEach(b => b.classList.toggle("on", +b.dataset.wlen === opt.window));
-        $("smootherV").textContent = {exp: "padrão", gauss: "usa pesquisas dos dois lados", window: "todas pesam igual"}[opt.smoother];
+        $("smootherV").textContent = {exp: "padrão", gauss: "usa pesquisas dos dois lados", window: "todas pesam igual", spline: "curva suave pelos dois lados"}[opt.smoother];
         $("houseStrength").value = opt.houseStrength; $("houseStrengthV").textContent = `${Math.round(100 * opt.houseStrength)}%`;
         $("r1Weight").value = opt.r1Weight; $("r1WeightV").textContent = `${Math.round(100 * opt.r1Weight)}%`;
         $("shrink").value = opt.shrink; $("shrinkV").textContent = fmt(opt.shrink);
@@ -609,7 +693,9 @@ if (typeof document !== "undefined") (function () {
     }
     function bindControls() {
         const num = (id, k, live) => $(id).addEventListener(live ? "input" : "change", () => { opt[k] = parseFloat($(id).value); recompute(); });
-        $("halfLife").addEventListener("input", () => { opt[opt.smoother === "window" ? "window" : "halfLife"] = parseFloat($("halfLife").value); recompute(); });
+        $("halfLife").addEventListener("input", () => {
+            opt[{window: "window", spline: "splineLog"}[opt.smoother] || "halfLife"] = parseFloat($("halfLife").value); recompute();
+        });
         document.querySelectorAll("[data-wlen]").forEach(b => b.onclick = () => { opt.window = +b.dataset.wlen; recompute(); });
         num("shrink", "shrink", true); num("errSd", "errSd", true); num("shift", "shift", true);
         num("houseStrength", "houseStrength", true); num("r1Weight", "r1Weight", true);
