@@ -61,6 +61,7 @@
                 <div><div class="n flavio" id="pF">–</div><div class="sub">Flávio Bolsonaro</div></div>
             </div>
             <div class="bar" id="pBar"></div>
+            <div id="pChart"></div>
             <p class="sub" id="scen"></p>
 
         </div>
@@ -77,6 +78,12 @@
             <div class="scroll"><table class="t" id="houseTbl"></table></div>
             <p class="sub">Lean: how far a pollster runs from the consensus, in points of Lula's share (negative = favours Flávio).
             Rating: accuracy against official results in past elections (lower plus-minus is better).</p>
+        </div>
+
+        <div class="card">
+            <h4>Robustness checks</h4>
+            <p id="robRatings"></p>
+            <p id="robHouse"></p>
         </div>
 
         <div class="card">
@@ -159,6 +166,32 @@ function chart(avg) {
          avg.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/></svg>`;
     sel("chart").innerHTML = s;
 }
+function pchart(hist) {
+    const W = 760, H = 150, m = {l: 38, r: 10, t: 8, b: 20};
+    const pts = hist.series;
+    const t0 = new Date(pts[0].date).getTime(), t1 = new Date(pts[pts.length - 1].date).getTime();
+    const x = t => m.l + (t - t0) / (t1 - t0) * (W - m.l - m.r);
+    const y = v => m.t + (1 - v) * (H - m.t - m.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Win probability over time">`;
+    for (const v of [0, 0.25, 0.5, 0.75, 1]) {
+        s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0.5 ? '#888' : '#eee'}"/>` +
+             `<text x="${m.l - 4}" y="${y(v) + 3}" text-anchor="end">${v * 100}%</text>`;
+    }
+    for (const d of [pts[0].date, "2026-09-15", "2026-10-04", pts[pts.length - 1].date]) {
+        s += `<text x="${x(new Date(d).getTime())}" y="${H - 5}" text-anchor="middle">${d.slice(5)}</text>`;
+    }
+    const line = k => pts.map(p => `${x(new Date(p.date).getTime())},${y(k(p))}`).join(" ");
+    s += `<polyline fill="none" stroke="#1f5fa8" stroke-width="2" points="${line(p => 1 - p.p_lula)}"/>`;
+    s += `<polyline fill="none" stroke="#c0392b" stroke-width="2" points="${line(p => p.p_lula)}"/></svg>`;
+    sel("pChart").innerHTML = s + `<p class="sub">Chance of winning as it would have been estimated each day (red Lula, blue Flávio).</p>`;
+}
+fetch("data/forecast_history.json").then(r => r.json()).then(pchart).catch(() => {});
+fetch("data/ratings_sensitivity.json").then(r => r.json()).then(d => {
+    sel("robRatings").innerHTML = "<b>Ratings.</b> " + d.summary;
+}).catch(() => {});
+fetch("data/house_diagnostics.json").then(r => r.json()).then(d => {
+    sel("robHouse").innerHTML = "<b>House effects.</b> " + d.summary;
+}).catch(() => {});
 Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.json"].map(u => fetch(u).then(r => r.json())))
 .then(([avg, fc, rat]) => {
     const c = avg.current;

@@ -9,6 +9,8 @@ python scripts/ratings.py                                   # needs data/hist/*.
 python scripts/average.py --ratings data/pollster_ratings.json
 python scripts/forecast.py
 python scripts/backtest.py                                 # 2010-2022 runoffs, 5 days out
+python scripts/forecast_history.py                         # daily win probability since 1 Sep
+python scripts/ratings_sensitivity.py; python scripts/house_diagnostics.py   # robustness checks
 ```
 Add new runoff polls to `data/raw/verified_*.json` (schema in `scripts/build_database.py` / the existing files), then
 ```

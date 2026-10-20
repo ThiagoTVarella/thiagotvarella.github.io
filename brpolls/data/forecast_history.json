@@ -386,19 +386,19 @@
   },
   {
    "date": "2026-10-19",
-   "lula_avg": 49.07,
-   "se": 0.202,
+   "lula_avg": 48.99,
+   "se": 0.197,
    "days_left": 6,
-   "polls": 92,
-   "p_lula": 0.2852
+   "polls": 94,
+   "p_lula": 0.2688
   },
   {
    "date": "2026-10-20",
-   "lula_avg": 49.07,
-   "se": 0.206,
+   "lula_avg": 48.97,
+   "se": 0.199,
    "days_left": 5,
-   "polls": 92,
-   "p_lula": 0.2828
+   "polls": 95,
+   "p_lula": 0.2637
   }
  ],
  "params": {
