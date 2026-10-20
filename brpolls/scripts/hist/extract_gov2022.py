@@ -45,8 +45,9 @@ PT = {
     "SC": "Eleições estaduais em Santa Catarina em 2022", "SP": "Eleições estaduais em São Paulo em 2022",
     "SE": "Eleições estaduais em Sergipe em 2022", "TO": "Eleições estaduais no Tocantins em 2022",
 }
-# en articles that exist (others 404). Federal District / MS en pages have no poll tables.
+# en articles that exist (others 404). Federal District / MS / SC en pages have no poll tables.
 EN = {
+    "AL": "2022 Alagoas general election",
     "BA": "2022 Bahia general election", "CE": "2022 Ceará general election",
     "DF": "2022 Federal District gubernatorial election", "ES": "2022 Espírito Santo general election",
     "MA": "2022 Maranhão gubernatorial election", "MS": "2022 Mato Grosso do Sul gubernatorial election",
@@ -134,7 +135,7 @@ def _flatten_templates(x):
 def pre(x):
     x = _flatten_templates(x)
     # Colour templates around shares: {{yes2|36,5%}} -> 36,5%
-    x = re.sub(r"\{\{\s*(?:yes|no|partial|yes2|no2|partial2|won|lost|hs|sim|nao|n[aã]o)\s*\|([^{}|]*)\}\}",
+    x = re.sub(r"\{\{\s*(?:(?:yes|no|partial)\d?|won|lost|hs|sim|nao|n[aã]o)\s*\|([^{}|]*)\}\}",
                r"\1", x, flags=re.I)
     # Resolve plain wikilinks to their display text so {{small|[[X|ABC]]}} cleans properly.
     x = re.sub(r"\[\[(?!(?:File|Ficheiro|Imagem|Image|Arquivo|Categoria|Category):)(?:[^|\]\[]*\|)?([^\]\[]*)\]\]",

@@ -212,10 +212,14 @@ def cell_value(raw_):
     rest = t[m.end():].strip()
     name = party = None
     if rest:
-        pm = re.fullmatch(r"\(?\s*([^()]*?)\s*\)?\s*(?:\(([^()]*)\))?", rest)
+        pm = re.fullmatch(r"\(\s*([^()]+?)\s*\)", rest)  # "(Haddad)"
+        pm2 = re.fullmatch(r"([^()]+?)\s*\(\s*([^()]*?)\s*\)", rest)  # "Marçal (PROS)"
         if pm:
-            name = pm.group(1).strip() or None
-            party = (pm.group(2) or "").strip() or None
+            name = pm.group(1)
+        elif pm2:
+            name, party = pm2.group(1), pm2.group(2) or None
+        elif "(" not in rest:
+            name = rest
     return pct, name, party
 
 
@@ -490,7 +494,7 @@ def table_polls(t, ctx, index):
             else:
                 name = ename or r[1]
                 party = r[2] or ""
-                if ename and r[1] and re.fullmatch(r"[A-Z][A-Za-z]{1,9}|PC do B|PCdoB", r[1]):
+                if ename and r[1] and not r[2] and re.fullmatch(r"[A-Z]{2,8}|PC do B|PCdoB", r[1]):
                     party = r[1]  # pt 2018: columns are parties, the name is in the cell
                 if ename and eparty:
                     party = eparty
