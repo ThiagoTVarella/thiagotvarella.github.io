@@ -1,0 +1,101 @@
+{
+ "note": "Error of the Flávio-minus-Lula margin, in points, vs the official first-round result (Flávio 47.0%, Lula 45.2% of valid votes). Positive = poll overstated Flávio. Polls fielded in the last 10 days before 4 Oct.",
+ "pollsters": [
+  {
+   "pollster": "Gerp",
+   "polls": 3,
+   "mean_margin_error": 0.24,
+   "mean_abs_error": 0.24
+  },
+  {
+   "pollster": "Futura",
+   "polls": 2,
+   "mean_margin_error": 0.71,
+   "mean_abs_error": 0.71
+  },
+  {
+   "pollster": "Veritá",
+   "polls": 2,
+   "mean_margin_error": -0.52,
+   "mean_abs_error": 0.83
+  },
+  {
+   "pollster": "Palver",
+   "polls": 2,
+   "mean_margin_error": 0.16,
+   "mean_abs_error": 2.02
+  },
+  {
+   "pollster": "Ideia",
+   "polls": 1,
+   "mean_margin_error": -2.88,
+   "mean_abs_error": 2.88
+  },
+  {
+   "pollster": "PoderData",
+   "polls": 1,
+   "mean_margin_error": -2.94,
+   "mean_abs_error": 2.94
+  },
+  {
+   "pollster": "Vox Brasil",
+   "polls": 2,
+   "mean_margin_error": -3.21,
+   "mean_abs_error": 3.21
+  },
+  {
+   "pollster": "DataTrends",
+   "polls": 1,
+   "mean_margin_error": -3.96,
+   "mean_abs_error": 3.96
+  },
+  {
+   "pollster": "AtlasIntel",
+   "polls": 2,
+   "mean_margin_error": -4.84,
+   "mean_abs_error": 4.84
+  },
+  {
+   "pollster": "Datafolha",
+   "polls": 4,
+   "mean_margin_error": -5.13,
+   "mean_abs_error": 5.13
+  },
+  {
+   "pollster": "Instituto França (IFP)",
+   "polls": 1,
+   "mean_margin_error": -5.25,
+   "mean_abs_error": 5.25
+  },
+  {
+   "pollster": "Quaest",
+   "polls": 2,
+   "mean_margin_error": -5.96,
+   "mean_abs_error": 5.96
+  },
+  {
+   "pollster": "Real Time Big Data",
+   "polls": 1,
+   "mean_margin_error": -6.01,
+   "mean_abs_error": 6.01
+  },
+  {
+   "pollster": "Nexus",
+   "polls": 1,
+   "mean_margin_error": -7.13,
+   "mean_abs_error": 7.13
+  },
+  {
+   "pollster": "MDA",
+   "polls": 1,
+   "mean_margin_error": -7.56,
+   "mean_abs_error": 7.56
+  },
+  {
+   "pollster": "Indexa",
+   "polls": 1,
+   "mean_margin_error": -7.75,
+   "mean_abs_error": 7.75
+  }
+ ]
+}

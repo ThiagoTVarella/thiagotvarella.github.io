@@ -277,7 +277,7 @@ def label_of(hc, j):
 
 def round_of(section, ncand):
     sec = norm(" ".join(section))
-    if re.search(r"rejei|simula|hipot|espont|potencial|senad|debate|cenarios", sec):
+    if re.search(r"rejei|simula|hipot|espont|potencial|senad|senator|debate|cenarios", sec):
         return None
     if re.search(r"2\.?o? turno|segundo turno|second round", sec):
         return 2
@@ -299,7 +299,7 @@ def parse_table(tb, uf, lang, page, idx, pre_text, report):
     labels = [label_of(hc, j) for j in range(ncol)]
     nl = [norm(x) for x in labels]
     # transposed tables (Pará): polls in columns, first column holds row labels
-    if len(hc) > 1 and any(row and norm(clean(row[0].raw)) == "instituto" for row in hc[1:]):
+    if len(hc) > 1 and norm(clean(unwrap(hc[0][0].raw))) == "data" and any(row and norm(clean(row[0].raw)) == "instituto" for row in hc[1:]):
         yield from parse_transposed(tb, uf, lang, page, idx, pre_text, report)
         return
     col = {}
@@ -353,6 +353,8 @@ def parse_table(tb, uf, lang, page, idx, pre_text, report):
             continue
         fs, fe = parse_dates(dt_t)
         if not fe:
+            if re.search(r"confirmad|segundo turno|debate", norm(dt_t)):
+                continue
             report.append(f"{uf}: unparsed date {dt_t!r} pollster {pol_t!r}")
             continue
         opts = []

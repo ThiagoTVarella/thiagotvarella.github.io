@@ -14,13 +14,19 @@ so the average inherits any industry-wide miss; the forecast accounts for that
 separately (forecast.py).
 """
 import argparse
+import csv
 import datetime as dt
 import json
 import math
 import os
+import sys
 from collections import defaultdict
 
+sys.path.insert(0, os.path.dirname(__file__))
+from ratings import canon  # noqa: E402  (shared pollster name canonicalisation)
+
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
+R1_END = dt.date(2026, 10, 3)   # last day of first-round fieldwork
 HALF_LIFE = 8.0        # days; weight halves every 8 days
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
@@ -54,6 +60,44 @@ def load(as_of, ratings):
     return polls
 
 
+def load_r1(ratings):
+    """First-round polls (Lula vs Flávio shares) used only to sharpen house effects.
+
+    They carry the same pollsters' lean on the same two candidates, so they roughly
+    double the evidence per pollster. Each series (first round, runoff) has its own trend.
+    """
+    by = defaultdict(dict)
+    meta = {}
+    with open(os.path.join(DATA, "hist", "polls_2026.csv"), encoding="utf-8") as f:
+        for r in csv.DictReader(f):
+            if r["office"] != "president" or r["round"] != "1" or r["field_end"] < START.isoformat():
+                continue
+            if r["option"] in ("Lula", "Flávio"):
+                try:
+                    by[r["poll_id"]][r["option"]] = float(r["pct"])
+                except ValueError:
+                    pass
+            meta[r["poll_id"]] = r
+    polls = []
+    for pid, o in by.items():
+        if "Lula" not in o or "Flávio" not in o or o["Lula"] + o["Flávio"] <= 0:
+            continue
+        r = meta[pid]
+        a, b = d(r["field_start"]), d(r["field_end"])
+        if b > R1_END or a > b:
+            continue
+        name = canon(r["pollster"])
+        n = min(int(float(r["sample_size"])) if r["sample_size"] else 1500, 5000)
+        polls.append({"poll_id": pid, "pollster": name, "series": "r1", "t": a + (b - a) / 2,
+                      "y": 100 * o["Lula"] / (o["Lula"] + o["Flávio"]),
+                      "rating": ratings.get(name, 1.0), "w_size": math.sqrt(n / 2000)})
+    for p in polls:
+        k = sum(1 for q in polls if q["pollster"] == p["pollster"]
+                and abs((q["t"] - p["t"]).days) <= FREQ_WINDOW)
+        p["w_freq"] = 1 / math.sqrt(max(1.0, k / 2))
+    return polls
+
+
 def trend_at(day, polls, house):
     num = den = 0.0
     for p in polls:
@@ -76,12 +120,17 @@ def main():
     if args.ratings:
         ratings = {k: v["weight"] for k, v in json.load(open(args.ratings)).items()}
     polls = load(as_of, ratings)
+    for p in polls:
+        p["series"] = "runoff"
+    r1 = load_r1(ratings)
+    everything = polls + r1
 
     house = defaultdict(float)
     for _ in range(40):
         resid = defaultdict(list)
-        for p in polls:
-            tr, _ = trend_at(p["t"], [q for q in polls if q is not p], house)
+        for p in everything:
+            same = [q for q in everything if q["series"] == p["series"] and q is not p]
+            tr, _ = trend_at(p["t"], same, house)
             if tr is not None:
                 resid[p["pollster"]].append(p["y"] - tr)
         new = {k: sum(v) / (len(v) + SHRINK_K) for k, v in resid.items()}
@@ -120,7 +169,8 @@ def main():
                     "n_eff": round(n_eff, 1), "poll_sd": round(sd, 2)},
         "series": series,
         "house_effects": {k: {"effect": round(v, 2),
-                              "polls": sum(1 for p in polls if p["pollster"] == k)}
+                              "polls": sum(1 for p in polls if p["pollster"] == k),
+                              "first_round_polls": sum(1 for p in r1 if p["pollster"] == k)}
                           for k, v in sorted(house.items(), key=lambda kv: kv[1])},
         "polls": [{"id": p["poll_id"], "pollster": p["pollster"],
                    "start": p["field_start"], "end": p["field_end"], "n": p["sample_size"],
@@ -132,7 +182,8 @@ def main():
                    "url": p["primary_url"]}
                   for i, p in enumerate(polls)],
         "params": {"half_life_days": HALF_LIFE, "freq_window_days": FREQ_WINDOW,
-                   "shrink_k": SHRINK_K, "ratings_used": bool(ratings)},
+                   "shrink_k": SHRINK_K, "ratings_used": bool(ratings),
+                   "first_round_polls_in_house_effects": len(r1)},
     }
     with open(os.path.join(DATA, "average.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
@@ -140,7 +191,7 @@ def main():
     print(f"as of {out['as_of']}: Lula {c['lula']:.2f}  Flávio {c['flavio']:.2f}  "
           f"(95% CI on Lula {c['ci95'][0]:.1f}-{c['ci95'][1]:.1f}; n_eff {c['n_eff']}, poll sd {c['poll_sd']})")
     for k, v in out["house_effects"].items():
-        print(f"  {k:26}{v['polls']:3}  {v['effect']:+.2f}")
+        print(f"  {k:26}{v['polls']:3} +{v['first_round_polls']:3}  {v['effect']:+.2f}")
 
 
 if __name__ == "__main__":

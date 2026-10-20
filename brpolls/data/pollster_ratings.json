@@ -1,28 +1,28 @@
 {
  "Prefab Future": {
-  "plus_minus": -2.282,
+  "plus_minus": -2.295,
   "mean_abs_error": 12.68,
   "bias_pt": null,
   "polls": 3,
   "races": 2,
   "evidence": 1.9,
-  "weight": 1.508,
+  "weight": 1.511,
   "grade": "unrated (thin history)",
   "rank": 1
  },
  "Studio Pesquisas": {
-  "plus_minus": -2.166,
+  "plus_minus": -2.177,
   "mean_abs_error": 8.25,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.477,
+  "weight": 1.48,
   "grade": "unrated (thin history)",
   "rank": 2
  },
  "Simplex": {
-  "plus_minus": -1.961,
+  "plus_minus": -1.959,
   "mean_abs_error": 8.19,
   "bias_pt": -2.71,
   "polls": 2,
@@ -33,35 +33,35 @@
   "rank": 3
  },
  "Neokemp": {
-  "plus_minus": -1.541,
+  "plus_minus": -1.534,
   "mean_abs_error": 4.45,
   "bias_pt": null,
   "polls": 6,
   "races": 3,
   "evidence": 2.6,
-  "weight": 1.32,
+  "weight": 1.318,
   "grade": "unrated (thin history)",
   "rank": 4
  },
  "Futura": {
-  "plus_minus": -1.371,
+  "plus_minus": -1.375,
   "mean_abs_error": 3.94,
   "bias_pt": -1.59,
   "polls": 18,
   "races": 7,
   "evidence": 8.6,
-  "weight": 1.28,
+  "weight": 1.281,
   "grade": "A+",
   "rank": 5
  },
  "DataControl": {
-  "plus_minus": -1.13,
+  "plus_minus": -1.137,
   "mean_abs_error": 0.45,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.226,
+  "weight": 1.227,
   "grade": "unrated (thin history)",
   "rank": 6
  },
@@ -77,92 +77,103 @@
   "rank": 7
  },
  "Veja": {
-  "plus_minus": -1.046,
+  "plus_minus": -1.063,
   "mean_abs_error": 2.4,
   "bias_pt": 0.48,
   "polls": 1,
   "races": 1,
   "evidence": 1.0,
-  "weight": 1.207,
+  "weight": 1.211,
   "grade": "unrated (thin history)",
   "rank": 8
  },
  "IPPI": {
-  "plus_minus": -1.029,
+  "plus_minus": -1.034,
   "mean_abs_error": 0.43,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.204,
+  "weight": 1.205,
   "grade": "unrated (thin history)",
   "rank": 9
  },
  "Vale Consultoria": {
-  "plus_minus": -0.951,
+  "plus_minus": -0.955,
   "mean_abs_error": 5.47,
   "bias_pt": 0.12,
   "polls": 5,
   "races": 2,
   "evidence": 1.3,
-  "weight": 1.187,
+  "weight": 1.188,
   "grade": "unrated (thin history)",
   "rank": 10
  },
  "F5": {
-  "plus_minus": -0.933,
+  "plus_minus": -0.947,
   "mean_abs_error": 4.42,
   "bias_pt": 0.08,
   "polls": 2,
   "races": 2,
   "evidence": 1.2,
-  "weight": 1.183,
+  "weight": 1.186,
   "grade": "unrated (thin history)",
   "rank": 11
  },
  "Global": {
-  "plus_minus": -0.907,
+  "plus_minus": -0.91,
   "mean_abs_error": 1.11,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.177,
+  "weight": 1.178,
   "grade": "unrated (thin history)",
   "rank": 12
  },
  "Goiás Pesquisas": {
-  "plus_minus": -0.854,
+  "plus_minus": -0.858,
   "mean_abs_error": 6.78,
   "bias_pt": null,
   "polls": 4,
   "races": 2,
   "evidence": 1.1,
-  "weight": 1.166,
+  "weight": 1.167,
   "grade": "unrated (thin history)",
   "rank": 13
  },
  "Múltipla": {
-  "plus_minus": -0.835,
+  "plus_minus": -0.848,
   "mean_abs_error": 2.42,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.162,
+  "weight": 1.165,
   "grade": "unrated (thin history)",
   "rank": 14
  },
  "Média": {
-  "plus_minus": -0.804,
+  "plus_minus": -0.809,
   "mean_abs_error": 10.55,
   "bias_pt": -0.96,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.156,
+  "weight": 1.157,
   "grade": "unrated (thin history)",
   "rank": 15
+ },
+ "Doxa": {
+  "plus_minus": -0.751,
+  "mean_abs_error": 6.93,
+  "bias_pt": null,
+  "polls": 10,
+  "races": 5,
+  "evidence": 2.8,
+  "weight": 1.145,
+  "grade": "unrated (thin history)",
+  "rank": 16
  },
  "Palver": {
   "plus_minus": -0.75,
@@ -173,10 +184,10 @@
   "evidence": 1.7,
   "weight": 1.145,
   "grade": "unrated (thin history)",
-  "rank": 16
+  "rank": 17
  },
  "Eficaz": {
-  "plus_minus": -0.742,
+  "plus_minus": -0.741,
   "mean_abs_error": 4.33,
   "bias_pt": null,
   "polls": 3,
@@ -184,76 +195,98 @@
   "evidence": 1.0,
   "weight": 1.143,
   "grade": "unrated (thin history)",
-  "rank": 17
+  "rank": 18
  },
  "Intelligence": {
-  "plus_minus": -0.729,
+  "plus_minus": -0.737,
   "mean_abs_error": 13.73,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.14,
+  "weight": 1.142,
   "grade": "unrated (thin history)",
-  "rank": 18
+  "rank": 19
  },
  "DataTrends": {
-  "plus_minus": -0.724,
+  "plus_minus": -0.727,
   "mean_abs_error": 3.16,
   "bias_pt": 1.35,
   "polls": 5,
   "races": 2,
   "evidence": 2.8,
-  "weight": 1.139,
+  "weight": 1.14,
   "grade": "unrated (thin history)",
-  "rank": 19
+  "rank": 20
  },
  "Diagnóstico": {
-  "plus_minus": -0.719,
+  "plus_minus": -0.723,
   "mean_abs_error": 4.77,
   "bias_pt": null,
   "polls": 3,
   "races": 1,
   "evidence": 0.7,
-  "weight": 1.138,
+  "weight": 1.139,
   "grade": "unrated (thin history)",
-  "rank": 20
+  "rank": 21
  },
  "DataTempo": {
-  "plus_minus": -0.682,
+  "plus_minus": -0.677,
   "mean_abs_error": 1.48,
   "bias_pt": -0.25,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.131,
+  "weight": 1.13,
   "grade": "unrated (thin history)",
-  "rank": 21
+  "rank": 22
  },
  "Vox Brasil": {
-  "plus_minus": -0.67,
+  "plus_minus": -0.661,
   "mean_abs_error": 2.72,
   "bias_pt": 1.08,
   "polls": 4,
   "races": 2,
   "evidence": 2.5,
-  "weight": 1.128,
+  "weight": 1.126,
   "grade": "unrated (thin history)",
-  "rank": 22
+  "rank": 23
+ },
+ "Data Ilha": {
+  "plus_minus": -0.657,
+  "mean_abs_error": 2.27,
+  "bias_pt": null,
+  "polls": 2,
+  "races": 2,
+  "evidence": 0.8,
+  "weight": 1.126,
+  "grade": "unrated (thin history)",
+  "rank": 24
  },
  "Instituto Radar": {
-  "plus_minus": -0.651,
+  "plus_minus": -0.656,
   "mean_abs_error": 2.52,
   "bias_pt": -0.24,
   "polls": 3,
   "races": 1,
   "evidence": 1.4,
-  "weight": 1.124,
+  "weight": 1.125,
   "grade": "unrated (thin history)",
-  "rank": 23
+  "rank": 25
+ },
+ "DATAmax": {
+  "plus_minus": -0.601,
+  "mean_abs_error": 3.87,
+  "bias_pt": 1.33,
+  "polls": 7,
+  "races": 4,
+  "evidence": 2.1,
+  "weight": 1.114,
+  "grade": "unrated (thin history)",
+  "rank": 26
  },
  "Perfil": {
-  "plus_minus": -0.572,
+  "plus_minus": -0.574,
   "mean_abs_error": 10.84,
   "bias_pt": -1.39,
   "polls": 3,
@@ -261,21 +294,21 @@
   "evidence": 1.2,
   "weight": 1.109,
   "grade": "unrated (thin history)",
-  "rank": 24
+  "rank": 27
  },
  "AtlasIntel": {
-  "plus_minus": -0.571,
+  "plus_minus": -0.56,
   "mean_abs_error": 8.92,
   "bias_pt": 3.2,
   "polls": 44,
   "races": 22,
   "evidence": 22.5,
-  "weight": 1.108,
+  "weight": 1.106,
   "grade": "A-",
-  "rank": 25
+  "rank": 28
  },
  "Bramane": {
-  "plus_minus": -0.5,
+  "plus_minus": -0.499,
   "mean_abs_error": 3.53,
   "bias_pt": 0.32,
   "polls": 1,
@@ -283,84 +316,95 @@
   "evidence": 0.4,
   "weight": 1.094,
   "grade": "unrated (thin history)",
-  "rank": 26
+  "rank": 29
  },
  "Doxa (Estado do Pará)": {
-  "plus_minus": -0.458,
+  "plus_minus": -0.461,
   "mean_abs_error": 16.19,
   "bias_pt": null,
   "polls": 3,
   "races": 1,
   "evidence": 0.7,
-  "weight": 1.086,
+  "weight": 1.087,
   "grade": "unrated (thin history)",
-  "rank": 27
+  "rank": 30
  },
  "Anova": {
-  "plus_minus": -0.445,
+  "plus_minus": -0.447,
   "mean_abs_error": 0.4,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.083,
+  "weight": 1.084,
   "grade": "unrated (thin history)",
-  "rank": 28
- },
- "Instituto França (IFP)": {
-  "plus_minus": -0.444,
-  "mean_abs_error": 2.67,
-  "bias_pt": 0.1,
-  "polls": 5,
-  "races": 3,
-  "evidence": 3.0,
-  "weight": 1.083,
-  "grade": "A-",
-  "rank": 29
+  "rank": 31
  },
  "IPEC AP‐04681": {
-  "plus_minus": -0.442,
+  "plus_minus": -0.446,
   "mean_abs_error": 3.77,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.083,
+  "weight": 1.084,
   "grade": "unrated (thin history)",
-  "rank": 30
+  "rank": 32
  },
  "Babesp": {
-  "plus_minus": -0.434,
+  "plus_minus": -0.438,
   "mean_abs_error": 23.88,
   "bias_pt": -5.27,
   "polls": 2,
   "races": 1,
   "evidence": 1.1,
-  "weight": 1.081,
+  "weight": 1.082,
   "grade": "unrated (thin history)",
-  "rank": 31
+  "rank": 33
+ },
+ "Instituto França (IFP)": {
+  "plus_minus": -0.425,
+  "mean_abs_error": 2.67,
+  "bias_pt": 0.1,
+  "polls": 5,
+  "races": 3,
+  "evidence": 3.0,
+  "weight": 1.08,
+  "grade": "A-",
+  "rank": 34
  },
  "Ágili": {
-  "plus_minus": -0.404,
+  "plus_minus": -0.396,
   "mean_abs_error": 5.12,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.075,
+  "weight": 1.074,
   "grade": "unrated (thin history)",
-  "rank": 32
+  "rank": 35
  },
  "IPEN": {
-  "plus_minus": -0.379,
+  "plus_minus": -0.377,
   "mean_abs_error": 1.42,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.071,
+  "weight": 1.07,
   "grade": "unrated (thin history)",
-  "rank": 33
+  "rank": 36
+ },
+ "Datailha": {
+  "plus_minus": -0.373,
+  "mean_abs_error": 1.42,
+  "bias_pt": null,
+  "polls": 1,
+  "races": 1,
+  "evidence": 0.4,
+  "weight": 1.069,
+  "grade": "unrated (thin history)",
+  "rank": 37
  },
  "IPEMS": {
   "plus_minus": -0.372,
@@ -371,21 +415,32 @@
   "evidence": 1.0,
   "weight": 1.069,
   "grade": "unrated (thin history)",
-  "rank": 34
+  "rank": 38
  },
  "Badra Comunicação": {
-  "plus_minus": -0.361,
+  "plus_minus": -0.367,
   "mean_abs_error": 10.23,
   "bias_pt": 2.92,
   "polls": 2,
   "races": 2,
   "evidence": 1.6,
-  "weight": 1.067,
+  "weight": 1.068,
   "grade": "unrated (thin history)",
-  "rank": 35
+  "rank": 39
+ },
+ "Datafolha": {
+  "plus_minus": -0.365,
+  "mean_abs_error": 10.62,
+  "bias_pt": 3.67,
+  "polls": 95,
+  "races": 35,
+  "evidence": 42.5,
+  "weight": 1.068,
+  "grade": "B+",
+  "rank": 40
  },
  "Instituto DataSensus": {
-  "plus_minus": -0.352,
+  "plus_minus": -0.351,
   "mean_abs_error": 0.1,
   "bias_pt": null,
   "polls": 1,
@@ -393,43 +448,54 @@
   "evidence": 0.4,
   "weight": 1.065,
   "grade": "unrated (thin history)",
-  "rank": 36
+  "rank": 41
  },
  "Quaest": {
-  "plus_minus": -0.345,
+  "plus_minus": -0.338,
   "mean_abs_error": 8.89,
   "bias_pt": 1.91,
   "polls": 55,
   "races": 33,
   "evidence": 24.9,
-  "weight": 1.064,
+  "weight": 1.063,
   "grade": "B+",
-  "rank": 37
+  "rank": 42
  },
  "Ver": {
-  "plus_minus": -0.316,
+  "plus_minus": -0.324,
   "mean_abs_error": 4.95,
   "bias_pt": -0.82,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 1.059,
+  "weight": 1.06,
   "grade": "unrated (thin history)",
-  "rank": 38
+  "rank": 43
  },
  "Brasilis": {
-  "plus_minus": -0.301,
+  "plus_minus": -0.313,
   "mean_abs_error": 5.4,
   "bias_pt": 1.41,
   "polls": 2,
   "races": 1,
   "evidence": 1.4,
-  "weight": 1.056,
+  "weight": 1.058,
   "grade": "unrated (thin history)",
-  "rank": 39
+  "rank": 44
+ },
+ "Ranking": {
+  "plus_minus": -0.285,
+  "mean_abs_error": 6.43,
+  "bias_pt": null,
+  "polls": 19,
+  "races": 5,
+  "evidence": 3.2,
+  "weight": 1.053,
+  "grade": "B+",
+  "rank": 45
  },
  "Item": {
-  "plus_minus": -0.27,
+  "plus_minus": -0.271,
   "mean_abs_error": 6.37,
   "bias_pt": -0.58,
   "polls": 1,
@@ -437,32 +503,21 @@
   "evidence": 0.4,
   "weight": 1.05,
   "grade": "unrated (thin history)",
-  "rank": 40
+  "rank": 46
  },
  "Projeta": {
-  "plus_minus": -0.257,
+  "plus_minus": -0.261,
   "mean_abs_error": 3.88,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.047,
+  "weight": 1.048,
   "grade": "unrated (thin history)",
-  "rank": 41
- },
- "DATAmax": {
-  "plus_minus": -0.25,
-  "mean_abs_error": 6.46,
-  "bias_pt": 1.33,
-  "polls": 3,
-  "races": 2,
-  "evidence": 1.0,
-  "weight": 1.046,
-  "grade": "unrated (thin history)",
-  "rank": 42
+  "rank": 47
  },
  "IPC": {
-  "plus_minus": -0.233,
+  "plus_minus": -0.235,
   "mean_abs_error": 1.41,
   "bias_pt": null,
   "polls": 1,
@@ -470,54 +525,54 @@
   "evidence": 0.4,
   "weight": 1.043,
   "grade": "unrated (thin history)",
-  "rank": 43
- },
- "Enquet": {
-  "plus_minus": -0.226,
-  "mean_abs_error": 3.93,
-  "bias_pt": null,
-  "polls": 2,
-  "races": 1,
-  "evidence": 0.6,
-  "weight": 1.041,
-  "grade": "unrated (thin history)",
-  "rank": 44
+  "rank": 48
  },
  "Jovem Pan": {
-  "plus_minus": -0.225,
+  "plus_minus": -0.23,
   "mean_abs_error": 5.97,
   "bias_pt": 1.27,
   "polls": 5,
   "races": 2,
   "evidence": 1.3,
-  "weight": 1.041,
+  "weight": 1.042,
   "grade": "unrated (thin history)",
-  "rank": 45
+  "rank": 49
  },
- "Datafolha": {
-  "plus_minus": -0.181,
-  "mean_abs_error": 8.72,
-  "bias_pt": 3.67,
-  "polls": 78,
-  "races": 27,
-  "evidence": 34.1,
-  "weight": 1.033,
+ "Enquet": {
+  "plus_minus": -0.227,
+  "mean_abs_error": 3.93,
+  "bias_pt": null,
+  "polls": 2,
+  "races": 1,
+  "evidence": 0.6,
+  "weight": 1.042,
+  "grade": "unrated (thin history)",
+  "rank": 50
+ },
+ "Nexus": {
+  "plus_minus": -0.188,
+  "mean_abs_error": 6.01,
+  "bias_pt": 1.03,
+  "polls": 11,
+  "races": 4,
+  "evidence": 6.6,
+  "weight": 1.034,
   "grade": "B+",
-  "rank": 46
+  "rank": 51
  },
  "Veritá": {
-  "plus_minus": -0.176,
+  "plus_minus": -0.175,
   "mean_abs_error": 8.11,
   "bias_pt": -2.67,
   "polls": 45,
   "races": 30,
   "evidence": 19.9,
   "weight": 1.032,
-  "grade": "B+",
-  "rank": 47
+  "grade": "B",
+  "rank": 52
  },
  "Pontual": {
-  "plus_minus": -0.169,
+  "plus_minus": -0.171,
   "mean_abs_error": 4.86,
   "bias_pt": null,
   "polls": 2,
@@ -525,21 +580,10 @@
   "evidence": 0.6,
   "weight": 1.031,
   "grade": "unrated (thin history)",
-  "rank": 48
- },
- "Nexus": {
-  "plus_minus": -0.165,
-  "mean_abs_error": 6.01,
-  "bias_pt": 1.03,
-  "polls": 11,
-  "races": 4,
-  "evidence": 6.6,
-  "weight": 1.03,
-  "grade": "B",
-  "rank": 49
+  "rank": 53
  },
  "TDL": {
-  "plus_minus": -0.16,
+  "plus_minus": -0.157,
   "mean_abs_error": 2.74,
   "bias_pt": null,
   "polls": 1,
@@ -547,10 +591,10 @@
   "evidence": 0.4,
   "weight": 1.029,
   "grade": "unrated (thin history)",
-  "rank": 50
+  "rank": 54
  },
  "Escutec": {
-  "plus_minus": -0.154,
+  "plus_minus": -0.152,
   "mean_abs_error": 0.17,
   "bias_pt": null,
   "polls": 1,
@@ -558,29 +602,18 @@
   "evidence": 0.4,
   "weight": 1.028,
   "grade": "unrated (thin history)",
-  "rank": 51
+  "rank": 55
  },
- "Pontual Pesquisas": {
-  "plus_minus": -0.125,
-  "mean_abs_error": 2.18,
+ "Methodus": {
+  "plus_minus": -0.141,
+  "mean_abs_error": 7.23,
   "bias_pt": null,
   "polls": 2,
-  "races": 1,
-  "evidence": 0.6,
-  "weight": 1.023,
+  "races": 2,
+  "evidence": 1.6,
+  "weight": 1.026,
   "grade": "unrated (thin history)",
-  "rank": 52
- },
- "Data Ilha": {
-  "plus_minus": -0.123,
-  "mean_abs_error": 2.59,
-  "bias_pt": null,
-  "polls": 1,
-  "races": 1,
-  "evidence": 0.4,
-  "weight": 1.022,
-  "grade": "unrated (thin history)",
-  "rank": 53
+  "rank": 56
  },
  "Ipopes": {
   "plus_minus": -0.122,
@@ -591,29 +624,51 @@
   "evidence": 0.4,
   "weight": 1.022,
   "grade": "unrated (thin history)",
-  "rank": 54
+  "rank": 57
+ },
+ "Pontual Pesquisas": {
+  "plus_minus": -0.121,
+  "mean_abs_error": 2.18,
+  "bias_pt": null,
+  "polls": 2,
+  "races": 1,
+  "evidence": 0.6,
+  "weight": 1.022,
+  "grade": "unrated (thin history)",
+  "rank": 58
  },
  "Ampla": {
-  "plus_minus": -0.113,
+  "plus_minus": -0.112,
   "mean_abs_error": 8.04,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.021,
+  "weight": 1.02,
   "grade": "unrated (thin history)",
-  "rank": 55
+  "rank": 59
+ },
+ "Nova Ibrape": {
+  "plus_minus": -0.11,
+  "mean_abs_error": 6.34,
+  "bias_pt": -0.58,
+  "polls": 1,
+  "races": 1,
+  "evidence": 0.4,
+  "weight": 1.02,
+  "grade": "unrated (thin history)",
+  "rank": 60
  },
  "Data Ranking": {
-  "plus_minus": -0.104,
+  "plus_minus": -0.108,
   "mean_abs_error": 4.79,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 1.019,
+  "weight": 1.02,
   "grade": "unrated (thin history)",
-  "rank": 56
+  "rank": 61
  },
  "Companhia de Pesquisa": {
   "plus_minus": -0.103,
@@ -624,21 +679,10 @@
   "evidence": 0.4,
   "weight": 1.019,
   "grade": "unrated (thin history)",
-  "rank": 57
- },
- "Nova Ibrape": {
-  "plus_minus": -0.102,
-  "mean_abs_error": 6.34,
-  "bias_pt": -0.58,
-  "polls": 1,
-  "races": 1,
-  "evidence": 0.4,
-  "weight": 1.018,
-  "grade": "unrated (thin history)",
-  "rank": 58
+  "rank": 62
  },
  "Correio do Povo": {
-  "plus_minus": -0.095,
+  "plus_minus": -0.094,
   "mean_abs_error": 4.23,
   "bias_pt": null,
   "polls": 1,
@@ -646,10 +690,21 @@
   "evidence": 0.4,
   "weight": 1.017,
   "grade": "unrated (thin history)",
-  "rank": 59
+  "rank": 63
+ },
+ "Vetor": {
+  "plus_minus": -0.086,
+  "mean_abs_error": 4.61,
+  "bias_pt": null,
+  "polls": 1,
+  "races": 1,
+  "evidence": 0.4,
+  "weight": 1.016,
+  "grade": "unrated (thin history)",
+  "rank": 64
  },
  "Novo Ibrape": {
-  "plus_minus": -0.084,
+  "plus_minus": -0.083,
   "mean_abs_error": 6.46,
   "bias_pt": null,
   "polls": 2,
@@ -657,40 +712,51 @@
   "evidence": 0.6,
   "weight": 1.015,
   "grade": "unrated (thin history)",
-  "rank": 60
- },
- "Vetor": {
-  "plus_minus": -0.081,
-  "mean_abs_error": 4.61,
-  "bias_pt": null,
-  "polls": 1,
-  "races": 1,
-  "evidence": 0.4,
-  "weight": 1.015,
-  "grade": "unrated (thin history)",
-  "rank": 61
+  "rank": 65
  },
  "Instituto Ranking Brasil": {
-  "plus_minus": -0.074,
+  "plus_minus": -0.075,
   "mean_abs_error": 5.51,
   "bias_pt": 0.68,
   "polls": 2,
   "races": 1,
   "evidence": 0.6,
+  "weight": 1.014,
+  "grade": "unrated (thin history)",
+  "rank": 66
+ },
+ "Ibope (Votos válidos)": {
+  "plus_minus": -0.069,
+  "mean_abs_error": 13.74,
+  "bias_pt": null,
+  "polls": 3,
+  "races": 2,
+  "evidence": 1.0,
   "weight": 1.013,
   "grade": "unrated (thin history)",
-  "rank": 62
+  "rank": 67
  },
- "Ranking": {
-  "plus_minus": -0.036,
-  "mean_abs_error": 9.93,
+ "Exata": {
+  "plus_minus": -0.049,
+  "mean_abs_error": 3.79,
   "bias_pt": null,
-  "polls": 9,
-  "races": 3,
-  "evidence": 1.8,
-  "weight": 1.007,
+  "polls": 3,
+  "races": 2,
+  "evidence": 1.0,
+  "weight": 1.009,
   "grade": "unrated (thin history)",
-  "rank": 63
+  "rank": 68
+ },
+ "Paraná Pesquisas": {
+  "plus_minus": -0.047,
+  "mean_abs_error": 8.99,
+  "bias_pt": -2.82,
+  "polls": 49,
+  "races": 29,
+  "evidence": 25.7,
+  "weight": 1.009,
+  "grade": "B-",
+  "rank": 69
  },
  "Percent Brasil": {
   "plus_minus": -0.033,
@@ -701,10 +767,10 @@
   "evidence": 0.4,
   "weight": 1.006,
   "grade": "unrated (thin history)",
-  "rank": 64
+  "rank": 70
  },
  "Brand": {
-  "plus_minus": -0.026,
+  "plus_minus": -0.028,
   "mean_abs_error": 5.54,
   "bias_pt": null,
   "polls": 2,
@@ -712,43 +778,32 @@
   "evidence": 0.6,
   "weight": 1.005,
   "grade": "unrated (thin history)",
-  "rank": 65
+  "rank": 71
  },
  "Econométrica": {
-  "plus_minus": -0.009,
+  "plus_minus": -0.008,
   "mean_abs_error": 2.04,
   "bias_pt": null,
   "polls": 2,
   "races": 1,
   "evidence": 0.6,
-  "weight": 1.002,
+  "weight": 1.001,
   "grade": "unrated (thin history)",
-  "rank": 66
- },
- "Ipec": {
-  "plus_minus": -0.002,
-  "mean_abs_error": 9.25,
-  "bias_pt": 4.31,
-  "polls": 128,
-  "races": 63,
-  "evidence": 51.7,
-  "weight": 1.0,
-  "grade": "B-",
-  "rank": 67
+  "rank": 72
  },
  "MDA": {
-  "plus_minus": 0.035,
+  "plus_minus": 0.04,
   "mean_abs_error": 7.43,
   "bias_pt": 4.14,
   "polls": 13,
   "races": 6,
   "evidence": 8.8,
-  "weight": 0.994,
+  "weight": 0.993,
   "grade": "B-",
-  "rank": 68
+  "rank": 73
  },
  "Opinião": {
-  "plus_minus": 0.05,
+  "plus_minus": 0.048,
   "mean_abs_error": 11.72,
   "bias_pt": -1.34,
   "polls": 3,
@@ -756,32 +811,21 @@
   "evidence": 1.0,
   "weight": 0.991,
   "grade": "unrated (thin history)",
-  "rank": 69
+  "rank": 74
  },
  "Instituto Opinião": {
-  "plus_minus": 0.06,
+  "plus_minus": 0.052,
   "mean_abs_error": 22.18,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 0.989,
+  "weight": 0.991,
   "grade": "unrated (thin history)",
-  "rank": 70
- },
- "FlexConsult": {
-  "plus_minus": 0.079,
-  "mean_abs_error": 5.59,
-  "bias_pt": null,
-  "polls": 2,
-  "races": 1,
-  "evidence": 0.6,
-  "weight": 0.986,
-  "grade": "unrated (thin history)",
-  "rank": 71
+  "rank": 75
  },
  "Veritate": {
-  "plus_minus": 0.083,
+  "plus_minus": 0.082,
   "mean_abs_error": 20.0,
   "bias_pt": null,
   "polls": 1,
@@ -789,21 +833,21 @@
   "evidence": 0.4,
   "weight": 0.985,
   "grade": "unrated (thin history)",
-  "rank": 72
+  "rank": 76
  },
- "Paraná Pesquisas": {
-  "plus_minus": 0.105,
-  "mean_abs_error": 9.36,
-  "bias_pt": -2.82,
-  "polls": 46,
-  "races": 27,
-  "evidence": 23.8,
-  "weight": 0.981,
-  "grade": "C+",
-  "rank": 73
+ "FlexConsult": {
+  "plus_minus": 0.083,
+  "mean_abs_error": 5.59,
+  "bias_pt": null,
+  "polls": 2,
+  "races": 1,
+  "evidence": 0.6,
+  "weight": 0.985,
+  "grade": "unrated (thin history)",
+  "rank": 77
  },
  "Acertar": {
-  "plus_minus": 0.111,
+  "plus_minus": 0.113,
   "mean_abs_error": 19.42,
   "bias_pt": null,
   "polls": 2,
@@ -811,51 +855,73 @@
   "evidence": 0.6,
   "weight": 0.98,
   "grade": "unrated (thin history)",
-  "rank": 74
+  "rank": 78
  },
  "Consult": {
-  "plus_minus": 0.143,
+  "plus_minus": 0.146,
   "mean_abs_error": 9.99,
   "bias_pt": -1.49,
   "polls": 3,
   "races": 3,
   "evidence": 1.2,
-  "weight": 0.975,
+  "weight": 0.974,
   "grade": "unrated (thin history)",
-  "rank": 75
+  "rank": 79
+ },
+ "Radar": {
+  "plus_minus": 0.165,
+  "mean_abs_error": 12.24,
+  "bias_pt": null,
+  "polls": 1,
+  "races": 1,
+  "evidence": 0.8,
+  "weight": 0.971,
+  "grade": "unrated (thin history)",
+  "rank": 80
  },
  "VOPE": {
-  "plus_minus": 0.181,
+  "plus_minus": 0.185,
   "mean_abs_error": 5.61,
   "bias_pt": null,
   "polls": 2,
   "races": 1,
   "evidence": 0.6,
-  "weight": 0.968,
+  "weight": 0.967,
   "grade": "unrated (thin history)",
-  "rank": 76
+  "rank": 81
  },
  "Instituto IRG": {
-  "plus_minus": 0.189,
+  "plus_minus": 0.199,
   "mean_abs_error": 4.74,
   "bias_pt": -0.79,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 0.967,
+  "weight": 0.965,
   "grade": "unrated (thin history)",
-  "rank": 77
+  "rank": 82
  },
  "Viva Voz": {
-  "plus_minus": 0.199,
+  "plus_minus": 0.203,
   "mean_abs_error": 9.23,
   "bias_pt": null,
   "polls": 2,
   "races": 2,
   "evidence": 0.8,
-  "weight": 0.965,
+  "weight": 0.964,
   "grade": "unrated (thin history)",
-  "rank": 78
+  "rank": 83
+ },
+ "Ipec": {
+  "plus_minus": 0.208,
+  "mean_abs_error": 10.1,
+  "bias_pt": 4.84,
+  "polls": 184,
+  "races": 93,
+  "evidence": 75.0,
+  "weight": 0.963,
+  "grade": "C+",
+  "rank": 84
  },
  "Seta": {
   "plus_minus": 0.211,
@@ -866,10 +932,10 @@
   "evidence": 0.4,
   "weight": 0.963,
   "grade": "unrated (thin history)",
-  "rank": 79
+  "rank": 85
  },
  "Perspectiva Mercado e Opinião": {
-  "plus_minus": 0.221,
+  "plus_minus": 0.223,
   "mean_abs_error": 5.43,
   "bias_pt": null,
   "polls": 3,
@@ -877,7 +943,7 @@
   "evidence": 1.0,
   "weight": 0.961,
   "grade": "unrated (thin history)",
-  "rank": 80
+  "rank": 86
  },
  "MT Dados": {
   "plus_minus": 0.225,
@@ -888,7 +954,7 @@
   "evidence": 1.0,
   "weight": 0.96,
   "grade": "unrated (thin history)",
-  "rank": 81
+  "rank": 87
  },
  "O Girassol": {
   "plus_minus": 0.239,
@@ -899,21 +965,21 @@
   "evidence": 0.4,
   "weight": 0.958,
   "grade": "unrated (thin history)",
-  "rank": 82
+  "rank": 88
  },
  "Fundepes": {
-  "plus_minus": 0.244,
+  "plus_minus": 0.248,
   "mean_abs_error": 6.01,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 0.957,
+  "weight": 0.956,
   "grade": "unrated (thin history)",
-  "rank": 83
+  "rank": 89
  },
  "Rumo": {
-  "plus_minus": 0.252,
+  "plus_minus": 0.251,
   "mean_abs_error": 6.75,
   "bias_pt": null,
   "polls": 1,
@@ -921,21 +987,21 @@
   "evidence": 0.4,
   "weight": 0.956,
   "grade": "unrated (thin history)",
-  "rank": 84
+  "rank": 90
  },
  "Datavero": {
-  "plus_minus": 0.257,
+  "plus_minus": 0.259,
   "mean_abs_error": 11.54,
   "bias_pt": 1.05,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 0.955,
+  "weight": 0.954,
   "grade": "unrated (thin history)",
-  "rank": 85
+  "rank": 91
  },
  "Datamax": {
-  "plus_minus": 0.267,
+  "plus_minus": 0.266,
   "mean_abs_error": 10.57,
   "bias_pt": 0.96,
   "polls": 1,
@@ -943,131 +1009,109 @@
   "evidence": 0.4,
   "weight": 0.953,
   "grade": "unrated (thin history)",
-  "rank": 86
- },
- "Exata": {
-  "plus_minus": 0.285,
-  "mean_abs_error": 4.68,
-  "bias_pt": null,
-  "polls": 1,
-  "races": 1,
-  "evidence": 0.4,
-  "weight": 0.95,
-  "grade": "unrated (thin history)",
-  "rank": 87
+  "rank": 92
  },
  "Indexa": {
-  "plus_minus": 0.297,
+  "plus_minus": 0.288,
   "mean_abs_error": 5.96,
   "bias_pt": 1.56,
   "polls": 2,
   "races": 1,
   "evidence": 1.4,
-  "weight": 0.948,
+  "weight": 0.949,
   "grade": "unrated (thin history)",
-  "rank": 88
- },
- "Doxa": {
-  "plus_minus": 0.298,
-  "mean_abs_error": 9.46,
-  "bias_pt": null,
-  "polls": 4,
-  "races": 3,
-  "evidence": 1.4,
-  "weight": 0.948,
-  "grade": "unrated (thin history)",
-  "rank": 89
- },
- "Gerp": {
-  "plus_minus": 0.299,
-  "mean_abs_error": 5.52,
-  "bias_pt": -0.29,
-  "polls": 9,
-  "races": 5,
-  "evidence": 5.5,
-  "weight": 0.948,
-  "grade": "C",
-  "rank": 90
+  "rank": 93
  },
  "American Analytics": {
-  "plus_minus": 0.308,
+  "plus_minus": 0.299,
   "mean_abs_error": 6.52,
   "bias_pt": 1.3,
   "polls": 1,
   "races": 1,
   "evidence": 1.0,
-  "weight": 0.946,
+  "weight": 0.948,
   "grade": "unrated (thin history)",
-  "rank": 91
+  "rank": 94
+ },
+ "Gerp": {
+  "plus_minus": 0.3,
+  "mean_abs_error": 5.52,
+  "bias_pt": -0.29,
+  "polls": 9,
+  "races": 5,
+  "evidence": 5.5,
+  "weight": 0.947,
+  "grade": "C",
+  "rank": 95
  },
  "Phoenix": {
-  "plus_minus": 0.338,
+  "plus_minus": 0.335,
   "mean_abs_error": 9.12,
   "bias_pt": null,
   "polls": 2,
   "races": 1,
   "evidence": 0.6,
-  "weight": 0.941,
+  "weight": 0.942,
   "grade": "unrated (thin history)",
-  "rank": 92
- },
- "Amostra": {
-  "plus_minus": 0.35,
-  "mean_abs_error": 6.63,
-  "bias_pt": 1.33,
-  "polls": 1,
-  "races": 1,
-  "evidence": 1.0,
-  "weight": 0.939,
-  "grade": "unrated (thin history)",
-  "rank": 93
+  "rank": 96
  },
  "Souza Lopes": {
-  "plus_minus": 0.356,
+  "plus_minus": 0.351,
   "mean_abs_error": 10.2,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 0.938,
+  "weight": 0.939,
   "grade": "unrated (thin history)",
-  "rank": 94
+  "rank": 97
  },
- "Ibrape": {
-  "plus_minus": 0.451,
-  "mean_abs_error": 10.84,
-  "bias_pt": 2.47,
-  "polls": 4,
-  "races": 2,
-  "evidence": 1.1,
-  "weight": 0.922,
+ "Amostra": {
+  "plus_minus": 0.36,
+  "mean_abs_error": 6.63,
+  "bias_pt": 1.33,
+  "polls": 1,
+  "races": 1,
+  "evidence": 1.0,
+  "weight": 0.937,
   "grade": "unrated (thin history)",
-  "rank": 95
+  "rank": 98
  },
  "Vox Populi": {
-  "plus_minus": 0.457,
+  "plus_minus": 0.453,
   "mean_abs_error": 12.55,
   "bias_pt": 5.48,
   "polls": 6,
   "races": 3,
   "evidence": 3.5,
-  "weight": 0.921,
+  "weight": 0.922,
   "grade": "C",
-  "rank": 96
+  "rank": 99
+ },
+ "Ibrape": {
+  "plus_minus": 0.463,
+  "mean_abs_error": 8.47,
+  "bias_pt": 2.47,
+  "polls": 7,
+  "races": 4,
+  "evidence": 2.1,
+  "weight": 0.92,
+  "grade": "unrated (thin history)",
+  "rank": 100
  },
  "Sensus": {
-  "plus_minus": 0.489,
+  "plus_minus": 0.483,
   "mean_abs_error": 8.76,
   "bias_pt": 1.75,
   "polls": 1,
   "races": 1,
   "evidence": 1.0,
-  "weight": 0.916,
+  "weight": 0.917,
   "grade": "unrated (thin history)",
-  "rank": 97
+  "rank": 101
  },
  "Ideia": {
-  "plus_minus": 0.515,
+  "plus_minus": 0.518,
   "mean_abs_error": 10.52,
   "bias_pt": 1.49,
   "polls": 6,
@@ -1075,18 +1119,40 @@
   "evidence": 4.6,
   "weight": 0.911,
   "grade": "C-",
-  "rank": 98
+  "rank": 102
  },
- "Instituto Potencial Inteligência": {
-  "plus_minus": 0.543,
-  "mean_abs_error": 13.9,
+ "Ipems": {
+  "plus_minus": 0.53,
+  "mean_abs_error": 6.29,
   "bias_pt": null,
-  "polls": 4,
+  "polls": 3,
   "races": 2,
-  "evidence": 2.2,
+  "evidence": 1.0,
+  "weight": 0.909,
+  "grade": "unrated (thin history)",
+  "rank": 103
+ },
+ "Instituto Alfa": {
+  "plus_minus": 0.543,
+  "mean_abs_error": 12.78,
+  "bias_pt": null,
+  "polls": 1,
+  "races": 1,
+  "evidence": 0.8,
   "weight": 0.907,
   "grade": "unrated (thin history)",
-  "rank": 99
+  "rank": 104
+ },
+ "PoderData": {
+  "plus_minus": 0.549,
+  "mean_abs_error": 5.49,
+  "bias_pt": 1.03,
+  "polls": 13,
+  "races": 6,
+  "evidence": 8.0,
+  "weight": 0.906,
+  "grade": "C-",
+  "rank": 105
  },
  "Metadata": {
   "plus_minus": 0.552,
@@ -1097,43 +1163,43 @@
   "evidence": 0.4,
   "weight": 0.905,
   "grade": "unrated (thin history)",
-  "rank": 100
+  "rank": 106
  },
- "Instituto Alfa": {
-  "plus_minus": 0.553,
-  "mean_abs_error": 12.78,
+ "Instituto Potencial Inteligência": {
+  "plus_minus": 0.555,
+  "mean_abs_error": 13.9,
   "bias_pt": null,
-  "polls": 1,
-  "races": 1,
-  "evidence": 0.8,
+  "polls": 4,
+  "races": 2,
+  "evidence": 2.2,
   "weight": 0.905,
   "grade": "unrated (thin history)",
-  "rank": 101
- },
- "PoderData": {
-  "plus_minus": 0.558,
-  "mean_abs_error": 5.49,
-  "bias_pt": 1.03,
-  "polls": 13,
-  "races": 6,
-  "evidence": 8.0,
-  "weight": 0.904,
-  "grade": "C-",
-  "rank": 102
+  "rank": 107
  },
  "Colectta": {
-  "plus_minus": 0.666,
+  "plus_minus": 0.66,
   "mean_abs_error": 10.35,
   "bias_pt": 1.72,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 0.887,
+  "weight": 0.888,
   "grade": "unrated (thin history)",
-  "rank": 103
+  "rank": 108
+ },
+ "Ipexx": {
+  "plus_minus": 0.662,
+  "mean_abs_error": 9.74,
+  "bias_pt": null,
+  "polls": 2,
+  "races": 1,
+  "evidence": 0.6,
+  "weight": 0.888,
+  "grade": "unrated (thin history)",
+  "rank": 109
  },
  "Equilíbrio Brasil": {
-  "plus_minus": 0.69,
+  "plus_minus": 0.689,
   "mean_abs_error": 10.5,
   "bias_pt": -2.1,
   "polls": 1,
@@ -1141,7 +1207,7 @@
   "evidence": 1.0,
   "weight": 0.883,
   "grade": "unrated (thin history)",
-  "rank": 104
+  "rank": 110
  },
  "Exatus": {
   "plus_minus": 0.691,
@@ -1152,21 +1218,10 @@
   "evidence": 1.0,
   "weight": 0.883,
   "grade": "unrated (thin history)",
-  "rank": 105
- },
- "Real Time Big Data": {
-  "plus_minus": 0.715,
-  "mean_abs_error": 9.76,
-  "bias_pt": 0.05,
-  "polls": 82,
-  "races": 47,
-  "evidence": 34.9,
-  "weight": 0.879,
-  "grade": "C-",
-  "rank": 106
+  "rank": 111
  },
  "IRG": {
-  "plus_minus": 0.804,
+  "plus_minus": 0.809,
   "mean_abs_error": 11.59,
   "bias_pt": null,
   "polls": 2,
@@ -1174,21 +1229,32 @@
   "evidence": 1.1,
   "weight": 0.865,
   "grade": "unrated (thin history)",
-  "rank": 107
+  "rank": 112
  },
  "Serpes": {
-  "plus_minus": 0.807,
+  "plus_minus": 0.809,
   "mean_abs_error": 14.2,
   "bias_pt": null,
   "polls": 4,
   "races": 2,
   "evidence": 1.1,
-  "weight": 0.865,
+  "weight": 0.864,
   "grade": "unrated (thin history)",
-  "rank": 108
+  "rank": 113
+ },
+ "Real Time Big Data": {
+  "plus_minus": 0.844,
+  "mean_abs_error": 9.86,
+  "bias_pt": 0.02,
+  "polls": 97,
+  "races": 55,
+  "evidence": 40.2,
+  "weight": 0.859,
+  "grade": "C-",
+  "rank": 114
  },
  "Census": {
-  "plus_minus": 0.977,
+  "plus_minus": 0.972,
   "mean_abs_error": 26.44,
   "bias_pt": null,
   "polls": 1,
@@ -1196,10 +1262,10 @@
   "evidence": 0.4,
   "weight": 0.839,
   "grade": "unrated (thin history)",
-  "rank": 109
+  "rank": 115
  },
  "Alfa Inteligência": {
-  "plus_minus": 1.003,
+  "plus_minus": 1.0,
   "mean_abs_error": 9.52,
   "bias_pt": 1.9,
   "polls": 1,
@@ -1207,32 +1273,32 @@
   "evidence": 1.0,
   "weight": 0.835,
   "grade": "unrated (thin history)",
-  "rank": 110
+  "rank": 116
  },
  "IGAPE": {
-  "plus_minus": 1.008,
+  "plus_minus": 1.003,
   "mean_abs_error": 15.87,
   "bias_pt": -2.67,
   "polls": 5,
   "races": 2,
   "evidence": 1.3,
-  "weight": 0.834,
+  "weight": 0.835,
   "grade": "unrated (thin history)",
-  "rank": 111
+  "rank": 117
  },
  "Revista Total": {
-  "plus_minus": 1.026,
+  "plus_minus": 1.018,
   "mean_abs_error": 13.11,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.8,
-  "weight": 0.831,
+  "weight": 0.833,
   "grade": "unrated (thin history)",
-  "rank": 112
+  "rank": 118
  },
  "Travessia": {
-  "plus_minus": 1.102,
+  "plus_minus": 1.104,
   "mean_abs_error": 17.76,
   "bias_pt": 2.2,
   "polls": 2,
@@ -1240,32 +1306,32 @@
   "evidence": 0.6,
   "weight": 0.82,
   "grade": "unrated (thin history)",
-  "rank": 113
+  "rank": 119
  },
  "Ipespe": {
-  "plus_minus": 1.136,
+  "plus_minus": 1.128,
   "mean_abs_error": 11.56,
   "bias_pt": 0.21,
   "polls": 22,
   "races": 9,
   "evidence": 11.4,
-  "weight": 0.815,
+  "weight": 0.816,
   "grade": "D",
-  "rank": 114
+  "rank": 120
  },
  "Destak": {
-  "plus_minus": 1.623,
+  "plus_minus": 1.616,
   "mean_abs_error": 23.84,
   "bias_pt": null,
   "polls": 2,
   "races": 2,
   "evidence": 0.8,
-  "weight": 0.747,
+  "weight": 0.748,
   "grade": "unrated (thin history)",
-  "rank": 115
+  "rank": 121
  },
  "Invox Brasil": {
-  "plus_minus": 1.775,
+  "plus_minus": 1.768,
   "mean_abs_error": 31.71,
   "bias_pt": -8.16,
   "polls": 3,
@@ -1273,21 +1339,21 @@
   "evidence": 1.4,
   "weight": 0.727,
   "grade": "unrated (thin history)",
-  "rank": 116
+  "rank": 122
  },
  "INOR": {
-  "plus_minus": 1.779,
+  "plus_minus": 1.774,
   "mean_abs_error": 30.97,
   "bias_pt": null,
   "polls": 1,
   "races": 1,
   "evidence": 0.4,
-  "weight": 0.726,
+  "weight": 0.727,
   "grade": "unrated (thin history)",
-  "rank": 117
+  "rank": 123
  },
  "Índice": {
-  "plus_minus": 2.111,
+  "plus_minus": 2.108,
   "mean_abs_error": 21.33,
   "bias_pt": null,
   "polls": 1,
@@ -1295,10 +1361,10 @@
   "evidence": 0.8,
   "weight": 0.684,
   "grade": "unrated (thin history)",
-  "rank": 118
+  "rank": 124
  },
  "IPSensus": {
-  "plus_minus": 2.882,
+  "plus_minus": 2.881,
   "mean_abs_error": 28.65,
   "bias_pt": null,
   "polls": 2,
@@ -1306,7 +1372,7 @@
   "evidence": 0.8,
   "weight": 0.595,
   "grade": "unrated (thin history)",
-  "rank": 119
+  "rank": 125
  },
  "Brasmarket": {
   "plus_minus": 3.746,
@@ -1317,6 +1383,6 @@
   "evidence": 6.0,
   "weight": 0.509,
   "grade": "D",
-  "rank": 120
+  "rank": 126
  }
 }

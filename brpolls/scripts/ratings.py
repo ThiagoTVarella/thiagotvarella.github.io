@@ -228,6 +228,20 @@ def main():
         for r in sorted(rows, key=lambda r: (r["race"], r["end"])):
             w.writerow({**r, "err": round(r["err"], 2), "pm": round(r["pm"], 2),
                         "bias_pt": None if r["bias_pt"] is None else round(r["bias_pt"], 2)})
+    # this cycle: how each pollster's final-10-day 2026 first-round presidential polls did
+    cyc = defaultdict(list)
+    for r in rows:
+        if r["race"] == "2026-president-BR-r1" and r["dte"] <= 10:
+            cyc[r["pollster"]].append(r["err"])
+    table = [{"pollster": k, "polls": len(v), "mean_margin_error": round(sum(v) / len(v), 2),
+              "mean_abs_error": round(sum(abs(e) for e in v) / len(v), 2)}
+             for k, v in cyc.items()]
+    table.sort(key=lambda x: x["mean_abs_error"])
+    with open(os.path.join(OUT, "cycle2026_first_round.json"), "w", encoding="utf-8") as f:
+        json.dump({"note": "Error of the Flávio-minus-Lula margin, in points, vs the official first-round result "
+                           "(Flávio 47.0%, Lula 45.2% of valid votes). Positive = poll overstated Flávio. "
+                           "Polls fielded in the last 10 days before 4 Oct.",
+                   "pollsters": table}, f, ensure_ascii=False, indent=1)
     print(f"{len(polls)} polls read, {len(rows)} scored in {len({r['race'] for r in rows})} races; "
           f"error slope {slope:+.3f} pts/day; overall mean |err| "
           f"{sum(r['abs'] for r in rows) / len(rows):.2f}")
