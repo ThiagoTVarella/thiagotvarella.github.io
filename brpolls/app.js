@@ -21,7 +21,9 @@ const DEFAULTS = {
     halfLife: 8,        // days for a poll's weight to halve
     house: true,        // correct pollster house effects
     shrink: 3,          // house effects shrink as if each pollster had this many extra polls at zero
-    useR1: false,       // let first-round polls inform house effects (off: leans shifted after the 1st round)
+    r1Weight: 0.5,      // weight of first-round polls when estimating house effects (0 = runoff polls only)
+    houseStrength: 1,   // how much of each estimated house effect to remove (1 = all of it)
+    smoother: "exp",    // exp: exponential decay, past only · gauss: centred Gaussian · window: simple moving window
     rating: true,       // weight by pollster rating
     size: true,         // weight by sqrt(sample size), capped at 5,000
     freq: true,         // penalise pollsters publishing many polls close together
@@ -55,14 +57,22 @@ function setWeights(list, opt) {
     }
 }
 
-function trendAt(day, list, house, H, skip) {
+// recency kernel: how much a poll fielded `age` days before `day` counts (negative age = after)
+function kernel(age, H, smoother) {
+    if (smoother === "gauss") return Math.exp(-0.5 * (age / H) * (age / H));
+    if (age < 0) return 0;
+    if (smoother === "window") return age < 2 * H ? 1 : 0;
+    return Math.pow(0.5, age / H);
+}
+
+function trendAt(day, list, house, H, skip, smoother = "exp", strength = 1) {
     let num = 0, den = 0, den2 = 0;
     for (const p of list) {
         if (p === skip) continue;
-        const age = day - p.t;
-        if (age < 0) continue;
-        const w = p.bw * Math.pow(0.5, age / H);
-        num += w * (p.y - (house[p.pollster] || 0));
+        const k = kernel(day - p.t, H, smoother);
+        if (k === 0) continue;
+        const w = p.bw * k;
+        num += w * (p.y - strength * (house[p.pollster] || 0));
         den += w;
         den2 += w * w;
     }
@@ -72,20 +82,22 @@ function trendAt(day, list, house, H, skip) {
 function estimateHouse(runoff, r1, opt, iters = 40) {
     let house = {};
     if (!opt.house) return house;
-    const all = opt.useR1 ? runoff.concat(r1) : runoff;
+    const all = opt.r1Weight > 0 ? runoff.concat(r1) : runoff;
     for (let it = 0; it < iters; it++) {
-        const resid = {};
+        const sum = {}, wt = {};
         for (const p of all) {
-            const tr = trendAt(p.t, p.series === "runoff" ? runoff : r1, house, opt.halfLife, p);
-            if (tr.v !== null) (resid[p.pollster] = resid[p.pollster] || []).push(p.y - tr.v);
+            const tr = trendAt(p.t, p.series === "runoff" ? runoff : r1, house, opt.halfLife, p, opt.smoother);
+            if (tr.v === null) continue;
+            const w = p.series === "r1" ? opt.r1Weight : 1;
+            sum[p.pollster] = (sum[p.pollster] || 0) + w * (p.y - tr.v);
+            wt[p.pollster] = (wt[p.pollster] || 0) + w;
         }
         const next = {};
         let tot = 0, mean = 0;
-        for (const k in resid) {
-            const v = resid[k];
-            next[k] = v.reduce((s, x) => s + x, 0) / (v.length + opt.shrink);
-            tot += v.length;
-            mean += next[k] * v.length;
+        for (const k in sum) {
+            next[k] = sum[k] / (wt[k] + opt.shrink);
+            tot += wt[k];
+            mean += next[k] * wt[k];
         }
         mean /= tot || 1;
         house = {};
@@ -122,29 +134,31 @@ function compute(data, opt) {
     let res = [];
     for (const p of runoff) {
         if (asOf - p.t > 21) continue;
-        const tr = trendAt(p.t, runoff, house, opt.halfLife, p);
-        if (tr.v !== null) res.push(p.y - (house[p.pollster] || 0) - tr.v);
+        const tr = trendAt(p.t, runoff, house, opt.halfLife, p, opt.smoother, opt.houseStrength);
+        if (tr.v !== null) res.push(p.y - opt.houseStrength * (house[p.pollster] || 0) - tr.v);
     }
     const sd = res.length > 1 ? Math.sqrt(res.reduce((s, r) => s + r * r, 0) / (res.length - 1)) : 1.5;
 
-    const series = [];
+    const series = [], raw = [];
     for (let d = data.start; d <= asOf; d++) {
-        const tr = trendAt(d, runoff, house, opt.halfLife);
+        const tr = trendAt(d, runoff, house, opt.halfLife, null, opt.smoother, opt.houseStrength);
         if (tr.v === null) continue;
         const se = sd / Math.sqrt(Math.max(1, tr.nEff));
         const c = tr.v + opt.shift;
         series.push({d, v: tr.v, se, p: winProb(c, se, ELECTION - d, opt.errSd)});
+        const r = trendAt(d, runoff, {}, opt.halfLife, null, opt.smoother);   // same trend, no house-effect correction
+        if (r.v !== null) raw.push({d, v: r.v});
     }
     const last = series[series.length - 1] || {v: NaN, se: NaN, p: NaN};
 
     let wsum = 0;
     for (const p of runoff) {
-        p.w = p.t <= asOf ? p.bw * Math.pow(0.5, (asOf - p.t) / opt.halfLife) : 0;
+        p.w = p.t <= asOf ? p.bw * kernel(asOf - p.t, opt.halfLife, opt.smoother) : 0;
         wsum += p.w;
-        p.adj = p.y - (house[p.pollster] || 0);
+        p.adj = p.y - opt.houseStrength * (house[p.pollster] || 0);
     }
     for (const p of runoff) p.wn = wsum ? p.w / wsum : 0;
-    return {asOf, runoff, r1, house, series, sd, current: last, daysLeft: ELECTION - asOf};
+    return {asOf, runoff, r1, house, series, raw, sd, current: last, daysLeft: ELECTION - asOf};
 }
 
 function influence(data, opt) {
@@ -183,7 +197,7 @@ if (typeof document !== "undefined") (function () {
     const EVENTS = [{d: FIRST_ROUND, label: "1º turno"}, {d: toDay("2026-10-18"), label: "Debate"}];
 
     let DATA, OFFICIAL, FC, FH, RAT, CYC, opt, R, view = {metric: "share", color: "lean", adjusted: false,
-        band: true, sized: true, w0: null, w1: null}, sel = {poll: null, pollster: null}, hover = null,
+        band: true, sized: true, rawLine: false, w0: null, w1: null}, sel = {poll: null, pollster: null}, hover = null,
         infl = null, playing = null;
 
     /* ---------- state in the URL, so a view can be shared */
@@ -193,6 +207,7 @@ if (typeof document !== "undefined") (function () {
         for (const [k, v] of h) {
             if (k in o) {
                 if (Array.isArray(o[k])) o[k] = v ? v.split("|") : [];
+                else if (typeof o[k] === "string") o[k] = v;
                 else if (typeof o[k] === "boolean") o[k] = v === "1";
                 else if (k === "asOf") o[k] = v ? toDay(v) : null;
                 else o[k] = parseFloat(v);
@@ -209,8 +224,8 @@ if (typeof document !== "undefined") (function () {
             if (JSON.stringify(v) === JSON.stringify(d)) continue;
             h.set(k, Array.isArray(v) ? v.join("|") : typeof v === "boolean" ? (v ? "1" : "0") : k === "asOf" ? fromDay(v) : v);
         }
-        for (const k of ["metric", "color", "adjusted", "band", "sized"]) {
-            const d = {metric: "share", color: "lean", adjusted: false, band: true, sized: true}[k];
+        for (const k of ["metric", "color", "adjusted", "band", "sized", "rawLine"]) {
+            const d = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false}[k];
             if (view[k] !== d) h.set(k, typeof view[k] === "boolean" ? (view[k] ? "1" : "0") : view[k]);
         }
         if (view.w0 != null) h.set("w0", fromDay(view.w0));
@@ -313,6 +328,12 @@ if (typeof document !== "undefined") (function () {
         if (view.band && ser.length) {
             const up = ser.map(p => `${x(p.d)},${y(metricVal(p.v + opt.shift + 1.96 * p.se))}`), dn = ser.map(p => `${x(p.d)},${y(metricVal(p.v + opt.shift - 1.96 * p.se))}`).reverse();
             s += `<polygon points="${up.concat(dn).join(" ")}" fill="${LULA}" fill-opacity=".10"/>`;
+        }
+        if (view.rawLine && R.raw.length) {
+            const rs = R.raw.filter(p => p.d >= w0 && p.d <= w1);
+            s += `<polyline fill="none" stroke="#7a7a7a" stroke-width="2" stroke-dasharray="2 3" points="${rs.map(p => `${x(p.d)},${y(metricVal(p.v + opt.shift))}`).join(" ")}"/>`;
+            const lr = rs[rs.length - 1];
+            if (lr) s += `<text x="${x(lr.d) - 4}" y="${y(metricVal(lr.v + opt.shift)) - 6}" text-anchor="end" style="fill:#555">sem correção ${fmt(lr.v + opt.shift)}</text>`;
         }
         if (!isDefault() && OFFICIAL.series) {
             const os = OFFICIAL.series.filter(p => toDay(p.date) >= w0 && toDay(p.date) <= w1);
@@ -539,18 +560,24 @@ if (typeof document !== "undefined") (function () {
 
     /* ---------- controls */
     function syncControls() {
-        $("halfLife").value = opt.halfLife; $("halfLifeV").textContent = `${opt.halfLife} dias`;
+        $("halfLife").value = opt.halfLife;
+        $("smoother").value = opt.smoother;
+        $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Largura da janela"}[opt.smoother];
+        $("halfLifeV").textContent = opt.smoother === "window" ? `${2 * opt.halfLife} dias` : `${opt.halfLife} dias`;
+        $("smootherV").textContent = {exp: "padrão", gauss: "usa pesquisas dos dois lados", window: "todas pesam igual"}[opt.smoother];
+        $("houseStrength").value = opt.houseStrength; $("houseStrengthV").textContent = `${Math.round(100 * opt.houseStrength)}%`;
+        $("r1Weight").value = opt.r1Weight; $("r1WeightV").textContent = `${Math.round(100 * opt.r1Weight)}%`;
         $("shrink").value = opt.shrink; $("shrinkV").textContent = fmt(opt.shrink);
         $("errSd").value = opt.errSd; $("errSdV").textContent = `${fmt(opt.errSd)} pontos`;
         $("shift").value = opt.shift; $("shiftV").textContent = opt.shift === 0 ? "nada" : `${sign(opt.shift)} ponto ${opt.shift < 0 ? "(exageram o Lula)" : "(subestimam o Lula)"}`;
-        for (const k of ["house", "useR1", "rating", "size", "freq", "pre", "unverified"]) $(k).checked = opt[k];
-        $("shrink").disabled = !opt.house; $("useR1").disabled = !opt.house;
+        for (const k of ["house", "rating", "size", "freq", "pre", "unverified"]) $(k).checked = opt[k];
+        for (const k of ["shrink", "houseStrength", "r1Weight"]) $(k).disabled = !opt.house;
         const asOf = R.asOf;
         $("asOf").value = asOf - DATA.start; $("asOfV").textContent = asOf === DATA.lastDay ? "hoje" : fdl(asOf);
         document.querySelectorAll("[data-metric]").forEach(b => b.classList.toggle("on", b.dataset.metric === view.metric));
         document.querySelectorAll("[data-win]").forEach(b => b.classList.toggle("on", b.dataset.win === currentWin()));
         $("colorBy").value = view.color;
-        $("adjusted").checked = view.adjusted; $("band").checked = view.band; $("sized").checked = view.sized;
+        $("adjusted").checked = view.adjusted; $("band").checked = view.band; $("sized").checked = view.sized; $("rawLine").checked = view.rawLine;
         const w0 = view.w0 != null ? view.w0 : DATA.start, w1 = view.w1 != null ? view.w1 : DATA.lastDay;
         $("win0").value = w0 - DATA.start; $("win1").value = w1 - DATA.start;
         $("winV").textContent = `${fdl(w0)} → ${fdl(Math.min(w1, R.asOf))}`;
@@ -572,7 +599,9 @@ if (typeof document !== "undefined") (function () {
     function bindControls() {
         const num = (id, k, live) => $(id).addEventListener(live ? "input" : "change", () => { opt[k] = parseFloat($(id).value); recompute(); });
         num("halfLife", "halfLife", true); num("shrink", "shrink", true); num("errSd", "errSd", true); num("shift", "shift", true);
-        for (const k of ["house", "useR1", "rating", "size", "freq", "pre", "unverified"]) $(k).onchange = () => { opt[k] = $(k).checked; recompute(); };
+        num("houseStrength", "houseStrength", true); num("r1Weight", "r1Weight", true);
+        $("smoother").onchange = () => { opt.smoother = $("smoother").value; recompute(); };
+        for (const k of ["house", "rating", "size", "freq", "pre", "unverified"]) $(k).onchange = () => { opt[k] = $(k).checked; recompute(); };
         $("asOf").addEventListener("input", () => { stopPlay(); const d = DATA.start + parseInt($("asOf").value, 10); opt.asOf = d >= DATA.lastDay ? null : d; recompute(); });
         $("play").onclick = () => playing ? stopPlay() : startPlay();
         document.querySelectorAll("[data-metric]").forEach(b => b.onclick = () => { view.metric = b.dataset.metric; render(); writeHash(); });
@@ -590,7 +619,7 @@ if (typeof document !== "undefined") (function () {
         };
         $("win0").addEventListener("input", winSlide); $("win1").addEventListener("input", winSlide);
         $("colorBy").onchange = () => { view.color = $("colorBy").value; render(); writeHash(); };
-        for (const k of ["adjusted", "band", "sized"]) $(k).onchange = () => { view[k] = $(k).checked; render(); writeHash(); };
+        for (const k of ["adjusted", "band", "sized", "rawLine"]) $(k).onchange = () => { view[k] = $(k).checked; render(); writeHash(); };
         $("reset").onclick = resetAll;
         $("share").onclick = () => {
             writeHash();
@@ -607,7 +636,7 @@ if (typeof document !== "undefined") (function () {
     }
     function resetAll() {
         opt = JSON.parse(JSON.stringify(DEFAULTS));
-        view = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, w0: null, w1: null};
+        view = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false, w0: null, w1: null};
         sel = {poll: null, pollster: null};
         stopPlay();
         recompute();

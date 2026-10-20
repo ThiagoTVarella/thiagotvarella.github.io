@@ -46,12 +46,14 @@ def house_effects(everything):
     for _ in range(40):
         h = np.array([house[k] for k in names])
         tr = np.where(ok, W @ (y - h) / np.where(ok, den, 1), np.nan)
-        resid = defaultdict(list)
+        rsum, rwt = defaultdict(float), defaultdict(float)
         for i in np.nonzero(ok)[0]:
-            resid[names[i]].append(y[i] - tr[i])
-        new = {k: sum(v) / (len(v) + A.SHRINK_K) for k, v in resid.items()}
-        total = sum(len(v) for v in resid.values())
-        mean = sum(new[k] * len(resid[k]) for k in new) / total
+            w = A.R1_WEIGHT if ser[i] == "r1" else 1.0
+            rsum[names[i]] += w * (y[i] - tr[i])
+            rwt[names[i]] += w
+        new = {k: rsum[k] / (rwt[k] + A.SHRINK_K) for k in rsum}
+        total = sum(rwt.values())
+        mean = sum(new[k] * rwt[k] for k in new) / total
         house = defaultdict(float, {k: v - mean for k, v in new.items()})
     return house
 
@@ -78,7 +80,7 @@ def average_on(day, ratings, r1_all):
 def main():
     ratings = {k: v["weight"] for k, v in
                json.load(open(os.path.join(A.DATA, "pollster_ratings.json"))).items()}
-    r1_all = []   # first-round polls are off by default in average.py (house effects shifted after the 1st round)
+    r1_all = A.load_r1(ratings) if A.R1_WEIGHT > 0 else []
     rng = np.random.default_rng(1)
     z_t = rng.standard_t(F.DF, NSIM) / math.sqrt(F.DF / (F.DF - 2))   # unit-sd t
     z_d, z_s = rng.standard_normal(NSIM), rng.standard_normal(NSIM)

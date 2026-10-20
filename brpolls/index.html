@@ -53,6 +53,7 @@
         .slider { display:grid; grid-template-columns: 170px 1fr 150px; gap:10px; align-items:center; margin:8px 0; font-size:13px; }
         .slider input[type=range] { width:100%; }
         .slider .v { font-size:12px; color:#555; text-align:right; }
+        .slider select { width:100%; }
         .dual { position:relative; height:30px; }
         .dual input[type=range] { position:absolute; left:0; top:6px; width:100%; pointer-events:none; -webkit-appearance:none; appearance:none; background:transparent; }
         .dual input[type=range]::-webkit-slider-thumb { pointer-events:auto; -webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:#333; cursor:pointer; position:relative; z-index:2; }
@@ -132,6 +133,7 @@
                 <label class="tg"><input type="checkbox" id="adjusted">Mostrar pontos já corrigidos pelo viés do instituto</label>
                 <label class="tg"><input type="checkbox" id="band">Faixa de incerteza</label>
                 <label class="tg"><input type="checkbox" id="sized">Tamanho do ponto = peso</label>
+                <label class="tg"><input type="checkbox" id="rawLine">Mostrar também a linha sem correção do viés</label>
             </div>
             <div id="chartWrap"><div id="chart"></div><div id="tip"></div></div>
             <div id="legend"></div>
@@ -158,13 +160,20 @@
         <div class="card">
             <h4>Ajustes do modelo</h4>
             <p class="sub">Os valores iniciais são o modelo que eu publiquei. Qualquer mudança atualiza todos os números e gráficos da página, e também o link na barra de endereço.</p>
-            <div class="slider"><span>Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Meia-vida em dias"><span class="v" id="halfLifeV"></span></div>
+            <div class="slider"><span>Tipo de suavização</span>
+                <select id="smoother" aria-label="Tipo de suavização">
+                    <option value="exp">Exponencial (só olha para trás)</option>
+                    <option value="gauss">Gaussiana (centrada no dia)</option>
+                    <option value="window">Janela móvel (média simples)</option>
+                </select><span class="v" id="smootherV"></span></div>
+            <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
+            <div class="slider"><span>Força da correção do viés</span><input type="range" id="houseStrength" min="0" max="1.5" step="0.05" aria-label="Força da correção do viés"><span class="v" id="houseStrengthV"></span></div>
+            <div class="slider"><span>Peso do 1º turno no viés</span><input type="range" id="r1Weight" min="0" max="1" step="0.05" aria-label="Peso das pesquisas do 1º turno na estimativa do viés"><span class="v" id="r1WeightV"></span></div>
             <div class="slider"><span>Encolhimento do viés</span><input type="range" id="shrink" min="0" max="15" step="0.5" aria-label="Encolhimento do viés dos institutos"><span class="v" id="shrinkV"></span></div>
             <div class="slider"><span>Erro comum das pesquisas</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Erro comum das pesquisas"><span class="v" id="errSdV"></span></div>
             <div class="slider"><span>Supor que as pesquisas erram</span><input type="range" id="shift" min="-4" max="4" step="0.1" aria-label="Viés suposto das pesquisas"><span class="v" id="shiftV"></span></div>
             <div class="toggles">
                 <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
-                <label class="tg"><input type="checkbox" id="useR1">Usar pesquisas do 1º turno para estimar o viés</label>
                 <label class="tg"><input type="checkbox" id="rating">Pesar pela nota do instituto</label>
                 <label class="tg"><input type="checkbox" id="size">Pesar pelo tamanho da amostra</label>
                 <label class="tg"><input type="checkbox" id="freq">Reduzir o peso de quem publica com muita frequência</label>
@@ -230,9 +239,11 @@
                     “Supor que as pesquisas erram” nos ajustes (o erro cheio do 1º turno daria −1,7 ponto).</p>
                 <p class="sub">Também olhei se o método da pesquisa (presencial, telefone, internet) faz diferença: depois de descontar o
                     viés de cada instituto, não vi efeito claro. O viés dos institutos mudou um pouco entre antes e depois do 1º turno,
-                    e por isso as pesquisas do 1º turno ficam de fora da estimativa do viés por padrão. Quando eu as usava, alguns institutos
+                    e por isso as pesquisas do 1º turno entram na estimativa do viés com peso pela metade. Com peso cheio, alguns institutos
                     eram corrigidos demais: a Quaest, por exemplo, puxava para o Lula no 1º turno mas não no 2º, e a correção empurrava as
-                    pesquisas dela para o outro lado. Quem quiser comparar pode ligar essa opção nos ajustes.</p></details>
+                    pesquisas dela para o outro lado, deixando a nuvem de pontos meio bimodal. Testei pesos de 0 a 100%: entre 25% e 50%
+                    os pontos corrigidos ficam mais juntos e nenhum instituto passa do ponto. Dá para mexer nisso nos ajustes, assim como
+                    na força da correção.</p></details>
             <details><summary>A previsão e o teste com eleições passadas</summary>
                 <p>A fatia do Lula no dia da eleição = a média + um erro comum a todas as pesquisas (distribuição t de Student com 4 graus
                     de liberdade, desvio padrão de 2 pontos por padrão) + um pouco de oscilação pelos dias que faltam + o ruído da própria
