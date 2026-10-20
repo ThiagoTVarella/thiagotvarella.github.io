@@ -1,0 +1,799 @@
+race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
+2006-president-BR-r1,Ipec,2006-president-BR-r1-ibope-2006-09-21,2006-09-21,10,13.91,2.27,13.91,1.0
+2006-president-BR-r1,Datafolha,2006-president-BR-r1-datafolha-2006-09-30,2006-09-30,1,7.92,-2.27,7.92,1.0
+2014-governor-AC-r1,Vox Populi,2014-governor-AC-r1-vox-populi-2014-09-16,2014-09-16,19,18.14,8.44,18.14,0.4
+2014-governor-AC-r1,Delta,2014-governor-AC-r1-delta-2014-09-26,2014-09-26,9,-1.35,-6.76,-1.35,0.4
+2014-governor-AC-r1,Ipec,2014-governor-AC-r1-ibope-2014-10-01,2014-10-01,4,5.63,-1.68,5.63,0.4
+2014-governor-AM-r1,Ipec,2014-governor-AM-r1-ibope-2014-10-02,2014-10-02,3,15.27,0.0,,0.4
+2014-governor-AM-r2,Ipec,2014-governor-AM-r2-ibope-2014-10-16,2014-10-16,10,-5.7,-3.41,,0.4
+2014-governor-AM-r2,Ipec,2014-governor-AM-r2-ibope-2014-10-25,2014-10-25,1,-11.08,3.41,,0.4
+2014-governor-AP-r1,Ipec,2014-governor-AP-r1-ibope-2014-10-03,2014-10-03,2,6.4,0.0,,0.4
+2014-governor-AP-r2,Ipec,2014-governor-AP-r2-ibope-2014-10-15,2014-10-15,11,10.65,0.0,,0.4
+2014-governor-BA-r1,Babesp,2014-governor-BA-r1-babesp-2014-09-21,2014-09-21,14,-29.3,2.81,-29.3,0.8
+2014-governor-BA-r1,Ipec,2014-governor-BA-r1-ibope-2014-09-23,2014-09-23,12,-37.39,11.22,-37.39,0.8
+2014-governor-BA-r1,Babesp,2014-governor-BA-r1-babesp-2014-09-29,2014-09-29,6,-18.47,-6.74,-18.47,0.8
+2014-governor-BA-r1,Ipec,2014-governor-BA-r1-ibope-2014-10-04,2014-10-04,1,-17.14,-7.28,-17.14,0.8
+2014-governor-CE-r1,Datafolha,2014-governor-CE-r1-datafolha-2014-09-19,2014-09-19,16,-10.26,2.29,-10.26,0.8
+2014-governor-CE-r1,Ipec,2014-governor-CE-r1-ibope-2014-09-23,2014-09-23,12,-7.28,-0.05,-7.28,0.8
+2014-governor-CE-r1,Datafolha,2014-governor-CE-r1-datafolha-2014-09-30,2014-09-30,5,-3.96,-2.25,-3.96,0.8
+2014-governor-DF-r1,Ipec,2014-governor-DF-r1-ibope-2014-09-18,2014-09-18,17,-8.28,2.41,,0.4
+2014-governor-DF-r1,Datafolha,2014-governor-DF-r1-datafolha-2014-09-26,2014-09-26,9,2.02,-2.57,,0.4
+2014-governor-DF-r1,Ipec,2014-governor-DF-r1-ibope-2014-09-29,2014-09-29,6,-7.38,3.27,,0.4
+2014-governor-DF-r1,Datafolha,2014-governor-DF-r1-datafolha-2014-10-02,2014-10-02,3,0.52,-3.11,,0.4
+2014-governor-ES-r1,Enquet,2014-governor-ES-r1-enquet-2014-09-18,2014-09-18,17,2.45,-4.41,,0.4
+2014-governor-ES-r1,Futura,2014-governor-ES-r1-futura-2014-09-18,2014-09-18,17,7.64,0.78,,0.4
+2014-governor-ES-r1,Brand,2014-governor-ES-r1-brand-2014-09-19,2014-09-19,16,-3.65,-3.05,,0.4
+2014-governor-ES-r1,Futura,2014-governor-ES-r1-futura-2014-09-24,2014-09-24,11,12.72,6.81,,0.4
+2014-governor-ES-r1,FlexConsult,2014-governor-ES-r1-flexconsult-2014-09-27,2014-09-27,8,8.43,3.0,,0.4
+2014-governor-ES-r1,Brand,2014-governor-ES-r1-brand-2014-10-01,2014-10-01,4,-7.43,2.64,,0.4
+2014-governor-ES-r1,Enquet,2014-governor-ES-r1-enquet-2014-10-02,2014-10-02,3,-5.4,0.77,,0.4
+2014-governor-ES-r1,Futura,2014-governor-ES-r1-futura-2014-10-02,2014-10-02,3,3.56,-1.07,,0.4
+2014-governor-ES-r1,FlexConsult,2014-governor-ES-r1-flexconsult-2014-10-03,2014-10-03,2,-2.75,-1.72,,0.4
+2014-governor-ES-r1,Ipec,2014-governor-ES-r1-ibope-2014-10-03,2014-10-03,2,0.72,-3.75,,0.4
+2014-governor-GO-r2,Ipec,2014-governor-GO-r2-ibope-2014-10-14,2014-10-14,12,-2.51,0.0,,0.4
+2014-governor-MS-r1,Vale Consultoria,2014-governor-MS-r1-vale-consultoria-2014-09-21,2014-09-21,14,8.59,-5.59,8.59,0.4
+2014-governor-MS-r1,Ibrape,2014-governor-MS-r1-ibrape-2014-09-22,2014-09-22,13,21.46,7.43,21.46,0.4
+2014-governor-MS-r1,IPEMS,2014-governor-MS-r1-ipems-2014-09-23,2014-09-23,12,14.68,0.81,14.68,0.4
+2014-governor-MS-r1,Ipec,2014-governor-MS-r1-ibope-2014-09-25,2014-09-25,10,19.34,5.8,19.34,0.4
+2014-governor-MS-r1,DATAmax,2014-governor-MS-r1-datamax-2014-09-26,2014-09-26,9,16.54,3.15,16.54,0.4
+2014-governor-MS-r1,Companhia de Pesquisa,2014-governor-MS-r1-companhia-de-pesquisa-2014-09-27,2014-09-27,8,12.09,-1.13,12.09,0.4
+2014-governor-MS-r1,Vale Consultoria,2014-governor-MS-r1-vale-consultoria-2014-10-02,2014-10-02,3,4.95,-7.48,4.95,0.4
+2014-governor-MS-r1,Ibrape,2014-governor-MS-r1-ibrape-2014-10-03,2014-10-03,2,18.4,6.13,18.4,0.4
+2014-governor-MS-r1,Ipec,2014-governor-MS-r1-ibope-2014-10-04,2014-10-04,1,2.99,-9.12,2.99,0.4
+2014-governor-MS-r2,Vale Consultoria,2014-governor-MS-r2-vale-consultoria-2014-10-10,2014-10-10,16,3.3,-4.3,-3.3,0.4
+2014-governor-MS-r2,Ipec,2014-governor-MS-r2-ibope-2014-10-13,2014-10-13,13,-8.45,1.33,8.45,0.4
+2014-governor-MS-r2,DATAmax,2014-governor-MS-r2-datamax-2014-10-17,2014-10-17,9,1.44,-5.04,-1.44,0.4
+2014-governor-MS-r2,Vale Consultoria,2014-governor-MS-r2-vale-consultoria-2014-10-18,2014-10-18,8,4.28,-2.04,-4.28,0.4
+2014-governor-MS-r2,IPEMS,2014-governor-MS-r2-ipems-2014-10-20,2014-10-20,6,-3.46,-2.55,3.46,0.4
+2014-governor-MS-r2,Ipec,2014-governor-MS-r2-ibope-2014-10-20,2014-10-20,6,-9.58,3.57,9.58,0.4
+2014-governor-MS-r2,Ipespe,2014-governor-MS-r2-ipespe-2014-10-20,2014-10-20,6,-16.7,10.7,16.7,0.4
+2014-governor-MS-r2,Vale Consultoria,2014-governor-MS-r2-vale-consultoria-2014-10-23,2014-10-23,3,6.21,0.69,-6.21,0.4
+2014-governor-MS-r2,DATAmax,2014-governor-MS-r2-datamax-2014-10-25,2014-10-25,1,-1.39,-3.81,1.39,0.4
+2014-governor-MS-r2,IPEMS,2014-governor-MS-r2-ipems-2014-10-25,2014-10-25,1,-0.08,-5.13,0.08,0.4
+2014-governor-MS-r2,Ipec,2014-governor-MS-r2-ibope-2014-10-25,2014-10-25,1,-11.77,6.57,11.77,0.4
+2014-governor-PA-r1,Ipec,2014-governor-PA-r1-ibope-2014-10-03,2014-10-03,2,-0.24,0.0,,0.4
+2014-governor-PA-r2,Ipec,2014-governor-PA-r2-ibope-2014-10-16,2014-10-16,10,-7.06,0.89,,0.4
+2014-governor-PA-r2,Ipec,2014-governor-PA-r2-ibope-2014-10-25,2014-10-25,1,-3.84,-0.89,,0.4
+2014-governor-PB-r1,Souza Lopes,2014-governor-PB-r1-souza-lopes-2014-09-18,2014-09-18,17,10.2,3.91,,0.4
+2014-governor-PB-r1,Ipec,2014-governor-PB-r1-ibope-2014-09-19,2014-09-19,16,4.56,-1.57,,0.4
+2014-governor-PB-r1,Ipec,2014-governor-PB-r1-ibope-2014-10-04,2014-10-04,1,-1.4,-2.34,,0.4
+2014-governor-PE-r1,Ipec,2014-governor-PE-r1-ibope-2014-09-15,2014-09-15,20,-28.68,2.36,,0.8
+2014-governor-PE-r1,Ipec,2014-governor-PE-r1-ibope-2014-09-22,2014-09-22,13,-31.6,6.41,,0.8
+2014-governor-PE-r1,Datafolha,2014-governor-PE-r1-datafolha-2014-09-26,2014-09-26,9,-25.62,1.06,,0.8
+2014-governor-PE-r1,Ipec,2014-governor-PE-r1-ibope-2014-09-30,2014-09-30,5,-26.62,2.7,,0.8
+2014-governor-PE-r1,Datafolha,2014-governor-PE-r1-datafolha-2014-10-02,2014-10-02,3,-24.96,1.37,,0.8
+2014-governor-PE-r1,Datafolha,2014-governor-PE-r1-datafolha-2014-10-04,2014-10-04,1,-12.3,-10.97,,0.8
+2014-governor-PE-r1,Ipec,2014-governor-PE-r1-ibope-2014-10-04,2014-10-04,1,-20.34,-2.93,,0.8
+2014-governor-PR-r1,Datafolha,2014-governor-PR-r1-datafolha-2014-09-18,2014-09-18,17,-11.64,2.16,,0.8
+2014-governor-PR-r1,Ipec,2014-governor-PR-r1-ibope-2014-09-18,2014-09-18,17,-9.22,-0.26,,0.8
+2014-governor-PR-r1,Datafolha,2014-governor-PR-r1-datafolha-2014-09-26,2014-09-26,9,-10.67,2.46,,0.8
+2014-governor-PR-r1,Ipec,2014-governor-PR-r1-ibope-2014-09-28,2014-09-28,7,-5.76,-2.13,,0.8
+2014-governor-PR-r1,Datafolha,2014-governor-PR-r1-datafolha-2014-10-02,2014-10-02,3,-3.11,-4.14,,0.8
+2014-governor-PR-r1,Datafolha,2014-governor-PR-r1-datafolha-2014-10-04,2014-10-04,1,-7.42,0.49,,0.8
+2014-governor-PR-r1,Ipec,2014-governor-PR-r1-ibope-2014-10-04,2014-10-04,1,-8.34,1.42,,0.8
+2014-governor-RJ-r1,Ipec,2014-governor-RJ-r1-ibope-2014-09-23,2014-09-23,12,-5.85,0.18,,0.8
+2014-governor-RJ-r1,Datafolha,2014-governor-RJ-r1-datafolha-2014-09-26,2014-09-26,9,-4.03,-1.17,,0.8
+2014-governor-RJ-r1,Ipec,2014-governor-RJ-r1-ibope-2014-09-29,2014-09-29,6,-2.02,-2.7,,0.8
+2014-governor-RJ-r1,Datafolha,2014-governor-RJ-r1-datafolha-2014-10-02,2014-10-02,3,-5.54,1.3,,0.8
+2014-governor-RJ-r1,Datafolha,2014-governor-RJ-r1-datafolha-2014-10-04,2014-10-04,1,-6.31,2.39,,0.8
+2014-governor-RJ-r2,Gerp,2014-governor-RJ-r2-gerp-2014-10-10,2014-10-10,16,-21.57,15.53,,0.8
+2014-governor-RJ-r2,Datafolha,2014-governor-RJ-r2-datafolha-2014-10-16,2014-10-16,10,0.63,-4.45,,0.8
+2014-governor-RJ-r2,Ipec,2014-governor-RJ-r2-ibope-2014-10-16,2014-10-16,10,-3.13,-1.95,,0.8
+2014-governor-RJ-r2,Ipec,2014-governor-RJ-r2-ibope-2014-10-20,2014-10-20,6,0.63,-3.81,,0.8
+2014-governor-RJ-r2,Ipec,2014-governor-RJ-r2-ibope-2014-10-22,2014-10-22,4,-0.72,-3.4,,0.8
+2014-governor-RJ-r2,Datafolha,2014-governor-RJ-r2-datafolha-2014-10-23,2014-10-23,3,-2.04,-1.92,,0.8
+2014-governor-RN-r1,Ipec,2014-governor-RN-r1-ibope-2014-09-14,2014-09-14,21,6.54,-0.71,,0.4
+2014-governor-RN-r1,Consult,2014-governor-RN-r1-consult-2014-09-22,2014-09-22,13,8.33,2.35,,0.4
+2014-governor-RN-r1,Ipec,2014-governor-RN-r1-ibope-2014-09-28,2014-09-28,7,4.04,-0.98,,0.4
+2014-governor-RN-r1,Ipec,2014-governor-RN-r1-ibope-2014-10-03,2014-10-03,2,3.56,-0.66,,0.4
+2014-governor-RN-r2,Ipec,2014-governor-RN-r2-ibope-2014-10-14,2014-10-14,12,-0.4,0.0,,0.4
+2014-governor-RS-r1,Datafolha,2014-governor-RS-r1-datafolha-2014-09-18,2014-09-18,17,-25.33,1.39,25.33,0.8
+2014-governor-RS-r1,Ipec,2014-governor-RS-r1-ibope-2014-09-23,2014-09-23,12,-25.9,2.76,25.9,0.8
+2014-governor-RS-r1,Datafolha,2014-governor-RS-r1-datafolha-2014-09-26,2014-09-26,9,-24.9,2.24,24.9,0.8
+2014-governor-RS-r1,Datafolha,2014-governor-RS-r1-datafolha-2014-10-02,2014-10-02,3,-18.29,-3.41,18.29,0.8
+2014-governor-RS-r1,Ipec,2014-governor-RS-r1-ibope-2014-10-03,2014-10-03,2,-25.07,3.52,25.07,0.8
+2014-governor-RS-r1,Datafolha,2014-governor-RS-r1-datafolha-2014-10-04,2014-10-04,1,-14.89,-6.5,14.89,0.8
+2014-governor-RS-r2,Datafolha,2014-governor-RS-r2-datafolha-2014-10-16,2014-10-16,10,-2.88,0.62,2.88,0.8
+2014-governor-RS-r2,Ipec,2014-governor-RS-r2-ibope-2014-10-17,2014-10-17,9,-1.49,-0.62,1.49,0.8
+2014-governor-SP-r1,Ipec,2014-governor-SP-r1-ibope-2014-09-22,2014-09-22,13,6.89,2.72,,0.8
+2014-governor-SP-r1,Datafolha,2014-governor-SP-r1-datafolha-2014-09-26,2014-09-26,9,-1.26,-2.27,,0.8
+2014-governor-SP-r1,Ipec,2014-governor-SP-r1-ibope-2014-09-29,2014-09-29,6,-1.57,-1.47,,0.8
+2014-governor-SP-r1,Datafolha,2014-governor-SP-r1-datafolha-2014-09-30,2014-09-30,5,-4.83,1.94,,0.8
+2014-governor-SP-r1,Datafolha,2014-governor-SP-r1-datafolha-2014-10-02,2014-10-02,3,-3.22,0.66,,0.8
+2014-governor-SP-r1,Datafolha,2014-governor-SP-r1-datafolha-2014-10-04,2014-10-04,1,-0.9,-1.35,,0.8
+2014-governor-SP-r1,Ipec,2014-governor-SP-r1-ibope-2014-10-04,2014-10-04,1,-2.01,-0.23,,0.8
+2014-president-BR-r1,MDA,2014-president-BR-r1-mda-2014-09-21,2014-09-21,14,14.2,-1.74,14.2,1.0
+2014-president-BR-r1,Vox Populi,2014-president-BR-r1-vox-populi-2014-09-24,2014-09-24,11,17.88,2.42,17.88,1.0
+2014-president-BR-r1,Datafolha,2014-president-BR-r1-datafolha-2014-09-26,2014-09-26,9,16.95,1.81,16.95,1.0
+2014-president-BR-r1,Vox Populi,2014-president-BR-r1-vox-populi-2014-09-28,2014-09-28,7,18.14,3.32,18.14,1.0
+2014-president-BR-r1,MDA,2014-president-BR-r1-mda-2014-09-28,2014-09-28,7,15.58,0.75,15.58,1.0
+2014-president-BR-r1,Ipec,2014-president-BR-r1-ibope-2014-10-01,2014-10-01,4,16.66,2.32,16.66,1.0
+2014-president-BR-r1,Datafolha,2014-president-BR-r1-datafolha-2014-10-02,2014-10-02,3,13.54,-0.64,13.54,1.0
+2014-president-BR-r1,MDA,2014-president-BR-r1-mda-2014-10-03,2014-10-03,2,10.73,-3.29,10.73,1.0
+2014-president-BR-r1,Ipec,2014-president-BR-r1-ibope-2014-10-04,2014-10-04,1,10.14,-3.73,10.14,1.0
+2014-president-BR-r1,Vox Populi,2014-president-BR-r1-vox-populi-2014-10-04,2014-10-04,1,12.64,-1.22,12.64,1.0
+2018-president-BR-r1,Nexus,2018-president-BR-r1-fsb-pesquisa-2018-09-16,2018-09-16,21,3.98,-3.61,-3.98,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-09-18,2018-09-18,19,-5.22,-2.06,5.22,1.0
+2018-president-BR-r1,Datafolha,2018-president-BR-r1-datafolha-2018-09-19,2018-09-19,18,-1.94,-5.17,1.94,1.0
+2018-president-BR-r1,Brasilis,2018-president-BR-r1-brasilis-2018-09-19,2018-09-19,18,-0.3,-6.81,0.3,1.0
+2018-president-BR-r1,Ipespe,2018-president-BR-r1-ipespe-2018-09-19-s1,2018-09-19,18,-0.96,-6.15,0.96,1.0
+2018-president-BR-r1,Ipespe,2018-president-BR-r1-ipespe-2018-09-19-s2,2018-09-19,18,-3.06,-4.06,3.06,1.0
+2018-president-BR-r1,PoderData,2018-president-BR-r1-datapoder360-2018-09-20,2018-09-20,17,-11.69,4.74,11.69,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-09-23,2018-09-23,14,-9.35,2.87,9.35,1.0
+2018-president-BR-r1,Nexus,2018-president-BR-r1-fsb-pesquisa-2018-09-23,2018-09-23,14,-5.26,-1.21,5.26,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-09-24,2018-09-24,13,-9.35,3.03,9.35,1.0
+2018-president-BR-r1,Sensus,2018-president-BR-r1-sensus-2018-09-24,2018-09-24,13,-8.76,2.45,8.76,1.0
+2018-president-BR-r1,Paraná Pesquisas,2018-president-BR-r1-parana-pesquisas-2018-09-25,2018-09-25,12,-3.07,-3.08,3.07,1.0
+2018-president-BR-r1,Brasilis,2018-president-BR-r1-brasilis-2018-09-26,2018-09-26,11,-10.5,4.51,10.5,1.0
+2018-president-BR-r1,Ipespe,2018-president-BR-r1-ipespe-2018-09-26,2018-09-26,11,-8.0,2.01,8.0,1.0
+2018-president-BR-r1,MDA,2018-president-BR-r1-mda-2018-09-28,2018-09-28,9,-12.93,7.25,12.93,1.0
+2018-president-BR-r1,Datafolha,2018-president-BR-r1-datafolha-2018-09-28,2018-09-28,9,-9.52,3.85,9.52,1.0
+2018-president-BR-r1,Real Time Big Data,2018-president-BR-r1-realtime-big-data-2018-09-29,2018-09-29,8,-10.8,5.29,10.8,1.0
+2018-president-BR-r1,Nexus,2018-president-BR-r1-fsb-pesquisa-2018-09-30,2018-09-30,7,-8.8,3.45,8.8,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-09-30,2018-09-30,7,-4.56,-0.8,4.56,1.0
+2018-president-BR-r1,Datafolha,2018-president-BR-r1-datafolha-2018-10-02,2018-10-02,5,-3.66,-1.38,3.66,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-10-02,2018-10-02,5,-5.64,0.61,5.64,1.0
+2018-president-BR-r1,Amostra,2018-president-BR-r1-amostra-2018-10-03,2018-10-03,4,-6.63,1.75,6.63,1.0
+2018-president-BR-r1,Ipespe,2018-president-BR-r1-ipespe-2018-10-04,2018-10-04,3,-0.66,-4.05,0.66,1.0
+2018-president-BR-r1,Real Time Big Data,2018-president-BR-r1-realtime-big-data-2018-10-04,2018-10-04,3,-4.85,0.13,4.85,1.0
+2018-president-BR-r1,PoderData,2018-president-BR-r1-datapoder360-2018-10-04,2018-10-04,3,-11.07,6.36,11.07,1.0
+2018-president-BR-r1,Datafolha,2018-president-BR-r1-datafolha-2018-10-04,2018-10-04,3,-1.81,-2.9,1.81,1.0
+2018-president-BR-r1,Paraná Pesquisas,2018-president-BR-r1-parana-pesquisas-2018-10-04,2018-10-04,3,-1.01,-3.71,1.01,1.0
+2018-president-BR-r1,MDA,2018-president-BR-r1-mda-2018-10-05,2018-10-05,2,-1.67,-2.88,1.67,1.0
+2018-president-BR-r1,Veritá,2018-president-BR-r1-verita-2018-10-05,2018-10-05,2,11.98,7.43,-11.98,1.0
+2018-president-BR-r1,Ipec,2018-president-BR-r1-ibope-2018-10-06,2018-10-06,1,-0.09,-4.31,0.09,1.0
+2018-president-BR-r1,Datafolha,2018-president-BR-r1-datafolha-2018-10-06,2018-10-06,1,-0.84,-3.55,0.84,1.0
+2018-president-BR-r2,Ipespe,2018-president-BR-r2-ipespe-2018-10-09,2018-10-09,19,6.98,-0.8,-6.98,1.0
+2018-president-BR-r2,Datafolha,2018-president-BR-r2-datafolha-2018-10-10,2018-10-10,18,5.03,-2.59,-5.03,1.0
+2018-president-BR-r2,Veja,2018-president-BR-r2-veja-2018-10-10,2018-10-10,18,-2.4,-5.23,2.4,1.0
+2018-president-BR-r2,Real Time Big Data,2018-president-BR-r2-realtime-big-data-2018-10-13,2018-10-13,15,8.26,1.11,-8.26,1.0
+2018-president-BR-r2,Nexus,2018-president-BR-r2-fsb-pesquisa-2018-10-14,2018-10-14,14,8.34,1.36,-8.34,1.0
+2018-president-BR-r2,Ipec,2018-president-BR-r2-ibope-2018-10-14,2018-10-14,14,6.59,-0.39,-6.59,1.0
+2018-president-BR-r2,Real Time Big Data,2018-president-BR-r2-realtime-big-data-2018-10-17,2018-10-17,11,9.28,2.77,-9.28,1.0
+2018-president-BR-r2,Vox Populi,2018-president-BR-r2-vox-populi-2018-10-17,2018-10-17,11,-4.24,-2.27,4.24,1.0
+2018-president-BR-r2,Ipespe,2018-president-BR-r2-ipespe-2018-10-17,2018-10-17,11,5.65,-0.86,-5.65,1.0
+2018-president-BR-r2,Paraná Pesquisas,2018-president-BR-r2-parana-pesquisas-2018-10-17,2018-10-17,11,11.63,5.12,-11.63,1.0
+2018-president-BR-r2,PoderData,2018-president-BR-r2-datapoder360-2018-10-18,2018-10-18,10,19.28,12.94,-19.28,1.0
+2018-president-BR-r2,Datafolha,2018-president-BR-r2-datafolha-2018-10-18,2018-10-18,10,7.39,1.04,-7.39,1.0
+2018-president-BR-r2,Real Time Big Data,2018-president-BR-r2-realtime-big-data-2018-10-20,2018-10-20,8,6.59,0.57,-6.59,1.0
+2018-president-BR-r2,MDA,2018-president-BR-r2-mda-2018-10-21,2018-10-21,7,3.89,-1.97,-3.89,1.0
+2018-president-BR-r2,Nexus,2018-president-BR-r2-fsb-pesquisa-2018-10-21,2018-10-21,7,9.28,3.41,-9.28,1.0
+2018-president-BR-r2,Vox Populi,2018-president-BR-r2-vox-populi-2018-10-23,2018-10-23,5,-4.24,-1.31,4.24,1.0
+2018-president-BR-r2,Ipec,2018-president-BR-r2-ibope-2018-10-23,2018-10-23,5,4.68,-0.86,-4.68,1.0
+2018-president-BR-r2,Real Time Big Data,2018-president-BR-r2-realtime-big-data-2018-10-24,2018-10-24,4,2.38,-3.0,-2.38,1.0
+2018-president-BR-r2,Ipespe,2018-president-BR-r2-ipespe-2018-10-24,2018-10-24,4,5.65,0.26,-5.65,1.0
+2018-president-BR-r2,Datafolha,2018-president-BR-r2-datafolha-2018-10-25,2018-10-25,3,1.37,-3.86,-1.37,1.0
+2018-president-BR-r2,Paraná Pesquisas,2018-president-BR-r2-parana-pesquisas-2018-10-25,2018-10-25,3,11.02,5.79,-11.02,1.0
+2018-president-BR-r2,Real Time Big Data,2018-president-BR-r2-realtime-big-data-2018-10-26,2018-10-26,2,-0.96,-4.11,0.96,1.0
+2018-president-BR-r2,MDA,2018-president-BR-r2-mda-2018-10-27,2018-10-27,1,3.19,-1.72,-3.19,1.0
+2018-president-BR-r2,Datafolha,2018-president-BR-r2-datafolha-2018-10-27,2018-10-27,1,-0.96,-3.95,0.96,1.0
+2018-president-BR-r2,Ipec,2018-president-BR-r2-ibope-2018-10-27,2018-10-27,1,-3.44,-1.47,3.44,1.0
+2022-governor-AC-r1,Real Time Big Data,2022-governor-AC-r1-realtime-big-data-2022-09-12,2022-09-12,20,-4.96,-5.35,4.96,0.4
+2022-governor-AC-r1,Travessia,2022-governor-AC-r1-travessia-2022-09-15,2022-09-15,17,-16.81,6.98,16.81,0.4
+2022-governor-AC-r1,Ipec,2022-governor-AC-r1-ipec-2022-09-18,2022-09-18,14,-1.69,-7.66,1.69,0.4
+2022-governor-AC-r1,Veritá,2022-governor-AC-r1-instituto-verita-2022-09-21,2022-09-21,11,-4.11,-4.77,4.11,0.4
+2022-governor-AC-r1,Travessia,2022-governor-AC-r1-travessia-2022-09-27,2022-09-27,5,-18.71,10.8,18.71,0.4
+2022-governor-AL-r1,Ibrape,2022-governor-AL-r1-ibrape-2022-09-14,2022-09-14,18,-0.34,-4.91,,0.4
+2022-governor-AL-r1,Paraná Pesquisas,2022-governor-AL-r1-parana-pesquisas-2022-09-14,2022-09-14,18,-8.82,3.57,,0.4
+2022-governor-AL-r1,Ipec,2022-governor-AL-r1-ipec-2022-09-18,2022-09-18,14,-7.66,3.05,,0.4
+2022-governor-AL-r1,Instituto DataSensus,2022-governor-AL-r1-instituto-datasensus-2022-09-22,2022-09-22,10,-0.1,-3.87,,0.4
+2022-governor-AL-r1,Ibrape,2022-governor-AL-r1-ibrape-2022-09-24,2022-09-24,8,-3.18,-0.46,,0.4
+2022-governor-AL-r1,Fundepes,2022-governor-AL-r1-fundepes-2022-09-26,2022-09-26,6,6.01,2.68,,0.4
+2022-governor-AL-r1,Ipec,2022-governor-AL-r1-ipec-2022-09-30,2022-09-30,2,2.62,-0.07,,0.4
+2022-governor-AM-r1,Quaest,2022-governor-AM-r1-quaest-2022-09-11,2022-09-11,21,-6.64,1.05,,0.4
+2022-governor-AM-r1,Real Time Big Data,2022-governor-AM-r1-realtime-big-data-2022-09-12,2022-09-12,20,-1.4,-4.03,,0.4
+2022-governor-AM-r1,Ipec,2022-governor-AM-r1-ipec-2022-09-16,2022-09-16,16,-2.75,-2.04,,0.4
+2022-governor-AM-r1,Perspectiva Mercado e Opinião,2022-governor-AM-r1-perspectiva-mercado-e-opiniao-2022-09-20,2022-09-20,12,-9.44,5.28,,0.4
+2022-governor-AM-r1,Pontual Pesquisas,2022-governor-AM-r1-pontual-pesquisas-2022-09-25,2022-09-25,7,-1.19,-2.17,,0.4
+2022-governor-AM-r1,Pontual Pesquisas,2022-governor-AM-r1-pontual-pesquisas-2022-09-27,2022-09-27,5,-3.18,0.14,,0.4
+2022-governor-AM-r1,Real Time Big Data,2022-governor-AM-r1-realtime-big-data-2022-09-27,2022-09-27,5,-0.98,-2.06,,0.4
+2022-governor-AM-r1,Ipec,2022-governor-AM-r1-ipec-2022-09-29,2022-09-29,3,-2.85,0.14,,0.4
+2022-governor-AM-r1,Perspectiva Mercado e Opinião,2022-governor-AM-r1-perspectiva-mercado-e-opiniao-2022-09-30,2022-09-30,2,-6.25,3.69,,0.4
+2022-governor-AM-r2,Real Time Big Data,2022-governor-AM-r2-realtime-big-data-2022-10-15,2022-10-15,15,1.91,-3.09,,0.4
+2022-governor-AM-r2,Ipec,2022-governor-AM-r2-ipec-2022-10-19,2022-10-19,11,-0.54,-3.82,,0.4
+2022-governor-AM-r2,Eficaz,2022-governor-AM-r2-eficaz-2022-10-20,2022-10-20,10,3.93,-0.28,,0.4
+2022-governor-AM-r2,Ideia,2022-governor-AM-r2-ideia-2022-10-20,2022-10-20,10,-5.26,1.06,,0.4
+2022-governor-AM-r2,Perspectiva Mercado e Opinião,2022-governor-AM-r2-perspectiva-mercado-e-opiniao-2022-10-20,2022-10-20,10,-0.6,-3.6,,0.4
+2022-governor-AM-r2,Quaest,2022-governor-AM-r2-quaest-2022-10-24,2022-10-24,6,0.98,-2.59,,0.4
+2022-governor-AM-r2,Paraná Pesquisas,2022-governor-AM-r2-parana-pesquisas-2022-10-25,2022-10-25,5,4.06,0.66,,0.4
+2022-governor-AM-r2,Eficaz,2022-governor-AM-r2-eficaz-2022-10-26,2022-10-26,4,3.53,0.29,,0.4
+2022-governor-AM-r2,Veritá,2022-governor-AM-r2-verita-2022-10-27,2022-10-27,3,11.61,8.52,,0.4
+2022-governor-AM-r2,Ipec,2022-governor-AM-r2-ipec-2022-10-29,2022-10-29,1,-5.61,2.85,,0.4
+2022-governor-AP-r1,Destak,2022-governor-AP-r1-destak-2022-09-13,2022-09-13,19,-15.4,6.29,,0.4
+2022-governor-AP-r1,IPEC AP‐04681,2022-governor-AP-r1-ipec-ap-04681-2022-09-16,2022-09-16,16,3.77,-4.86,,0.4
+2022-governor-AP-r1,Veritá,2022-governor-AP-r1-instituto-verita-2022-09-21,2022-09-21,11,1.38,-6.45,,0.4
+2022-governor-AP-r1,Doxa,2022-governor-AP-r1-doxa-2022-09-24,2022-09-24,8,-14.01,6.65,,0.4
+2022-governor-AP-r1,Quaest,2022-governor-AP-r1-quaest-2022-09-27,2022-09-27,5,3.77,-3.1,,0.4
+2022-governor-AP-r1,Ipec,2022-governor-AP-r1-ipec-2022-09-29,2022-09-29,3,8.03,1.47,,0.4
+2022-governor-CE-r1,Ipespe,2022-governor-CE-r1-ipespe-2022-09-11,2022-09-11,21,-38.15,11.95,-38.15,0.8
+2022-governor-CE-r1,Invox Brasil,2022-governor-CE-r1-invox-brasil-2022-09-12,2022-09-12,20,-38.15,12.11,-38.15,0.8
+2022-governor-CE-r1,Paraná Pesquisas,2022-governor-CE-r1-parana-pesquisas-2022-09-12,2022-09-12,20,-38.01,11.98,-38.01,0.8
+2022-governor-CE-r1,Real Time Big Data,2022-governor-CE-r1-real-time-big-data-2022-09-12,2022-09-12,20,-34.2,8.16,-34.2,0.8
+2022-governor-CE-r1,Invox Brasil,2022-governor-CE-r1-invox-brasil-2022-09-18,2022-09-18,14,-35.88,10.8,-35.88,0.8
+2022-governor-CE-r1,Ipespe,2022-governor-CE-r1-ipespe-2022-09-20,2022-09-20,12,-33.01,8.25,-33.01,0.8
+2022-governor-CE-r1,Ipec,2022-governor-CE-r1-ipec-2022-09-21,2022-09-21,11,-21.08,-3.52,-21.08,0.8
+2022-governor-CE-r1,AtlasIntel,2022-governor-CE-r1-atlas-2022-09-22,2022-09-22,10,-28.07,3.63,-28.07,0.8
+2022-governor-CE-r1,Real Time Big Data,2022-governor-CE-r1-real-time-big-data-2022-09-22,2022-09-22,10,-22.29,-2.14,-22.29,0.8
+2022-governor-CE-r1,Paraná Pesquisas,2022-governor-CE-r1-parana-pesquisas-2022-09-27,2022-09-27,5,-22.06,-1.58,-22.06,0.8
+2022-governor-CE-r1,Simplex,2022-governor-CE-r1-simplex-2022-09-27,2022-09-27,5,-16.27,-7.37,-16.27,0.8
+2022-governor-CE-r1,AtlasIntel,2022-governor-CE-r1-atlas-2022-09-28,2022-09-28,4,-10.64,-12.84,-10.64,0.8
+2022-governor-CE-r1,Invox Brasil,2022-governor-CE-r1-invox-brasil-2022-09-29,2022-09-29,3,-21.1,-2.22,-21.1,0.8
+2022-governor-CE-r1,Real Time Big Data,2022-governor-CE-r1-real-time-big-data-2022-09-29,2022-09-29,3,-14.43,-8.89,-14.43,0.8
+2022-governor-CE-r1,AtlasIntel,2022-governor-CE-r1-atlas-2022-09-30,2022-09-30,2,-6.54,-16.62,-6.54,0.8
+2022-governor-CE-r1,Ipespe,2022-governor-CE-r1-ipespe-2022-09-30,2022-09-30,2,-19.94,-3.22,-19.94,0.8
+2022-governor-CE-r1,Ipec,2022-governor-CE-r1-ipec-2022-10-01,2022-10-01,1,-14.52,-8.48,-14.52,0.8
+2022-governor-DF-r1,Ideia,2022-governor-DF-r1-ideia-2022-09-19,2022-09-19,13,26.68,12.99,,0.4
+2022-governor-DF-r1,Ipec,2022-governor-DF-r1-ipec-2022-09-20,2022-09-20,12,9.7,-3.83,,0.4
+2022-governor-DF-r1,Opinião,2022-governor-DF-r1-opiniao-2022-09-24,2022-09-24,8,13.51,0.62,,0.4
+2022-governor-DF-r1,Ipec,2022-governor-DF-r1-ipec-2022-09-26,2022-09-26,6,7.71,-4.86,,0.4
+2022-governor-DF-r1,Real Time Big Data,2022-governor-DF-r1-real-time-big-data-2022-09-28,2022-09-28,4,7.34,-4.91,,0.4
+2022-governor-ES-r1,Ipec,2022-governor-ES-r1-ipec-2022-09-21,2022-09-21,11,32.24,8.13,,0.4
+2022-governor-ES-r1,Ipopes,2022-governor-ES-r1-ipopes-2022-09-26,2022-09-26,6,21.96,-1.35,,0.4
+2022-governor-ES-r1,Real Time Big Data,2022-governor-ES-r1-real-time-big-data-2022-09-27,2022-09-27,5,14.53,-8.62,,0.4
+2022-governor-ES-r1,Ipec,2022-governor-ES-r1-ipec-2022-09-30,2022-09-30,2,24.51,1.84,,0.4
+2022-governor-ES-r2,Real Time Big Data,2022-governor-ES-r2-real-time-big-data-2022-10-11,2022-10-11,19,-0.92,-5.94,,0.4
+2022-governor-ES-r2,Veritá,2022-governor-ES-r2-verita-2022-10-16,2022-10-16,14,-10.12,4.05,,0.4
+2022-governor-ES-r2,Real Time Big Data,2022-governor-ES-r2-real-time-big-data-2022-10-19,2022-10-19,11,-4.36,-1.23,,0.4
+2022-governor-ES-r2,Ipec,2022-governor-ES-r2-ipec-2022-10-21,2022-10-21,9,2.52,-2.75,,0.4
+2022-governor-ES-r2,Veritá,2022-governor-ES-r2-verita-2022-10-21,2022-10-21,9,-11.95,6.68,,0.4
+2022-governor-ES-r2,Perfil,2022-governor-ES-r2-perfil-2022-10-26,2022-10-26,4,5.46,0.99,,0.4
+2022-governor-ES-r2,Real Time Big Data,2022-governor-ES-r2-real-time-big-data-2022-10-26,2022-10-26,4,-5.46,0.99,,0.4
+2022-governor-ES-r2,Ipec,2022-governor-ES-r2-ipec-2022-10-29,2022-10-29,1,-1.21,-2.79,,0.4
+2022-governor-GO-r1,Diagnóstico,2022-governor-GO-r1-diagnostico-2022-09-11,2022-09-11,21,-3.98,-6.79,,0.4
+2022-governor-GO-r1,Serpes,2022-governor-GO-r1-serpes-2022-09-14,2022-09-14,18,19.28,8.99,,0.4
+2022-governor-GO-r1,Goiás Pesquisas,2022-governor-GO-r1-goias-pesquisas-2022-09-15,2022-09-15,17,-8.29,-1.83,,0.4
+2022-governor-GO-r1,Diagnóstico,2022-governor-GO-r1-diagnostico-2022-09-18,2022-09-18,14,-7.01,-2.63,,0.4
+2022-governor-GO-r1,Paraná Pesquisas,2022-governor-GO-r1-parana-pesquisas-2022-09-19,2022-09-19,13,11.99,2.51,,0.4
+2022-governor-GO-r1,Ipec,2022-governor-GO-r1-ipec-2022-09-21,2022-09-21,11,9.35,0.19,,0.4
+2022-governor-GO-r1,Goiás Pesquisas,2022-governor-GO-r1-goias-pesquisas-2022-09-22,2022-09-22,10,-7.28,-1.73,,0.4
+2022-governor-GO-r1,Serpes,2022-governor-GO-r1-serpes-2022-09-22,2022-09-22,10,10.79,1.79,,0.4
+2022-governor-GO-r1,Diagnóstico,2022-governor-GO-r1-diagnostico-2022-09-25,2022-09-25,7,3.34,-5.19,,0.4
+2022-governor-GO-r1,Paraná Pesquisas,2022-governor-GO-r1-parana-pesquisas-2022-09-27,2022-09-27,5,11.6,3.4,,0.4
+2022-governor-GO-r1,AtlasIntel,2022-governor-GO-r1-atlasintel-2022-09-28,2022-09-28,4,-4.83,-3.21,,0.4
+2022-governor-GO-r1,Real Time Big Data,2022-governor-GO-r1-real-time-big-data-2022-09-28,2022-09-28,4,10.06,2.02,,0.4
+2022-governor-GO-r1,Serpes,2022-governor-GO-r1-serpes-2022-09-29,2022-09-29,3,10.37,2.49,,0.4
+2022-governor-MA-r1,Data Ilha,2022-governor-MA-r1-data-ilha-2022-09-12,2022-09-12,20,-2.59,-1.35,,0.4
+2022-governor-MA-r1,Ipec,2022-governor-MA-r1-ipec-2022-09-19,2022-09-19,13,1.99,-0.84,,0.4
+2022-governor-MA-r1,Econométrica,2022-governor-MA-r1-econometrica-2022-09-20,2022-09-20,12,1.2,-1.46,,0.4
+2022-governor-MA-r1,Escutec,2022-governor-MA-r1-escutec-2022-09-25,2022-09-25,7,0.17,-1.69,,0.4
+2022-governor-MA-r1,Econométrica,2022-governor-MA-r1-econometrica-2022-09-27,2022-09-27,5,2.87,1.32,,0.4
+2022-governor-MA-r1,Exata,2022-governor-MA-r1-exata-2022-09-27,2022-09-27,5,-4.68,3.14,,0.4
+2022-governor-MA-r1,Ipec,2022-governor-MA-r1-ipec-2022-09-30,2022-09-30,2,-1.96,0.89,,0.4
+2022-governor-MG-r1,Datafolha,2022-governor-MG-r1-datafolha-2022-09-15,2022-09-15,17,11.45,5.01,,0.8
+2022-governor-MG-r1,Real Time Big Data,2022-governor-MG-r1-real-time-big-data-2022-09-15,2022-09-15,17,-11.43,4.99,,0.8
+2022-governor-MG-r1,Ipec,2022-governor-MG-r1-ipec-2022-09-19,2022-09-19,13,-0.63,-5.18,,0.8
+2022-governor-MG-r1,Datafolha,2022-governor-MG-r1-datafolha-2022-09-22,2022-09-22,10,2.99,-2.33,,0.8
+2022-governor-MG-r1,Quaest,2022-governor-MG-r1-quaest-2022-09-25,2022-09-25,7,-0.87,-3.97,,0.8
+2022-governor-MG-r1,Ipec,2022-governor-MG-r1-ipec-2022-09-26,2022-09-26,6,-8.32,3.63,,0.8
+2022-governor-MG-r1,AtlasIntel,2022-governor-MG-r1-atlasintel-2022-09-27,2022-09-27,5,-4.7,0.18,,0.8
+2022-governor-MG-r1,Datafolha,2022-governor-MG-r1-datafolha-2022-09-29,2022-09-29,3,1.88,-2.32,,0.8
+2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-12,2022-09-12,20,-15.33,6.27,,0.4
+2022-governor-MS-r1,Veritá,2022-governor-MS-r1-verita-2022-09-14,2022-09-14,18,-1.33,-7.41,,0.4
+2022-governor-MS-r1,Ipec,2022-governor-MS-r1-ipec-2022-09-15,2022-09-15,17,-5.35,-3.23,,0.4
+2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-17,2022-09-17,15,-9.42,1.16,,0.4
+2022-governor-MS-r1,Novo Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-21,2022-09-21,11,-6.89,-0.73,,0.4
+2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-21,2022-09-21,11,-12.88,5.25,,0.4
+2022-governor-MS-r1,Percent Brasil,2022-governor-MS-r1-percent-brasil-2022-09-23,2022-09-23,9,-6.94,-0.37,,0.4
+2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-26,2022-09-26,6,-11.56,4.74,,0.4
+2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-26,2022-09-26,6,-6.99,0.16,,0.4
+2022-governor-MS-r1,Novo Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-27,2022-09-27,5,-6.04,-0.63,,0.4
+2022-governor-MS-r1,Paraná Pesquisas,2022-governor-MS-r1-parana-pesquisas-2022-09-28,2022-09-28,4,-7.8,1.3,,0.4
+2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-29,2022-09-29,3,-7.17,0.82,,0.4
+2022-governor-MS-r1,Veritá,2022-governor-MS-r1-verita-2022-09-29,2022-09-29,3,0.84,-5.5,,0.4
+2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-30,2022-09-30,2,-7.72,1.53,,0.4
+2022-governor-MS-r1,Ipec,2022-governor-MS-r1-ipec-2022-10-01,2022-10-01,1,-2.66,-3.36,,0.4
+2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-13,2022-10-13,17,-7.17,-8.49,,0.4
+2022-governor-MS-r2,Real Time Big Data,2022-governor-MS-r2-realtime-big-data-2022-10-15,2022-10-15,15,-27.44,12.11,,0.4
+2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-16,2022-10-16,14,-25.63,10.45,,0.4
+2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-20,2022-10-20,10,-5.74,-8.8,,0.4
+2022-governor-MS-r2,Ipec,2022-governor-MS-r2-ipec-2022-10-21,2022-10-21,9,-13.81,-0.57,,0.4
+2022-governor-MS-r2,Real Time Big Data,2022-governor-MS-r2-realtime-big-data-2022-10-22,2022-10-22,8,-13.81,-0.41,,0.4
+2022-governor-MS-r2,Serpes,2022-governor-MS-r2-serpes-2022-10-25,2022-10-25,5,-16.36,2.62,,0.4
+2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-25,2022-10-25,5,-22.72,8.98,,0.4
+2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-27,2022-10-27,3,-6.75,-6.68,,0.4
+2022-governor-MS-r2,Ipec,2022-governor-MS-r2-ipec-2022-10-29,2022-10-29,1,-8.31,-4.79,,0.4
+2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-29,2022-10-29,1,-6.62,-6.48,,0.4
+2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-29,2022-10-29,1,-15.16,2.06,,0.4
+2022-governor-MT-r1,Ipec,2022-governor-MT-r1-ipec-2022-09-14,2022-09-14,18,3.51,-1.22,,0.4
+2022-governor-MT-r1,MT Dados,2022-governor-MT-r1-mt-dados-2022-09-20,2022-09-20,12,7.71,3.94,,0.4
+2022-governor-MT-r1,Real Time Big Data,2022-governor-MT-r1-realtime-big-data-2022-09-21,2022-09-21,11,0.9,-2.72,,0.4
+2022-governor-PA-r1,Doxa (Estado do Pará),2022-governor-PA-r1-doxa-estado-do-para-2022-09-11,2022-09-11,21,27.91,6.91,,0.4
+2022-governor-PA-r1,Acertar,2022-governor-PA-r1-acertar-2022-09-23,2022-09-23,9,27.87,8.79,,0.4
+2022-governor-PA-r1,Destak,2022-governor-PA-r1-destak-2022-09-23,2022-09-23,9,32.28,13.19,,0.4
+2022-governor-PA-r1,Ipec,2022-governor-PA-r1-ipec-2022-09-23,2022-09-23,9,16.29,-2.79,,0.4
+2022-governor-PA-r1,Veritate,2022-governor-PA-r1-veritate-2022-09-23,2022-09-23,9,20.0,0.92,,0.4
+2022-governor-PA-r1,Doxa (Estado do Pará),2022-governor-PA-r1-doxa-estado-do-para-2022-09-24,2022-09-24,8,16.06,-2.86,,0.4
+2022-governor-PA-r1,Acertar,2022-governor-PA-r1-acertar-2022-09-30,2022-09-30,2,10.97,-7.0,,0.4
+2022-governor-PA-r1,Doxa (Estado do Pará),2022-governor-PA-r1-doxa-estado-do-para-2022-09-30,2022-09-30,2,4.61,-13.35,,0.4
+2022-governor-PA-r1,Ipec,2022-governor-PA-r1-ipec-2022-09-30,2022-09-30,2,14.17,-3.8,,0.4
+2022-governor-PB-r1,Real Time Big Data,2022-governor-PB-r1-real-time-big-data-2022-09-17,2022-09-17,15,7.41,2.81,,0.4
+2022-governor-PB-r1,Ipec,2022-governor-PB-r1-ipec-2022-09-21,2022-09-21,11,2.1,-1.87,,0.4
+2022-governor-PB-r1,Veritá,2022-governor-PB-r1-instituto-verita-2022-09-25,2022-09-25,7,3.65,0.32,,0.4
+2022-governor-PB-r1,Ipec,2022-governor-PB-r1-ipec-2022-09-30,2022-09-30,2,1.26,-1.26,,0.4
+2022-governor-PB-r2,Real Time Big Data,2022-governor-PB-r2-real-time-big-data-2022-10-10,2022-10-10,20,5.32,-0.93,,0.4
+2022-governor-PB-r2,Real Time Big Data,2022-governor-PB-r2-real-time-big-data-2022-10-17,2022-10-17,13,7.62,2.48,,0.4
+2022-governor-PB-r2,Veritá,2022-governor-PB-r2-instituto-verita-2022-10-20,2022-10-20,10,-5.24,0.59,,0.4
+2022-governor-PB-r2,Ipec,2022-governor-PB-r2-ipec-2022-10-20,2022-10-20,10,0.59,-4.06,,0.4
+2022-governor-PB-r2,Consult,2022-governor-PB-r2-consult-2022-10-23,2022-10-23,7,5.25,1.07,,0.4
+2022-governor-PB-r2,Real Time Big Data,2022-governor-PB-r2-real-time-big-data-2022-10-24,2022-10-24,6,4.86,0.85,,0.4
+2022-governor-PE-r1,Real Time Big Data,2022-governor-PE-r1-real-time-big-data-2022-09-13,2022-09-13,19,20.75,-1.38,,0.8
+2022-governor-PE-r1,Instituto Opinião,2022-governor-PE-r1-instituto-opiniao-2022-09-15,2022-09-15,17,22.18,0.36,,0.8
+2022-governor-PE-r1,Paraná Pesquisas,2022-governor-PE-r1-parana-pesquisas-2022-09-16,2022-09-16,16,17.54,-4.12,,0.8
+2022-governor-PE-r1,Ipec,2022-governor-PE-r1-ipec-2022-09-20,2022-09-20,12,24.46,3.44,,0.8
+2022-governor-PE-r1,Ipespe,2022-governor-PE-r1-ipespe-2022-09-25,2022-09-25,7,24.66,4.44,,0.8
+2022-governor-PE-r1,Ipec,2022-governor-PE-r1-ipec-2022-09-26,2022-09-26,6,18.71,-1.35,,0.8
+2022-governor-PE-r1,Instituto Potencial Inteligência,2022-governor-PE-r1-instituto-potencial-inteligencia-2022-09-27,2022-09-27,5,18.5,-1.4,,0.8
+2022-governor-PE-r2,Real Time Big Data,2022-governor-PE-r2-real-time-big-data-2022-10-10,2022-10-10,20,3.94,-7.33,,0.8
+2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-11,2022-10-11,19,-8.71,-2.4,,0.8
+2022-governor-PE-r2,Real Time Big Data,2022-governor-PE-r2-real-time-big-data-2022-10-17,2022-10-17,13,-5.58,-4.58,,0.8
+2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-20,2022-10-20,10,-10.17,0.49,,0.8
+2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-24,2022-10-24,6,-13.46,4.43,,0.8
+2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-25,2022-10-25,5,-8.9,0.02,,0.8
+2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-26,2022-10-26,4,-13.48,4.76,,0.8
+2022-governor-PE-r2,Veritá,2022-governor-PE-r2-instituto-verita-2022-10-27,2022-10-27,3,11.99,3.44,,0.8
+2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-29,2022-10-29,1,-9.41,1.17,,0.8
+2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-14,2022-09-14,18,1.03,-5.14,-1.03,0.8
+2022-governor-PR-r1,Ipec,2022-governor-PR-r1-ipec-2022-09-15,2022-09-15,17,-12.8,6.8,12.8,0.8
+2022-governor-PR-r1,Paraná Pesquisas,2022-governor-PR-r1-parana-pesquisas-2022-09-19,2022-09-19,13,-2.72,-2.65,2.72,0.8
+2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-21,2022-09-21,11,4.14,-0.9,-4.14,0.8
+2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-28,2022-09-28,4,-2.38,-1.55,2.38,0.8
+2022-governor-PR-r1,Paraná Pesquisas,2022-governor-PR-r1-parana-pesquisas-2022-09-28,2022-09-28,4,-0.32,-3.61,0.32,0.8
+2022-governor-PR-r1,Instituto IRG,2022-governor-PR-r1-instituto-irg-2022-09-30,2022-09-30,2,4.74,1.13,-4.74,0.8
+2022-governor-PR-r1,Ipec,2022-governor-PR-r1-ipec-2022-10-01,2022-10-01,1,-9.37,5.92,9.37,0.8
+2022-governor-RJ-r1,Prefab Future,2022-governor-RJ-r1-prefab-future-2022-09-11,2022-09-11,21,1.19,-18.04,,0.8
+2022-governor-RJ-r1,Quaest,2022-governor-RJ-r1-quaest-2022-09-13,2022-09-13,19,-16.8,-2.1,,0.8
+2022-governor-RJ-r1,Datafolha,2022-governor-RJ-r1-datafolha-2022-09-15,2022-09-15,17,-25.89,7.31,,0.8
+2022-governor-RJ-r1,Real Time Big Data,2022-governor-RJ-r1-real-time-big-data-2022-09-17,2022-09-17,15,-15.51,-2.76,,0.8
+2022-governor-RJ-r1,Intelligence,2022-governor-RJ-r1-intelligence-2022-09-18,2022-09-18,14,-13.73,-4.38,,0.8
+2022-governor-RJ-r1,Ipec,2022-governor-RJ-r1-ipec-2022-09-19,2022-09-19,13,-18.64,0.69,,0.8
+2022-governor-RJ-r1,Ideia,2022-governor-RJ-r1-ideia-2022-09-21,2022-09-21,11,-20.77,3.14,,0.8
+2022-governor-RJ-r1,Paraná Pesquisas,2022-governor-RJ-r1-parana-pesquisas-2022-09-21,2022-09-21,11,-21.97,4.35,,0.8
+2022-governor-RJ-r1,Datafolha,2022-governor-RJ-r1-datafolha-2022-09-22,2022-09-22,10,-18.31,0.84,,0.8
+2022-governor-RJ-r1,Quaest,2022-governor-RJ-r1-quaest-2022-09-25,2022-09-25,7,-15.08,-1.91,,0.8
+2022-governor-RJ-r1,Ipec,2022-governor-RJ-r1-ipec-2022-09-26,2022-09-26,6,-14.84,-1.99,,0.8
+2022-governor-RJ-r1,AtlasIntel,2022-governor-RJ-r1-atlasintel-2022-09-27,2022-09-27,5,-22.46,5.8,,0.8
+2022-governor-RJ-r1,Datafolha,2022-governor-RJ-r1-datafolha-2022-09-29,2022-09-29,3,-18.8,2.45,,0.8
+2022-governor-RJ-r1,AtlasIntel,2022-governor-RJ-r1-atlasintel-2022-09-30,2022-09-30,2,-21.4,5.21,,0.8
+2022-governor-RJ-r1,Datafolha,2022-governor-RJ-r1-datafolha-2022-10-01,2022-10-01,1,-21.3,5.27,,0.8
+2022-governor-RJ-r1,Ipec,2022-governor-RJ-r1-ipec-2022-10-01,2022-10-01,1,-12.88,-3.15,,0.8
+2022-governor-RJ-r1,Quaest,2022-governor-RJ-r1-quaest-2022-10-01,2022-10-01,1,-15.3,-0.73,,0.8
+2022-governor-RN-r1,Exatus,2022-governor-RN-r1-exatus-2022-09-11,2022-09-11,21,12.48,2.65,12.48,0.4
+2022-governor-RN-r1,Item,2022-governor-RN-r1-item-2022-09-14,2022-09-14,18,-6.37,-2.97,-6.37,0.4
+2022-governor-RN-r1,Bramane,2022-governor-RN-r1-bramane-2022-09-16,2022-09-16,16,3.53,-5.5,3.53,0.4
+2022-governor-RN-r1,Datavero,2022-governor-RN-r1-datavero-2022-09-18,2022-09-18,14,11.54,2.83,11.54,0.4
+2022-governor-RN-r1,Real Time Big Data,2022-governor-RN-r1-real-time-big-data-2022-09-19,2022-09-19,13,11.53,2.99,11.53,0.4
+2022-governor-RO-r1,Real Time Big Data,2022-governor-RO-r1-realtime-big-data-2022-09-14,2022-09-14,18,19.22,3.33,,0.4
+2022-governor-RO-r1,Ipec,2022-governor-RO-r1-ipec-2022-09-16,2022-09-16,16,11.26,-4.31,,0.4
+2022-governor-RO-r1,Ipec,2022-governor-RO-r1-ipec-2022-09-29,2022-09-29,3,14.47,0.98,,0.4
+2022-governor-RO-r2,Real Time Big Data,2022-governor-RO-r2-realtime-big-data-2022-10-15,2022-10-15,15,-4.93,-2.6,,0.4
+2022-governor-RO-r2,Ipec,2022-governor-RO-r2-ipec-2022-10-19,2022-10-19,11,-4.93,-1.96,,0.4
+2022-governor-RO-r2,Real Time Big Data,2022-governor-RO-r2-realtime-big-data-2022-10-22,2022-10-22,8,-3.86,-2.55,,0.4
+2022-governor-RO-r2,Brasmarket,2022-governor-RO-r2-brasmarket-2022-10-25,2022-10-25,5,-9.63,3.7,,0.4
+2022-governor-RO-r2,Veritá,2022-governor-RO-r2-verita-2022-10-27,2022-10-27,3,-4.93,-0.68,,0.4
+2022-governor-RO-r2,Ipec,2022-governor-RO-r2-ipec-2022-10-29,2022-10-29,1,-9.38,4.09,,0.4
+2022-governor-RR-r1,Ipec,2022-governor-RR-r1-ipec-2022-09-19,2022-09-19,13,3.13,0.0,,0.4
+2022-governor-RS-r1,Ipec,2022-governor-RS-r1-ipec-2022-09-15,2022-09-15,17,-24.98,3.41,,0.8
+2022-governor-RS-r1,Studio Pesquisas,2022-governor-RS-r1-studio-pesquisas-2022-09-17,2022-09-17,15,-8.25,-13.0,,0.8
+2022-governor-RS-r1,Real Time Big Data,2022-governor-RS-r1-real-time-big-data-2022-09-22,2022-09-22,10,-21.41,0.96,,0.8
+2022-governor-RS-r1,Ipec,2022-governor-RS-r1-ipec-2022-09-25,2022-09-25,7,-25.99,6.02,,0.8
+2022-governor-RS-r1,Real Time Big Data,2022-governor-RS-r1-real-time-big-data-2022-09-29,2022-09-29,3,-24.18,4.85,,0.8
+2022-governor-RS-r1,AtlasIntel,2022-governor-RS-r1-atlasintel-2022-09-30,2022-09-30,2,-15.3,-3.87,,0.8
+2022-governor-RS-r1,Ipec,2022-governor-RS-r1-ipec-2022-09-30,2022-09-30,2,-20.81,1.63,,0.8
+2022-governor-RS-r2,Real Time Big Data,2022-governor-RS-r2-real-time-big-data-2022-10-12,2022-10-12,18,-15.51,4.89,,0.8
+2022-governor-RS-r2,AtlasIntel,2022-governor-RS-r2-atlasintel-2022-10-14,2022-10-14,16,-10.17,-0.13,,0.8
+2022-governor-RS-r2,Ipec,2022-governor-RS-r2-ipec-2022-10-14,2022-10-14,16,-6.72,-3.58,,0.8
+2022-governor-RS-r2,Real Time Big Data,2022-governor-RS-r2-real-time-big-data-2022-10-19,2022-10-19,11,-13.14,3.64,,0.8
+2022-governor-RS-r2,Paraná Pesquisas,2022-governor-RS-r2-parana-pesquisas-2022-10-20,2022-10-20,10,-19.1,9.76,,0.8
+2022-governor-RS-r2,Ipec,2022-governor-RS-r2-ipec-2022-10-21,2022-10-21,9,-4.35,-4.83,,0.8
+2022-governor-RS-r2,Real Time Big Data,2022-governor-RS-r2-real-time-big-data-2022-10-26,2022-10-26,4,-9.99,1.6,,0.8
+2022-governor-RS-r2,Ipec,2022-governor-RS-r2-ipec-2022-10-28,2022-10-28,2,-3.13,-4.93,,0.8
+2022-governor-RS-r2,AtlasIntel,2022-governor-RS-r2-atlasintel-2022-10-29,2022-10-29,1,-1.48,-6.43,,0.8
+2022-governor-SC-r1,Jovem Pan,2022-governor-SC-r1-jovem-pan-2022-09-16,2022-09-16,16,-1.91,-3.85,1.91,0.4
+2022-governor-SC-r1,Ipec,2022-governor-SC-r1-ipec-2022-09-20,2022-09-20,12,-9.29,4.17,9.29,0.4
+2022-governor-SC-r1,Jovem Pan,2022-governor-SC-r1-jovem-pan-2022-09-23,2022-09-23,9,0.61,-4.04,-0.61,0.4
+2022-governor-SC-r1,Ipec,2022-governor-SC-r1-ipec-2022-09-30,2022-09-30,2,-7.24,3.72,7.24,0.4
+2022-governor-SC-r2,Jovem Pan,2022-governor-SC-r2-jovem-pan-2022-10-11,2022-10-11,19,-16.05,7.33,16.05,0.4
+2022-governor-SC-r2,Ipec,2022-governor-SC-r2-ipec-2022-10-18,2022-10-18,12,-2.56,-5.04,2.56,0.4
+2022-governor-SC-r2,Jovem Pan,2022-governor-SC-r2-jovem-pan-2022-10-18,2022-10-18,12,-9.72,2.12,9.72,0.4
+2022-governor-SC-r2,Real Time Big Data,2022-governor-SC-r2-real-time-big-data-2022-10-19,2022-10-19,11,-3.12,-4.33,3.12,0.4
+2022-governor-SC-r2,Veritá,2022-governor-SC-r2-verita-2022-10-20,2022-10-20,10,14.27,6.98,-14.27,0.4
+2022-governor-SC-r2,Jovem Pan,2022-governor-SC-r2-jovem-pan-2022-10-25,2022-10-25,5,-1.58,-4.91,1.58,0.4
+2022-governor-SC-r2,Real Time Big Data,2022-governor-SC-r2-real-time-big-data-2022-10-26,2022-10-26,4,-4.18,-2.15,4.18,0.4
+2022-governor-SE-r1,Ipec,2022-governor-SE-r1-ipec-2022-09-21,2022-09-21,11,-1.14,-0.17,-1.14,0.4
+2022-governor-SE-r1,Real Time Big Data,2022-governor-SE-r1-real-time-big-data-2022-09-27,2022-09-27,5,-0.52,0.17,-0.52,0.4
+2022-governor-SP-r1,Badra Comunicação,2022-governor-SP-r1-badra-comunicacao-2022-09-14,2022-09-14,18,-14.27,-3.96,14.27,0.8
+2022-governor-SP-r1,Datafolha,2022-governor-SP-r1-datafolha-2022-09-15,2022-09-15,17,-23.69,5.61,23.69,0.8
+2022-governor-SP-r1,Ipec,2022-governor-SP-r1-ipec-2022-09-19,2022-09-19,13,-21.81,4.37,21.81,0.8
+2022-governor-SP-r1,Ipespe,2022-governor-SP-r1-ipespe-2022-09-21,2022-09-21,11,-21.91,4.79,21.91,0.8
+2022-governor-SP-r1,Datafolha,2022-governor-SP-r1-datafolha-2022-09-22,2022-09-22,10,-20.54,3.58,20.54,0.8
+2022-governor-SP-r1,Paraná Pesquisas,2022-governor-SP-r1-parana-pesquisas-2022-09-22,2022-09-22,10,-10.85,-6.11,10.85,0.8
+2022-governor-SP-r1,Quaest,2022-governor-SP-r1-quaest-2022-09-25,2022-09-25,7,-19.77,3.3,19.77,0.8
+2022-governor-SP-r1,Ipec,2022-governor-SP-r1-ipec-2022-09-26,2022-09-26,6,-18.81,2.49,18.81,0.8
+2022-governor-SP-r1,AtlasIntel,2022-governor-SP-r1-atlasintel-2022-09-27,2022-09-27,5,-11.65,-4.51,11.65,0.8
+2022-governor-SP-r1,Datafolha,2022-governor-SP-r1-datafolha-2022-09-29,2022-09-29,3,-17.46,1.62,17.46,0.8
+2022-governor-SP-r1,Ipespe,2022-governor-SP-r1-ipespe-2022-09-29,2022-09-29,3,-18.66,2.82,18.66,0.8
+2022-governor-SP-r1,Paraná Pesquisas,2022-governor-SP-r1-parana-pesquisas-2022-09-29,2022-09-29,3,-11.47,-4.37,11.47,0.8
+2022-governor-SP-r1,AtlasIntel,2022-governor-SP-r1-atlasintel-2022-09-30,2022-09-30,2,-12.65,-3.03,12.65,0.8
+2022-governor-SP-r1,Datafolha,2022-governor-SP-r1-datafolha-2022-10-01,2022-10-01,1,-15.05,-0.47,15.05,0.8
+2022-governor-SP-r1,Ipec,2022-governor-SP-r1-ipec-2022-10-01,2022-10-01,1,-16.25,0.73,16.25,0.8
+2022-governor-SP-r1,Quaest,2022-governor-SP-r1-quaest-2022-10-01,2022-10-01,1,-8.64,-6.88,8.64,0.8
+2022-governor-SP-r2,Ipec,2022-governor-SP-r2-ipec-2022-10-11,2022-10-11,19,-4.8,-2.52,4.8,0.8
+2022-governor-SP-r2,Real Time Big Data,2022-governor-SP-r2-real-time-big-data-2022-10-11,2022-10-11,19,3.74,-3.57,-3.74,0.8
+2022-governor-SP-r2,Futura,2022-governor-SP-r2-futura-2022-10-12,2022-10-12,18,6.52,-0.63,-6.52,0.8
+2022-governor-SP-r2,AtlasIntel,2022-governor-SP-r2-atlasintel-2022-10-13,2022-10-13,17,0.75,-6.24,-0.75,0.8
+2022-governor-SP-r2,Paraná Pesquisas,2022-governor-SP-r2-parana-pesquisas-2022-10-13,2022-10-13,17,1.47,-5.52,-1.47,0.8
+2022-governor-SP-r2,Real Time Big Data,2022-governor-SP-r2-real-time-big-data-2022-10-18,2022-10-18,12,4.75,-1.44,-4.75,0.8
+2022-governor-SP-r2,Brasmarket,2022-governor-SP-r2-brasmarket-2022-10-19,2022-10-19,11,12.23,6.19,-12.23,0.8
+2022-governor-SP-r2,Datafolha,2022-governor-SP-r2-datafolha-2022-10-19,2022-10-19,11,-0.43,-5.6,0.43,0.8
+2022-governor-SP-r2,Paraná Pesquisas,2022-governor-SP-r2-parana-pesquisas-2022-10-20,2022-10-20,10,4.45,-1.42,-4.45,0.8
+2022-governor-SP-r2,Brasmarket,2022-governor-SP-r2-brasmarket-2022-10-22,2022-10-22,8,14.02,8.47,-14.02,0.8
+2022-governor-SP-r2,AtlasIntel,2022-governor-SP-r2-atlasintel-2022-10-25,2022-10-25,5,-3.28,-1.79,3.28,0.8
+2022-governor-SP-r2,Brasmarket,2022-governor-SP-r2-brasmarket-2022-10-25,2022-10-25,5,15.42,10.34,-15.42,0.8
+2022-governor-SP-r2,Ipec,2022-governor-SP-r2-ipec-2022-10-25,2022-10-25,5,-7.17,2.1,7.17,0.8
+2022-governor-SP-r2,Real Time Big Data,2022-governor-SP-r2-real-time-big-data-2022-10-25,2022-10-25,5,1.82,-3.26,-1.82,0.8
+2022-governor-SP-r2,Futura,2022-governor-SP-r2-futura-2022-10-26,2022-10-26,4,2.3,-2.62,-2.3,0.8
+2022-governor-SP-r2,Badra Comunicação,2022-governor-SP-r2-badra-comunicacao-2022-10-27,2022-10-27,3,-6.19,1.44,6.19,0.8
+2022-governor-SP-r2,Paraná Pesquisas,2022-governor-SP-r2-parana-pesquisas-2022-10-27,2022-10-27,3,6.63,1.87,-6.63,0.8
+2022-governor-SP-r2,AtlasIntel,2022-governor-SP-r2-atlasintel-2022-10-29,2022-10-29,1,-5.52,1.08,5.52,0.8
+2022-governor-SP-r2,Datafolha,2022-governor-SP-r2-datafolha-2022-10-29,2022-10-29,1,-6.0,1.56,6.0,0.8
+2022-governor-SP-r2,Ipec,2022-governor-SP-r2-ipec-2022-10-29,2022-10-29,1,-6.0,1.56,6.0,0.8
+2022-governor-TO-r1,Vetor,2022-governor-TO-r1-vetor-2022-09-14,2022-09-14,18,4.61,-0.9,,0.4
+2022-governor-TO-r1,Ipec,2022-governor-TO-r1-ipec-2022-09-18,2022-09-18,14,-0.21,-4.66,,0.4
+2022-governor-TO-r1,VOPE,2022-governor-TO-r1-vope-2022-09-18,2022-09-18,14,6.21,1.34,,0.4
+2022-governor-TO-r1,O Girassol,2022-governor-TO-r1-o-girassol-2022-09-19,2022-09-19,13,7.33,2.63,,0.4
+2022-governor-TO-r1,VOPE,2022-governor-TO-r1-vope-2022-09-27,2022-09-27,5,5.01,1.58,,0.4
+2022-president-BR-r1,Nexus,2022-president-BR-r1-fsb-2022-09-11,2022-09-11,21,1.08,-7.72,1.08,1.0
+2022-president-BR-r1,Ipec,2022-president-BR-r1-ipec-2022-09-11,2022-09-11,21,11.43,2.63,11.43,1.0
+2022-president-BR-r1,Paraná Pesquisas,2022-president-BR-r1-parana-pesquisas-2022-09-12,2022-09-12,20,-1.78,-6.86,-1.78,1.0
+2022-president-BR-r1,PoderData,2022-president-BR-r1-poderdata-2022-09-13,2022-09-13,19,1.15,-7.34,1.15,1.0
+2022-president-BR-r1,Quaest,2022-president-BR-r1-quaest-2022-09-13,2022-09-13,19,3.76,-4.73,3.76,1.0
+2022-president-BR-r1,MDA,2022-president-BR-r1-mda-2022-09-14,2022-09-14,18,4.35,-3.97,4.35,1.0
+2022-president-BR-r1,Futura,2022-president-BR-r1-futura-2022-09-14,2022-09-14,18,-10.56,2.23,-10.56,1.0
+2022-president-BR-r1,Brasmarket,2022-president-BR-r1-brasmarket-2022-09-14,2022-09-14,18,-20.06,11.73,-20.06,1.0
+2022-president-BR-r1,Datafolha,2022-president-BR-r1-datafolha-2022-09-15,2022-09-15,17,7.67,-0.5,7.67,1.0
+2022-president-BR-r1,Ipespe,2022-president-BR-r1-ipespe-2022-09-16,2022-09-16,16,5.41,-2.6,5.41,1.0
+2022-president-BR-r1,Ipec,2022-president-BR-r1-ipec-2022-09-18,2022-09-18,14,12.35,4.66,12.35,1.0
+2022-president-BR-r1,Nexus,2022-president-BR-r1-fsb-2022-09-18,2022-09-18,14,4.55,-3.14,4.55,1.0
+2022-president-BR-r1,Paraná Pesquisas,2022-president-BR-r1-parana-pesquisas-2022-09-19,2022-09-19,13,-1.11,-6.41,-1.11,1.0
+2022-president-BR-r1,Brasmarket,2022-president-BR-r1-brasmarket-2022-09-20,2022-09-20,12,-21.03,13.66,-21.03,1.0
+2022-president-BR-r1,PoderData,2022-president-BR-r1-poderdata-2022-09-20,2022-09-20,12,2.21,-5.15,2.21,1.0
+2022-president-BR-r1,Quaest,2022-president-BR-r1-quaest-2022-09-20,2022-09-20,12,5.88,-1.49,5.88,1.0
+2022-president-BR-r1,AtlasIntel,2022-president-BR-r1-atlasintel-2022-09-20,2022-09-20,12,4.66,-2.71,4.66,1.0
+2022-president-BR-r1,Futura,2022-president-BR-r1-futura-2022-09-21,2022-09-21,11,-5.34,-1.87,-5.34,1.0
+2022-president-BR-r1,Ipespe,2022-president-BR-r1-ipespe-2022-09-21,2022-09-21,11,6.59,-0.61,6.59,1.0
+2022-president-BR-r1,Equilíbrio Brasil,2022-president-BR-r1-equilibrio-brasil-2022-09-22,2022-09-22,10,-10.5,3.45,-10.5,1.0
+2022-president-BR-r1,Datafolha,2022-president-BR-r1-datafolha-2022-09-22,2022-09-22,10,9.82,2.77,9.82,1.0
+2022-president-BR-r1,Veritá,2022-president-BR-r1-instituto-verita-2022-09-23,2022-09-23,9,-6.37,-0.52,-6.37,1.0
+2022-president-BR-r1,Nexus,2022-president-BR-r1-fsb-2022-09-25,2022-09-25,7,5.52,-1.05,5.52,1.0
+2022-president-BR-r1,Ipec,2022-president-BR-r1-ipec-2022-09-26,2022-09-26,6,13.25,6.84,13.25,1.0
+2022-president-BR-r1,Paraná Pesquisas,2022-president-BR-r1-parana-pesquisas-2022-09-26,2022-09-26,6,1.7,-4.71,1.7,1.0
+2022-president-BR-r1,AtlasIntel,2022-president-BR-r1-atlasintel-2022-09-26,2022-09-26,6,2.25,-4.16,2.25,1.0
+2022-president-BR-r1,PoderData,2022-president-BR-r1-poderdata-2022-09-27,2022-09-27,5,4.44,-1.81,4.44,1.0
+2022-president-BR-r1,Quaest,2022-president-BR-r1-quaest-2022-09-27,2022-09-27,5,9.05,2.8,9.05,1.0
+2022-president-BR-r1,Brasmarket,2022-president-BR-r1-brasmarket-2022-09-28,2022-09-28,4,-21.49,15.4,-21.49,1.0
+2022-president-BR-r1,Futura,2022-president-BR-r1-futura-2022-09-28,2022-09-28,4,-2.13,-3.96,-2.13,1.0
+2022-president-BR-r1,AtlasIntel,2022-president-BR-r1-atlasintel-2022-09-28,2022-09-28,4,4.45,-1.64,4.45,1.0
+2022-president-BR-r1,Ideia,2022-president-BR-r1-ideia-2022-09-28,2022-09-28,4,5.16,-0.93,5.16,1.0
+2022-president-BR-r1,Paraná Pesquisas,2022-president-BR-r1-parana-pesquisas-2022-09-29,2022-09-29,3,1.86,-4.07,1.86,1.0
+2022-president-BR-r1,Datafolha,2022-president-BR-r1-datafolha-2022-09-29,2022-09-29,3,9.66,3.73,9.66,1.0
+2022-president-BR-r1,Veritá,2022-president-BR-r1-instituto-verita-2022-09-29,2022-09-29,3,-8.31,2.38,-8.31,1.0
+2022-president-BR-r1,Ipespe,2022-president-BR-r1-ipespe-2022-09-30,2022-09-30,2,8.6,2.83,8.6,1.0
+2022-president-BR-r1,AtlasIntel,2022-president-BR-r1-atlasintel-2022-09-30,2022-09-30,2,3.98,-1.79,3.98,1.0
+2022-president-BR-r1,MDA,2022-president-BR-r1-mda-2022-09-30,2022-09-30,2,3.4,-2.37,3.4,1.0
+2022-president-BR-r1,Datafolha,2022-president-BR-r1-datafolha-2022-10-01,2022-10-01,1,9.5,3.89,9.5,1.0
+2022-president-BR-r1,Ipec,2022-president-BR-r1-ipec-2022-10-01,2022-10-01,1,8.75,3.13,8.75,1.0
+2022-president-BR-r2,Ipespe,2022-president-BR-r2-ipespe-2022-10-10,2022-10-10,20,5.72,-0.04,5.72,1.0
+2022-president-BR-r2,Ipec,2022-president-BR-r2-ipec-2022-10-10,2022-10-10,20,7.87,2.11,7.87,1.0
+2022-president-BR-r2,PoderData,2022-president-BR-r2-poderdata-2022-10-11,2022-10-11,19,2.54,-3.06,2.54,1.0
+2022-president-BR-r2,Gerp,2022-president-BR-r2-gerp-2022-10-11,2022-10-11,19,0.32,-5.28,0.32,1.0
+2022-president-BR-r2,Futura,2022-president-BR-r2-futura-2022-10-12,2022-10-12,18,-1.38,-4.06,-1.38,1.0
+2022-president-BR-r2,Ipespe,2022-president-BR-r2-ipespe-2022-10-12,2022-10-12,18,4.72,-0.72,4.72,1.0
+2022-president-BR-r2,Quaest,2022-president-BR-r2-quaest-2022-10-12,2022-10-12,18,7.08,1.64,7.08,1.0
+2022-president-BR-r2,Paraná Pesquisas,2022-president-BR-r2-parana-pesquisas-2022-10-12,2022-10-12,18,2.01,-3.43,2.01,1.0
+2022-president-BR-r2,AtlasIntel,2022-president-BR-r2-atlas-2022-10-12,2022-10-12,18,2.91,-2.53,2.91,1.0
+2022-president-BR-r2,Datafolha,2022-president-BR-r2-datafolha-2022-10-14,2022-10-14,16,3.57,-1.55,3.57,1.0
+2022-president-BR-r2,Veritá,2022-president-BR-r2-instituto-verita-2022-10-15,2022-10-15,15,-4.22,-0.74,-4.22,1.0
+2022-president-BR-r2,MDA,2022-president-BR-r2-mda-2022-10-16,2022-10-16,14,5.2,0.4,5.2,1.0
+2022-president-BR-r2,Ipec,2022-president-BR-r2-ipec-2022-10-17,2022-10-17,13,5.72,1.08,5.72,1.0
+2022-president-BR-r2,Datafolha,2022-president-BR-r2-datafolha-2022-10-18,2022-10-18,12,2.45,-2.03,2.45,1.0
+2022-president-BR-r2,Ipespe,2022-president-BR-r2-ipespe-2022-10-18,2022-10-18,12,4.72,0.24,4.72,1.0
+2022-president-BR-r2,Quaest,2022-president-BR-r2-quaest-2022-10-18,2022-10-18,12,3.81,-0.67,3.81,1.0
+2022-president-BR-r2,PoderData,2022-president-BR-r2-poderdata-2022-10-18,2022-10-18,12,2.54,-1.94,2.54,1.0
+2022-president-BR-r2,Futura,2022-president-BR-r2-futura-2022-10-19,2022-10-19,11,-2.88,-1.44,-2.88,1.0
+2022-president-BR-r2,Brasmarket,2022-president-BR-r2-brasmarket-2022-10-19,2022-10-19,11,-7.25,2.93,-7.25,1.0
+2022-president-BR-r2,Paraná Pesquisas,2022-president-BR-r2-parana-pesquisas-2022-10-19,2022-10-19,11,0.82,-3.5,0.82,1.0
+2022-president-BR-r2,Ideia,2022-president-BR-r2-ideia-2022-10-19,2022-10-19,11,2.36,-1.96,2.36,1.0
+2022-president-BR-r2,Veritá,2022-president-BR-r2-instituto-verita-2022-10-20,2022-10-20,10,-4.61,0.45,-4.61,1.0
+2022-president-BR-r2,Instituto França (IFP),2022-president-BR-r2-ifp-2022-10-21,2022-10-21,9,-5.02,1.02,-5.02,1.0
+2022-president-BR-r2,AtlasIntel,2022-president-BR-r2-atlasintel-2022-10-22,2022-10-22,8,4.1,0.26,4.1,1.0
+2022-president-BR-r2,Brasmarket,2022-president-BR-r2-brasmarket-2022-10-23,2022-10-23,7,-8.4,4.71,-8.4,1.0
+2022-president-BR-r2,Ipespe,2022-president-BR-r2-ipespe-2022-10-24,2022-10-24,6,4.58,1.06,4.58,1.0
+2022-president-BR-r2,Ipec,2022-president-BR-r2-ipec-2022-10-24,2022-10-24,6,5.72,2.2,5.72,1.0
+2022-president-BR-r2,Paraná Pesquisas,2022-president-BR-r2-parana-pesquisas-2022-10-24,2022-10-24,6,-1.37,-2.15,-1.37,1.0
+2022-president-BR-r2,Brasmarket,2022-president-BR-r2-brasmarket-2022-10-25,2022-10-25,5,-8.59,5.23,-8.59,1.0
+2022-president-BR-r2,AtlasIntel,2022-president-BR-r2-atlasintel-2022-10-25,2022-10-25,5,4.7,1.34,4.7,1.0
+2022-president-BR-r2,PoderData,2022-president-BR-r2-poderdata-2022-10-25,2022-10-25,5,3.57,0.21,3.57,1.0
+2022-president-BR-r2,Quaest,2022-president-BR-r2-quaest-2022-10-25,2022-10-25,5,4.86,1.5,4.86,1.0
+2022-president-BR-r2,Futura,2022-president-BR-r2-futura-2022-10-26,2022-10-26,4,-2.44,-0.76,-2.44,1.0
+2022-president-BR-r2,Gerp,2022-president-BR-r2-gerp-2022-10-26,2022-10-26,4,-6.25,3.05,-6.25,1.0
+2022-president-BR-r2,Veritá,2022-president-BR-r2-instituto-verita-2022-10-27,2022-10-27,3,-4.85,1.81,-4.85,1.0
+2022-president-BR-r2,Datafolha,2022-president-BR-r2-datafolha-2022-10-27,2022-10-27,3,3.57,0.53,3.57,1.0
+2022-president-BR-r2,Brasmarket,2022-president-BR-r2-brasmarket-2022-10-27,2022-10-27,3,-7.86,4.81,-7.86,1.0
+2022-president-BR-r2,MDA,2022-president-BR-r2-mda-2022-10-28,2022-10-28,2,0.37,-2.51,0.37,1.0
+2022-president-BR-r2,Paraná Pesquisas,2022-president-BR-r2-parana-pesquisas-2022-10-28,2022-10-28,2,-0.95,-1.94,-0.95,1.0
+2022-president-BR-r2,Veritá,2022-president-BR-r2-instituto-verita-2022-10-29,2022-10-29,1,-3.83,1.11,-3.83,1.0
+2022-president-BR-r2,Quaest,2022-president-BR-r2-quaest-2022-10-29,2022-10-29,1,1.57,-1.16,1.57,1.0
+2022-president-BR-r2,Datafolha,2022-president-BR-r2-datafolha-2022-10-29,2022-10-29,1,2.45,-0.27,2.45,1.0
+2022-president-BR-r2,Ipec,2022-president-BR-r2-ipec-2022-10-29,2022-10-29,1,5.72,3.0,5.72,1.0
+2022-president-BR-r2,AtlasIntel,2022-president-BR-r2-atlasintel-2022-10-29,2022-10-29,1,5.02,2.3,5.02,1.0
+2022-president-BR-r2,Instituto França (IFP),2022-president-BR-r2-ifp-2022-10-29,2022-10-29,1,-1.47,-1.25,-1.47,1.0
+2026-governor-AC-r1,DataControl,2026-governor-AC-r1-datacontrol-2026-09-16,2026-09-16,18,0.45,-12.43,,0.4
+2026-governor-AC-r1,Delta,2026-governor-AC-r1-delta-2026-09-19,2026-09-19,15,-7.57,-4.83,,0.4
+2026-governor-AC-r1,Real Time Big Data,2026-governor-AC-r1-real-time-big-data-2026-09-19,2026-09-19,15,-13.92,1.52,,0.4
+2026-governor-AC-r1,IPSensus,2026-governor-AC-r1-ipsensus-2026-09-24,2026-09-24,10,-29.06,17.46,,0.4
+2026-governor-AC-r1,Quaest,2026-governor-AC-r1-quaest-2026-09-24,2026-09-24,10,-7.36,-4.24,,0.4
+2026-governor-AC-r1,Delta,2026-governor-AC-r1-delta-2026-09-29,2026-09-29,5,-5.37,-5.43,,0.4
+2026-governor-AC-r1,Veritá,2026-governor-AC-r1-verita-2026-10-01,2026-10-01,3,-15.36,4.88,,0.4
+2026-governor-AC-r1,Quaest,2026-governor-AC-r1-quaest-2026-10-03,2026-10-03,1,-13.24,3.07,,0.4
+2026-governor-AM-r1,Pontual,2026-governor-AM-r1-pontual-2026-09-13,2026-09-13,21,-6.52,-0.99,,0.4
+2026-governor-AM-r1,Phoenix,2026-governor-AM-r1-phoenix-2026-09-15,2026-09-15,19,-8.69,1.51,,0.4
+2026-governor-AM-r1,Projeta,2026-governor-AM-r1-projeta-2026-09-18,2026-09-18,16,-3.88,-2.82,,0.4
+2026-governor-AM-r1,PoderData,2026-governor-AM-r1-poderdata-2026-09-23,2026-09-23,11,-3.05,-2.86,,0.4
+2026-governor-AM-r1,Quaest,2026-governor-AM-r1-quaest-2026-09-23,2026-09-23,11,-3.16,-2.75,,0.4
+2026-governor-AM-r1,Veritá,2026-governor-AM-r1-verita-2026-09-24,2026-09-24,10,-11.43,5.68,,0.4
+2026-governor-AM-r1,IPEN,2026-governor-AM-r1-ipen-2026-09-25,2026-09-25,9,1.42,-4.17,,0.4
+2026-governor-AM-r1,Phoenix,2026-governor-AM-r1-phoenix-2026-09-25,2026-09-25,9,-9.54,3.95,,0.4
+2026-governor-AM-r1,Viva Voz,2026-governor-AM-r1-viva-voz-2026-09-27,2026-09-27,7,-10.85,5.58,,0.4
+2026-governor-AM-r1,Pontual,2026-governor-AM-r1-pontual-2026-09-29,2026-09-29,5,-3.21,-1.74,,0.4
+2026-governor-AM-r1,Real Time Big Data,2026-governor-AM-r1-real-time-big-data-2026-10-01,2026-10-01,3,-3.24,-1.39,,0.4
+2026-governor-AP-r1,F5,2026-governor-AP-r1-f5-2026-09-14,2026-09-14,20,8.36,0.91,,0.4
+2026-governor-AP-r1,Doxa,2026-governor-AP-r1-doxa-2026-09-19,2026-09-19,15,0.15,-6.49,,0.4
+2026-governor-AP-r1,Quaest,2026-governor-AP-r1-quaest-2026-09-23,2026-09-23,11,-11.8,5.8,,0.4
+2026-governor-AP-r1,Paraná Pesquisas,2026-governor-AP-r1-parana-pesquisas-2026-09-27,2026-09-27,7,-6.06,0.7,,0.4
+2026-governor-AP-r1,Real Time Big Data,2026-governor-AP-r1-real-time-big-data-2026-09-29,2026-09-29,5,-4.13,-0.92,,0.4
+2026-governor-CE-r1,AtlasIntel,2026-governor-CE-r1-atlasintel-2026-09-17,2026-09-17,17,-6.45,-2.15,-6.45,0.8
+2026-governor-CE-r1,Datafolha,2026-governor-CE-r1-datafolha-2026-09-17,2026-09-17,17,-15.01,6.41,-15.01,0.8
+2026-governor-CE-r1,Paraná Pesquisas,2026-governor-CE-r1-parana-pesquisas-2026-09-17,2026-09-17,17,-15.56,6.96,-15.56,0.8
+2026-governor-CE-r1,Real Time Big Data,2026-governor-CE-r1-real-time-big-data-2026-09-17,2026-09-17,17,-1.35,-7.25,-1.35,0.8
+2026-governor-CE-r1,Quaest,2026-governor-CE-r1-quaest-2026-09-22,2026-09-22,12,-9.35,1.55,-9.35,0.8
+2026-governor-CE-r1,Datafolha,2026-governor-CE-r1-datafolha-2026-09-24,2026-09-24,10,-8.12,0.63,-8.12,0.8
+2026-governor-CE-r1,Real Time Big Data,2026-governor-CE-r1-real-time-big-data-2026-09-24,2026-09-24,10,0.9,-6.59,0.9,0.8
+2026-governor-CE-r1,Veritá,2026-governor-CE-r1-verita-2026-09-24,2026-09-24,10,-7.47,-0.01,-7.47,0.8
+2026-governor-CE-r1,Paraná Pesquisas,2026-governor-CE-r1-parana-pesquisas-2026-09-25,2026-09-25,9,-11.28,3.95,-11.28,0.8
+2026-governor-CE-r1,AtlasIntel,2026-governor-CE-r1-atlasintel-2026-09-28,2026-09-28,6,-5.52,-1.33,-5.52,0.8
+2026-governor-CE-r1,Datafolha,2026-governor-CE-r1-datafolha-2026-10-03,2026-10-03,1,-3.87,-2.17,-3.87,0.8
+2026-governor-DF-r1,IGAPE,2026-governor-DF-r1-igape-2026-09-19,2026-09-19,15,15.52,3.98,-15.52,0.4
+2026-governor-DF-r1,Opinião,2026-governor-DF-r1-opiniao-2026-09-19,2026-09-19,15,9.7,-1.84,-9.7,0.4
+2026-governor-DF-r1,Quaest,2026-governor-DF-r1-quaest-2026-09-22,2026-09-22,12,1.19,-9.88,-1.19,0.4
+2026-governor-DF-r1,Datafolha,2026-governor-DF-r1-datafolha-2026-09-24,2026-09-24,10,9.2,-1.55,-9.2,0.4
+2026-governor-DF-r1,Veritá,2026-governor-DF-r1-verita-2026-09-24,2026-09-24,10,0.29,-10.46,-0.29,0.4
+2026-governor-DF-r1,IGAPE,2026-governor-DF-r1-igape-2026-09-26,2026-09-26,8,21.8,11.38,-21.8,0.4
+2026-governor-DF-r1,Opinião,2026-governor-DF-r1-opiniao-2026-09-28,2026-09-28,6,11.95,1.84,-11.95,0.4
+2026-governor-DF-r1,Quaest,2026-governor-DF-r1-quaest-2026-09-28,2026-09-28,6,6.14,-3.96,-6.14,0.4
+2026-governor-DF-r1,Real Time Big Data,2026-governor-DF-r1-real-time-big-data-2026-09-28,2026-09-28,6,8.66,-1.45,-8.66,0.4
+2026-governor-DF-r1,IGAPE,2026-governor-DF-r1-igape-2026-09-29,2026-09-29,5,16.98,7.03,-16.98,0.4
+2026-governor-DF-r1,Datafolha,2026-governor-DF-r1-datafolha-2026-10-01,2026-10-01,3,14.52,4.9,-14.52,0.4
+2026-governor-ES-r1,Veritá,2026-governor-ES-r1-verita-2026-09-15,2026-09-15,19,-2.72,-14.49,,0.4
+2026-governor-ES-r1,Paraná Pesquisas,2026-governor-ES-r1-parana-pesquisas-2026-09-22,2026-09-22,12,-13.64,-2.44,,0.4
+2026-governor-ES-r1,Perfil,2026-governor-ES-r1-perfil-2026-09-24,2026-09-24,10,-11.79,-3.98,,0.4
+2026-governor-ES-r1,Quaest,2026-governor-ES-r1-quaest-2026-09-24,2026-09-24,10,-18.22,2.45,,0.4
+2026-governor-ES-r1,Real Time Big Data,2026-governor-ES-r1-real-time-big-data-2026-09-24,2026-09-24,10,-25.26,9.5,,0.4
+2026-governor-ES-r1,Real Time Big Data,2026-governor-ES-r1-real-time-big-data-2026-09-29,2026-09-29,5,-23.92,8.95,,0.4
+2026-governor-GO-r1,IGAPE,2026-governor-GO-r1-igape-2026-09-14,2026-09-14,20,-11.83,-0.87,,0.4
+2026-governor-GO-r1,Goiás Pesquisas,2026-governor-GO-r1-goias-pesquisas-2026-09-15,2026-09-15,19,-6.41,-6.13,,0.4
+2026-governor-GO-r1,Veritá,2026-governor-GO-r1-verita-2026-09-17,2026-09-17,17,-24.85,12.63,,0.4
+2026-governor-GO-r1,IGAPE,2026-governor-GO-r1-igape-2026-09-19,2026-09-19,15,-13.22,1.32,,0.4
+2026-governor-GO-r1,Real Time Big Data,2026-governor-GO-r1-real-time-big-data-2026-09-21,2026-09-21,13,-7.54,-4.04,,0.4
+2026-governor-GO-r1,Quaest,2026-governor-GO-r1-quaest-2026-09-23,2026-09-23,11,-3.88,-7.38,,0.4
+2026-governor-GO-r1,Veritá,2026-governor-GO-r1-verita-2026-09-24,2026-09-24,10,-25.36,14.26,,0.4
+2026-governor-GO-r1,Goiás Pesquisas,2026-governor-GO-r1-goias-pesquisas-2026-09-25,2026-09-25,9,-5.14,-5.81,,0.4
+2026-governor-GO-r1,Paraná Pesquisas,2026-governor-GO-r1-parana-pesquisas-2026-09-27,2026-09-27,7,-6.63,-4.0,,0.4
+2026-governor-MA-r1,IPPI,2026-governor-MA-r1-ippi-2026-09-14,2026-09-14,20,0.43,-11.32,,0.4
+2026-governor-MA-r1,IPSensus,2026-governor-MA-r1-ipsensus-2026-09-18,2026-09-18,16,-28.24,17.13,,0.4
+2026-governor-MA-r1,Viva Voz,2026-governor-MA-r1-viva-voz-2026-09-20,2026-09-20,14,7.6,-3.19,,0.4
+2026-governor-MA-r1,Ranking,2026-governor-MA-r1-ranking-2026-09-21,2026-09-21,13,-15.58,4.95,,0.4
+2026-governor-MA-r1,Quaest,2026-governor-MA-r1-quaest-2026-09-24,2026-09-24,10,2.59,-7.56,,0.4
+2026-governor-MG-r1,Veritá,2026-governor-MG-r1-verita-2026-09-17,2026-09-17,17,-0.36,-6.8,0.36,0.8
+2026-governor-MG-r1,F5,2026-governor-MG-r1-f5-2026-09-18,2026-09-18,16,-0.49,-6.52,0.49,0.8
+2026-governor-MG-r1,Real Time Big Data,2026-governor-MG-r1-real-time-big-data-2026-09-19,2026-09-19,15,-11.28,4.43,11.28,0.8
+2026-governor-MG-r1,Ver,2026-governor-MG-r1-ver-2026-09-19,2026-09-19,15,4.95,-1.9,-4.95,0.8
+2026-governor-MG-r1,AtlasIntel,2026-governor-MG-r1-atlasintel-2026-09-20,2026-09-20,14,-20.37,13.69,20.37,0.8
+2026-governor-MG-r1,Quaest,2026-governor-MG-r1-quaest-2026-09-22,2026-09-22,12,-1.43,-4.94,1.43,0.8
+2026-governor-MG-r1,Datafolha,2026-governor-MG-r1-datafolha-2026-09-24,2026-09-24,10,2.99,-3.05,-2.99,0.8
+2026-governor-MG-r1,Veritá,2026-governor-MG-r1-verita-2026-09-24,2026-09-24,10,-2.15,-3.9,2.15,0.8
+2026-governor-MG-r1,Real Time Big Data,2026-governor-MG-r1-real-time-big-data-2026-09-26,2026-09-26,8,-9.06,3.33,9.06,0.8
+2026-governor-MG-r1,AtlasIntel,2026-governor-MG-r1-atlasintel-2026-09-27,2026-09-27,7,-20.48,14.91,20.48,0.8
+2026-governor-MG-r1,DataTempo,2026-governor-MG-r1-datatempo-2026-09-27,2026-09-27,7,1.48,-4.09,-1.48,0.8
+2026-governor-MG-r1,Quaest,2026-governor-MG-r1-quaest-2026-09-28,2026-09-28,6,-5.01,-0.4,5.01,0.8
+2026-governor-MG-r1,Datafolha,2026-governor-MG-r1-datafolha-2026-10-01,2026-10-01,3,1.71,-3.22,-1.71,0.8
+2026-governor-MG-r1,Real Time Big Data,2026-governor-MG-r1-real-time-big-data-2026-10-02,2026-10-02,2,-3.21,-1.55,3.21,0.8
+2026-governor-MS-r1,Nova Ibrape,2026-governor-MS-r1-nova-ibrape-2026-09-13,2026-09-13,21,6.34,-1.12,-6.34,0.4
+2026-governor-MS-r1,Instituto Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-18,2026-09-18,16,-7.63,0.97,7.63,0.4
+2026-governor-MS-r1,Quaest,2026-governor-MS-r1-quaest-2026-09-24,2026-09-24,10,10.78,5.07,-10.78,0.4
+2026-governor-MS-r1,Instituto Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-25,2026-09-25,9,-3.39,-2.16,3.39,0.4
+2026-governor-MS-r1,Quaest,2026-governor-MS-r1-quaest-2026-10-03,2026-10-03,1,1.51,-2.76,-1.51,0.4
+2026-governor-MT-r1,MT Dados,2026-governor-MT-r1-mt-dados-2026-09-17,2026-09-17,17,-26.77,4.77,,0.4
+2026-governor-MT-r1,Paraná Pesquisas,2026-governor-MT-r1-parana-pesquisas-2026-09-17,2026-09-17,17,-22.61,0.61,,0.4
+2026-governor-MT-r1,Quaest,2026-governor-MT-r1-quaest-2026-09-24,2026-09-24,10,-34.6,13.72,,0.4
+2026-governor-MT-r1,Veritá,2026-governor-MT-r1-verita-2026-09-24,2026-09-24,10,-29.71,8.83,,0.4
+2026-governor-MT-r1,Paraná Pesquisas,2026-governor-MT-r1-parana-pesquisas-2026-09-29,2026-09-29,5,-15.9,-4.19,,0.4
+2026-governor-MT-r1,MT Dados,2026-governor-MT-r1-mt-dados-2026-09-30,2026-09-30,4,-13.53,-6.39,,0.4
+2026-governor-MT-r1,AtlasIntel,2026-governor-MT-r1-atlasintel-2026-10-02,2026-10-02,2,-2.25,-17.36,,0.4
+2026-governor-PA-r1,Real Time Big Data,2026-governor-PA-r1-real-time-big-data-2026-09-14,2026-09-14,20,-11.12,-0.4,,0.4
+2026-governor-PA-r1,Veritá,2026-governor-PA-r1-verita-2026-09-17,2026-09-17,17,12.54,1.49,,0.4
+2026-governor-PA-r1,Veritá,2026-governor-PA-r1-verita-2026-09-24,2026-09-24,10,0.1,-9.83,,0.4
+2026-governor-PA-r1,Quaest,2026-governor-PA-r1-quaest-2026-09-25,2026-09-25,9,6.85,-2.91,,0.4
+2026-governor-PA-r1,Real Time Big Data,2026-governor-PA-r1-real-time-big-data-2026-09-26,2026-09-26,8,-13.12,3.51,,0.4
+2026-governor-PA-r1,Ampla,2026-governor-PA-r1-ampla-2026-09-28,2026-09-28,6,8.04,-1.25,,0.4
+2026-governor-PA-r1,Doxa,2026-governor-PA-r1-doxa-2026-09-28,2026-09-28,6,-12.72,3.43,,0.4
+2026-governor-PA-r1,Futura,2026-governor-PA-r1-futura-2026-09-28,2026-09-28,6,7.46,-1.83,,0.4
+2026-governor-PA-r1,Doxa,2026-governor-PA-r1-doxa-2026-09-30,2026-09-30,4,-10.96,1.99,,0.4
+2026-governor-PA-r1,AtlasIntel,2026-governor-PA-r1-atlasintel-2026-10-02,2026-10-02,2,-11.09,2.44,,0.4
+2026-governor-PA-r1,Quaest,2026-governor-PA-r1-quaest-2026-10-03,2026-10-03,1,11.83,3.34,,0.4
+2026-governor-PB-r1,Data Ranking,2026-governor-PB-r1-data-ranking-2026-09-18,2026-09-18,16,4.79,-1.14,,0.4
+2026-governor-PB-r1,Quaest,2026-governor-PB-r1-quaest-2026-09-21,2026-09-21,13,1.13,-4.33,,0.4
+2026-governor-PB-r1,Anova,2026-governor-PB-r1-anova-2026-09-22,2026-09-22,12,0.4,-4.9,,0.4
+2026-governor-PB-r1,TDL,2026-governor-PB-r1-tdl-2026-09-27,2026-09-27,7,2.74,-1.76,,0.4
+2026-governor-PB-r1,Real Time Big Data,2026-governor-PB-r1-real-time-big-data-2026-10-01,2026-10-01,3,-15.98,12.12,,0.4
+2026-governor-PE-r1,Múltipla,2026-governor-PE-r1-multipla-2026-09-14,2026-09-14,20,-2.42,-5.01,,0.8
+2026-governor-PE-r1,Real Time Big Data,2026-governor-PE-r1-real-time-big-data-2026-09-14,2026-09-14,20,-9.6,2.16,,0.8
+2026-governor-PE-r1,AtlasIntel,2026-governor-PE-r1-atlasintel-2026-09-16,2026-09-16,18,-5.16,-1.95,,0.8
+2026-governor-PE-r1,DataTrends,2026-governor-PE-r1-datatrends-2026-09-17,2026-09-17,17,1.08,-5.88,,0.8
+2026-governor-PE-r1,Revista Total,2026-governor-PE-r1-revista-total-2026-09-17,2026-09-17,17,-13.11,6.16,,0.8
+2026-governor-PE-r1,AtlasIntel,2026-governor-PE-r1-atlasintel-2026-09-20,2026-09-20,14,-7.2,0.72,,0.8
+2026-governor-PE-r1,Simplex,2026-governor-PE-r1-simplex-2026-09-20,2026-09-20,14,0.12,-6.36,,0.8
+2026-governor-PE-r1,Quaest,2026-governor-PE-r1-quaest-2026-09-22,2026-09-22,12,-5.95,-0.21,,0.8
+2026-governor-PE-r1,DataTrends,2026-governor-PE-r1-datatrends-2026-09-24,2026-09-24,10,-2.7,-3.14,,0.8
+2026-governor-PE-r1,Datafolha,2026-governor-PE-r1-datafolha-2026-09-24,2026-09-24,10,-4.1,-1.74,,0.8
+2026-governor-PE-r1,Ipespe,2026-governor-PE-r1-ipespe-2026-09-26,2026-09-26,8,-10.1,4.58,,0.8
+2026-governor-PE-r1,Real Time Big Data,2026-governor-PE-r1-real-time-big-data-2026-09-26,2026-09-26,8,-10.72,5.2,,0.8
+2026-governor-PE-r1,Quaest,2026-governor-PE-r1-quaest-2026-09-28,2026-09-28,6,-8.45,3.25,,0.8
+2026-governor-PE-r1,Paraná Pesquisas,2026-governor-PE-r1-parana-pesquisas-2026-09-29,2026-09-29,5,-9.0,3.96,,0.8
+2026-governor-PE-r1,DataTrends,2026-governor-PE-r1-datatrends-2026-09-30,2026-09-30,4,-1.63,-3.25,,0.8
+2026-governor-PE-r1,Datafolha,2026-governor-PE-r1-datafolha-2026-10-01,2026-10-01,3,-6.23,1.51,,0.8
+2026-governor-PI-r1,Datafolha,2026-governor-PI-r1-datafolha-2026-09-16,2026-09-16,18,-5.98,-2.13,-5.98,0.4
+2026-governor-PI-r1,Veritá,2026-governor-PI-r1-verita-2026-09-18,2026-09-18,16,-11.55,3.76,-11.55,0.4
+2026-governor-PI-r1,Datamax,2026-governor-PI-r1-datamax-2026-09-19,2026-09-19,15,10.57,2.93,10.57,0.4
+2026-governor-PI-r1,AtlasIntel,2026-governor-PI-r1-atlasintel-2026-09-28,2026-09-28,6,1.63,-4.56,1.63,0.4
+2026-governor-PR-r1,Real Time Big Data,2026-governor-PR-r1-real-time-big-data-2026-09-15,2026-09-15,19,-15.65,6.03,,0.8
+2026-governor-PR-r1,AtlasIntel,2026-governor-PR-r1-atlasintel-2026-09-16,2026-09-16,18,6.71,-2.75,,0.8
+2026-governor-PR-r1,Instituto Alfa,2026-governor-PR-r1-instituto-alfa-2026-09-16,2026-09-16,18,-12.78,3.32,,0.8
+2026-governor-PR-r1,Neokemp,2026-governor-PR-r1-neokemp-2026-09-16,2026-09-16,18,1.76,-7.71,,0.8
+2026-governor-PR-r1,Paraná Pesquisas,2026-governor-PR-r1-parana-pesquisas-2026-09-17,2026-09-17,17,3.2,-6.11,,0.8
+2026-governor-PR-r1,IRG,2026-governor-PR-r1-irg-2026-09-20,2026-09-20,14,-11.62,2.79,,0.8
+2026-governor-PR-r1,Índice,2026-governor-PR-r1-indice-2026-09-21,2026-09-21,13,-21.33,12.67,,0.8
+2026-governor-PR-r1,Neokemp,2026-governor-PR-r1-neokemp-2026-09-23,2026-09-23,11,4.12,-4.23,,0.8
+2026-governor-PR-r1,Quaest,2026-governor-PR-r1-quaest-2026-09-23,2026-09-23,11,-4.48,-3.86,,0.8
+2026-governor-PR-r1,Neokemp,2026-governor-PR-r1-neokemp-2026-09-26,2026-09-26,8,0.47,-7.4,,0.8
+2026-governor-PR-r1,Paraná Pesquisas,2026-governor-PR-r1-parana-pesquisas-2026-09-27,2026-09-27,7,2.02,-5.68,,0.8
+2026-governor-PR-r1,Real Time Big Data,2026-governor-PR-r1-real-time-big-data-2026-09-28,2026-09-28,6,-15.85,8.3,,0.8
+2026-governor-PR-r1,Ágili,2026-governor-PR-r1-agili-2026-09-28,2026-09-28,6,5.12,-2.42,,0.8
+2026-governor-PR-r1,IRG,2026-governor-PR-r1-irg-2026-10-01,2026-10-01,3,-11.56,4.5,,0.8
+2026-governor-PR-r1,Neokemp,2026-governor-PR-r1-neokemp-2026-10-01,2026-10-01,3,0.54,-6.52,,0.8
+2026-governor-PR-r1,Real Time Big Data,2026-governor-PR-r1-real-time-big-data-2026-10-01,2026-10-01,3,-16.13,9.07,,0.8
+2026-governor-RJ-r1,Veritá,2026-governor-RJ-r1-verita-2026-09-18,2026-09-18,16,-7.16,-11.9,,0.8
+2026-governor-RJ-r1,AtlasIntel,2026-governor-RJ-r1-atlasintel-2026-09-20,2026-09-20,14,-13.45,-5.3,,0.8
+2026-governor-RJ-r1,Paraná Pesquisas,2026-governor-RJ-r1-parana-pesquisas-2026-09-22,2026-09-22,12,-25.68,7.26,,0.8
+2026-governor-RJ-r1,Prefab Future,2026-governor-RJ-r1-prefab-future-2026-09-22,2026-09-22,12,-20.37,1.94,,0.8
+2026-governor-RJ-r1,Quaest,2026-governor-RJ-r1-quaest-2026-09-22,2026-09-22,12,-25.29,6.87,,0.8
+2026-governor-RJ-r1,Datafolha,2026-governor-RJ-r1-datafolha-2026-09-24,2026-09-24,10,-23.77,5.66,,0.8
+2026-governor-RJ-r1,AtlasIntel,2026-governor-RJ-r1-atlasintel-2026-09-27,2026-09-27,7,-15.57,-2.05,,0.8
+2026-governor-RJ-r1,Quaest,2026-governor-RJ-r1-quaest-2026-09-28,2026-09-28,6,-19.76,2.3,,0.8
+2026-governor-RJ-r1,Real Time Big Data,2026-governor-RJ-r1-real-time-big-data-2026-09-29,2026-09-29,5,-13.72,-3.59,,0.8
+2026-governor-RJ-r1,Gerp,2026-governor-RJ-r1-gerp-2026-09-30,2026-09-30,4,-15.81,-1.34,,0.8
+2026-governor-RJ-r1,Datafolha,2026-governor-RJ-r1-datafolha-2026-10-01,2026-10-01,3,-15.81,-1.18,,0.8
+2026-governor-RJ-r1,Paraná Pesquisas,2026-governor-RJ-r1-parana-pesquisas-2026-10-01,2026-10-01,3,-20.62,3.63,,0.8
+2026-governor-RJ-r1,Prefab Future,2026-governor-RJ-r1-prefab-future-2026-10-02,2026-10-02,2,-16.47,-0.36,,0.8
+2026-governor-RJ-r1,Quaest,2026-governor-RJ-r1-quaest-2026-10-03,2026-10-03,1,-14.72,-1.95,,0.8
+2026-governor-RN-r1,Perfil,2026-governor-RN-r1-perfil-2026-09-15,2026-09-15,19,15.26,-4.46,-15.26,0.4
+2026-governor-RN-r1,Média,2026-governor-RN-r1-media-2026-09-17,2026-09-17,17,10.55,-8.85,-10.55,0.4
+2026-governor-RN-r1,Exatus,2026-governor-RN-r1-exatus-2026-09-23,2026-09-23,11,23.97,5.53,-23.97,0.4
+2026-governor-RN-r1,Metadata,2026-governor-RN-r1-metadata-2026-09-23,2026-09-23,11,24.51,6.08,-24.51,0.4
+2026-governor-RN-r1,Quaest,2026-governor-RN-r1-quaest-2026-09-24,2026-09-24,10,22.3,4.02,-22.3,0.4
+2026-governor-RN-r1,Seta,2026-governor-RN-r1-seta-2026-09-24,2026-09-24,10,20.6,2.32,-20.6,0.4
+2026-governor-RN-r1,Consult,2026-governor-RN-r1-consult-2026-09-26,2026-09-26,8,16.39,-1.57,-16.39,0.4
+2026-governor-RN-r1,AtlasIntel,2026-governor-RN-r1-atlasintel-2026-09-28,2026-09-28,6,-11.71,-5.93,11.71,0.4
+2026-governor-RN-r1,Exatus,2026-governor-RN-r1-exatus-2026-09-30,2026-09-30,4,20.18,2.86,-20.18,0.4
+2026-governor-RO-r1,Veritá,2026-governor-RO-r1-verita-2026-09-19,2026-09-19,15,-4.32,-7.64,,0.4
+2026-governor-RO-r1,Quaest,2026-governor-RO-r1-quaest-2026-09-23,2026-09-23,11,-15.18,3.86,,0.4
+2026-governor-RO-r1,Veritá,2026-governor-RO-r1-verita-2026-09-25,2026-09-25,9,-1.48,-9.52,,0.4
+2026-governor-RO-r1,Real Time Big Data,2026-governor-RO-r1-real-time-big-data-2026-09-29,2026-09-29,5,-23.67,13.31,,0.4
+2026-governor-RR-r1,Census,2026-governor-RR-r1-census-2026-09-13,2026-09-13,21,-26.44,10.74,,0.4
+2026-governor-RR-r1,Eficaz,2026-governor-RR-r1-eficaz-2026-09-19,2026-09-19,15,5.53,-9.22,,0.4
+2026-governor-RR-r1,Quaest,2026-governor-RR-r1-quaest-2026-09-24,2026-09-24,10,-12.41,-1.53,,0.4
+2026-governor-RS-r1,Brasmarket,2026-governor-RS-r1-brasmarket-2026-09-18,2026-09-18,16,-7.35,-8.23,,0.8
+2026-governor-RS-r1,Paraná Pesquisas,2026-governor-RS-r1-parana-pesquisas-2026-09-18,2026-09-18,16,-20.31,4.73,,0.8
+2026-governor-RS-r1,AtlasIntel,2026-governor-RS-r1-atlasintel-2026-09-20,2026-09-20,14,-20.42,5.17,,0.8
+2026-governor-RS-r1,Quaest,2026-governor-RS-r1-quaest-2026-09-23,2026-09-23,11,-17.17,2.39,,0.8
+2026-governor-RS-r1,Neokemp,2026-governor-RS-r1-neokemp-2026-09-24,2026-09-24,10,-8.79,-5.83,,0.8
+2026-governor-RS-r1,Real Time Big Data,2026-governor-RS-r1-real-time-big-data-2026-09-28,2026-09-28,6,-21.19,7.21,,0.8
+2026-governor-RS-r1,Quaest,2026-governor-RS-r1-quaest-2026-10-03,2026-10-03,1,-7.73,-5.45,,0.8
+2026-governor-SC-r1,Real Time Big Data,2026-governor-SC-r1-real-time-big-data-2026-09-16,2026-09-16,18,2.09,-2.53,,0.4
+2026-governor-SC-r1,Veritá,2026-governor-SC-r1-verita-2026-09-19,2026-09-19,15,1.18,-2.96,,0.4
+2026-governor-SC-r1,IPC,2026-governor-SC-r1-ipc-2026-09-20,2026-09-20,14,1.41,-2.57,,0.4
+2026-governor-SC-r1,Rumo,2026-governor-SC-r1-rumo-2026-09-20,2026-09-20,14,-6.75,2.77,,0.4
+2026-governor-SC-r1,Paraná Pesquisas,2026-governor-SC-r1-parana-pesquisas-2026-09-22,2026-09-22,12,0.68,-2.98,,0.4
+2026-governor-SC-r1,Quaest,2026-governor-SC-r1-quaest-2026-09-23,2026-09-23,11,3.09,-0.41,,0.4
+2026-governor-SC-r1,Neokemp,2026-governor-SC-r1-neokemp-2026-09-30,2026-09-30,4,-11.05,8.67,,0.4
+2026-governor-SE-r1,INOR,2026-governor-SE-r1-inor-2026-09-13,2026-09-13,21,-30.97,19.57,,0.4
+2026-governor-SE-r1,Global,2026-governor-SE-r1-global-2026-09-15,2026-09-15,19,-1.11,-9.97,,0.4
+2026-governor-SE-r1,Instituto França (IFP),2026-governor-SE-r1-ifp-2026-09-19,2026-09-19,15,0.18,-10.26,,0.4
+2026-governor-SE-r1,Real Time Big Data,2026-governor-SE-r1-real-time-big-data-2026-09-21,2026-09-21,13,-16.98,6.85,,0.4
+2026-governor-SE-r1,Quaest,2026-governor-SE-r1-quaest-2026-09-23,2026-09-23,11,-11.49,1.69,,0.4
+2026-governor-SE-r1,Instituto França (IFP),2026-governor-SE-r1-ifp-2026-09-26,2026-09-26,8,-1.44,-7.89,,0.4
+2026-governor-SP-r1,Real Time Big Data,2026-governor-SP-r1-real-time-big-data-2026-09-19,2026-09-19,15,-10.11,3.27,10.11,0.8
+2026-governor-SP-r1,Veritá,2026-governor-SP-r1-verita-2026-09-19,2026-09-19,15,-7.4,0.57,7.4,0.8
+2026-governor-SP-r1,AtlasIntel,2026-governor-SP-r1-atlasintel-2026-09-20,2026-09-20,14,-11.55,4.88,11.55,0.8
+2026-governor-SP-r1,Paraná Pesquisas,2026-governor-SP-r1-parana-pesquisas-2026-09-21,2026-09-21,13,-6.53,0.02,6.53,0.8
+2026-governor-SP-r1,Colectta,2026-governor-SP-r1-colectta-2026-09-22,2026-09-22,12,-10.35,4.0,10.35,0.8
+2026-governor-SP-r1,Quaest,2026-governor-SP-r1-quaest-2026-09-22,2026-09-22,12,-3.26,-3.09,3.26,0.8
+2026-governor-SP-r1,Vox Brasil,2026-governor-SP-r1-vox-2026-09-22,2026-09-22,12,-1.4,-4.96,1.4,0.8
+2026-governor-SP-r1,Datafolha,2026-governor-SP-r1-datafolha-2026-09-23,2026-09-23,11,-3.25,-2.95,3.25,0.8
+2026-governor-SP-r1,Futura,2026-governor-SP-r1-futura-2026-09-26,2026-09-26,8,-1.49,-4.23,1.49,0.8
+2026-governor-SP-r1,AtlasIntel,2026-governor-SP-r1-atlasintel-2026-09-27,2026-09-27,7,-12.63,7.07,12.63,0.8
+2026-governor-SP-r1,Quaest,2026-governor-SP-r1-quaest-2026-09-28,2026-09-28,6,1.54,-3.85,-1.54,0.8
+2026-governor-SP-r1,Real Time Big Data,2026-governor-SP-r1-real-time-big-data-2026-09-28,2026-09-28,6,-11.34,5.95,11.34,0.8
+2026-governor-SP-r1,Vox Brasil,2026-governor-SP-r1-vox-2026-09-29,2026-09-29,5,-3.08,-2.16,3.08,0.8
+2026-governor-SP-r1,Datafolha,2026-governor-SP-r1-datafolha-2026-09-30,2026-09-30,4,-7.35,2.27,7.35,0.8
+2026-governor-SP-r1,Gerp,2026-governor-SP-r1-gerp-2026-09-30,2026-09-30,4,-3.51,-1.57,3.51,0.8
+2026-governor-SP-r1,Futura,2026-governor-SP-r1-futura-2026-10-01,2026-10-01,3,0.25,-4.66,-0.25,0.8
+2026-governor-SP-r1,AtlasIntel,2026-governor-SP-r1-atlasintel-2026-10-02,2026-10-02,2,-10.57,5.82,10.57,0.8
+2026-governor-SP-r1,Datafolha,2026-governor-SP-r1-datafolha-2026-10-03,2026-10-03,1,-1.23,-3.36,1.23,0.8
+2026-governor-SP-r1,Quaest,2026-governor-SP-r1-quaest-2026-10-03,2026-10-03,1,-1.58,-3.02,1.58,0.8
+2026-governor-TO-r1,Paraná Pesquisas,2026-governor-TO-r1-parana-pesquisas-2026-09-14,2026-09-14,20,6.16,-0.71,,0.4
+2026-governor-TO-r1,Real Time Big Data,2026-governor-TO-r1-real-time-big-data-2026-09-14,2026-09-14,20,-0.39,-6.48,,0.4
+2026-governor-TO-r1,Veritá,2026-governor-TO-r1-verita-2026-09-19,2026-09-19,15,2.19,-3.89,,0.4
+2026-governor-TO-r1,Quaest,2026-governor-TO-r1-quaest-2026-09-22,2026-09-22,12,14.47,8.87,,0.4
+2026-governor-TO-r1,Correio do Povo,2026-governor-TO-r1-correio-do-povo-2026-09-24,2026-09-24,10,4.23,-1.04,,0.4
+2026-governor-TO-r1,Real Time Big Data,2026-governor-TO-r1-real-time-big-data-2026-09-24,2026-09-24,10,6.65,1.38,,0.4
+2026-governor-TO-r1,Veritá,2026-governor-TO-r1-verita-2026-09-25,2026-09-25,9,4.53,-0.59,,0.4
+2026-governor-TO-r1,Paraná Pesquisas,2026-governor-TO-r1-parana-pesquisas-2026-10-01,2026-10-01,3,5.68,1.53,,0.4
+2026-governor-TO-r1,Real Time Big Data,2026-governor-TO-r1-real-time-big-data-2026-10-01,2026-10-01,3,5.09,0.93,,0.4
+2026-president-BR-r1,Indexa,2026-president-BR-r1-indexa-2026-09-13,2026-09-13,21,-4.16,-1.93,4.16,1.0
+2026-president-BR-r1,MDA,2026-president-BR-r1-mda-2026-09-13,2026-09-13,21,-13.49,7.39,13.49,1.0
+2026-president-BR-r1,Nexus,2026-president-BR-r1-nexus-2026-09-13,2026-09-13,21,-7.18,1.09,7.18,1.0
+2026-president-BR-r1,Quaest,2026-president-BR-r1-quaest-2026-09-13,2026-09-13,21,-7.89,1.79,7.89,1.0
+2026-president-BR-r1,DataTrends,2026-president-BR-r1-datatrends-2026-09-14,2026-09-14,20,-6.41,0.47,6.41,1.0
+2026-president-BR-r1,Futura,2026-president-BR-r1-futura-2026-09-15,2026-09-15,19,-2.52,-3.26,2.52,1.0
+2026-president-BR-r1,AtlasIntel,2026-president-BR-r1-atlasintel-2026-09-16,2026-09-16,18,-4.32,-1.3,4.32,1.0
+2026-president-BR-r1,Datafolha,2026-president-BR-r1-datafolha-2026-09-16,2026-09-16,18,-5.13,-0.49,5.13,1.0
+2026-president-BR-r1,Gerp,2026-president-BR-r1-gerp-2026-09-16,2026-09-16,18,1.47,-4.15,-1.47,1.0
+2026-president-BR-r1,PoderData,2026-president-BR-r1-poderdata-2026-09-16,2026-09-16,18,-2.94,-2.68,2.94,1.0
+2026-president-BR-r1,Palver,2026-president-BR-r1-palver-2026-09-18,2026-09-18,16,-0.87,-4.42,0.87,1.0
+2026-president-BR-r1,Veritá,2026-president-BR-r1-verita-2026-09-19,2026-09-19,15,1.92,-3.22,-1.92,1.0
+2026-president-BR-r1,American Analytics,2026-president-BR-r1-american-analytics-2026-09-20,2026-09-20,14,-6.52,1.54,6.52,1.0
+2026-president-BR-r1,Nexus,2026-president-BR-r1-nexus-2026-09-20,2026-09-20,14,-5.02,0.05,5.02,1.0
+2026-president-BR-r1,Quaest,2026-president-BR-r1-quaest-2026-09-20,2026-09-20,14,-6.57,1.59,6.57,1.0
+2026-president-BR-r1,AtlasIntel,2026-president-BR-r1-atlasintel-2026-09-22,2026-09-22,12,-4.29,-0.36,4.29,1.0
+2026-president-BR-r1,Alfa Inteligência,2026-president-BR-r1-alfa-inteligencia-2026-09-23,2026-09-23,11,-9.52,5.02,9.52,1.0
+2026-president-BR-r1,Futura,2026-president-BR-r1-futura-2026-09-23,2026-09-23,11,0.25,-4.25,-0.25,1.0
+2026-president-BR-r1,Palver,2026-president-BR-r1-palver-2026-09-23,2026-09-23,11,-1.87,-2.63,1.87,1.0
+2026-president-BR-r1,PoderData,2026-president-BR-r1-poderdata-2026-09-23,2026-09-23,11,-3.97,-0.53,3.97,1.0
+2026-president-BR-r1,Real Time Big Data,2026-president-BR-r1-real-time-big-data-2026-09-23,2026-09-23,11,-6.01,1.51,6.01,1.0
+2026-president-BR-r1,Datafolha,2026-president-BR-r1-datafolha-2026-09-24,2026-09-24,10,-6.31,1.97,6.31,1.0
+2026-president-BR-r1,Veritá,2026-president-BR-r1-verita-2026-09-25,2026-09-25,9,-1.36,-2.82,1.36,1.0
+2026-president-BR-r1,Nexus,2026-president-BR-r1-nexus-2026-09-27,2026-09-27,7,-7.13,3.27,7.13,1.0
+2026-president-BR-r1,Quaest,2026-president-BR-r1-quaest-2026-09-27,2026-09-27,7,-7.75,3.89,7.75,1.0
+2026-president-BR-r1,AtlasIntel,2026-president-BR-r1-atlasintel-2026-09-28,2026-09-28,6,-4.99,1.29,4.99,1.0
+2026-president-BR-r1,Gerp,2026-president-BR-r1-gerp-2026-09-28,2026-09-28,6,0.24,-3.46,-0.24,1.0
+2026-president-BR-r1,Ideia,2026-president-BR-r1-ideia-2026-09-28,2026-09-28,6,-2.88,-0.82,2.88,1.0
+2026-president-BR-r1,Palver,2026-president-BR-r1-palver-2026-09-28,2026-09-28,6,-1.87,-1.83,1.87,1.0
+2026-president-BR-r1,Vox Brasil,2026-president-BR-r1-vox-brasil-2026-09-28,2026-09-28,6,-5.44,1.74,5.44,1.0
+2026-president-BR-r1,Futura,2026-president-BR-r1-futura-2026-09-29,2026-09-29,5,1.08,-2.46,-1.08,1.0
+2026-president-BR-r1,Indexa,2026-president-BR-r1-indexa-2026-09-29,2026-09-29,5,-7.75,4.21,7.75,1.0
+2026-president-BR-r1,DataTrends,2026-president-BR-r1-datatrends-2026-09-30,2026-09-30,4,-3.96,0.58,3.96,1.0
+2026-president-BR-r1,Real Time Big Data,2026-president-BR-r1-real-time-big-data-2026-09-30,2026-09-30,4,-6.01,2.63,6.01,1.0
+2026-president-BR-r1,Datafolha,2026-president-BR-r1-datafolha-2026-10-01,2026-10-01,3,-6.17,2.95,6.17,1.0
+2026-president-BR-r1,Palver,2026-president-BR-r1-palver-2026-10-01,2026-10-01,3,2.18,-1.04,-2.18,1.0
+2026-president-BR-r1,Vox Brasil,2026-president-BR-r1-vox-2026-10-01,2026-10-01,3,-0.97,-2.25,0.97,1.0
+2026-president-BR-r1,AtlasIntel,2026-president-BR-r1-atlasintel-2026-10-02,2026-10-02,2,-4.7,1.64,4.7,1.0
+2026-president-BR-r1,Gerp,2026-president-BR-r1-gerp-2026-10-02,2026-10-02,2,0.29,-2.78,-0.29,1.0
+2026-president-BR-r1,Instituto França (IFP),2026-president-BR-r1-ifp-2026-10-02,2026-10-02,2,-5.25,2.19,5.25,1.0
+2026-president-BR-r1,MDA,2026-president-BR-r1-mda-2026-10-02,2026-10-02,2,-7.56,4.5,7.56,1.0
+2026-president-BR-r1,PoderData,2026-president-BR-r1-poderdata-2026-10-02,2026-10-02,2,-2.94,-0.12,2.94,1.0
+2026-president-BR-r1,Veritá,2026-president-BR-r1-verita-2026-10-02,2026-10-02,2,0.31,-2.75,-0.31,1.0
+2026-president-BR-r1,Datafolha,2026-president-BR-r1-datafolha-2026-10-03,2026-10-03,1,-4.04,1.14,4.04,1.0
+2026-president-BR-r1,Datafolha,2026-president-BR-r1-datafolha-2026-10-03-2,2026-10-03,1,-4.02,1.11,4.02,1.0
+2026-president-BR-r1,Futura,2026-president-BR-r1-futura-2026-10-03,2026-10-03,1,0.33,-2.57,-0.33,1.0
+2026-president-BR-r1,Gerp,2026-president-BR-r1-gerp-2026-10-03,2026-10-03,1,0.2,-2.7,-0.2,1.0
+2026-president-BR-r1,Quaest,2026-president-BR-r1-quaest-2026-10-03,2026-10-03,1,-4.16,1.26,4.16,1.0
