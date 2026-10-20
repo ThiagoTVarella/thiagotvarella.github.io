@@ -54,14 +54,21 @@ MONTHS = {"jan": 1, "fev": 2, "feb": 2, "mar": 3, "abr": 4, "apr": 4, "mai": 5, 
           "jun": 6, "jul": 7, "ago": 8, "aug": 8, "set": 9, "sep": 9, "out": 10, "oct": 10,
           "nov": 11, "dez": 12, "dec": 12}
 
-# Institutes seen on these pages; used to split "Contratante/Instituto" cells.
-KNOWN_POLLSTERS = [
-    "datafolha", "quaest", "ipec", "ibope", "atlas", "parana pesquisas", "real time big data",
-    "futura", "gerp", "vox", "ipespe", "mda", "poderdata", "ideia", "paraná", "nexus",
-    "veritá", "verita", "doxa", "ipri", "item", "seta", "dataform", "opinião", "opiniao",
-    "instituto", "pesquisa", "data", "census", "ibpad", "badra", "agili", "real big data",
-    "ranking", "radar", "methodus", "delta", "projeta", "pontual", "falpe", "potencial",
-]
+# Clients/media seen in "A/B" pollster cells on these pages. The pages are inconsistent about
+# the order ("Folha/Datafolha" vs "Nexus/BTG"), so the part that is a known client is the
+# sponsor and the other part is the institute; otherwise the last part is the institute.
+KNOWN_SPONSORS = {
+    "acsp", "acieg", "acre em dia", "agora rn", "agorarn", "a tarde", "btg", "btg pactual",
+    "bnews", "blog do barreto", "blog do mario", "broadcast", "cbn", "cbn salvador", "cnbc",
+    "clube fm", "brazil economy", "tn", "papo aberto", "es hoje", "fonte83", "100% cidades",
+    "apex", "g6", "grupo dial", "folha", "meio", "inove noticias", "difusora", "imediato", "jd1",
+    "jovem pan", "jovem pan news", "cnt", "mais goias", "o potengi", "potengi",
+    "campo grande news", "correio", "bahia noticias", "bahia noticia", "bg", "politica ao vivo",
+    "portal gazeta rn", "portal stylo", "primeira pagina", "genial", "revista total brasil",
+    "polemica", "tv gazeta", "tv ponta negra", "noticias da hora", "focus", "96fm", "aya",
+    "ipsus", "arrow", "tsdois", "globo", "tv globo", "folha de s.paulo", "estadao", "band",
+    "sbt", "record", "cnn", "cnn brasil", "poder360", "times brasil", "veja", "exame", "panorama",
+}
 
 
 def strip_accents(s):
@@ -80,7 +87,7 @@ def slug(s):
 # ---------------------------------------------------------------- table parsing
 
 def _brace_depth(s):
-    s = re.sub(r"<!--.*?-->", "", s, flags=re.S)
+    s = re.sub(r"<!--.*?-->|<nowiki>.*?</nowiki>", "", s, flags=re.S)
     return (s.count("{{") - s.count("}}")) + (len(re.findall(r"<ref[^>/]*>", s))
                                              - s.count("</ref>"))
 
@@ -181,7 +188,7 @@ def _parse_body(body):
 
 def special_kind(label):
     t = norm(label)
-    if re.search(r"vantagem|^lead|^link|diferen", t):
+    if re.search(r"vanta|^lead|^link|diferen|^margem", t):
         return "SKIP"
     if re.search(r"^outros|^others|^outro\b", t):
         return "OTHERS"
@@ -214,22 +221,34 @@ def meta_kind(label):
     return None
 
 
+PARTY_RE = re.compile(r"[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9 .!-]{2,15}|Avante|Republicanos|Democrata|"
+                      r"Solidariedade|Podemos|Agir|Mobiliza|Cidadania|Novo|Missão|Rede|"
+                      r"Sem partido|Patriota|Progressistas", re.I)
+
+
 def party_and_name(cellraw):
     r = re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", cellraw, flags=re.S)
-    party = ""
-    m = re.findall(r"<small>(.*?)</small>", r, flags=re.S | re.I)
-    if not m:
-        m = re.findall(r"\{\{\s*small\s*\|(.*?)\}\}\s*$", r.strip(), flags=re.S | re.I)
-    name_raw = r
+    r = re.sub(r"\{\{\s*small\s*\|", "<small>", r, flags=re.I)
+    party, name_raw = "", r
+    m = re.search(r"<small>(.*)$", r, flags=re.S | re.I)
     if m:
-        party = clean(m[-1])
-        name_raw = re.sub(r"<small>.*?</small>", "", r, flags=re.S | re.I)
-        name_raw = re.sub(r"\{\{\s*small\s*\|.*\}\}\s*$", "", name_raw.strip(), flags=re.S | re.I)
-    name = clean(name_raw)
+        party = clean(m.group(1).replace("}}", ""))
+        name_raw = r[:m.start()]
+    else:
+        parts = [clean(x) for x in re.split(r"<br\s*/?>|\n", r, flags=re.I)]
+        parts = [x for x in parts if x]
+        if len(parts) >= 2 and PARTY_RE.fullmatch(parts[-1].strip("() ")):
+            party = parts[-1]
+            name_raw = " ".join(parts[:-1])
+    name = clean(name_raw).strip(" (")
     if not party:
         mm = re.match(r"^(.*?)\s*\(([^()]+)\)\s*$", name)
         if mm:
             name, party = mm.group(1), mm.group(2)
+        else:
+            mm = re.match(r"^(.*\S)\s+([A-ZÁÉÍÓÚÃÕÇ]{2,}|Avante|Republicanos|Democrata)$", name)
+            if mm and len(name.split()) >= 2:
+                name, party = mm.group(1), mm.group(2)
     party = party.strip("() ")
     return name.strip(), party
 
@@ -346,15 +365,14 @@ def iso(y, m, d):
 
 def split_pollster(txt):
     txt = re.sub(r"\s+", " ", txt).strip()
-    if "/" not in txt:
-        return txt, ""
+    txt = re.sub(r"^American Analytics Times Brasil", "American Analytics/Times Brasil", txt)
     parts = [p.strip() for p in txt.split("/") if p.strip()]
     if len(parts) < 2:
         return txt, ""
-    # "100% Cidades" etc: prefer the part that is a known institute, else the last part
-    for i in range(len(parts) - 1, -1, -1):
-        if any(k in norm(parts[i]) for k in KNOWN_POLLSTERS[:12]):
-            return parts[i], "/".join(parts[:i] + parts[i + 1:])
+    rest = [p for p in parts if norm(p) not in KNOWN_SPONSORS]
+    spons = [p for p in parts if norm(p) in KNOWN_SPONSORS]
+    if len(rest) == 1:
+        return rest[0], "/".join(spons)
     return parts[-1], "/".join(parts[:-1])
 
 
@@ -433,6 +451,9 @@ def extract_page(lang, title, office, state, official, finalists, log):
     if not text:
         log.append(f"{state}: page missing: {title}")
         return []
+    # number-formatting templates hold sample sizes etc.: {{fmtn|1500}}, {{formatnum:1500}}
+    text = re.sub(r"\{\{\s*(?:fmtn|formatnum|nts)\s*[|:]\s*([\d.,]+)[^{}]*\}\}", r"\1", text,
+                  flags=re.I)
     idx = ref_index(text)
     polls = []  # dicts
     cur_year, prev_month, prev_secyear = YEAR, None, None
@@ -443,10 +464,10 @@ def extract_page(lang, title, office, state, official, finalists, log):
         if office == "president" and rnd != 1:
             continue
         sy = section_year(section)
-        if sy != prev_secyear:
-            if sy:
-                cur_year, prev_month = sy, None
-            prev_secyear = sy
+        # restart year inference when the round or the section year changes
+        if (rnd, sy) != prev_secyear:
+            cur_year, prev_month = (sy or YEAR), None
+            prev_secyear = (rnd, sy)
         colmap, block, last_kind = None, [], None
         for kind, cells in rows:
             if kind == "H":
@@ -481,7 +502,14 @@ def extract_page(lang, title, office, state, official, finalists, log):
                 cur_year = end[2]
             prev_month = end[1]
             if start[2] is None:
-                start[2] = end[2] - 1 if (start[1], start[0]) > (end[1], end[0]) else end[2]
+                start[2] = end[2]
+                if (start[1], start[0]) > (end[1], end[0]):
+                    if start[1] >= 11 and end[1] <= 2:  # Dec - Jan
+                        start[2] = end[2] - 1
+                    else:  # typo on Wikipedia such as "22 a 18 de julho"
+                        p["notes"].append(f"start after end on Wikipedia ({p['_datetext']}); "
+                                          "field_start set to field_end")
+                        start = end
             p["field_start"] = iso(start[2], start[1], start[0])
             p["field_end"] = iso(end[2], end[1], end[0])
             ey = ELECTION[rnd]
@@ -522,6 +550,8 @@ def row_to_poll(cells, colmap, idx):
             moe = moe_value(cell.raw)
         elif kind == "scen":
             scen = cell.text
+        elif kind == "special" and label == "SKIP":
+            continue
         elif kind in ("cand", "special"):
             v, note = pct_value(cell.raw)
             if v is None:
@@ -577,7 +607,8 @@ def choose_scenarios(polls, official):
         def score(p):
             names = [o for o, k, _ in p["options"] if k == "cand"]
             m = sum(1 for n in names if cand_match(n, official))
-            return m - (len(names) - m)
+            # fewest non-candidates first, then most actual candidates included
+            return (m - (len(names) - m), m)
         best = max(score(p) for p in ps)
         top = [p for p in ps if score(p) == best]
         if len(top) == 1:

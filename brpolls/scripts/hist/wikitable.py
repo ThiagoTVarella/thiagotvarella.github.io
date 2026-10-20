@@ -39,6 +39,7 @@ class Table:
     header: list = field(default_factory=list)
     rows: list = field(default_factory=list)
     attrs: str = ""
+    header_cells: list = field(default_factory=list)  # header rows as expanded Cell lists
 
 
 def clean(s):
@@ -195,7 +196,8 @@ def _parse(body, section):
             last.raw += "\n" + ln
     head_rows = [r for r in raw_rows if r[2] and r[1]]
     body_rows = [r for r in raw_rows if not r[2] and r[1]]
-    t.header = [[c.text for c in row] for _, row in _expand([(r[0], r[1]) for r in head_rows])]
+    t.header_cells = [row for _, row in _expand([(r[0], r[1]) for r in head_rows])]
+    t.header = [[c.text for c in row] for row in t.header_cells]
     t.rows = [Row(cells, style) for style, cells in _expand([(r[0], r[1]) for r in body_rows])]
     return t
 
