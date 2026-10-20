@@ -673,7 +673,13 @@ if (typeof document !== "undefined") (function () {
         $("r1Weight").value = opt.r1Weight; $("r1WeightV").textContent = `${Math.round(100 * opt.r1Weight)}%`;
         $("shrink").value = opt.shrink; $("shrinkV").textContent = fmt(opt.shrink);
         $("errSd").value = opt.errSd; $("errSdV").textContent = `${fmt(opt.errSd)} pontos`;
-        $("shift").value = opt.shift; $("shiftV").textContent = opt.shift === 0 ? "nada" : `${sign(opt.shift)} ponto ${opt.shift < 0 ? "(exageram o Lula)" : "(subestimam o Lula)"}`;
+        $("shift").value = opt.shift;
+        $("shiftV").textContent = opt.shift === 0 ? "nenhum (padrão)"
+            : opt.shift < 0 ? `${fmt(-opt.shift)} ponto a favor do Flávio (como se as pesquisas exagerassem o Lula)`
+            : `${fmt(opt.shift)} ponto a favor do Lula (como se as pesquisas subestimassem o Lula)`;
+        const r1shift = FC && FC.stress ? FC.stress.shift_pts : -1.7;
+        document.querySelectorAll("[data-shift]").forEach(b => b.classList.toggle("on",
+            Math.abs(opt.shift - (b.dataset.shift === "r1" ? Math.round(r1shift * 10) / 10 : 0)) < 1e-9));
         for (const k of ["house", "useR1", "rating", "size", "freq", "pre", "unverified"]) $(k).checked = opt[k];
         for (const k of ["shrink", "houseStrength", "useR1"]) $(k).disabled = !opt.house;
         $("r1Weight").disabled = !opt.house || !opt.useR1;
@@ -724,6 +730,10 @@ if (typeof document !== "undefined") (function () {
         document.querySelectorAll("[data-metric]").forEach(b => b.onclick = () => { view.metric = b.dataset.metric; render(); writeHash(); });
         document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { view.mode = b.dataset.view; render(); writeHash(); });
         $("minGrade").onchange = () => { opt.minGrade = $("minGrade").value; recompute(); };
+        document.querySelectorAll("[data-shift]").forEach(b => b.onclick = () => {
+            opt.shift = b.dataset.shift === "r1" ? Math.round((FC && FC.stress ? FC.stress.shift_pts : -1.7) * 10) / 10 : 0;
+            recompute();
+        });
         $("keepUnrated").onchange = () => { opt.keepUnrated = $("keepUnrated").checked; recompute(); };
         document.querySelectorAll("[data-win]").forEach(b => b.onclick = () => {
             const w = b.dataset.win;
