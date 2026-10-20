@@ -195,108 +195,108 @@
   },
   {
    "date": "2026-09-20",
-   "lula": 49.48,
-   "weight": 15.86
+   "lula": 49.49,
+   "weight": 15.81
   },
   {
    "date": "2026-09-21",
    "lula": 49.36,
-   "weight": 18.64
+   "weight": 18.59
   },
   {
    "date": "2026-09-22",
    "lula": 49.39,
-   "weight": 17.88
+   "weight": 17.84
   },
   {
    "date": "2026-09-23",
    "lula": 49.39,
-   "weight": 16.39
+   "weight": 16.36
   },
   {
    "date": "2026-09-24",
    "lula": 49.39,
-   "weight": 15.03
+   "weight": 15.0
   },
   {
    "date": "2026-09-25",
    "lula": 49.42,
-   "weight": 17.16
+   "weight": 17.13
   },
   {
    "date": "2026-09-26",
    "lula": 49.48,
-   "weight": 18.73
+   "weight": 18.7
   },
   {
    "date": "2026-09-27",
    "lula": 49.38,
-   "weight": 19.16
+   "weight": 19.13
   },
   {
    "date": "2026-09-28",
    "lula": 49.38,
-   "weight": 19.38
+   "weight": 19.36
   },
   {
    "date": "2026-09-29",
    "lula": 49.39,
-   "weight": 19.0
+   "weight": 18.98
   },
   {
    "date": "2026-09-30",
    "lula": 49.41,
-   "weight": 20.31
+   "weight": 20.29
   },
   {
    "date": "2026-10-01",
    "lula": 49.43,
-   "weight": 22.64
+   "weight": 22.62
   },
   {
    "date": "2026-10-02",
    "lula": 49.35,
-   "weight": 24.1
+   "weight": 24.08
   },
   {
    "date": "2026-10-03",
    "lula": 49.35,
-   "weight": 22.1
+   "weight": 22.08
   },
   {
    "date": "2026-10-04",
    "lula": 49.35,
-   "weight": 20.26
+   "weight": 20.25
   },
   {
    "date": "2026-10-05",
    "lula": 49.18,
-   "weight": 19.81
+   "weight": 19.8
   },
   {
    "date": "2026-10-06",
    "lula": 49.08,
-   "weight": 20.65
+   "weight": 20.64
   },
   {
    "date": "2026-10-07",
    "lula": 49.02,
-   "weight": 19.65
+   "weight": 19.63
   },
   {
    "date": "2026-10-08",
    "lula": 48.9,
-   "weight": 20.06
+   "weight": 20.05
   },
   {
    "date": "2026-10-09",
    "lula": 48.9,
-   "weight": 18.4
+   "weight": 18.39
   },
   {
    "date": "2026-10-10",
    "lula": 48.84,
-   "weight": 17.72
+   "weight": 17.71
   },
   {
    "date": "2026-10-11",
@@ -306,22 +306,22 @@
   {
    "date": "2026-10-12",
    "lula": 48.91,
-   "weight": 19.17
+   "weight": 19.16
   },
   {
    "date": "2026-10-13",
    "lula": 48.81,
-   "weight": 19.78
+   "weight": 19.77
   },
   {
    "date": "2026-10-14",
    "lula": 48.99,
-   "weight": 23.29
+   "weight": 23.28
   },
   {
    "date": "2026-10-15",
    "lula": 48.97,
-   "weight": 24.14
+   "weight": 24.13
   },
   {
    "date": "2026-10-16",
@@ -331,12 +331,12 @@
   {
    "date": "2026-10-17",
    "lula": 49.07,
-   "weight": 25.31
+   "weight": 25.3
   },
   {
    "date": "2026-10-18",
    "lula": 49.07,
-   "weight": 23.21
+   "weight": 23.2
   },
   {
    "date": "2026-10-19",
@@ -346,305 +346,33 @@
   {
    "date": "2026-10-20",
    "lula": 49.07,
-   "weight": 19.52
+   "weight": 19.51
   }
  ],
- "anchored": {
-  "lula": 48.64,
-  "flavio": 51.36,
-  "series": [
-   {
-    "date": "2026-08-15",
-    "lula": 51.05
-   },
-   {
-    "date": "2026-08-16",
-    "lula": 51.05
-   },
-   {
-    "date": "2026-08-17",
-    "lula": 51.05
-   },
-   {
-    "date": "2026-08-18",
-    "lula": 51.24
-   },
-   {
-    "date": "2026-08-19",
-    "lula": 51.24
-   },
-   {
-    "date": "2026-08-20",
-    "lula": 51.24
-   },
-   {
-    "date": "2026-08-21",
-    "lula": 51.62
-   },
-   {
-    "date": "2026-08-22",
-    "lula": 51.16
-   },
-   {
-    "date": "2026-08-23",
-    "lula": 50.11
-   },
-   {
-    "date": "2026-08-24",
-    "lula": 50.15
-   },
-   {
-    "date": "2026-08-25",
-    "lula": 50.15
-   },
-   {
-    "date": "2026-08-26",
-    "lula": 49.95
-   },
-   {
-    "date": "2026-08-27",
-    "lula": 50.49
-   },
-   {
-    "date": "2026-08-28",
-    "lula": 50.49
-   },
-   {
-    "date": "2026-08-29",
-    "lula": 50.3
-   },
-   {
-    "date": "2026-08-30",
-    "lula": 50.3
-   },
-   {
-    "date": "2026-08-31",
-    "lula": 50.14
-   },
-   {
-    "date": "2026-09-01",
-    "lula": 50.15
-   },
-   {
-    "date": "2026-09-02",
-    "lula": 49.7
-   },
-   {
-    "date": "2026-09-03",
-    "lula": 49.7
-   },
-   {
-    "date": "2026-09-04",
-    "lula": 49.66
-   },
-   {
-    "date": "2026-09-05",
-    "lula": 49.21
-   },
-   {
-    "date": "2026-09-06",
-    "lula": 49.22
-   },
-   {
-    "date": "2026-09-07",
-    "lula": 49.23
-   },
-   {
-    "date": "2026-09-08",
-    "lula": 49.23
-   },
-   {
-    "date": "2026-09-09",
-    "lula": 49.31
-   },
-   {
-    "date": "2026-09-10",
-    "lula": 49.31
-   },
-   {
-    "date": "2026-09-11",
-    "lula": 49.58
-   },
-   {
-    "date": "2026-09-12",
-    "lula": 49.6
-   },
-   {
-    "date": "2026-09-13",
-    "lula": 49.4
-   },
-   {
-    "date": "2026-09-14",
-    "lula": 49.36
-   },
-   {
-    "date": "2026-09-15",
-    "lula": 49.14
-   },
-   {
-    "date": "2026-09-16",
-    "lula": 49.08
-   },
-   {
-    "date": "2026-09-17",
-    "lula": 49.09
-   },
-   {
-    "date": "2026-09-18",
-    "lula": 49.06
-   },
-   {
-    "date": "2026-09-19",
-    "lula": 49.15
-   },
-   {
-    "date": "2026-09-20",
-    "lula": 49.12
-   },
-   {
-    "date": "2026-09-21",
-    "lula": 48.95
-   },
-   {
-    "date": "2026-09-22",
-    "lula": 49.0
-   },
-   {
-    "date": "2026-09-23",
-    "lula": 49.0
-   },
-   {
-    "date": "2026-09-24",
-    "lula": 49.0
-   },
-   {
-    "date": "2026-09-25",
-    "lula": 49.04
-   },
-   {
-    "date": "2026-09-26",
-    "lula": 49.01
-   },
-   {
-    "date": "2026-09-27",
-    "lula": 48.92
-   },
-   {
-    "date": "2026-09-28",
-    "lula": 48.98
-   },
-   {
-    "date": "2026-09-29",
-    "lula": 49.01
-   },
-   {
-    "date": "2026-09-30",
-    "lula": 49.09
-   },
-   {
-    "date": "2026-10-01",
-    "lula": 49.07
-   },
-   {
-    "date": "2026-10-02",
-    "lula": 49.02
-   },
-   {
-    "date": "2026-10-03",
-    "lula": 49.02
-   },
-   {
-    "date": "2026-10-04",
-    "lula": 49.02
-   },
-   {
-    "date": "2026-10-05",
-    "lula": 48.87
-   },
-   {
-    "date": "2026-10-06",
-    "lula": 48.79
-   },
-   {
-    "date": "2026-10-07",
-    "lula": 48.73
-   },
-   {
-    "date": "2026-10-08",
-    "lula": 48.58
-   },
-   {
-    "date": "2026-10-09",
-    "lula": 48.58
-   },
-   {
-    "date": "2026-10-10",
-    "lula": 48.43
-   },
-   {
-    "date": "2026-10-11",
-    "lula": 48.48
-   },
-   {
-    "date": "2026-10-12",
-    "lula": 48.48
-   },
-   {
-    "date": "2026-10-13",
-    "lula": 48.44
-   },
-   {
-    "date": "2026-10-14",
-    "lula": 48.59
-   },
-   {
-    "date": "2026-10-15",
-    "lula": 48.51
-   },
-   {
-    "date": "2026-10-16",
-    "lula": 48.63
-   },
-   {
-    "date": "2026-10-17",
-    "lula": 48.64
-   },
-   {
-    "date": "2026-10-18",
-    "lula": 48.64
-   },
-   {
-    "date": "2026-10-19",
-    "lula": 48.64
-   },
-   {
-    "date": "2026-10-20",
-    "lula": 48.64
-   }
-  ],
-  "lula_overstatement_by_pollster": {
-   "Futura": -0.09,
-   "Gerp": -0.04,
-   "Palver": -0.02,
-   "Veritá": 0.07,
-   "Ideia": 0.24,
-   "PoderData": 0.24,
-   "Ipespe": 0.25,
-   "DataTrends": 0.33,
-   "Vox Brasil": 0.4,
-   "Instituto França (IFP)": 0.44,
-   "Real Time Big Data": 0.5,
-   "Nexus": 0.59,
-   "AtlasIntel": 0.6,
-   "MDA": 0.63,
-   "Indexa": 0.65,
-   "Quaest": 0.74,
-   "Datafolha": 0.85,
-   "American Analytics": 0.9,
-   "Alfa Inteligência": 1.32
+ "first_round_informed": {
+  "slope": 0.325,
+  "first_round_industry_lula_overstatement": 1.68,
+  "expected_runoff_bias": {
+   "Gerp": -0.35,
+   "Futura": -0.33,
+   "Palver": -0.29,
+   "Veritá": -0.23,
+   "Ideia": -0.03,
+   "PoderData": -0.02,
+   "Vox Brasil": -0.01,
+   "DataTrends": 0.03,
+   "Instituto França (IFP)": 0.1,
+   "AtlasIntel": 0.12,
+   "Real Time Big Data": 0.14,
+   "Datafolha": 0.19,
+   "Nexus": 0.2,
+   "Quaest": 0.21,
+   "MDA": 0.23,
+   "Indexa": 0.24
   },
-  "persistence": 0.5,
-  "note": "Each pollster's runoff polls corrected by half of how far its final 2026 first-round polls overstated Lula, shrunk for few polls."
+  "shift": 0.02,
+  "lula": 49.1,
+  "flavio": 50.9
  },
  "house_effects": {
   "Gerp": {
@@ -1042,7 +770,7 @@
    "flavio": 53,
    "lula_two_party": 45.36,
    "adjusted": 47.69,
-   "weight": 0.0182,
+   "weight": 0.0183,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1586,7 +1314,7 @@
    "flavio": 43,
    "lula_two_party": 50.0,
    "adjusted": 49.05,
-   "weight": 0.0037,
+   "weight": 0.0035,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",

@@ -208,7 +208,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2018-governor-MA-r1,Exata,2018-governor-MA-r1-exata-2018-09-30,2018-09-30,7,1.47,-5.03,,0.4
 2018-governor-MA-r1,Real Time Big Data,2018-governor-MA-r1-real-time-big-data-2018-10-03,2018-10-03,4,-12.91,6.97,,0.4
 2018-governor-MA-r1,Ipec,2018-governor-MA-r1-ibope-2018-10-04,2018-10-04,3,-1.55,-4.2,,0.4
-2018-governor-MA-r1,Datailha,2018-governor-MA-r1-datailha-2018-10-06,2018-10-06,1,1.42,-3.96,,0.4
+2018-governor-MA-r1,Data Ilha,2018-governor-MA-r1-datailha-2018-10-06,2018-10-06,1,1.42,-3.96,,0.4
 2018-governor-MA-r1,Exata,2018-governor-MA-r1-exata-2018-10-06,2018-10-06,1,5.23,-0.15,,0.4
 2018-governor-MG-r1,Ipec,2018-governor-MG-r1-ibope-2018-09-26,2018-09-26,11,-55.86,13.31,,0.8
 2018-governor-MG-r1,Datafolha,2018-governor-MG-r1-datafolha-2018-09-28,2018-09-28,9,-31.24,-10.93,,0.8
@@ -218,36 +218,36 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2018-governor-MG-r2,Datafolha,2018-governor-MG-r2-datafolha-2018-10-18,2018-10-18,10,-2.15,-5.07,,0.8
 2018-governor-MG-r2,Ipec,2018-governor-MG-r2-ibope-2018-10-23,2018-10-23,5,-11.05,4.77,,0.8
 2018-governor-MG-r2,Ipec,2018-governor-MG-r2-ibope-2018-10-27,2018-10-27,1,-7.14,1.61,,0.8
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-09-17,2018-09-17,20,-10.91,4.48,,0.4
-2018-governor-MS-r1,Ipems,2018-governor-MS-r1-ipems-2018-09-21,2018-09-21,16,2.42,-3.26,,0.4
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-09-21,2018-09-21,16,-3.22,-2.46,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-09-17,2018-09-17,20,-10.91,4.48,,0.4
+2018-governor-MS-r1,IPEMS,2018-governor-MS-r1-ipems-2018-09-21,2018-09-21,16,2.42,-3.26,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-09-21,2018-09-21,16,-3.22,-2.46,,0.4
 2018-governor-MS-r1,Ipec,2018-governor-MS-r1-ibope-2018-09-24,2018-09-24,13,0.42,-4.69,,0.4
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-09-26,2018-09-26,11,-0.41,-4.33,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-09-26,2018-09-26,11,-0.41,-4.33,,0.4
 2018-governor-MS-r1,Ibrape,2018-governor-MS-r1-ibrape-2018-09-27,2018-09-27,10,5.83,1.28,,0.4
 2018-governor-MS-r1,DATAmax,2018-governor-MS-r1-datamax-2018-09-30,2018-09-30,7,0.38,-3.62,,0.4
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-10-01,2018-10-01,6,1.98,-1.83,,0.4
-2018-governor-MS-r1,Ipems,2018-governor-MS-r1-ipems-2018-10-02,2018-10-02,5,4.38,0.76,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-10-01,2018-10-01,6,1.98,-1.83,,0.4
+2018-governor-MS-r1,IPEMS,2018-governor-MS-r1-ipems-2018-10-02,2018-10-02,5,4.38,0.76,,0.4
 2018-governor-MS-r1,Ibrape,2018-governor-MS-r1-ibrape-2018-10-03,2018-10-03,4,6.55,3.12,,0.4
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-10-04,2018-10-04,3,1.45,-1.79,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-10-04,2018-10-04,3,1.45,-1.79,,0.4
 2018-governor-MS-r1,Real Time Big Data,2018-governor-MS-r1-real-time-big-data-2018-10-04,2018-10-04,3,15.06,11.81,,0.4
 2018-governor-MS-r1,Ipec,2018-governor-MS-r1-ibope-2018-10-05,2018-10-05,2,1.78,-1.28,,0.4
 2018-governor-MS-r1,DATAmax,2018-governor-MS-r1-datamax-2018-10-06,2018-10-06,1,5.38,2.51,,0.4
-2018-governor-MS-r1,Ranking,2018-governor-MS-r1-ranking-2018-10-06,2018-10-06,1,2.17,-0.7,,0.4
-2018-governor-MS-r2,Ranking,2018-governor-MS-r2-ranking-2018-10-13,2018-10-13,15,4.8,-1.54,,0.4
+2018-governor-MS-r1,Instituto Ranking,2018-governor-MS-r1-ranking-2018-10-06,2018-10-06,1,2.17,-0.7,,0.4
+2018-governor-MS-r2,Instituto Ranking,2018-governor-MS-r2-ranking-2018-10-13,2018-10-13,15,4.8,-1.54,,0.4
 2018-governor-MS-r2,Real Time Big Data,2018-governor-MS-r2-real-time-big-data-2018-10-16,2018-10-16,12,9.9,4.13,,0.4
 2018-governor-MS-r2,DATAmax,2018-governor-MS-r2-datamax-2018-10-17,2018-10-17,11,0.91,-4.67,,0.4
 2018-governor-MS-r2,Ibrape,2018-governor-MS-r2-ibrape-2018-10-18,2018-10-18,10,3.53,-1.87,,0.4
 2018-governor-MS-r2,Ipec,2018-governor-MS-r2-ibope-2018-10-19,2018-10-19,9,1.96,-3.25,,0.4
 2018-governor-MS-r2,Ipexx,2018-governor-MS-r2-ipexx-2018-10-22,2018-10-22,6,-9.74,5.08,,0.4
-2018-governor-MS-r2,Ranking,2018-governor-MS-r2-ranking-2018-10-22,2018-10-22,6,3.74,-0.92,,0.4
+2018-governor-MS-r2,Instituto Ranking,2018-governor-MS-r2-ranking-2018-10-22,2018-10-22,6,3.74,-0.92,,0.4
 2018-governor-MS-r2,Real Time Big Data,2018-governor-MS-r2-real-time-big-data-2018-10-23,2018-10-23,5,5.41,0.94,,0.4
-2018-governor-MS-r2,Ranking,2018-governor-MS-r2-ranking-2018-10-24,2018-10-24,4,2.36,-1.91,,0.4
+2018-governor-MS-r2,Instituto Ranking,2018-governor-MS-r2-ranking-2018-10-24,2018-10-24,4,2.36,-1.91,,0.4
 2018-governor-MS-r2,Ipexx,2018-governor-MS-r2-ipexx-2018-10-25,2018-10-25,3,-9.74,5.65,,0.4
 2018-governor-MS-r2,Ipec,2018-governor-MS-r2-ibope-2018-10-26,2018-10-26,2,-1.48,-2.42,,0.4
 2018-governor-MS-r2,Real Time Big Data,2018-governor-MS-r2-real-time-big-data-2018-10-26,2018-10-26,2,0.91,-2.99,,0.4
 2018-governor-MS-r2,DATAmax,2018-governor-MS-r2-datamax-2018-10-27,2018-10-27,1,-1.05,-2.66,,0.4
-2018-governor-MS-r2,Ipems,2018-governor-MS-r2-ipems-2018-10-27,2018-10-27,1,12.08,8.37,,0.4
-2018-governor-MS-r2,Ranking,2018-governor-MS-r2-ranking-2018-10-27,2018-10-27,1,-1.79,-1.93,,0.4
+2018-governor-MS-r2,IPEMS,2018-governor-MS-r2-ipems-2018-10-27,2018-10-27,1,12.08,8.37,,0.4
+2018-governor-MS-r2,Instituto Ranking,2018-governor-MS-r2-ranking-2018-10-27,2018-10-27,1,-1.79,-1.93,,0.4
 2018-governor-PA-r1,Doxa,2018-governor-PA-r1-doxa-2018-09-17,2018-09-17,20,1.05,-13.71,,0.4
 2018-governor-PA-r1,Ipec,2018-governor-PA-r1-ibope-2018-09-17,2018-09-17,20,23.03,8.27,,0.4
 2018-governor-PA-r1,Real Time Big Data,2018-governor-PA-r1-real-time-big-data-2018-09-20,2018-09-20,17,26.11,11.92,,0.4
@@ -378,7 +378,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-AL-r1,Ibrape,2022-governor-AL-r1-ibrape-2022-09-14,2022-09-14,18,-0.34,-5.1,,0.4
 2022-governor-AL-r1,Paraná Pesquisas,2022-governor-AL-r1-parana-pesquisas-2022-09-14,2022-09-14,18,-8.82,3.38,,0.4
 2022-governor-AL-r1,Ipec,2022-governor-AL-r1-ipec-2022-09-18,2022-09-18,14,-7.66,2.96,,0.4
-2022-governor-AL-r1,Instituto DataSensus,2022-governor-AL-r1-instituto-datasensus-2022-09-22,2022-09-22,10,-0.1,-3.85,,0.4
+2022-governor-AL-r1,IPSensus,2022-governor-AL-r1-instituto-datasensus-2022-09-22,2022-09-22,10,-0.1,-3.85,,0.4
 2022-governor-AL-r1,Ibrape,2022-governor-AL-r1-ibrape-2022-09-24,2022-09-24,8,-3.18,-0.38,,0.4
 2022-governor-AL-r1,Fundepes,2022-governor-AL-r1-fundepes-2022-09-26,2022-09-26,6,6.01,2.82,,0.4
 2022-governor-AL-r1,Ipec,2022-governor-AL-r1-ipec-2022-09-30,2022-09-30,2,2.62,0.18,,0.4
@@ -386,8 +386,8 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-AM-r1,Real Time Big Data,2022-governor-AM-r1-realtime-big-data-2022-09-12,2022-09-12,20,-1.4,-4.31,,0.4
 2022-governor-AM-r1,Ipec,2022-governor-AM-r1-ipec-2022-09-16,2022-09-16,16,-2.75,-2.2,,0.4
 2022-governor-AM-r1,Perspectiva Mercado e Opinião,2022-governor-AM-r1-perspectiva-mercado-e-opiniao-2022-09-20,2022-09-20,12,-9.44,5.23,,0.4
-2022-governor-AM-r1,Pontual Pesquisas,2022-governor-AM-r1-pontual-pesquisas-2022-09-25,2022-09-25,7,-1.19,-2.08,,0.4
-2022-governor-AM-r1,Pontual Pesquisas,2022-governor-AM-r1-pontual-pesquisas-2022-09-27,2022-09-27,5,-3.18,0.29,,0.4
+2022-governor-AM-r1,Pontual,2022-governor-AM-r1-pontual-pesquisas-2022-09-25,2022-09-25,7,-1.19,-2.08,,0.4
+2022-governor-AM-r1,Pontual,2022-governor-AM-r1-pontual-pesquisas-2022-09-27,2022-09-27,5,-3.18,0.29,,0.4
 2022-governor-AM-r1,Real Time Big Data,2022-governor-AM-r1-realtime-big-data-2022-09-27,2022-09-27,5,-0.98,-1.92,,0.4
 2022-governor-AM-r1,Ipec,2022-governor-AM-r1-ipec-2022-09-29,2022-09-29,3,-2.85,0.33,,0.4
 2022-governor-AM-r1,Perspectiva Mercado e Opinião,2022-governor-AM-r1-perspectiva-mercado-e-opiniao-2022-09-30,2022-09-30,2,-6.25,3.91,,0.4
@@ -469,32 +469,32 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-MG-r1,Ipec,2022-governor-MG-r1-ipec-2022-09-26,2022-09-26,6,-8.32,3.74,,0.8
 2022-governor-MG-r1,AtlasIntel,2022-governor-MG-r1-atlasintel-2022-09-27,2022-09-27,5,-4.7,0.31,,0.8
 2022-governor-MG-r1,Datafolha,2022-governor-MG-r1-datafolha-2022-09-29,2022-09-29,3,1.88,-2.14,,0.8
-2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-12,2022-09-12,20,-15.33,5.96,,0.4
+2022-governor-MS-r1,Ranking Brasil,2022-governor-MS-r1-ranking-brasil-2022-09-12,2022-09-12,20,-15.33,5.96,,0.4
 2022-governor-MS-r1,Veritá,2022-governor-MS-r1-verita-2022-09-14,2022-09-14,18,-1.33,-7.67,,0.4
 2022-governor-MS-r1,Ipec,2022-governor-MS-r1-ipec-2022-09-15,2022-09-15,17,-5.35,-3.46,,0.4
 2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-17,2022-09-17,15,-9.42,0.98,,0.4
-2022-governor-MS-r1,Novo Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-21,2022-09-21,11,-6.89,-0.8,,0.4
-2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-21,2022-09-21,11,-12.88,5.19,,0.4
+2022-governor-MS-r1,Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-21,2022-09-21,11,-6.89,-0.8,,0.4
+2022-governor-MS-r1,Ranking Brasil,2022-governor-MS-r1-ranking-brasil-2022-09-21,2022-09-21,11,-12.88,5.19,,0.4
 2022-governor-MS-r1,Percent Brasil,2022-governor-MS-r1-percent-brasil-2022-09-23,2022-09-23,9,-6.94,-0.37,,0.4
-2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-26,2022-09-26,6,-11.56,4.81,,0.4
+2022-governor-MS-r1,Ranking Brasil,2022-governor-MS-r1-ranking-brasil-2022-09-26,2022-09-26,6,-11.56,4.81,,0.4
 2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-26,2022-09-26,6,-6.99,0.24,,0.4
-2022-governor-MS-r1,Novo Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-27,2022-09-27,5,-6.04,-0.52,,0.4
+2022-governor-MS-r1,Ibrape,2022-governor-MS-r1-novo-ibrape-2022-09-27,2022-09-27,5,-6.04,-0.52,,0.4
 2022-governor-MS-r1,Paraná Pesquisas,2022-governor-MS-r1-parana-pesquisas-2022-09-28,2022-09-28,4,-7.8,1.43,,0.4
 2022-governor-MS-r1,Real Time Big Data,2022-governor-MS-r1-realtime-big-data-2022-09-29,2022-09-29,3,-7.17,0.98,,0.4
 2022-governor-MS-r1,Veritá,2022-governor-MS-r1-verita-2022-09-29,2022-09-29,3,0.84,-5.34,,0.4
-2022-governor-MS-r1,Ranking,2022-governor-MS-r1-ranking-brasil-2022-09-30,2022-09-30,2,-7.72,1.72,,0.4
+2022-governor-MS-r1,Ranking Brasil,2022-governor-MS-r1-ranking-brasil-2022-09-30,2022-09-30,2,-7.72,1.72,,0.4
 2022-governor-MS-r1,Ipec,2022-governor-MS-r1-ipec-2022-10-01,2022-10-01,1,-2.66,-3.15,,0.4
-2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-13,2022-10-13,17,-7.17,-8.75,,0.4
+2022-governor-MS-r2,Ranking Brasil,2022-governor-MS-r2-ranking-brasil-2022-10-13,2022-10-13,17,-7.17,-8.75,,0.4
 2022-governor-MS-r2,Real Time Big Data,2022-governor-MS-r2-realtime-big-data-2022-10-15,2022-10-15,15,-27.44,11.9,,0.4
 2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-16,2022-10-16,14,-25.63,10.27,,0.4
-2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-20,2022-10-20,10,-5.74,-8.87,,0.4
+2022-governor-MS-r2,Ranking Brasil,2022-governor-MS-r2-ranking-brasil-2022-10-20,2022-10-20,10,-5.74,-8.87,,0.4
 2022-governor-MS-r2,Ipec,2022-governor-MS-r2-ipec-2022-10-21,2022-10-21,9,-13.81,-0.62,,0.4
 2022-governor-MS-r2,Real Time Big Data,2022-governor-MS-r2-realtime-big-data-2022-10-22,2022-10-22,8,-13.81,-0.43,,0.4
 2022-governor-MS-r2,Serpes,2022-governor-MS-r2-serpes-2022-10-25,2022-10-25,5,-16.36,2.69,,0.4
 2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-25,2022-10-25,5,-22.72,9.05,,0.4
-2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-27,2022-10-27,3,-6.75,-6.55,,0.4
+2022-governor-MS-r2,Ranking Brasil,2022-governor-MS-r2-ranking-brasil-2022-10-27,2022-10-27,3,-6.75,-6.55,,0.4
 2022-governor-MS-r2,Ipec,2022-governor-MS-r2-ipec-2022-10-29,2022-10-29,1,-8.31,-4.61,,0.4
-2022-governor-MS-r2,Ranking,2022-governor-MS-r2-ranking-brasil-2022-10-29,2022-10-29,1,-6.62,-6.3,,0.4
+2022-governor-MS-r2,Ranking Brasil,2022-governor-MS-r2-ranking-brasil-2022-10-29,2022-10-29,1,-6.62,-6.3,,0.4
 2022-governor-MS-r2,Veritá,2022-governor-MS-r2-verita-2022-10-29,2022-10-29,1,-15.16,2.23,,0.4
 2022-governor-MT-r1,Ipec,2022-governor-MT-r1-ipec-2022-09-14,2022-09-14,18,3.51,-1.34,,0.4
 2022-governor-MT-r1,MT Dados,2022-governor-MT-r1-mt-dados-2022-09-20,2022-09-20,12,7.71,3.98,,0.4
@@ -519,28 +519,28 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-PB-r2,Consult,2022-governor-PB-r2-consult-2022-10-23,2022-10-23,7,5.25,1.18,,0.4
 2022-governor-PB-r2,Real Time Big Data,2022-governor-PB-r2-real-time-big-data-2022-10-24,2022-10-24,6,4.86,0.99,,0.4
 2022-governor-PE-r1,Real Time Big Data,2022-governor-PE-r1-real-time-big-data-2022-09-13,2022-09-13,19,20.75,-1.59,,0.8
-2022-governor-PE-r1,Instituto Opinião,2022-governor-PE-r1-instituto-opiniao-2022-09-15,2022-09-15,17,22.18,0.22,,0.8
+2022-governor-PE-r1,Opinião,2022-governor-PE-r1-instituto-opiniao-2022-09-15,2022-09-15,17,22.18,0.22,,0.8
 2022-governor-PE-r1,Paraná Pesquisas,2022-governor-PE-r1-parana-pesquisas-2022-09-16,2022-09-16,16,17.54,-4.23,,0.8
 2022-governor-PE-r1,Ipec,2022-governor-PE-r1-ipec-2022-09-20,2022-09-20,12,24.46,3.44,,0.8
 2022-governor-PE-r1,Ipespe,2022-governor-PE-r1-ipespe-2022-09-25,2022-09-25,7,24.66,4.57,,0.8
 2022-governor-PE-r1,Ipec,2022-governor-PE-r1-ipec-2022-09-26,2022-09-26,6,18.71,-1.2,,0.8
-2022-governor-PE-r1,Instituto Potencial Inteligência,2022-governor-PE-r1-instituto-potencial-inteligencia-2022-09-27,2022-09-27,5,18.5,-1.21,,0.8
+2022-governor-PE-r1,Potencial Inteligência,2022-governor-PE-r1-instituto-potencial-inteligencia-2022-09-27,2022-09-27,5,18.5,-1.21,,0.8
 2022-governor-PE-r2,Real Time Big Data,2022-governor-PE-r2-real-time-big-data-2022-10-10,2022-10-10,20,3.94,-7.63,,0.8
 2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-11,2022-10-11,19,-8.71,-2.68,,0.8
 2022-governor-PE-r2,Real Time Big Data,2022-governor-PE-r2-real-time-big-data-2022-10-17,2022-10-17,13,-5.58,-4.69,,0.8
-2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-20,2022-10-20,10,-10.17,0.46,,0.8
-2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-24,2022-10-24,6,-13.46,4.51,,0.8
+2022-governor-PE-r2,Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-20,2022-10-20,10,-10.17,0.46,,0.8
+2022-governor-PE-r2,Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-24,2022-10-24,6,-13.46,4.51,,0.8
 2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-25,2022-10-25,5,-8.9,0.13,,0.8
-2022-governor-PE-r2,Instituto Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-26,2022-10-26,4,-13.48,4.9,,0.8
+2022-governor-PE-r2,Potencial Inteligência,2022-governor-PE-r2-instituto-potencial-inteligencia-2022-10-26,2022-10-26,4,-13.48,4.9,,0.8
 2022-governor-PE-r2,Veritá,2022-governor-PE-r2-instituto-verita-2022-10-27,2022-10-27,3,11.99,3.6,,0.8
 2022-governor-PE-r2,Ipec,2022-governor-PE-r2-ipec-2022-10-29,2022-10-29,1,-9.41,1.39,,0.8
-2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-14,2022-09-14,18,1.03,-5.39,-1.03,0.8
+2022-governor-PR-r1,Radar,2022-governor-PR-r1-instituto-radar-2022-09-14,2022-09-14,18,1.03,-5.39,-1.03,0.8
 2022-governor-PR-r1,Ipec,2022-governor-PR-r1-ipec-2022-09-15,2022-09-15,17,-12.8,6.57,12.8,0.8
 2022-governor-PR-r1,Paraná Pesquisas,2022-governor-PR-r1-parana-pesquisas-2022-09-19,2022-09-19,13,-2.72,-2.76,2.72,0.8
-2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-21,2022-09-21,11,4.14,-0.97,-4.14,0.8
-2022-governor-PR-r1,Instituto Radar,2022-governor-PR-r1-instituto-radar-2022-09-28,2022-09-28,4,-2.38,-1.42,2.38,0.8
+2022-governor-PR-r1,Radar,2022-governor-PR-r1-instituto-radar-2022-09-21,2022-09-21,11,4.14,-0.97,-4.14,0.8
+2022-governor-PR-r1,Radar,2022-governor-PR-r1-instituto-radar-2022-09-28,2022-09-28,4,-2.38,-1.42,2.38,0.8
 2022-governor-PR-r1,Paraná Pesquisas,2022-governor-PR-r1-parana-pesquisas-2022-09-28,2022-09-28,4,-0.32,-3.48,0.32,0.8
-2022-governor-PR-r1,Instituto IRG,2022-governor-PR-r1-instituto-irg-2022-09-30,2022-09-30,2,4.74,1.32,-4.74,0.8
+2022-governor-PR-r1,IRG,2022-governor-PR-r1-instituto-irg-2022-09-30,2022-09-30,2,4.74,1.32,-4.74,0.8
 2022-governor-PR-r1,Ipec,2022-governor-PR-r1-ipec-2022-10-01,2022-10-01,1,-9.37,6.13,9.37,0.8
 2022-governor-RJ-r1,Prefab Future,2022-governor-RJ-r1-prefab-future-2022-09-11,2022-09-11,21,1.19,-18.36,,0.8
 2022-governor-RJ-r1,Quaest,2022-governor-RJ-r1-quaest-2022-09-13,2022-09-13,19,-16.8,-2.37,,0.8
@@ -560,9 +560,9 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-RJ-r1,Ipec,2022-governor-RJ-r1-ipec-2022-10-01,2022-10-01,1,-12.88,-2.93,,0.8
 2022-governor-RJ-r1,Quaest,2022-governor-RJ-r1-quaest-2022-10-01,2022-10-01,1,-15.3,-0.51,,0.8
 2022-governor-RN-r1,Exatus,2022-governor-RN-r1-exatus-2022-09-11,2022-09-11,21,12.48,2.52,12.48,0.4
-2022-governor-RN-r1,Item,2022-governor-RN-r1-item-2022-09-14,2022-09-14,18,-6.37,-3.02,-6.37,0.4
+2022-governor-RN-r1,ITEM,2022-governor-RN-r1-item-2022-09-14,2022-09-14,18,-6.37,-3.02,-6.37,0.4
 2022-governor-RN-r1,Bramane,2022-governor-RN-r1-bramane-2022-09-16,2022-09-16,16,3.53,-5.49,3.53,0.4
-2022-governor-RN-r1,Datavero,2022-governor-RN-r1-datavero-2022-09-18,2022-09-18,14,11.54,2.9,11.54,0.4
+2022-governor-RN-r1,DataVero,2022-governor-RN-r1-datavero-2022-09-18,2022-09-18,14,11.54,2.9,11.54,0.4
 2022-governor-RN-r1,Real Time Big Data,2022-governor-RN-r1-real-time-big-data-2022-09-19,2022-09-19,13,11.53,3.08,11.53,0.4
 2022-governor-RO-r1,Real Time Big Data,2022-governor-RO-r1-realtime-big-data-2022-09-14,2022-09-14,18,19.22,3.17,,0.4
 2022-governor-RO-r1,Ipec,2022-governor-RO-r1-ipec-2022-09-16,2022-09-16,16,11.26,-4.41,,0.4
@@ -575,7 +575,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-RO-r2,Ipec,2022-governor-RO-r2-ipec-2022-10-29,2022-10-29,1,-9.38,4.26,,0.4
 2022-governor-RR-r1,Ipec,2022-governor-RR-r1-ipec-2022-09-19,2022-09-19,13,3.13,0.0,,0.4
 2022-governor-RS-r1,Ipec,2022-governor-RS-r1-ipec-2022-09-15,2022-09-15,17,-24.98,3.16,,0.8
-2022-governor-RS-r1,Studio Pesquisas,2022-governor-RS-r1-studio-pesquisas-2022-09-17,2022-09-17,15,-8.25,-13.19,,0.8
+2022-governor-RS-r1,Studio,2022-governor-RS-r1-studio-pesquisas-2022-09-17,2022-09-17,15,-8.25,-13.19,,0.8
 2022-governor-RS-r1,Real Time Big Data,2022-governor-RS-r1-real-time-big-data-2022-09-22,2022-09-22,10,-21.41,0.9,,0.8
 2022-governor-RS-r1,Ipec,2022-governor-RS-r1-ipec-2022-09-25,2022-09-25,7,-25.99,6.05,,0.8
 2022-governor-RS-r1,Real Time Big Data,2022-governor-RS-r1-real-time-big-data-2022-09-29,2022-09-29,3,-24.18,4.98,,0.8
@@ -603,7 +603,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-SC-r2,Real Time Big Data,2022-governor-SC-r2-real-time-big-data-2022-10-26,2022-10-26,4,-4.18,-1.97,4.18,0.4
 2022-governor-SE-r1,Ipec,2022-governor-SE-r1-ipec-2022-09-21,2022-09-21,11,-1.14,-0.26,-1.14,0.4
 2022-governor-SE-r1,Real Time Big Data,2022-governor-SE-r1-real-time-big-data-2022-09-27,2022-09-27,5,-0.52,0.26,-0.52,0.4
-2022-governor-SP-r1,Badra Comunicação,2022-governor-SP-r1-badra-comunicacao-2022-09-14,2022-09-14,18,-14.27,-4.27,14.27,0.8
+2022-governor-SP-r1,Badra,2022-governor-SP-r1-badra-comunicacao-2022-09-14,2022-09-14,18,-14.27,-4.27,14.27,0.8
 2022-governor-SP-r1,Datafolha,2022-governor-SP-r1-datafolha-2022-09-15,2022-09-15,17,-23.69,5.34,23.69,0.8
 2022-governor-SP-r1,Ipec,2022-governor-SP-r1-ipec-2022-09-19,2022-09-19,13,-21.81,4.2,21.81,0.8
 2022-governor-SP-r1,Ipespe,2022-governor-SP-r1-ipespe-2022-09-21,2022-09-21,11,-21.91,4.68,21.91,0.8
@@ -634,16 +634,16 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2022-governor-SP-r2,Ipec,2022-governor-SP-r2-ipec-2022-10-25,2022-10-25,5,-7.17,2.2,7.17,0.8
 2022-governor-SP-r2,Real Time Big Data,2022-governor-SP-r2-real-time-big-data-2022-10-25,2022-10-25,5,1.82,-3.15,-1.82,0.8
 2022-governor-SP-r2,Futura,2022-governor-SP-r2-futura-2022-10-26,2022-10-26,4,2.3,-2.49,-2.3,0.8
-2022-governor-SP-r2,Badra Comunicação,2022-governor-SP-r2-badra-comunicacao-2022-10-27,2022-10-27,3,-6.19,1.6,6.19,0.8
+2022-governor-SP-r2,Badra,2022-governor-SP-r2-badra-comunicacao-2022-10-27,2022-10-27,3,-6.19,1.6,6.19,0.8
 2022-governor-SP-r2,Paraná Pesquisas,2022-governor-SP-r2-parana-pesquisas-2022-10-27,2022-10-27,3,6.63,2.03,-6.63,0.8
 2022-governor-SP-r2,AtlasIntel,2022-governor-SP-r2-atlasintel-2022-10-29,2022-10-29,1,-5.52,1.29,5.52,0.8
 2022-governor-SP-r2,Datafolha,2022-governor-SP-r2-datafolha-2022-10-29,2022-10-29,1,-6.0,1.77,6.0,0.8
 2022-governor-SP-r2,Ipec,2022-governor-SP-r2-ipec-2022-10-29,2022-10-29,1,-6.0,1.77,6.0,0.8
 2022-governor-TO-r1,Vetor,2022-governor-TO-r1-vetor-2022-09-14,2022-09-14,18,4.61,-1.04,,0.4
 2022-governor-TO-r1,Ipec,2022-governor-TO-r1-ipec-2022-09-18,2022-09-18,14,-0.21,-4.69,,0.4
-2022-governor-TO-r1,VOPE,2022-governor-TO-r1-vope-2022-09-18,2022-09-18,14,6.21,1.31,,0.4
+2022-governor-TO-r1,VÓPE,2022-governor-TO-r1-vope-2022-09-18,2022-09-18,14,6.21,1.31,,0.4
 2022-governor-TO-r1,O Girassol,2022-governor-TO-r1-o-girassol-2022-09-19,2022-09-19,13,7.33,2.62,,0.4
-2022-governor-TO-r1,VOPE,2022-governor-TO-r1-vope-2022-09-27,2022-09-27,5,5.01,1.8,,0.4
+2022-governor-TO-r1,VÓPE,2022-governor-TO-r1-vope-2022-09-27,2022-09-27,5,5.01,1.8,,0.4
 2022-president-BR-r1,Nexus,2022-president-BR-r1-fsb-2022-09-11,2022-09-11,21,1.08,-8.03,1.08,1.0
 2022-president-BR-r1,Ipec,2022-president-BR-r1-ipec-2022-09-11,2022-09-11,21,11.43,2.32,11.43,1.0
 2022-president-BR-r1,Paraná Pesquisas,2022-president-BR-r1-parana-pesquisas-2022-09-12,2022-09-12,20,-1.78,-7.14,-1.78,1.0
@@ -743,7 +743,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2026-governor-AM-r1,PoderData,2026-governor-AM-r1-poderdata-2026-09-23,2026-09-23,11,-3.05,-2.86,,0.4
 2026-governor-AM-r1,Quaest,2026-governor-AM-r1-quaest-2026-09-23,2026-09-23,11,-3.16,-2.75,,0.4
 2026-governor-AM-r1,Veritá,2026-governor-AM-r1-verita-2026-09-24,2026-09-24,10,-11.43,5.71,,0.4
-2026-governor-AM-r1,IPEN,2026-governor-AM-r1-ipen-2026-09-25,2026-09-25,9,1.42,-4.11,,0.4
+2026-governor-AM-r1,Ipen,2026-governor-AM-r1-ipen-2026-09-25,2026-09-25,9,1.42,-4.11,,0.4
 2026-governor-AM-r1,Phoenix,2026-governor-AM-r1-phoenix-2026-09-25,2026-09-25,9,-9.54,4.0,,0.4
 2026-governor-AM-r1,Viva Voz,2026-governor-AM-r1-viva-voz-2026-09-27,2026-09-27,7,-10.85,5.69,,0.4
 2026-governor-AM-r1,Pontual,2026-governor-AM-r1-pontual-2026-09-29,2026-09-29,5,-3.21,-1.58,,0.4
@@ -793,7 +793,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2026-governor-MA-r1,IPPI,2026-governor-MA-r1-ippi-2026-09-14,2026-09-14,20,0.43,-11.47,,0.4
 2026-governor-MA-r1,IPSensus,2026-governor-MA-r1-ipsensus-2026-09-18,2026-09-18,16,-28.24,17.09,,0.4
 2026-governor-MA-r1,Viva Voz,2026-governor-MA-r1-viva-voz-2026-09-20,2026-09-20,14,7.6,-3.17,,0.4
-2026-governor-MA-r1,Ranking,2026-governor-MA-r1-ranking-2026-09-21,2026-09-21,13,-15.58,4.99,,0.4
+2026-governor-MA-r1,Instituto Ranking,2026-governor-MA-r1-ranking-2026-09-21,2026-09-21,13,-15.58,4.99,,0.4
 2026-governor-MA-r1,Quaest,2026-governor-MA-r1-quaest-2026-09-24,2026-09-24,10,2.59,-7.44,,0.4
 2026-governor-MG-r1,Veritá,2026-governor-MG-r1-verita-2026-09-17,2026-09-17,17,-0.36,-6.99,0.36,0.8
 2026-governor-MG-r1,F5,2026-governor-MG-r1-f5-2026-09-18,2026-09-18,16,-0.49,-6.68,0.49,0.8
@@ -810,9 +810,9 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2026-governor-MG-r1,Datafolha,2026-governor-MG-r1-datafolha-2026-10-01,2026-10-01,3,1.71,-3.02,-1.71,0.8
 2026-governor-MG-r1,Real Time Big Data,2026-governor-MG-r1-real-time-big-data-2026-10-02,2026-10-02,2,-3.21,-1.33,3.21,0.8
 2026-governor-MS-r1,Nova Ibrape,2026-governor-MS-r1-nova-ibrape-2026-09-13,2026-09-13,21,6.34,-1.39,-6.34,0.4
-2026-governor-MS-r1,Instituto Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-18,2026-09-18,16,-7.63,0.84,7.63,0.4
+2026-governor-MS-r1,Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-18,2026-09-18,16,-7.63,0.84,7.63,0.4
 2026-governor-MS-r1,Quaest,2026-governor-MS-r1-quaest-2026-09-24,2026-09-24,10,10.78,5.11,-10.78,0.4
-2026-governor-MS-r1,Instituto Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-25,2026-09-25,9,-3.39,-2.09,3.39,0.4
+2026-governor-MS-r1,Ranking Brasil,2026-governor-MS-r1-instituto-ranking-brasil-2026-09-25,2026-09-25,9,-3.39,-2.09,3.39,0.4
 2026-governor-MS-r1,Quaest,2026-governor-MS-r1-quaest-2026-10-03,2026-10-03,1,1.51,-2.47,-1.51,0.4
 2026-governor-MT-r1,MT Dados,2026-governor-MT-r1-mt-dados-2026-09-17,2026-09-17,17,-26.77,4.56,,0.4
 2026-governor-MT-r1,Paraná Pesquisas,2026-governor-MT-r1-parana-pesquisas-2026-09-17,2026-09-17,17,-22.61,0.4,,0.4
@@ -855,11 +855,11 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2026-governor-PE-r1,Datafolha,2026-governor-PE-r1-datafolha-2026-10-01,2026-10-01,3,-6.23,1.74,,0.8
 2026-governor-PI-r1,Datafolha,2026-governor-PI-r1-datafolha-2026-09-16,2026-09-16,18,-5.98,-2.25,-5.98,0.4
 2026-governor-PI-r1,Veritá,2026-governor-PI-r1-verita-2026-09-18,2026-09-18,16,-11.55,3.7,-11.55,0.4
-2026-governor-PI-r1,Datamax,2026-governor-PI-r1-datamax-2026-09-19,2026-09-19,15,10.57,2.9,10.57,0.4
+2026-governor-PI-r1,DATAmax,2026-governor-PI-r1-datamax-2026-09-19,2026-09-19,15,10.57,2.9,10.57,0.4
 2026-governor-PI-r1,AtlasIntel,2026-governor-PI-r1-atlasintel-2026-09-28,2026-09-28,6,1.63,-4.35,1.63,0.4
 2026-governor-PR-r1,Real Time Big Data,2026-governor-PR-r1-real-time-big-data-2026-09-15,2026-09-15,19,-15.65,5.8,,0.8
 2026-governor-PR-r1,AtlasIntel,2026-governor-PR-r1-atlasintel-2026-09-16,2026-09-16,18,6.71,-2.95,,0.8
-2026-governor-PR-r1,Instituto Alfa,2026-governor-PR-r1-instituto-alfa-2026-09-16,2026-09-16,18,-12.78,3.12,,0.8
+2026-governor-PR-r1,Alfa Inteligência,2026-governor-PR-r1-instituto-alfa-2026-09-16,2026-09-16,18,-12.78,3.12,,0.8
 2026-governor-PR-r1,Neokemp,2026-governor-PR-r1-neokemp-2026-09-16,2026-09-16,18,1.76,-7.9,,0.8
 2026-governor-PR-r1,Paraná Pesquisas,2026-governor-PR-r1-parana-pesquisas-2026-09-17,2026-09-17,17,3.2,-6.27,,0.8
 2026-governor-PR-r1,IRG,2026-governor-PR-r1-irg-2026-09-20,2026-09-20,14,-11.62,2.71,,0.8
@@ -888,7 +888,7 @@ race,pollster,poll_id,end,dte,err,pm,bias_pt,race_w
 2026-governor-RJ-r1,Prefab Future,2026-governor-RJ-r1-prefab-future-2026-10-02,2026-10-02,2,-16.47,-0.2,,0.8
 2026-governor-RJ-r1,Quaest,2026-governor-RJ-r1-quaest-2026-10-03,2026-10-03,1,-14.72,-1.76,,0.8
 2026-governor-RN-r1,Perfil,2026-governor-RN-r1-perfil-2026-09-15,2026-09-15,19,15.26,-4.69,-15.26,0.4
-2026-governor-RN-r1,Média,2026-governor-RN-r1-media-2026-09-17,2026-09-17,17,10.55,-9.02,-10.55,0.4
+2026-governor-RN-r1,Media,2026-governor-RN-r1-media-2026-09-17,2026-09-17,17,10.55,-9.02,-10.55,0.4
 2026-governor-RN-r1,Exatus,2026-governor-RN-r1-exatus-2026-09-23,2026-09-23,11,23.97,5.52,-23.97,0.4
 2026-governor-RN-r1,Metadata,2026-governor-RN-r1-metadata-2026-09-23,2026-09-23,11,24.51,6.07,-24.51,0.4
 2026-governor-RN-r1,Quaest,2026-governor-RN-r1-quaest-2026-09-24,2026-09-24,10,22.3,4.04,-22.3,0.4

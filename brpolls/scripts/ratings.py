@@ -55,8 +55,17 @@ CANON = {
     "futura": "Futura", "futurainteligencia": "Futura", "vox": "Vox Brasil", "voxbrasil": "Vox Brasil",
     "voxpopuli": "Vox Populi", "mda": "MDA", "cntmda": "MDA", "gerp": "Gerp", "indexa": "Indexa",
     "palver": "Palver", "datatrends": "DataTrends", "ifp": "Instituto França (IFP)",
-    "rankingbrasil": "Ranking", "ranking": "Ranking", "sensus": "Sensus", "brasmarket": "Brasmarket",
+    "rankingbrasil": "Ranking Brasil", "rankingbrasilinteligencia": "Ranking Brasil",
+    "ranking": "Instituto Ranking", "institutoranking": "Instituto Ranking",
+    "sensus": "Sensus", "brasmarket": "Brasmarket", "franca": "Instituto França (IFP)",
+    "francaifp": "Instituto França (IFP)", "ibrape": "Ibrape", "novoibrape": "Ibrape",
+    "badra": "Badra", "badracomunicacao": "Badra", "datamax": "DATAmax", "irg": "IRG",
+    "ipems": "IPEMS", "ipsensus": "IPSensus", "datasensus": "IPSensus", "exatago": "Exata GO",
 }
+# words that only decorate institute names ("Instituto X de Pesquisa") and are dropped before matching
+DECOR = {"instituto", "de", "do", "da", "e", "pesquisa", "pesquisas", "grupo", "inteligencia",
+         "comunicacao", "opiniao", "mercado", "ltda"}
+_seen = {}
 
 
 def norm(s):
@@ -65,8 +74,15 @@ def norm(s):
 
 
 def canon(name):
+    """Canonical institute name: explicit lineage/alias table first, then a decoration-free
+    key so that e.g. "Instituto DataSensus" and "DataSensus" or "DATAmax"/"Datamax" merge."""
     key = re.sub(r"[^a-z0-9]", "", norm(name))
-    return CANON.get(key, name.strip())
+    if key in CANON:
+        return CANON[key]
+    core = "".join(t for t in norm(name).split() if t not in DECOR) or key
+    if core in CANON:
+        return CANON[core]
+    return _seen.setdefault(core, re.sub(r"^Instituto\s+", "", name.strip()))
 
 
 # ballot name -> other names pollsters use for the same candidate
@@ -218,6 +234,40 @@ def grade(ratings):
         ratings[k]["rank"] = i + 1
 
 
+def persistence(rows, dte_max=14):
+    """Does a pollster's first-round bias carry into the runoff of the same election?
+
+    Uses the signed error on the PT candidate's margin in presidential polls from the final
+    two weeks. Reports (a) the industry-wide mean bias per round and (b) the slope of each
+    pollster's runoff bias on its first-round bias, both measured relative to that round's
+    industry mean. Writes ../data/bias_persistence.json for average.py.
+    """
+    pres = [r for r in rows if r["office"] == "president" and r["bias_pt"] is not None
+            and r["dte"] <= dte_max]
+    ind = defaultdict(list)
+    by = defaultdict(list)
+    for r in pres:
+        ind[(r["year"], r["round"])].append(r["bias_pt"])
+        by[(r["year"], r["round"], r["pollster"])].append(r["bias_pt"])
+    mean = lambda v: sum(v) / len(v)
+    xs, ys = [], []
+    for (y, rnd, name), v in by.items():
+        if rnd == 1 and (y, 2, name) in by:
+            xs.append(mean(v) - mean(ind[(y, 1)]))
+            ys.append(mean(by[(y, 2, name)]) - mean(ind[(y, 2)]))
+    mx, my = mean(xs), mean(ys)
+    sxx = sum((x - mx) ** 2 for x in xs)
+    slope = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sxx
+    out = {"relative_slope": round(slope, 3), "pairs": len(xs),
+           "industry_pt_margin_bias": {f"{y}-r{rnd}": round(mean(v), 2) for (y, rnd), v in sorted(ind.items())},
+           "note": "Signed error on the PT candidate's margin (points), presidential polls in the final "
+                   f"{dte_max} days. relative_slope: share of a pollster's first-round bias relative to its "
+                   "peers that reappears in the runoff."}
+    with open(os.path.join(OUT, "bias_persistence.json"), "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    return out
+
+
 def main():
     results = load_results()
     polls = load_polls()
@@ -249,6 +299,7 @@ def main():
                            "(Flávio 47.0%, Lula 45.2% of valid votes). Positive = poll overstated Flávio. "
                            "Polls fielded in the last 10 days before 4 Oct.",
                    "pollsters": table}, f, ensure_ascii=False, indent=1)
+    persistence(rows)
     print(f"{len(polls)} polls read, {len(rows)} scored in {len({r['race'] for r in rows})} races; "
           f"error slope {slope:+.3f} pts/day; overall mean |err| "
           f"{sum(r['abs'] for r in rows) / len(rows):.2f}")

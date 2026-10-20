@@ -52,29 +52,24 @@
                 <div class="sub" id="avgNote"></div>
             </div>
             <div class="bar" id="avgBar"></div>
-            <p id="anchNote" class="sub"></p>
         </div>
 
         <div class="card">
             <h4>Chance of winning on 25 October</h4>
             <div class="big">
-                <div><div class="n lula" id="pL">–</div><div class="sub">Lula (poll average as is)</div></div>
+                <div><div class="n lula" id="pL">–</div><div class="sub">Lula</div></div>
                 <div><div class="n flavio" id="pF">–</div><div class="sub">Flávio Bolsonaro</div></div>
             </div>
             <div class="bar" id="pBar"></div>
             <p class="sub" id="scen"></p>
-            <div class="big" style="margin-top:12px">
-                <div><div class="n lula" id="pLa">–</div><div class="sub">Lula, adjusted for first-round accuracy</div></div>
-                <div><div class="n flavio" id="pFa">–</div><div class="sub">Flávio Bolsonaro</div></div>
-            </div>
+
         </div>
 
         <div class="card">
             <h4>Trend</h4>
             <div id="chart"></div>
             <p class="sub">Dots: each poll's Lula share of the two-candidate vote (total votes, undecided removed). Solid line: weighted
-            average after correcting each pollster's lean relative to the others. Dashed line: the same, also corrected for each
-            pollster's miss in the 2026 first round. 50% = tie.</p>
+            average after correcting each pollster's lean relative to the others. 50% = tie.</p>
         </div>
 
         <div class="card">
@@ -111,15 +106,18 @@
             races at full weight, the eight largest states at 0.8, and the rest at 0.4. Ratings are shrunk toward the average
             and are rough: no usable 2002/2006 polls, thin 2014 data, some Wikipedia tables are inconsistent, and
             pollsters with a short record are marked unrated. Ibope is treated as Ipec and FSB as Nexus.</p>
-            <p><b>The consensus problem.</b> The average above is centred on the pollsters' consensus. In the first round, the
-            pollsters that leaned toward Flávio (Gerp, Futura, Veritá, Palver) landed close to the official result, while
-            Datafolha, Quaest, Nexus, MDA and Indexa understated him by 5 to 8 points of margin. A consensus-centred average
-            therefore risks inheriting that miss. The adjusted estimate corrects each pollster by half of its own first-round miss
-            (a judgement call: how much a miss carries into the runoff is unknown, and each pollster has only 1 to 9 polls to judge).</p>
+            <p><b>Does the first-round miss carry over?</b> In every election since 2010, final first-round polls overstated
+            the PT candidate's margin over the runner-up (by 13, 15, 5, 2 and 4 points in 2010, 2014, 2018, 2022 and 2026),
+            yet runoff polls were close to unbiased (+0.3, 0.0, −4.9 and +0.2 in 2010-2022; the 2018 miss favoured Bolsonaro).
+            First-round misses come largely from late switching between candidates, which a two-way runoff does not have.
+            What does persist is a pollster's miss <i>relative to its peers</i>: about a third of it reappears in the runoff
+            (28 pollster pairs). Correcting each pollster for that moves the 2026 average by only a few hundredths of a point,
+            so the headline uses it but it changes nothing visible. The stress test shows what happens if the full first-round
+            miss repeated anyway.</p>
             <p><b>Forecast.</b> 200,000 simulations of Lula's share: the average plus a shared polling error (fat-tailed, standard
             deviation 2 points of share: final-week averages in the four runoffs from 2010 to 2022 missed by about 1.2 points
             rms, but this year's first round missed by about 1.7, so 2 is used as a cautious floor) plus a little drift.
-            Both the plain and the adjusted average are simulated. Which is closer to the truth is the main uncertainty.</p>
+            </p>
             <p class="sub">Code and data: <code>brpolls/</code> in this repository.</p>
         </div>
     </div>
@@ -154,10 +152,6 @@ function chart(avg) {
         const t = (new Date(p.start).getTime() + new Date(p.end).getTime()) / 2;
         s += `<circle cx="${x(t)}" cy="${y(p.lula_two_party)}" r="3" fill="#c0392b" fill-opacity=".28"><title>${p.pollster} ${p.start}–${p.end}: Lula ${p.lula} Flávio ${p.flavio}</title></circle>`;
     }
-    if (avg.anchored) {
-        s += `<polyline fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="5 4" points="` +
-             avg.anchored.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/>`;
-    }
     s += `<polyline fill="none" stroke="#c0392b" stroke-width="2.2" points="` +
          avg.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/></svg>`;
     sel("chart").innerHTML = s;
@@ -171,11 +165,9 @@ Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.j
     bar("avgBar", c.lula, c.flavio);
     sel("pL").textContent = pct(100 * fc.base.p_lula); sel("pF").textContent = pct(100 * fc.base.p_flavio);
     bar("pBar", 100 * fc.base.p_lula, 100 * fc.base.p_flavio);
-    sel("scen").textContent = `Shared polling error assumed: ${fc.inputs.shared_error_sd} points of Lula's share.`;
-    if (fc.anchored) {
-        sel("pLa").textContent = pct(100 * fc.anchored.p_lula); sel("pFa").textContent = pct(100 * fc.anchored.p_flavio);
-        sel("anchNote").textContent = `Adjusted for each pollster's 2026 first-round accuracy: Lula ${pct(avg.anchored.lula)}, Flávio ${pct(avg.anchored.flavio)}.`;
-    }
+    sel("scen").textContent = `Shared polling error assumed: ${fc.inputs.shared_error_sd} points of Lula's share. ` +
+        `Stress test: if the full first-round polling miss repeated (${fc.stress.shift_pts} points), Lula's chance would be ` +
+        `${pct(100 * fc.stress.p_lula)}. Runoff polls have not repeated first-round misses in past elections.`;
     chart(avg);
     let h = `<tr><th>Pollster</th><th>Polls</th><th>Lean (Lula pts)</th><th>Grade</th><th>Plus-minus</th><th>Past polls scored</th></tr>`;
     for (const [k, v] of Object.entries(avg.house_effects)) {
