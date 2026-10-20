@@ -1,0 +1,52 @@
+{
+ "horizon_days": 5,
+ "shared_error_sd": 2.0,
+ "races": [
+  {
+   "year": 2010,
+   "pt_candidate": "DILMA",
+   "opponent": "JOSÉ SERRA",
+   "polls_used": 11,
+   "average_pt_share": 55.53,
+   "actual_pt_share": 56.05,
+   "error": -0.52,
+   "p_pt_win": 0.991,
+   "pt_won": true
+  },
+  {
+   "year": 2014,
+   "pt_candidate": "DILMA",
+   "opponent": "AÉCIO NEVES",
+   "polls_used": 9,
+   "average_pt_share": 50.72,
+   "actual_pt_share": 51.64,
+   "error": -0.92,
+   "p_pt_win": 0.681,
+   "pt_won": true
+  },
+  {
+   "year": 2018,
+   "pt_candidate": "FERNANDO HADDAD",
+   "opponent": "JAIR BOLSONARO",
+   "polls_used": 71,
+   "average_pt_share": 43.89,
+   "actual_pt_share": 44.87,
+   "error": -0.98,
+   "p_pt_win": 0.006,
+   "pt_won": false
+  },
+  {
+   "year": 2022,
+   "pt_candidate": "LULA",
+   "opponent": "JAIR BOLSONARO",
+   "polls_used": 176,
+   "average_pt_share": 52.4,
+   "actual_pt_share": 50.9,
+   "error": 1.5,
+   "p_pt_win": 0.918,
+   "pt_won": true
+  }
+ ],
+ "rmse_share": 1.04,
+ "brier": 0.027
+}

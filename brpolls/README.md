@@ -8,6 +8,7 @@ except `data/raw/overrides.json` (documented manual decisions).
 python scripts/ratings.py                                   # needs data/hist/*.csv
 python scripts/average.py --ratings data/pollster_ratings.json
 python scripts/forecast.py
+python scripts/backtest.py                                 # 2010-2022 runoffs, 5 days out
 ```
 Add new runoff polls to `data/raw/verified_*.json` (schema in `scripts/build_database.py` / the existing files), then
 ```
@@ -28,6 +29,6 @@ python scripts/build_database.py --registry pesquisa_eleitoral_2026_BRASIL.csv
 ## Known limits
 - Historical polls: no usable 2002/2006 polls, thin 2014 (no governor polls for 10 states), pollster names normalised only for the main institutes, some Wikipedia tables inconsistent (flagged in the notes column; shares outside 90-105 kept as published).
 - Ratings: simplified plus-minus on valid-vote margin, shrunk toward average; pollsters with short history marked unrated.
-- Forecast: shared polling error (2 points of share) is a judgement call; four past runoffs (2010-2022) give about 1.2 points rms, the 2026 first round missed by about 1.7.
-- The average is centred on the pollsters' consensus. The 2026 first round showed the consensus leaned to Lula, so a second, adjusted estimate corrects each pollster by half its own first-round miss (the 0.5 persistence is a judgement call).
+- Forecast: shared polling error of 2 points of share. The backtest (2010-2022 runoffs, 5 days out) missed by 1.0 rms and called all four winners; 2.0 is about the upper 90% bound for four races.
+- The average is centred on the pollsters' consensus. First-round industry misses (always toward PT since 2010) have not carried into runoffs; about a third of a pollster's miss relative to peers does (`bias_persistence.json`), which moves the 2026 average by ~0.02 points.
 - Unconfirmed polls: DataTrends 12-14 Sep (blog/search snippets only); registered polls from Alfa, IFP, Phoenix, Ranking and JOTA not yet found published.

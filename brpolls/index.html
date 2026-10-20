@@ -114,9 +114,12 @@
             (28 pollster pairs). Correcting each pollster for that moves the 2026 average by only a few hundredths of a point,
             so the headline uses it but it changes nothing visible. The stress test shows what happens if the full first-round
             miss repeated anyway.</p>
+            <p><b>Backtest.</b> The same average, rebuilt for the 2010, 2014, 2018 and 2022 runoffs as of five days before
+            each election, called every winner and missed the PT candidate's share by −0.5, −0.9, −1.0 and +1.5 points
+            (root-mean-square 1.0). Four races is a small test.</p>
+            <div class="scroll"><table class="t" id="btTbl"></table></div>
             <p><b>Forecast.</b> 200,000 simulations of Lula's share: the average plus a shared polling error (fat-tailed, standard
-            deviation 2 points of share: final-week averages in the four runoffs from 2010 to 2022 missed by about 1.2 points
-            rms, but this year's first round missed by about 1.7, so 2 is used as a cautious floor) plus a little drift.
+            deviation 2 points of share, about the upper 90% bound of what four backtested runoffs allow, so deliberately cautious) plus a little drift.
             </p>
             <p class="sub">Code and data: <code>brpolls/</code> in this repository.</p>
         </div>
@@ -189,6 +192,15 @@ Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.j
              `<td>${(100 * q.weight).toFixed(1)}%</td><td>${q.url ? `<a href="${q.url}">${q.verification.replace("verified-", "")}</a>` : q.verification}</td></tr>`;
     }
     sel("pollTbl").innerHTML = p;
+    fetch("data/backtest.json").then(r => r.json()).then(bt => {
+        let t = `<tr><th>Runoff</th><th>Average (PT share)</th><th>Actual</th><th>Error</th><th>Forecast P(PT win)</th></tr>`;
+        for (const r of bt.races) {
+            t += `<tr><td>${r.year} ${r.pt_candidate} vs ${r.opponent}</td><td>${r.average_pt_share.toFixed(1)}</td>` +
+                 `<td>${r.actual_pt_share.toFixed(1)}</td><td>${r.error > 0 ? "+" : ""}${r.error.toFixed(1)}</td>` +
+                 `<td>${pct(100 * r.p_pt_win)} (${r.pt_won ? "won" : "lost"})</td></tr>`;
+        }
+        sel("btTbl").innerHTML = t;
+    });
 }).catch(e => { sel("asof").textContent = "Could not load data: " + e; });
 </script>
 </body>
