@@ -1,0 +1,692 @@
+{
+ "schemes": {
+  "president_only": {
+   "description": "Presidential races only, weight 1.0",
+   "polls_scored": 274,
+   "races": 10,
+   "dte_slope": 0.1543,
+   "runoff_pollsters_rated": 19
+  },
+  "pres_big8": {
+   "description": "Presidential + governors of SP, MG, RJ, BA, RS, PR, PE, CE, all weight 1.0",
+   "polls_scored": 590,
+   "races": 48,
+   "dte_slope": 0.2058,
+   "runoff_pollsters_rated": 19
+  },
+  "tiered_current": {
+   "description": "All races: president 1.0, big-state governor 0.8, other governor 0.4 (as ratings.py)",
+   "polls_scored": 1000,
+   "races": 123,
+   "dte_slope": 0.1873,
+   "runoff_pollsters_rated": 19
+  }
+ },
+ "pollsters": {
+  "Alfa Inteligência": {
+   "president_only": {
+    "plus_minus": 1.005,
+    "polls": 1,
+    "races": 1,
+    "evidence": 1.0,
+    "weight": 0.834,
+    "rank": 19,
+    "rank_all": 27,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": 1.321,
+    "polls": 2,
+    "races": 2,
+    "evidence": 2.0,
+    "weight": 0.788,
+    "rank": 19,
+    "rank_all": 46,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": 1.287,
+    "polls": 2,
+    "races": 2,
+    "evidence": 1.8,
+    "weight": 0.793,
+    "rank": 19,
+    "rank_all": 110,
+    "grade": "unrated (thin history)"
+   }
+  },
+  "American Analytics": {
+   "president_only": {
+    "plus_minus": 0.313,
+    "polls": 1,
+    "races": 1,
+    "evidence": 1.0,
+    "weight": 0.945,
+    "rank": 15,
+    "rank_all": 20,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": 0.264,
+    "polls": 1,
+    "races": 1,
+    "evidence": 1.0,
+    "weight": 0.954,
+    "rank": 13,
+    "rank_all": 32,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": 0.281,
+    "polls": 1,
+    "races": 1,
+    "evidence": 1.0,
+    "weight": 0.951,
+    "rank": 13,
+    "rank_all": 86,
+    "grade": "unrated (thin history)"
+   }
+  },
+  "AtlasIntel": {
+   "president_only": {
+    "plus_minus": -0.367,
+    "polls": 12,
+    "races": 3,
+    "evidence": 5.2,
+    "weight": 1.068,
+    "rank": 7,
+    "rank_all": 9,
+    "grade": "A-"
+   },
+   "pres_big8": {
+    "plus_minus": -0.097,
+    "polls": 39,
+    "races": 17,
+    "evidence": 24.3,
+    "weight": 1.018,
+    "rank": 9,
+    "rank_all": 25,
+    "grade": "B"
+   },
+   "tiered_current": {
+    "plus_minus": -0.538,
+    "polls": 44,
+    "races": 22,
+    "evidence": 22.5,
+    "weight": 1.102,
+    "rank": 6,
+    "rank_all": 27,
+    "grade": "A-"
+   }
+  },
+  "DataTrends": {
+   "president_only": {
+    "plus_minus": 0.142,
+    "polls": 2,
+    "races": 1,
+    "evidence": 1.4,
+    "weight": 0.975,
+    "rank": 11,
+    "rank_all": 15,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": -0.898,
+    "polls": 5,
+    "races": 2,
+    "evidence": 3.1,
+    "weight": 1.175,
+    "rank": 2,
+    "rank_all": 10,
+    "grade": "A"
+   },
+   "tiered_current": {
+    "plus_minus": -0.732,
+    "polls": 5,
+    "races": 2,
+    "evidence": 2.8,
+    "weight": 1.141,
+    "rank": 3,
+    "rank_all": 22,
+    "grade": "unrated (thin history)"
+   }
+  },
+  "Datafolha": {
+   "president_only": {
+    "plus_minus": -0.873,
+    "polls": 44,
+    "races": 10,
+    "evidence": 16.6,
+    "weight": 1.17,
+    "rank": 3,
+    "rank_all": 5,
+    "grade": "A"
+   },
+   "pres_big8": {
+    "plus_minus": -0.503,
+    "polls": 108,
+    "races": 34,
+    "evidence": 53.4,
+    "weight": 1.095,
+    "rank": 7,
+    "rank_all": 18,
+    "grade": "B+"
+   },
+   "tiered_current": {
+    "plus_minus": -0.574,
+    "polls": 114,
+    "races": 38,
+    "evidence": 48.0,
+    "weight": 1.109,
+    "rank": 5,
+    "rank_all": 26,
+    "grade": "A-"
+   }
+  },
+  "Futura": {
+   "president_only": {
+    "plus_minus": -1.207,
+    "polls": 10,
+    "races": 3,
+    "evidence": 5.2,
+    "weight": 1.243,
+    "rank": 1,
+    "rank_all": 1,
+    "grade": "A+"
+   },
+   "pres_big8": {
+    "plus_minus": -1.655,
+    "polls": 14,
+    "races": 5,
+    "evidence": 8.0,
+    "weight": 1.347,
+    "rank": 1,
+    "rank_all": 5,
+    "grade": "A+"
+   },
+   "tiered_current": {
+    "plus_minus": -1.382,
+    "polls": 18,
+    "races": 7,
+    "evidence": 8.6,
+    "weight": 1.282,
+    "rank": 1,
+    "rank_all": 5,
+    "grade": "A+"
+   }
+  },
+  "Gerp": {
+   "president_only": {
+    "plus_minus": -1.015,
+    "polls": 6,
+    "races": 2,
+    "evidence": 3.1,
+    "weight": 1.2,
+    "rank": 2,
+    "rank_all": 4,
+    "grade": "A"
+   },
+   "pres_big8": {
+    "plus_minus": 0.534,
+    "polls": 9,
+    "races": 5,
+    "evidence": 6.1,
+    "weight": 0.908,
+    "rank": 16,
+    "rank_all": 38,
+    "grade": "C"
+   },
+   "tiered_current": {
+    "plus_minus": 0.302,
+    "polls": 9,
+    "races": 5,
+    "evidence": 5.5,
+    "weight": 0.947,
+    "rank": 14,
+    "rank_all": 87,
+    "grade": "C"
+   }
+  },
+  "Ideia": {
+   "president_only": {
+    "plus_minus": -0.535,
+    "polls": 3,
+    "races": 3,
+    "evidence": 3.0,
+    "weight": 1.101,
+    "rank": 6,
+    "rank_all": 8,
+    "grade": "A-"
+   },
+   "pres_big8": {
+    "plus_minus": -0.038,
+    "polls": 4,
+    "races": 4,
+    "evidence": 4.0,
+    "weight": 1.007,
+    "rank": 10,
+    "rank_all": 26,
+    "grade": "B-"
+   },
+   "tiered_current": {
+    "plus_minus": 0.525,
+    "polls": 6,
+    "races": 6,
+    "evidence": 4.6,
+    "weight": 0.91,
+    "rank": 15,
+    "rank_all": 94,
+    "grade": "C-"
+   }
+  },
+  "Indexa": {
+   "president_only": {
+    "plus_minus": 0.303,
+    "polls": 2,
+    "races": 1,
+    "evidence": 1.4,
+    "weight": 0.947,
+    "rank": 13,
+    "rank_all": 18,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": 0.252,
+    "polls": 2,
+    "races": 1,
+    "evidence": 1.4,
+    "weight": 0.956,
+    "rank": 12,
+    "rank_all": 31,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": 0.27,
+    "polls": 2,
+    "races": 1,
+    "evidence": 1.4,
+    "weight": 0.953,
+    "rank": 12,
+    "rank_all": 85,
+    "grade": "unrated (thin history)"
+   }
+  },
+  "Instituto França (IFP)": {
+   "president_only": {
+    "plus_minus": 0.305,
+    "polls": 3,
+    "races": 2,
+    "evidence": 2.4,
+    "weight": 0.947,
+    "rank": 14,
+    "rank_all": 19,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": 0.412,
+    "polls": 3,
+    "races": 2,
+    "evidence": 2.4,
+    "weight": 0.929,
+    "rank": 14,
+    "rank_all": 35,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": -0.385,
+    "polls": 5,
+    "races": 3,
+    "evidence": 3.0,
+    "weight": 1.072,
+    "rank": 7,
+    "rank_all": 35,
+    "grade": "A-"
+   }
+  },
+  "Ipespe": {
+   "president_only": {
+    "plus_minus": -0.549,
+    "polls": 14,
+    "races": 4,
+    "evidence": 6.9,
+    "weight": 1.104,
+    "rank": 5,
+    "rank_all": 7,
+    "grade": "A-"
+   },
+   "pres_big8": {
+    "plus_minus": 1.088,
+    "polls": 21,
+    "races": 8,
+    "evidence": 12.1,
+    "weight": 0.822,
+    "rank": 18,
+    "rank_all": 44,
+    "grade": "C-"
+   },
+   "tiered_current": {
+    "plus_minus": 1.111,
+    "polls": 22,
+    "races": 9,
+    "evidence": 11.4,
+    "weight": 0.819,
+    "rank": 18,
+    "rank_all": 109,
+    "grade": "D"
+   }
+  },
+  "MDA": {
+   "president_only": {
+    "plus_minus": 0.089,
+    "polls": 15,
+    "races": 7,
+    "evidence": 10.2,
+    "weight": 0.984,
+    "rank": 10,
+    "rank_all": 13,
+    "grade": "B"
+   },
+   "pres_big8": {
+    "plus_minus": 0.147,
+    "polls": 15,
+    "races": 7,
+    "evidence": 10.2,
+    "weight": 0.974,
+    "rank": 11,
+    "rank_all": 30,
+    "grade": "B-"
+   },
+   "tiered_current": {
+    "plus_minus": 0.126,
+    "polls": 15,
+    "races": 7,
+    "evidence": 10.2,
+    "weight": 0.978,
+    "rank": 11,
+    "rank_all": 72,
+    "grade": "C+"
+   }
+  },
+  "Nexus": {
+   "president_only": {
+    "plus_minus": -0.152,
+    "polls": 11,
+    "races": 4,
+    "evidence": 6.6,
+    "weight": 1.028,
+    "rank": 8,
+    "rank_all": 11,
+    "grade": "B+"
+   },
+   "pres_big8": {
+    "plus_minus": -0.279,
+    "polls": 11,
+    "races": 4,
+    "evidence": 6.6,
+    "weight": 1.052,
+    "rank": 8,
+    "rank_all": 23,
+    "grade": "B"
+   },
+   "tiered_current": {
+    "plus_minus": -0.234,
+    "polls": 11,
+    "races": 4,
+    "evidence": 6.6,
+    "weight": 1.043,
+    "rank": 9,
+    "rank_all": 48,
+    "grade": "B"
+   }
+  },
+  "Palver": {
+   "president_only": {
+    "plus_minus": -0.751,
+    "polls": 4,
+    "races": 1,
+    "evidence": 1.7,
+    "weight": 1.145,
+    "rank": 4,
+    "rank_all": 6,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": -0.748,
+    "polls": 4,
+    "races": 1,
+    "evidence": 1.7,
+    "weight": 1.144,
+    "rank": 4,
+    "rank_all": 13,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": -0.749,
+    "polls": 4,
+    "races": 1,
+    "evidence": 1.7,
+    "weight": 1.144,
+    "rank": 2,
+    "rank_all": 17,
+    "grade": "unrated (thin history)"
+   }
+  },
+  "PoderData": {
+   "president_only": {
+    "plus_minus": 0.682,
+    "polls": 12,
+    "races": 5,
+    "evidence": 7.6,
+    "weight": 0.884,
+    "rank": 18,
+    "rank_all": 25,
+    "grade": "C-"
+   },
+   "pres_big8": {
+    "plus_minus": 0.626,
+    "polls": 12,
+    "races": 5,
+    "evidence": 7.6,
+    "weight": 0.893,
+    "rank": 17,
+    "rank_all": 39,
+    "grade": "C"
+   },
+   "tiered_current": {
+    "plus_minus": 0.529,
+    "polls": 13,
+    "races": 6,
+    "evidence": 8.0,
+    "weight": 0.909,
+    "rank": 16,
+    "rank_all": 95,
+    "grade": "C-"
+   }
+  },
+  "Quaest": {
+   "president_only": {
+    "plus_minus": 0.253,
+    "polls": 11,
+    "races": 3,
+    "evidence": 5.2,
+    "weight": 0.955,
+    "rank": 12,
+    "rank_all": 17,
+    "grade": "B-"
+   },
+   "pres_big8": {
+    "plus_minus": -0.6,
+    "polls": 31,
+    "races": 13,
+    "evidence": 19.0,
+    "weight": 1.114,
+    "rank": 6,
+    "rank_all": 15,
+    "grade": "A-"
+   },
+   "tiered_current": {
+    "plus_minus": -0.322,
+    "polls": 55,
+    "races": 33,
+    "evidence": 24.9,
+    "weight": 1.06,
+    "rank": 8,
+    "rank_all": 42,
+    "grade": "B+"
+   }
+  },
+  "Real Time Big Data": {
+   "president_only": {
+    "plus_minus": 0.677,
+    "polls": 9,
+    "races": 3,
+    "evidence": 4.6,
+    "weight": 0.885,
+    "rank": 17,
+    "rank_all": 24,
+    "grade": "C-"
+   },
+   "pres_big8": {
+    "plus_minus": 0.434,
+    "polls": 42,
+    "races": 21,
+    "evidence": 28.3,
+    "weight": 0.925,
+    "rank": 15,
+    "rank_all": 36,
+    "grade": "C"
+   },
+   "tiered_current": {
+    "plus_minus": 0.838,
+    "polls": 97,
+    "races": 55,
+    "evidence": 40.2,
+    "weight": 0.86,
+    "rank": 17,
+    "rank_all": 103,
+    "grade": "C-"
+   }
+  },
+  "Veritá": {
+   "president_only": {
+    "plus_minus": 0.476,
+    "polls": 10,
+    "races": 4,
+    "evidence": 5.9,
+    "weight": 0.918,
+    "rank": 16,
+    "rank_all": 23,
+    "grade": "C"
+   },
+   "pres_big8": {
+    "plus_minus": -0.684,
+    "polls": 16,
+    "races": 9,
+    "evidence": 11.3,
+    "weight": 1.131,
+    "rank": 5,
+    "rank_all": 14,
+    "grade": "A-"
+   },
+   "tiered_current": {
+    "plus_minus": -0.172,
+    "polls": 45,
+    "races": 30,
+    "evidence": 19.9,
+    "weight": 1.031,
+    "rank": 10,
+    "rank_all": 50,
+    "grade": "B"
+   }
+  },
+  "Vox Brasil": {
+   "president_only": {
+    "plus_minus": -0.073,
+    "polls": 2,
+    "races": 1,
+    "evidence": 1.4,
+    "weight": 1.013,
+    "rank": 9,
+    "rank_all": 12,
+    "grade": "unrated (thin history)"
+   },
+   "pres_big8": {
+    "plus_minus": -0.75,
+    "polls": 4,
+    "races": 2,
+    "evidence": 2.8,
+    "weight": 1.144,
+    "rank": 3,
+    "rank_all": 12,
+    "grade": "unrated (thin history)"
+   },
+   "tiered_current": {
+    "plus_minus": -0.644,
+    "polls": 4,
+    "races": 2,
+    "evidence": 2.5,
+    "weight": 1.123,
+    "rank": 4,
+    "rank_all": 24,
+    "grade": "unrated (thin history)"
+   }
+  }
+ },
+ "rank_correlations": {
+  "president_only__vs__pres_big8": {
+   "spearman": 0.398,
+   "n": 19
+  },
+  "president_only__vs__tiered_current": {
+   "spearman": 0.47,
+   "n": 19
+  },
+  "pres_big8__vs__tiered_current": {
+   "spearman": 0.884,
+   "n": 19
+  }
+ },
+ "max_rank_shift": {
+  "Gerp": 14,
+  "Ipespe": 13,
+  "Veritá": 11,
+  "DataTrends": 9,
+  "Ideia": 9,
+  "Instituto França (IFP)": 7,
+  "Quaest": 6,
+  "Vox Brasil": 6,
+  "Datafolha": 4,
+  "AtlasIntel": 3,
+  "American Analytics": 2,
+  "Palver": 2,
+  "PoderData": 2,
+  "Real Time Big Data": 2,
+  "Indexa": 1,
+  "MDA": 1,
+  "Nexus": 1,
+  "Alfa Inteligência": 0,
+  "Futura": 0
+ },
+ "max_weight_shift": {
+  "Gerp": 0.292,
+  "Ipespe": 0.285,
+  "Veritá": 0.213,
+  "DataTrends": 0.2,
+  "Ideia": 0.191,
+  "Quaest": 0.159,
+  "Instituto França (IFP)": 0.143,
+  "Vox Brasil": 0.131,
+  "Futura": 0.104,
+  "AtlasIntel": 0.084,
+  "Datafolha": 0.075,
+  "Real Time Big Data": 0.065,
+  "Alfa Inteligência": 0.046,
+  "PoderData": 0.025,
+  "Nexus": 0.024,
+  "MDA": 0.01,
+  "American Analytics": 0.009,
+  "Indexa": 0.009,
+  "Palver": 0.001
+ },
+ "summary": "Including governor races matters, but how they are tiered does not: the current tiered scheme ranks the 19 runoff pollsters almost the same as presidential + big-8 governors at equal weight (Spearman 0.88), while presidential-only ranks them quite differently (Spearman 0.40 and 0.47). The movers are pollsters whose presidential and governor records diverge (Gerp 14 places, Ipespe 13 places, Veritá 11 places); Futura is first under every scheme. Because shrinkage keeps plus-minus small, the polling-average weight moves by at most 0.29 (Gerp), so the choice changes rankings and grades more than it changes the average."
+}
