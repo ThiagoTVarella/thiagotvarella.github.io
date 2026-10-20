@@ -78,7 +78,7 @@ def average_on(day, ratings, r1_all):
 def main():
     ratings = {k: v["weight"] for k, v in
                json.load(open(os.path.join(A.DATA, "pollster_ratings.json"))).items()}
-    r1_all = A.load_r1(ratings)
+    r1_all = []   # first-round polls are off by default in average.py (house effects shifted after the 1st round)
     rng = np.random.default_rng(1)
     z_t = rng.standard_t(F.DF, NSIM) / math.sqrt(F.DF / (F.DF - 2))   # unit-sd t
     z_d, z_s = rng.standard_normal(NSIM), rng.standard_normal(NSIM)

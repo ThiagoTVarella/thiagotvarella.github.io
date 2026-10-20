@@ -21,7 +21,7 @@ const DEFAULTS = {
     halfLife: 8,        // days for a poll's weight to halve
     house: true,        // correct pollster house effects
     shrink: 3,          // house effects shrink as if each pollster had this many extra polls at zero
-    useR1: true,        // let first-round polls inform house effects
+    useR1: false,       // let first-round polls inform house effects (off: leans shifted after the 1st round)
     rating: true,       // weight by pollster rating
     size: true,         // weight by sqrt(sample size), capped at 5,000
     freq: true,         // penalise pollsters publishing many polls close together
