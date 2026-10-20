@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <meta name="author" content="ThiagoTVarella">
+    <meta name="description" content="Poll aggregator for the 2026 Brazilian presidential runoff: Lula vs Flávio Bolsonaro">
+    <title>Brazil 2026 runoff poll average</title>
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="../js/main.js"></script>
+    <style>
+        .wrap { padding-top: 16px; padding-bottom: 64px; }
+        .card { background:#fff; border:1px solid #e0e0e0; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,.07);
+                padding:20px 24px; margin-bottom:20px; }
+        .card h4 { margin-top:0; }
+        .big { display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end; }
+        .big .n { font-size:44px; line-height:1.1; font-weight:bold; }
+        .lula { color:#c0392b; } .flavio { color:#1f5fa8; }
+        .sub { color:#777; font-size:12px; }
+        .bar { height:22px; border-radius:4px; overflow:hidden; display:flex; margin:8px 0; }
+        .bar div { color:#fff; font-size:12px; line-height:22px; text-align:center; }
+        table.t { width:100%; border-collapse:collapse; font-size:12px; }
+        table.t th, table.t td { padding:4px 8px; border-bottom:1px solid #eee; text-align:right; white-space:nowrap; }
+        table.t th:first-child, table.t td:first-child { text-align:left; }
+        .scroll { overflow-x:auto; max-height:420px; overflow-y:auto; }
+        svg text { font-family:'Comfortaa', cursive; font-size:10px; fill:#666; }
+        .warn { background:#fff8e6; border-color:#f0d58c; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="header"></div>
+    <div class="col-lg-2 col-md-1"></div>
+    <div class="col-lg-8 col-md-10 wrap">
+        <h3>Brazil 2026 runoff: Lula vs Flávio Bolsonaro</h3>
+        <p class="sub" id="asof">Loading…</p>
+
+        <div class="card warn">
+            <b>Preliminary.</b> A first version built in one overnight session. The polling data are checked against
+            pollsters and the TSE registry; the ratings and the forecast rest on thin history and rough assumptions
+            (details in the methodology below). Treat the probabilities as a sketch, not a prediction.
+        </div>
+
+        <div class="card">
+            <h4>Poll average</h4>
+            <div class="big">
+                <div><div class="n lula" id="avgL">–</div><div class="sub">Lula, share of the two-candidate vote</div></div>
+                <div><div class="n flavio" id="avgF">–</div><div class="sub">Flávio Bolsonaro</div></div>
+                <div class="sub" id="avgNote"></div>
+            </div>
+            <div class="bar" id="avgBar"></div>
+        </div>
+
+        <div class="card">
+            <h4>Chance of winning on 25 October</h4>
+            <div class="big">
+                <div><div class="n lula" id="pL">–</div><div class="sub">Lula (poll average as is)</div></div>
+                <div><div class="n flavio" id="pF">–</div><div class="sub">Flávio Bolsonaro</div></div>
+            </div>
+            <div class="bar" id="pBar"></div>
+            <p class="sub" id="scen"></p>
+        </div>
+
+        <div class="card">
+            <h4>Trend</h4>
+            <div id="chart"></div>
+            <p class="sub">Dots: each poll's Lula share of the two-candidate vote (total votes, undecided removed). Line: weighted average
+            after correcting each pollster's lean. 50% = tie.</p>
+        </div>
+
+        <div class="card">
+            <h4>Pollster lean and rating</h4>
+            <div class="scroll"><table class="t" id="houseTbl"></table></div>
+            <p class="sub">Lean: how far a pollster runs from the consensus, in points of Lula's share (negative = favours Flávio).
+            Rating: accuracy against official results in past elections (lower plus-minus is better).</p>
+        </div>
+
+        <div class="card">
+            <h4>All polls</h4>
+            <div class="scroll"><table class="t" id="pollTbl"></table></div>
+        </div>
+
+        <div class="card">
+            <h4>Methodology</h4>
+            <p><b>Data.</b> Every national poll of Lula vs Flávio with fieldwork from 14 Aug 2026, checked against the
+            pollster's own release or a major outlet and matched to its TSE registration number. Seeded from Wikipedia; a few
+            polls Wikipedia lacks were found through the TSE registry. Two polls remain unconfirmed. Field dates differ by a day
+            in places between sources.</p>
+            <p><b>Average.</b> Each poll is weighted by pollster rating, sample size (square root, capped at 5,000), recency
+            (halves every 8 days) and a penalty for pollsters that publish many polls close together. Pollster lean is estimated
+            jointly with the trend and removed. Lean is measured against the consensus, not the truth, so a miss shared by all
+            pollsters is invisible to the average.</p>
+            <p><b>Ratings.</b> Final-3-weeks polls from 2014-2026 presidential races and 2014/2018/2022/2026 governor races,
+            scored on the error of the margin between the top two finishers against official TSE results, with presidential
+            races at full weight, the eight largest states at 0.8, and the rest at 0.4. Ratings are shrunk toward the average
+            and are rough: no usable 2002/2006 polls, thin 2014 data, some Wikipedia tables are inconsistent, and
+            pollsters with a short record are marked unrated. Ibope is treated as Ipec and FSB as Nexus.</p>
+            <p><b>Forecast.</b> 200,000 simulations of Lula's share: the average plus a shared polling error (fat-tailed, standard
+            deviation 2 points, a judgement call because only two past runoffs had enough final-week polls) plus a little drift.
+            The second scenario shifts the average by the amount final-week polls missed in this year's first round (they
+            understated Flávio). Whether that miss repeats is the main uncertainty.</p>
+            <p class="sub">Code and data: <code>brpolls/</code> in this repository.</p>
+        </div>
+    </div>
+</div>
+<div id="footer"></div>
+<script>
+const pct = x => x.toFixed(1) + "%";
+const sel = id => document.getElementById(id);
+function bar(el, l, f) {
+    sel(el).innerHTML = `<div style="width:${l}%;background:#c0392b">${pct(l)}</div><div style="width:${f}%;background:#1f5fa8">${pct(f)}</div>`;
+}
+function chart(avg) {
+    const W = 760, H = 300, m = {l: 38, r: 10, t: 10, b: 24};
+    const days = avg.series.map(s => new Date(s.date).getTime());
+    const t0 = new Date("2026-08-14").getTime(), t1 = new Date(avg.as_of).getTime();
+    const x = t => m.l + (t - t0) / (t1 - t0) * (W - m.l - m.r);
+    const lo = 42, hi = 56;
+    const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Poll trend">`;
+    for (let v = lo; v <= hi; v += 2) {
+        s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 50 ? '#888' : '#eee'}"/>` +
+             `<text x="${m.l - 4}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+    }
+    for (const d of ["2026-08-15", "2026-09-01", "2026-09-15", "2026-10-04", "2026-10-20"]) {
+        const t = new Date(d).getTime();
+        s += `<text x="${x(t)}" y="${H - 6}" text-anchor="middle">${d.slice(5)}</text>`;
+    }
+    const fr = new Date("2026-10-04").getTime();
+    s += `<line x1="${x(fr)}" x2="${x(fr)}" y1="${m.t}" y2="${H - m.b}" stroke="#bbb" stroke-dasharray="3 3"/>` +
+         `<text x="${x(fr) + 3}" y="${m.t + 9}">1st round</text>`;
+    for (const p of avg.polls) {
+        const t = (new Date(p.start).getTime() + new Date(p.end).getTime()) / 2;
+        s += `<circle cx="${x(t)}" cy="${y(p.lula_two_party)}" r="3" fill="#c0392b" fill-opacity=".28"><title>${p.pollster} ${p.start}–${p.end}: Lula ${p.lula} Flávio ${p.flavio}</title></circle>`;
+    }
+    s += `<polyline fill="none" stroke="#c0392b" stroke-width="2.2" points="` +
+         avg.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/></svg>`;
+    sel("chart").innerHTML = s;
+}
+Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.json"].map(u => fetch(u).then(r => r.json())))
+.then(([avg, fc, rat]) => {
+    const c = avg.current;
+    sel("asof").textContent = `Polls through ${avg.as_of}. Runoff on 25 October 2026.`;
+    sel("avgL").textContent = pct(c.lula); sel("avgF").textContent = pct(c.flavio);
+    sel("avgNote").textContent = `Average uncertainty ±${(1.96 * c.se).toFixed(1)} points (excludes any shared polling error); ${avg.polls.length} polls.`;
+    bar("avgBar", c.lula, c.flavio);
+    sel("pL").textContent = pct(100 * fc.base.p_lula); sel("pF").textContent = pct(100 * fc.base.p_flavio);
+    bar("pBar", 100 * fc.base.p_lula, 100 * fc.base.p_flavio);
+    sel("scen").textContent = `If this year's first-round polling miss repeats, Lula's chance falls to ${pct(100 * fc.repeat_miss.p_lula)}. ` +
+        `Shared polling error assumed: ${fc.inputs.shared_error_sd} points.`;
+    chart(avg);
+    let h = `<tr><th>Pollster</th><th>Polls</th><th>Lean (Lula pts)</th><th>Grade</th><th>Plus-minus</th><th>Past polls scored</th></tr>`;
+    for (const [k, v] of Object.entries(avg.house_effects)) {
+        const r = rat[k];
+        h += `<tr><td>${k}</td><td>${v.polls}</td><td>${v.effect > 0 ? "+" : ""}${v.effect.toFixed(1)}</td>` +
+             `<td>${r ? r.grade.split(" ")[0] : "–"}</td><td>${r ? r.plus_minus.toFixed(2) : "–"}</td><td>${r ? r.polls : 0}</td></tr>`;
+    }
+    sel("houseTbl").innerHTML = h;
+    let p = `<tr><th>Pollster</th><th>Field dates</th><th>n</th><th>Lula</th><th>Flávio</th><th>Weight</th><th>Check</th></tr>`;
+    for (const q of [...avg.polls].sort((a, b) => b.end.localeCompare(a.end))) {
+        p += `<tr><td>${q.pollster}</td><td>${q.start.slice(5)} – ${q.end.slice(5)}</td><td>${q.n ?? ""}</td><td>${q.lula}</td><td>${q.flavio}</td>` +
+             `<td>${(100 * q.weight).toFixed(1)}%</td><td>${q.url ? `<a href="${q.url}">${q.verification.replace("verified-", "")}</a>` : q.verification}</td></tr>`;
+    }
+    sel("pollTbl").innerHTML = p;
+}).catch(e => { sel("asof").textContent = "Could not load data: " + e; });
+</script>
+</body>
+</html>
