@@ -30,6 +30,8 @@ R1_END = dt.date(2026, 10, 3)   # last day of first-round fieldwork
 HALF_LIFE = 8.0        # days; weight halves every 8 days
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
+PERSISTENCE = 0.5      # how much of a pollster's 2026 first-round miss we assume carries into the runoff
+PRIOR_POLLS = 2.0      # first-round bias shrinks as if each pollster had 2 extra polls with no miss
 START = dt.date(2026, 8, 14)
 
 
@@ -139,6 +141,23 @@ def main():
         mean = sum(new[k] * len(resid[k]) for k in new) / total
         house = defaultdict(float, {k: v - mean for k, v in new.items()})
 
+    # Anchored estimate: house effects above are relative to the consensus. The 2026 first
+    # round showed the consensus itself leaned to Lula, so also try correcting each pollster
+    # by how far its own final first-round polls missed the official result.
+    anchored, anch_series, anch_bias = None, [], {}
+    cyc_path = os.path.join(DATA, "cycle2026_first_round.json")
+    if os.path.exists(cyc_path):
+        cyc = json.load(open(cyc_path, encoding="utf-8"))["pollsters"]
+        absb = {c["pollster"]: PERSISTENCE * c["polls"] / (c["polls"] + PRIOR_POLLS)
+                * (-c["mean_margin_error"] / 2) for c in cyc if c["pollster"] in house}
+        counts = defaultdict(int)
+        for p in polls:
+            counts[p["pollster"]] += 1
+        have = [k for k in absb if counts[k]]
+        offset = sum(counts[k] * (absb[k] - house[k]) for k in have) / sum(counts[k] for k in have)
+        anchored = defaultdict(float, {k: absb.get(k, house[k] + offset) for k in house})
+        anch_bias = {k: round(v, 2) for k, v in sorted(anchored.items(), key=lambda kv: kv[1])}
+
     days = [START + dt.timedelta(i) for i in range((as_of - START).days + 1)]
     series = []
     for day in days:
@@ -146,6 +165,11 @@ def main():
         if tr is not None:
             series.append({"date": day.isoformat(), "lula": round(tr, 2), "weight": round(den, 2)})
 
+    if anchored is not None:
+        for day in days:
+            tr, _ = trend_at(day, polls, anchored)
+            if tr is not None:
+                anch_series.append({"date": day.isoformat(), "lula": round(tr, 2)})
     cur_trend, _ = trend_at(as_of, polls, house)
     ws = [p["rating"] * p["w_size"] * p["w_freq"] * 0.5 ** ((as_of - p["t"]).days / HALF_LIFE)
           for p in polls]
@@ -168,6 +192,13 @@ def main():
                                                  round(cur_trend + 1.96 * se, 2)],
                     "n_eff": round(n_eff, 1), "poll_sd": round(sd, 2)},
         "series": series,
+        "anchored": None if anchored is None else {
+            "lula": round(trend_at(as_of, polls, anchored)[0], 2),
+            "flavio": round(100 - trend_at(as_of, polls, anchored)[0], 2),
+            "series": anch_series, "lula_overstatement_by_pollster": anch_bias,
+            "persistence": PERSISTENCE,
+            "note": "Each pollster's runoff polls corrected by half of how far its final 2026 "
+                    "first-round polls overstated Lula, shrunk for few polls."},
         "house_effects": {k: {"effect": round(v, 2),
                               "polls": sum(1 for p in polls if p["pollster"] == k),
                               "first_round_polls": sum(1 for p in r1 if p["pollster"] == k)}
@@ -190,6 +221,8 @@ def main():
     c = out["current"]
     print(f"as of {out['as_of']}: Lula {c['lula']:.2f}  Flávio {c['flavio']:.2f}  "
           f"(95% CI on Lula {c['ci95'][0]:.1f}-{c['ci95'][1]:.1f}; n_eff {c['n_eff']}, poll sd {c['poll_sd']})")
+    if out["anchored"]:
+        print(f"anchored to 2026 first-round accuracy: Lula {out['anchored']['lula']:.2f}")
     for k, v in out["house_effects"].items():
         print(f"  {k:26}{v['polls']:3} +{v['first_round_polls']:3}  {v['effect']:+.2f}")
 

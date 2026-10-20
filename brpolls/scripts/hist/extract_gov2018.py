@@ -447,6 +447,16 @@ def main():
         if len(polls) == n0:
             report.append(f"{uf}: no polls extracted from {page}")
 
+    # a "valid votes" hint from nearby text is only trusted when the shares sum to ~100
+    # and no blank/undecided column exists (otherwise the table is total votes)
+    for p in polls:
+        if p["valid"]:
+            tot_ = sum(v for _, _, v in p["opts"])
+            has_sp = any(o in ("BLANK_NULL", "UNDECIDED", "BLANK_NULL_UNDECIDED") for o, _, _ in p["opts"])
+            if tot_ < 97 or has_sp:
+                p["valid"] = False
+                p["notes"] = [n for n in p["notes"] if n != "valid votes"]
+
     # scope: election year up to election day
     keep = []
     for p in polls:

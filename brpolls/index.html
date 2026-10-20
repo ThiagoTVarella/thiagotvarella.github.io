@@ -52,6 +52,7 @@
                 <div class="sub" id="avgNote"></div>
             </div>
             <div class="bar" id="avgBar"></div>
+            <p id="anchNote" class="sub"></p>
         </div>
 
         <div class="card">
@@ -62,13 +63,18 @@
             </div>
             <div class="bar" id="pBar"></div>
             <p class="sub" id="scen"></p>
+            <div class="big" style="margin-top:12px">
+                <div><div class="n lula" id="pLa">–</div><div class="sub">Lula, adjusted for first-round accuracy</div></div>
+                <div><div class="n flavio" id="pFa">–</div><div class="sub">Flávio Bolsonaro</div></div>
+            </div>
         </div>
 
         <div class="card">
             <h4>Trend</h4>
             <div id="chart"></div>
-            <p class="sub">Dots: each poll's Lula share of the two-candidate vote (total votes, undecided removed). Line: weighted average
-            after correcting each pollster's lean. 50% = tie.</p>
+            <p class="sub">Dots: each poll's Lula share of the two-candidate vote (total votes, undecided removed). Solid line: weighted
+            average after correcting each pollster's lean relative to the others. Dashed line: the same, also corrected for each
+            pollster's miss in the 2026 first round. 50% = tie.</p>
         </div>
 
         <div class="card">
@@ -76,6 +82,13 @@
             <div class="scroll"><table class="t" id="houseTbl"></table></div>
             <p class="sub">Lean: how far a pollster runs from the consensus, in points of Lula's share (negative = favours Flávio).
             Rating: accuracy against official results in past elections (lower plus-minus is better).</p>
+        </div>
+
+        <div class="card">
+            <h4>How pollsters did in the 2026 first round</h4>
+            <div class="scroll"><table class="t" id="cycTbl"></table></div>
+            <p class="sub">Error of the Flávio-minus-Lula margin in each pollster's final-10-day polls against the official result
+            (Flávio 47.0%, Lula 45.2% of valid votes). Negative = the poll understated Flávio. Few polls per pollster, so read loosely.</p>
         </div>
 
         <div class="card">
@@ -98,10 +111,14 @@
             races at full weight, the eight largest states at 0.8, and the rest at 0.4. Ratings are shrunk toward the average
             and are rough: no usable 2002/2006 polls, thin 2014 data, some Wikipedia tables are inconsistent, and
             pollsters with a short record are marked unrated. Ibope is treated as Ipec and FSB as Nexus.</p>
+            <p><b>The consensus problem.</b> The average above is centred on the pollsters' consensus. In the first round, the
+            pollsters that leaned toward Flávio (Gerp, Futura, Veritá, Palver) landed close to the official result, while
+            Datafolha, Quaest, Nexus, MDA and Indexa understated him by 5 to 8 points of margin. A consensus-centred average
+            therefore risks inheriting that miss. The adjusted estimate corrects each pollster by half of its own first-round miss
+            (a judgement call: how much a miss carries into the runoff is unknown, and each pollster has only 1 to 9 polls to judge).</p>
             <p><b>Forecast.</b> 200,000 simulations of Lula's share: the average plus a shared polling error (fat-tailed, standard
             deviation 2 points, a judgement call because only two past runoffs had enough final-week polls) plus a little drift.
-            The second scenario shifts the average by the amount final-week polls missed in this year's first round (they
-            understated Flávio). Whether that miss repeats is the main uncertainty.</p>
+            Both the plain and the adjusted average are simulated. Which is closer to the truth is the main uncertainty.</p>
             <p class="sub">Code and data: <code>brpolls/</code> in this repository.</p>
         </div>
     </div>
@@ -136,6 +153,10 @@ function chart(avg) {
         const t = (new Date(p.start).getTime() + new Date(p.end).getTime()) / 2;
         s += `<circle cx="${x(t)}" cy="${y(p.lula_two_party)}" r="3" fill="#c0392b" fill-opacity=".28"><title>${p.pollster} ${p.start}–${p.end}: Lula ${p.lula} Flávio ${p.flavio}</title></circle>`;
     }
+    if (avg.anchored) {
+        s += `<polyline fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="5 4" points="` +
+             avg.anchored.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/>`;
+    }
     s += `<polyline fill="none" stroke="#c0392b" stroke-width="2.2" points="` +
          avg.series.map(p => `${x(new Date(p.date).getTime())},${y(p.lula)}`).join(" ") + `"/></svg>`;
     sel("chart").innerHTML = s;
@@ -149,8 +170,11 @@ Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.j
     bar("avgBar", c.lula, c.flavio);
     sel("pL").textContent = pct(100 * fc.base.p_lula); sel("pF").textContent = pct(100 * fc.base.p_flavio);
     bar("pBar", 100 * fc.base.p_lula, 100 * fc.base.p_flavio);
-    sel("scen").textContent = `If this year's first-round polling miss repeats, Lula's chance falls to ${pct(100 * fc.repeat_miss.p_lula)}. ` +
-        `Shared polling error assumed: ${fc.inputs.shared_error_sd} points.`;
+    sel("scen").textContent = `Shared polling error assumed: ${fc.inputs.shared_error_sd} points of Lula's share.`;
+    if (fc.anchored) {
+        sel("pLa").textContent = pct(100 * fc.anchored.p_lula); sel("pFa").textContent = pct(100 * fc.anchored.p_flavio);
+        sel("anchNote").textContent = `Adjusted for each pollster's 2026 first-round accuracy: Lula ${pct(avg.anchored.lula)}, Flávio ${pct(avg.anchored.flavio)}.`;
+    }
     chart(avg);
     let h = `<tr><th>Pollster</th><th>Polls</th><th>Lean (Lula pts)</th><th>Grade</th><th>Plus-minus</th><th>Past polls scored</th></tr>`;
     for (const [k, v] of Object.entries(avg.house_effects)) {
@@ -159,6 +183,13 @@ Promise.all(["data/average.json", "data/forecast.json", "data/pollster_ratings.j
              `<td>${r ? r.grade.split(" ")[0] : "–"}</td><td>${r ? r.plus_minus.toFixed(2) : "–"}</td><td>${r ? r.polls : 0}</td></tr>`;
     }
     sel("houseTbl").innerHTML = h;
+    fetch("data/cycle2026_first_round.json").then(r => r.json()).then(cy => {
+        let t = `<tr><th>Pollster</th><th>Polls</th><th>Margin error</th><th>Absolute error</th></tr>`;
+        for (const q of cy.pollsters) {
+            t += `<tr><td>${q.pollster}</td><td>${q.polls}</td><td>${q.mean_margin_error > 0 ? "+" : ""}${q.mean_margin_error.toFixed(1)}</td><td>${q.mean_abs_error.toFixed(1)}</td></tr>`;
+        }
+        sel("cycTbl").innerHTML = t;
+    });
     let p = `<tr><th>Pollster</th><th>Field dates</th><th>n</th><th>Lula</th><th>Flávio</th><th>Weight</th><th>Check</th></tr>`;
     for (const q of [...avg.polls].sort((a, b) => b.end.localeCompare(a.end))) {
         p += `<tr><td>${q.pollster}</td><td>${q.start.slice(5)} – ${q.end.slice(5)}</td><td>${q.n ?? ""}</td><td>${q.lula}</td><td>${q.flavio}</td>` +

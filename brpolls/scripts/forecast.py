@@ -8,8 +8,9 @@ Lula's share of the two-candidate (valid) vote = poll average
     averages missed in past presidential runoffs (rounds 2 of 2010-2022 in race_errors.csv)
 Lula wins if his share is above 50. Two scenarios are reported:
   base          the poll average as is
-  repeat_miss   the average shifted by the 2026 first-round miss of final-week polls
-                (they understated Flávio), i.e. if the same bias persists in the runoff
+  anchored      the average corrected pollster by pollster for how far its own final
+                2026 first-round polls missed the official result (they understated
+                Flávio), assuming half of that miss carries into the runoff
 This is a first version: error sizes rest on only four past runoffs.
 """
 import csv
@@ -93,17 +94,21 @@ def main():
                    "first_round_2026_final_week_margin_error": round(miss26, 2),
                    "first_round_2026_polls_used": n26},
         "base": summary(simulate(center, sd, drift_sd, avg_se, 0.0, 1)),
-        "repeat_miss": summary(simulate(center, sd, drift_sd, avg_se, shift, 2)),
-        "repeat_miss_shift_pts": round(shift, 2),
     }
-    out["repeat_miss"]["note"] = ("Average shifted by %+.2f points of Lula's two-candidate share, "
-                                  "the amount final-week 2026 first-round polls missed." % shift)
+    if avg.get("anchored"):
+        a_center = avg["anchored"]["lula"]
+        out["anchored_poll_average_lula"] = a_center
+        out["anchored"] = summary(simulate(a_center, sd, drift_sd, avg_se, 0.0, 2))
+        out["anchored"]["note"] = ("Average corrected for each pollster's 2026 first-round miss "
+                                   "(half assumed to persist): Lula %.2f vs %.2f." % (a_center, center))
+    out["repeat_miss_uniform_shift_pts"] = round(shift, 2)
     with open(os.path.join(DATA, "forecast.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    b, r = out["base"], out["repeat_miss"]
+    b = out["base"]
+    r = out.get("anchored", b)
     print(f"average Lula {center:.2f} ({days} days left); error sd {sd:.2f} (empirical {rmse:.2f})")
     print(f"base:        Lula {b['p_lula']:.1%}  Flávio {b['p_flavio']:.1%}  median Lula share {b['lula_share']['median']}")
-    print(f"repeat miss: Lula {r['p_lula']:.1%}  Flávio {r['p_flavio']:.1%}  (shift {shift:+.2f})")
+    print(f"anchored:    Lula {r['p_lula']:.1%}  Flávio {r['p_flavio']:.1%}  (center {out.get('anchored_poll_average_lula')})")
     print(out["inputs"]["past_runoff_final_week_error_margin_pts"], out["inputs"]["first_round_2026_final_week_margin_error"])
 
 
