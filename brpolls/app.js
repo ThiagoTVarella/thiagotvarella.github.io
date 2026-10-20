@@ -686,10 +686,13 @@ if (typeof document !== "undefined") (function () {
         const asOf = R.asOf;
         $("asOf").value = asOf - DATA.start; $("asOfV").textContent = asOf === DATA.lastDay ? "hoje" : fdl(asOf);
         document.body.classList.toggle("simple", view.mode === "simple");
+        document.body.classList.toggle("pro", view.mode === "pro");
         document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("on", b.dataset.view === view.mode));
-        $("modeHint").textContent = view.mode === "simple"
-            ? "Mostra o essencial. A visão detalhada tem todos os ajustes, filtros e tabelas."
-            : "Todos os ajustes do modelo estão liberados.";
+        $("modeHint").textContent = {
+            simple: "Mostra o essencial.",
+            pro: "Os ajustes principais, as tabelas dos institutos e a máquina do tempo.",
+            full: "O painel inteiro, com uma explicação curta para cada ajuste.",
+        }[view.mode] || "";
         $("minGrade").value = opt.minGrade; $("keepUnrated").checked = opt.keepUnrated; $("keepUnrated").disabled = !opt.minGrade;
         const kept = DATA.pollsters.filter(n => gradeOk(n, DATA, opt) && !opt.exclude.includes(n)).length;
         $("minGradeV").textContent = `${kept} de ${DATA.pollsters.length} institutos`;
