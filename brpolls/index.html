@@ -71,6 +71,10 @@
         table.t tr.off td { color:#bbb; }
         .scroll { overflow-x:auto; max-height:460px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
         details summary { cursor:pointer; font-weight:bold; margin:6px 0; }
+        body.simple .adv { display:none !important; }
+        .modebar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:4px 0 12px; }
+        #methodCard > details > summary { font-size:18px; font-weight:normal; margin:0; }
+        #methodCard > details > summary span { font-size:12px; color:#777; }
         @media (max-width: 700px) {
             .card { padding:14px 12px; }
             .kpis { grid-template-columns: 1fr; gap:8px; }
@@ -93,9 +97,15 @@
     <div class="col-lg-10 col-md-12 wrap">
         <h3>Segundo turno de 2026: Lula x Flávio Bolsonaro</h3>
         <p class="sub" id="asofLine">Carregando…</p>
+        <div class="modebar">
+            <div class="seg" role="group" aria-label="Tipo de visualização">
+                <button data-view="simple">Visão simples</button><button data-view="pro">Visão detalhada</button>
+            </div>
+            <span class="sub" id="modeHint"></span>
+        </div>
         <div class="warn"><b>Versão preliminar.</b> Conferi as pesquisas uma a uma nos sites dos institutos e no registro do TSE, então nos
             dados eu confio. Já as notas dos institutos e a previsão se apoiam num histórico curtinho e em algumas escolhas minhas (explico
-            tudo lá embaixo, na metodologia). Tudo aqui é recalculado no seu navegador, então fique à vontade para mexer no modelo e discordar de mim.</div>
+            tudo na metodologia, no fim da página). Na visão detalhada dá para mexer no modelo inteiro, e fique à vontade para discordar de mim.</div>
         <div class="custom" id="custom"></div>
 
         <div class="card">
@@ -123,13 +133,13 @@
                 <div class="seg" role="group" aria-label="Período">
                     <button data-win="14">14 dias</button><button data-win="30">30 dias</button><button data-win="r2">Desde o 1º turno</button><button data-win="all">Tudo</button>
                 </div>
-                <label class="tg">Colorir por
+                <label class="tg adv">Colorir por
                     <select id="colorBy" aria-label="Colorir os pontos por">
                         <option value="lean">Viés do instituto</option><option value="pollster">Instituto</option>
                         <option value="mode">Método da pesquisa</option><option value="phase">Antes/depois do 1º turno</option>
                     </select></label>
             </div>
-            <div class="toolbar">
+            <div class="toolbar adv">
                 <label class="tg"><input type="checkbox" id="adjusted">Mostrar pontos já corrigidos pelo viés do instituto</label>
                 <label class="tg"><input type="checkbox" id="band">Faixa de incerteza</label>
                 <label class="tg"><input type="checkbox" id="sized">Tamanho do ponto = peso</label>
@@ -137,7 +147,7 @@
             </div>
             <div id="chartWrap"><div id="chart"></div><div id="tip"></div></div>
             <div id="legend"></div>
-            <div class="slider" style="margin-top:4px">
+            <div class="slider adv" style="margin-top:4px">
                 <span>Período</span>
                 <div class="dual"><div class="track"></div><input type="range" id="win0" step="1" aria-label="Início do período"><input type="range" id="win1" step="1" aria-label="Fim do período"></div>
                 <span class="v" id="winV"></span>
@@ -146,18 +156,20 @@
         </div>
 
         <div class="card">
-            <h4>Máquina do tempo</h4>
-            <p class="sub">Volte para qualquer dia e veja como estavam a média e a previsão, usando só as pesquisas que já tinham saído até ali.</p>
-            <div class="slider">
-                <span>Pesquisas até</span><input type="range" id="asOf" step="1" aria-label="Usar pesquisas até esta data"><span class="v" id="asOfV"></span>
+            <div class="adv">
+                <h4>Máquina do tempo</h4>
+                <p class="sub">Volte para qualquer dia e veja como estavam a média e a previsão, usando só as pesquisas que já tinham saído até ali.</p>
+                <div class="slider">
+                    <span>Pesquisas até</span><input type="range" id="asOf" step="1" aria-label="Usar pesquisas até esta data"><span class="v" id="asOfV"></span>
+                </div>
+                <button class="btn dark" id="play">▶ Rever a campanha</button>
             </div>
-            <button class="btn dark" id="play">▶ Rever a campanha</button>
-            <h4 style="margin-top:18px">Chance de vitória ao longo do tempo</h4>
+            <h4 class="probTitle">Chance de vitória ao longo do tempo</h4>
             <div id="pChart"></div>
-            <p class="sub">Linha cheia: com os seus ajustes. Tracejado cinza (quando você muda algo): o modelo que eu publiquei.</p>
+            <p class="sub adv">Linha cheia: com os seus ajustes. Tracejado cinza (quando você muda algo): o modelo que eu publiquei.</p>
         </div>
 
-        <div class="card">
+        <div class="card adv">
             <h4>Ajustes do modelo</h4>
             <p class="sub">Os valores iniciais são o modelo que eu publiquei. Qualquer mudança atualiza todos os números e gráficos da página, e também o link na barra de endereço.</p>
             <div class="slider"><span>Tipo de suavização</span>
@@ -186,6 +198,14 @@
                 <label class="tg"><input type="checkbox" id="pre">Incluir pesquisas de antes do 1º turno</label>
                 <label class="tg"><input type="checkbox" id="unverified">Incluir as 2 pesquisas que não consegui confirmar</label>
             </div>
+            <div class="slider"><span>Filtrar por nota do instituto</span>
+                <select id="minGrade" aria-label="Nota mínima do instituto">
+                    <option value="">Todos os institutos</option>
+                    <option value="B">Nota B ou melhor</option>
+                    <option value="B+">Nota B+ ou melhor</option>
+                    <option value="A-">Nota A- ou melhor</option>
+                </select><span class="v" id="minGradeV"></span></div>
+            <label class="tg" style="margin-bottom:6px"><input type="checkbox" id="keepUnrated">Manter os institutos que ainda não têm nota</label>
             <div class="sub" style="margin-top:6px">Métodos de pesquisa usados (toque para tirar):</div>
             <div id="modes"></div>
             <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
@@ -194,7 +214,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card adv">
             <h4>Institutos</h4>
             <p class="sub">Toque numa linha para destacar as pesquisas daquele instituto no gráfico; desmarque para tirá-lo do modelo. Dá para ordenar por qualquer coluna.
                 <button class="btn" id="inflBtn" style="margin-left:6px">Calcular a influência de cada instituto</button></p>
@@ -207,16 +227,16 @@
             <div class="scroll"><table class="t" id="pollTbl"></table></div>
         </div>
 
-        <div class="card">
+        <div class="card adv">
             <h4>Como os institutos se saíram no 1º turno de 2026</h4>
             <div class="scroll"><table class="t" id="cycTbl"></table></div>
             <p class="sub">Erro na diferença Flávio menos Lula nas pesquisas dos últimos 10 dias, comparado ao resultado oficial
                 (Flávio 47,0%, Lula 45,2% dos votos válidos). Negativo = subestimou o Flávio. São poucas pesquisas por instituto, então não leve muito a sério.</p>
         </div>
 
-        <div class="card">
-            <h4>Metodologia</h4>
-            <details open><summary>Os dados</summary>
+        <div class="card" id="methodCard">
+            <details><summary>Metodologia <span>(toque para abrir)</span></summary>
+            <details><summary>Os dados</summary>
                 <p>Juntei todas as pesquisas nacionais de Lula x Flávio com campo a partir de 14 de agosto de 2026. Cada uma foi conferida no
                     material do próprio instituto ou num veículo grande, e casada com o número de registro no TSE. Comecei pela lista da
                     Wikipédia e achei as que faltavam olhando o registro do TSE. Duas eu não consegui confirmar direito (você pode tirá-las
@@ -224,8 +244,8 @@
             <details><summary>A média</summary>
                 <p>O peso de cada pesquisa é: nota do instituto × raiz do tamanho da amostra (com teto de 5.000) × quão recente ela é
                     (o peso cai pela metade a cada <i>meia-vida</i>) × uma penalidade para quem publica muitas pesquisas em sequência.
-                    O viés de cada instituto é estimado junto com a tendência e depois descontado. Um detalhe importante: esse viés é medido
-                    em relação ao consenso dos institutos, não em relação à verdade. Se todo mundo errar junto, a média erra junto.
+                    O viés de cada instituto é estimado junto com a tendência e depois descontado. Um detalhe: esse viés é medido
+                    em relação ao consenso dos institutos. Se todo mundo errar junto, a média erra junto.
                     A conta é feita sobre a fatia do Lula no total dos dois candidatos (usando votos totais), então indecisos, brancos e nulos ficam de fora.</p>
                 <p>Nos ajustes dá para trocar o jeito de suavizar: exponencial (o padrão, que só olha para trás), gaussiana (centrada no dia),
                     janela móvel simples (7, 15, 30 dias…) ou uma spline cúbica de suavização, igual à do <i>csaps</i>. Na spline, a
@@ -238,11 +258,11 @@
                     2022 e 2026. Comparei a diferença entre os dois primeiros colocados com o resultado oficial do TSE. Eleição presidencial
                     conta peso cheio, os oito maiores estados contam 0,8 e os demais 0,4. As notas são puxadas para a média, e quem tem pouco
                     histórico fica sem nota. Tratei o Ibope como Ipec e a FSB como Nexus.</p>
-                <p class="sub">Testei a robustez: incluir ou não as eleições para governador muda bastante a ordem dos institutos, mas a forma
-                    de pesar os estados quase não muda nada (correlação de 0,88 entre os esquemas com governador). Na média final, o peso de um
-                    instituto varia no máximo 0,29, então isso mexe mais nas notas do que no resultado.</p></details>
+                <p class="sub">Testei a robustez. Usar só as eleições presidenciais dá uma ordem de institutos diferente da que inclui governadores
+                    (correlação de 0,40 a 0,47). Entre os esquemas que incluem governadores, a ordem fica parecida (correlação de 0,88). Na
+                    média final, o peso de um instituto varia no máximo 0,29 entre os esquemas.</p></details>
             <details><summary>O erro do 1º turno se repete no 2º?</summary>
-                <p>Essa foi a pergunta que mais me preocupou. Em toda eleição desde 2010, as pesquisas finais do 1º turno exageraram a
+                <p>Em toda eleição desde 2010, as pesquisas finais do 1º turno exageraram a
                     vantagem do candidato do PT (em 13, 15, 5, 2 e 4 pontos em 2010, 2014, 2018, 2022 e 2026). Só que no 2º turno elas
                     ficaram praticamente sem viés (+0,3, 0,0, −4,9 e +0,2 de 2010 a 2022). Minha leitura é que o erro do 1º turno vem
                     muito do voto que migra de última hora entre candidatos, e isso não existe num segundo turno de dois. O que persiste é
@@ -264,6 +284,7 @@
                 <p>Refazendo a mesma média para os segundos turnos passados, cinco dias antes da eleição, ela acertou os quatro vencedores:</p>
                 <div class="scroll"><table class="t" id="btTbl"></table></div></details>
             <p class="sub" style="margin-top:10px">Código e dados: pasta <code>brpolls/</code> no repositório deste site. Qualquer erro é meu; se achar algum, me avise.</p>
+            </details>
         </div>
     </div>
 </div>
