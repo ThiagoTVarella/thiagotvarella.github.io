@@ -34,6 +34,8 @@ const DEFAULTS = {
     unverified: true,   // include the two polls not confirmed against a primary source
     errSd: 2.0,         // shared polling error, points of Lula's two-candidate share
     shift: 0,           // assume polls overstate Lula by this much (stress test)
+    minGrade: "",       // keep only pollsters graded at least this ("" = all)
+    keepUnrated: true,  // with a grade filter, keep pollsters that have no grade yet
     exclude: [],        // pollsters left out
     excludeModes: [],   // survey modes left out
     asOf: null,         // last day of polls to use (null = latest)
@@ -201,9 +203,17 @@ function winProb(center, se, days, errSd) {
     return 1 - t4cdf((50 - center) / scale);
 }
 
+const GRADES = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D"];
+function gradeOk(name, data, opt) {
+    if (!opt.minGrade) return true;
+    const g = (data.grades || {})[name];
+    if (!g || GRADES.indexOf(g) < 0) return opt.keepUnrated;
+    return GRADES.indexOf(g) <= GRADES.indexOf(opt.minGrade);
+}
+
 function compute(data, opt) {
     const asOf = opt.asOf == null ? data.lastDay : opt.asOf;
-    const ex = new Set(opt.exclude), exm = new Set(opt.excludeModes);
+    const ex = new Set(opt.exclude.concat((data.pollsters || []).filter(n => !gradeOk(n, data, opt)))), exm = new Set(opt.excludeModes);
     const runoff = data.runoff.filter(p => p.b <= asOf && !ex.has(p.pollster) && !exm.has(p.mode)
         && (opt.pre || p.phase === "post_first_round")
         && (opt.unverified || p.verification !== "unverified"));
@@ -284,7 +294,7 @@ if (typeof document !== "undefined") (function () {
     const EVENTS = [{d: FIRST_ROUND, label: "1º turno"}, {d: toDay("2026-10-18"), label: "Debate"}];
 
     let DATA, OFFICIAL, FC, FH, RAT, CYC, opt, R, view = {metric: "share", color: "lean", adjusted: false,
-        band: true, sized: true, rawLine: false, w0: null, w1: null}, sel = {poll: null, pollster: null}, hover = null,
+        band: true, sized: true, rawLine: false, mode: "simple", w0: null, w1: null}, sel = {poll: null, pollster: null}, hover = null,
         infl = null, playing = null;
 
     /* ---------- state in the URL, so a view can be shared */
@@ -311,8 +321,8 @@ if (typeof document !== "undefined") (function () {
             if (JSON.stringify(v) === JSON.stringify(d)) continue;
             h.set(k, Array.isArray(v) ? v.join("|") : typeof v === "boolean" ? (v ? "1" : "0") : k === "asOf" ? fromDay(v) : v);
         }
-        for (const k of ["metric", "color", "adjusted", "band", "sized", "rawLine"]) {
-            const d = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false}[k];
+        for (const k of ["metric", "color", "adjusted", "band", "sized", "rawLine", "mode"]) {
+            const d = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false, mode: "simple"}[k];
             if (view[k] !== d) h.set(k, typeof view[k] === "boolean" ? (view[k] ? "1" : "0") : view[k]);
         }
         if (view.w0 != null) h.set("w0", fromDay(view.w0));
@@ -586,7 +596,7 @@ if (typeof document !== "undefined") (function () {
             const mine = R.runoff.filter(p => p.pollster === n), cyc = (CYC.pollsters || []).find(c => c.pollster === n), r = RAT[n] || {};
             return {n, polls: mine.length, lean: R.house[n], grade: grade(r.grade), pm: r.plus_minus, past: r.polls || 0,
                 r1: cyc ? cyc.mean_margin_error : null, wt: mine.reduce((s, p) => s + p.wn, 0), infl: infl ? infl[n] : null,
-                excluded: opt.exclude.includes(n)};
+                excluded: opt.exclude.includes(n) || !gradeOk(n, DATA, opt)};
         });
         const key = pSort.k;
         rows.sort((a, b) => ((a[key] ?? -1e9) > (b[key] ?? -1e9) ? 1 : (a[key] ?? -1e9) < (b[key] ?? -1e9) ? -1 : 0) * pSort.dir);
@@ -669,6 +679,14 @@ if (typeof document !== "undefined") (function () {
         $("r1Weight").disabled = !opt.house || !opt.useR1;
         const asOf = R.asOf;
         $("asOf").value = asOf - DATA.start; $("asOfV").textContent = asOf === DATA.lastDay ? "hoje" : fdl(asOf);
+        document.body.classList.toggle("simple", view.mode === "simple");
+        document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("on", b.dataset.view === view.mode));
+        $("modeHint").textContent = view.mode === "simple"
+            ? "Mostra o essencial. A visão detalhada tem todos os ajustes, filtros e tabelas."
+            : "Todos os ajustes do modelo estão liberados.";
+        $("minGrade").value = opt.minGrade; $("keepUnrated").checked = opt.keepUnrated; $("keepUnrated").disabled = !opt.minGrade;
+        const kept = DATA.pollsters.filter(n => gradeOk(n, DATA, opt) && !opt.exclude.includes(n)).length;
+        $("minGradeV").textContent = `${kept} de ${DATA.pollsters.length} institutos`;
         document.querySelectorAll("[data-metric]").forEach(b => b.classList.toggle("on", b.dataset.metric === view.metric));
         document.querySelectorAll("[data-win]").forEach(b => b.classList.toggle("on", b.dataset.win === currentWin()));
         $("colorBy").value = view.color;
@@ -704,6 +722,9 @@ if (typeof document !== "undefined") (function () {
         $("asOf").addEventListener("input", () => { stopPlay(); const d = DATA.start + parseInt($("asOf").value, 10); opt.asOf = d >= DATA.lastDay ? null : d; recompute(); });
         $("play").onclick = () => playing ? stopPlay() : startPlay();
         document.querySelectorAll("[data-metric]").forEach(b => b.onclick = () => { view.metric = b.dataset.metric; render(); writeHash(); });
+        document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { view.mode = b.dataset.view; render(); writeHash(); });
+        $("minGrade").onchange = () => { opt.minGrade = $("minGrade").value; recompute(); };
+        $("keepUnrated").onchange = () => { opt.keepUnrated = $("keepUnrated").checked; recompute(); };
         document.querySelectorAll("[data-win]").forEach(b => b.onclick = () => {
             const w = b.dataset.win;
             view.w1 = null;
@@ -735,7 +756,7 @@ if (typeof document !== "undefined") (function () {
     }
     function resetAll() {
         opt = JSON.parse(JSON.stringify(DEFAULTS));
-        view = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false, w0: null, w1: null};
+        view = {metric: "share", color: "lean", adjusted: false, band: true, sized: true, rawLine: false, mode: view.mode, w0: null, w1: null};
         sel = {poll: null, pollster: null};
         stopPlay();
         recompute();
@@ -771,7 +792,8 @@ if (typeof document !== "undefined") (function () {
             OFFICIAL = avg; FC = fc; FH = fh; RAT = rat || {}; CYC = cyc || {pollsters: []};
             const runoff = prepare(avg.polls, "runoff"), r1 = prepare(avg.first_round_polls, "r1");
             DATA = {runoff, r1, start: toDay(avg.params.start), lastDay: toDay(avg.as_of),
-                pollsters: [...new Set(runoff.map(p => p.pollster))].sort()};
+                pollsters: [...new Set(runoff.map(p => p.pollster))].sort(), grades: {}};
+            for (const n of DATA.pollsters) DATA.grades[n] = ((RAT[n] || {}).grade || "").split(" ")[0];
             const span = DATA.lastDay - DATA.start;
             for (const id of ["asOf", "win0", "win1"]) { $(id).max = span; $(id).min = id === "asOf" ? 10 : 0; }
             opt = readHash();
