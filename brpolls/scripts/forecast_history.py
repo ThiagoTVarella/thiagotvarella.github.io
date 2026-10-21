@@ -2,7 +2,7 @@
 
     python forecast_history.py   ->  ../data/forecast_history.json
 
-For each day D from 2026-09-01 to 2026-10-20: rebuild the house-effect-corrected average
+For each day D from 2026-09-01 to the as-of date of ../data/average.json: rebuild the house-effect-corrected average
 from polls with field_end <= D (first-round polls with midpoint <= D) using average.py's
 load / load_r1 / trend_at and the same 40-iteration house-effect loop (vectorised here,
 same arithmetic), then P(Lula > 50 on election day) with forecast.py's error model:
@@ -23,7 +23,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 import average as A  # noqa: E402
 import forecast as F  # noqa: E402
 
-FIRST, LAST = dt.date(2026, 9, 1), dt.date(2026, 10, 20)
+FIRST = dt.date(2026, 9, 1)
+LAST = dt.date.fromisoformat(json.load(open(os.path.join(os.path.dirname(__file__), "..", "data", "average.json")))["as_of"])
 ELECTION = dt.date.fromisoformat(F.ELECTION_DAY)
 NSIM = 20_000
 
