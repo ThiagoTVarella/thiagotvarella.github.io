@@ -195,12 +195,33 @@ function t4cdf(x) {
     return 0.5 + 0.375 * (x / Math.sqrt(1 + x * x / 4)) * (1 - u / 3);
 }
 
-// P(Lula > 50): shared t-distributed error plus normal drift and the average's own error,
-// combined into one fat-tailed distribution with the same variance
-function winProb(center, se, days, errSd) {
+/* P(Lula > 50) by Monte Carlo, the same simulation scripts/forecast.py runs: Lula's share on election day =
+ * the average + a shared polling error (Student t, 4 degrees of freedom, scaled to the chosen standard deviation)
+ * + drift over the days left + the average's own noise. The random draws are made once with a fixed seed and
+ * reused, so moving a slider changes only the inputs and the probability does not jitter. */
+const SIM_N = 200000, SIM_DF = 4;
+let SIM = null;
+function simDraws() {
+    if (SIM) return SIM;
+    let st = 20261025;                                       // mulberry32 PRNG, fixed seed
+    const rnd = () => { st = (st + 0x6D2B79F5) | 0; let t = Math.imul(st ^ (st >>> 15), 1 | st); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    const norm = () => Math.sqrt(-2 * Math.log(1 - rnd())) * Math.cos(2 * Math.PI * rnd());
+    const T = new Float32Array(SIM_N), D = new Float32Array(SIM_N), E = new Float32Array(SIM_N);
+    for (let i = 0; i < SIM_N; i++) {
+        const chi2 = norm() ** 2 + norm() ** 2 + norm() ** 2 + norm() ** 2;   // chi-square with 4 df
+        T[i] = norm() / Math.sqrt(chi2 / SIM_DF);
+        D[i] = norm(); E[i] = norm();
+    }
+    return (SIM = {T, D, E});
+}
+// n = how many of the stored draws to use (all of them for the headline, fewer for the daily history)
+function winProb(center, se, days, errSd, n = SIM_N) {
+    const {T, D, E} = simDraws();
+    const scale = errSd / Math.sqrt(SIM_DF / (SIM_DF - 2));
     const drift = 0.2 * Math.sqrt(Math.max(days, 0));
-    const scale = Math.sqrt((errSd * errSd + drift * drift + se * se) / 2);
-    return 1 - t4cdf((50 - center) / scale);
+    let wins = 0;
+    for (let i = 0; i < n; i++) if (center + scale * T[i] + drift * D[i] + se * E[i] > 50) wins++;
+    return wins / n;
 }
 
 const GRADES = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D"];
@@ -209,6 +230,21 @@ function gradeOk(name, data, opt) {
     const g = (data.grades || {})[name];
     if (!g || GRADES.indexOf(g) < 0) return opt.keepUnrated;
     return GRADES.indexOf(g) <= GRADES.indexOf(opt.minGrade);
+}
+
+// Small correction used by the forecast: about a third of a pollster's first-round miss relative to its peers
+// reappears in the runoff (history in data/bias_persistence.json). Weighted like the average, per day.
+function persistShift(day, runoff, eb, opt) {
+    if (!opt.house || !eb) return 0;
+    let num = 0, den = 0;
+    for (const p of runoff) {
+        const k = kernel(day - p.t, width(opt), kernelSmoother(opt));
+        if (k === 0) continue;
+        const w = p.bw * k;
+        num += w * (eb[p.pollster] || 0);
+        den += w;
+    }
+    return den ? -opt.houseStrength * num / den : 0;
 }
 
 function compute(data, opt) {
@@ -242,11 +278,13 @@ function compute(data, opt) {
         if (tr.v === null) continue;
         const v = spl ? spl(d) : tr.v;
         const se = sd / Math.sqrt(Math.max(1, tr.nEff));
-        series.push({d, v, se, p: winProb(v + opt.shift, se, ELECTION - d, opt.errSd)});
+        const fr = persistShift(d, runoff, data.expectedBias, opt);
+        series.push({d, v, se, fr, p: winProb(v + fr + opt.shift, se, ELECTION - d, opt.errSd, 30000)});
         const r = splRaw ? {v: splRaw(d)} : trendAt(d, runoff, {}, width(opt), null, opt.smoother);   // no house-effect correction
         if (r.v !== null) raw.push({d, v: r.v});
     }
     const last = series[series.length - 1] || {v: NaN, se: NaN, p: NaN};
+    if (series.length) last.p = winProb(last.v + last.fr + opt.shift, last.se, ELECTION - last.d, opt.errSd);   // headline: all 200,000 draws
 
     let wsum = 0;
     for (const p of runoff) {
@@ -369,7 +407,9 @@ if (typeof document !== "undefined") (function () {
         $("pBar").innerHTML = `<div style="width:${100 * c.p}%;background:${LULA}">${pct(100 * c.p, 0)}</div><div style="width:${100 - 100 * c.p}%;background:${FLAVIO}">${pct(100 - 100 * c.p, 0)}</div>`;
         $("asofLine").textContent = `Pesquisas até ${fdl(R.asOf)} · ${R.runoff.length} pesquisas de 2º turno · faltam ${R.daysLeft} dias para a eleição (25/10/2026)`;
         const gap = 50 - (c.v + opt.shift);
-        $("probExplain").textContent = `Como calculo: a média deixa o Lula ${fmt(Math.abs(gap))} ponto ${gap >= 0 ? "abaixo" : "acima"} de 50%. ` +
+        const fr = R.series.length ? R.series[R.series.length - 1].fr : 0;
+        $("probExplain").textContent = `Como calculo: a média deixa o Lula ${fmt(Math.abs(gap))} ponto ${gap >= 0 ? "abaixo" : "acima"} de 50%` +
+            (Math.abs(fr) >= 0.005 ? ` (a previsão parte de ${fmt(c.v + fr + opt.shift, 2)}%, já com um pequeno ajuste pelo erro de cada instituto no 1º turno)` : "") + `. ` +
             `Somo a ela um erro que todas as pesquisas podem cometer juntas (${fmt(opt.errSd)} pontos, com caudas largas), a oscilação até a eleição ` +
             `e o ruído da própria média, e conto em que fração dos cenários o Lula passa de 50%.`;
         $("kNote").textContent = `±${fmt(1.96 * c.se)} ponto só pelo ruído das pesquisas; a previsão ainda soma um erro comum de ${fmt(opt.errSd)} pontos.`;
@@ -809,7 +849,8 @@ if (typeof document !== "undefined") (function () {
             OFFICIAL = avg; FC = fc; FH = fh; RAT = rat || {}; CYC = cyc || {pollsters: []};
             const runoff = prepare(avg.polls, "runoff"), r1 = prepare(avg.first_round_polls, "r1");
             DATA = {runoff, r1, start: toDay(avg.params.start), lastDay: toDay(avg.as_of),
-                pollsters: [...new Set(runoff.map(p => p.pollster))].sort(), grades: {}};
+                pollsters: [...new Set(runoff.map(p => p.pollster))].sort(), grades: {},
+                expectedBias: (avg.first_round_informed || {}).expected_runoff_bias || null};
             for (const n of DATA.pollsters) DATA.grades[n] = ((RAT[n] || {}).grade || "").split(" ")[0];
             const span = DATA.lastDay - DATA.start;
             for (const id of ["asOf", "win0", "win1"]) { $(id).max = span; $(id).min = id === "asOf" ? 10 : 0; }

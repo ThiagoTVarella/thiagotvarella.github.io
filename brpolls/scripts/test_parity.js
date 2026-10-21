@@ -9,7 +9,8 @@ const fc = require(path.join(__dirname, "../data/forecast.json"));
 
 const runoff = prepare(avg.polls, "runoff"), r1 = prepare(avg.first_round_polls, "r1");
 const data = {runoff, r1, start: toDay(avg.params.start), lastDay: toDay(avg.as_of),
-    pollsters: [...new Set(runoff.map(p => p.pollster))].sort()};
+    pollsters: [...new Set(runoff.map(p => p.pollster))].sort(),
+    expectedBias: (avg.first_round_informed || {}).expected_runoff_bias || null};
 const R = compute(data, JSON.parse(JSON.stringify(DEFAULTS)));
 
 let failed = false;
@@ -31,6 +32,6 @@ const okH = Number.isFinite(worst) && worst < 0.05;
 if (!okH) failed = true;
 console.log(`${okH ? "PASS" : "FAIL"}  house effects: max |diff|=${worst.toFixed(4)} (${worstName}) over ${Object.keys(avg.house_effects).length} pollsters (tol 0.05)`);
 
-check("win probability (Lula)", R.current.p, fc.base.p_lula, 0.03);
+check("win probability (Lula)", R.current.p, fc.base.p_lula, 0.01);   // both are 200,000-draw simulations
 
 process.exit(failed ? 1 : 0);
