@@ -399,6 +399,14 @@
    "days_left": 5,
    "polls": 95,
    "p_lula": 0.2663
+  },
+  {
+   "date": "2026-10-21",
+   "lula_avg": 48.99,
+   "se": 0.192,
+   "days_left": 4,
+   "polls": 95,
+   "p_lula": 0.2643
   }
  ],
  "params": {

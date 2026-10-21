@@ -1,6 +1,6 @@
 """Diagnostics on runoff house effects (Lula two-candidate share).
 
-    python house_diagnostics.py [--ratings ../data/pollster_ratings.json] [--as-of 2026-10-20]
+    python house_diagnostics.py [--ratings ../data/pollster_ratings.json] [--as-of YYYY-MM-DD]   (default: today)
 
 Re-runs average.py's joint trend/house-effect estimation, then takes each runoff poll's
 residual from the house-effect-free trend (leave-one-out, as in average.py):
@@ -66,7 +66,7 @@ def estimate_house(everything):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--as-of", default="2026-10-20")
+    ap.add_argument("--as-of", default=min(dt.date.today(), dt.date(2026, 10, 25)).isoformat())
     ap.add_argument("--ratings", default=os.path.join(DATA, "pollster_ratings.json"))
     args = ap.parse_args()
     as_of = d(args.as_of)

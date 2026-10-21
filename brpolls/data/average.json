@@ -1,16 +1,16 @@
 {
- "as_of": "2026-10-20",
+ "as_of": "2026-10-21",
  "quantity": "Lula share of the two-candidate vote (%), total-vote basis",
  "current": {
   "lula": 48.99,
   "flavio": 51.01,
   "se": 0.19,
   "ci95": [
-   48.62,
+   48.61,
    49.36
   ],
   "n_eff": 39.0,
-  "poll_sd": 1.18
+  "poll_sd": 1.2
  },
  "series": [
   {
@@ -347,6 +347,11 @@
    "date": "2026-10-20",
    "lula": 48.99,
    "weight": 21.99
+  },
+  {
+   "date": "2026-10-21",
+   "lula": 48.99,
+   "weight": 20.17
   }
  ],
  "first_round_informed": {

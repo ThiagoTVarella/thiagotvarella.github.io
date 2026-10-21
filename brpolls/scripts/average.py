@@ -1,6 +1,6 @@
 """Polling average for the 2026 runoff, Lula vs Flávio Bolsonaro.
 
-    python average.py [--ratings ../data/pollster_ratings.json] [--as-of 2026-10-20]
+    python average.py [--ratings ../data/pollster_ratings.json] [--as-of YYYY-MM-DD]   (default: today)
 
 Reads ../data/polls_runoff_lula_flavio.json and writes ../data/average.json.
 
@@ -115,7 +115,7 @@ def trend_at(day, polls, house):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--as-of", default="2026-10-20")
+    ap.add_argument("--as-of", default=min(dt.date.today(), dt.date(2026, 10, 25)).isoformat())
     ap.add_argument("--ratings")
     ap.add_argument("--r1-weight", type=float, default=R1_WEIGHT,
                     help="weight of first-round polls when estimating house effects (0 = runoff only)")
