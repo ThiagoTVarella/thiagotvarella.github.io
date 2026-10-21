@@ -540,17 +540,17 @@
    "rating": 0.91,
    "lula": 46,
    "flavio": 48,
-   "blank": null,
-   "undecided": null,
-   "lula_valid": null,
-   "flavio_valid": null,
+   "blank": 3.4,
+   "undecided": 2.6,
+   "lula_valid": 48.9,
+   "flavio_valid": 51.1,
    "lula_two_party": 48.94,
    "adjusted": 48.79,
    "weight": 0.0269,
    "mode": "unknown",
    "phase": "post_first_round",
-   "verification": "unverified",
-   "url": "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2026_Brazilian_presidential_election"
+   "verification": "verified-primary",
+   "url": "https://www.canalmeio.com.br/wp-content/uploads/2026/10/Pesquisa-Meio_Ideia-Outubro.pdf"
   },
   {
    "id": "alfa-inteligencia-2026-10-19",

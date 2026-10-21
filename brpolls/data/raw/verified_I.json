@@ -8,20 +8,22 @@
   "tse_registration": "BR-08251/2026",
   "sample_size": 1500,
   "margin_of_error": 2.5,
-  "confidence_level": null,
+  "confidence_level": 95,
   "mode": "unknown",
   "population": "voters 16+, national",
   "scenario_note": null,
   "lula_total": 46,
   "flavio_total": 48,
-  "blank_null_total": null,
-  "undecided_total": null,
-  "lula_valid": null,
-  "flavio_valid": null,
-  "primary_url": "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2026_Brazilian_presidential_election",
-  "secondary_urls": [],
-  "verification": "unverified",
+  "blank_null_total": 3.4,
+  "undecided_total": 2.6,
+  "lula_valid": 48.9,
+  "flavio_valid": 51.1,
+  "primary_url": "https://www.canalmeio.com.br/wp-content/uploads/2026/10/Pesquisa-Meio_Ideia-Outubro.pdf",
+  "secondary_urls": [
+   "https://en.wikipedia.org/wiki/Opinion_polling_for_the_2026_Brazilian_presidential_election"
+  ],
+  "verification": "verified-primary",
   "wiki_matches": null,
-  "notes": "Numbers from English Wikipedia (row added without a citation), read 21 Oct around 01:50 Brasília time; blank/null/undecided 6 combined. The TSE registry confirms BR-08251/2026 (Boas Ideias, the Meio/Ideia registrant): national, field 15-19 Oct, n=1,500, release allowed from 21 Oct. No outlet coverage found yet; upgrade when a primary source appears."
+  "notes": "Read from the Meio/Ideia report (pages 6-7): total votes Lula 46, Flávio 48, branco/nulo 3.4, não sabe 2.6; valid votes 48.9/51.1. 1,500 phone interviews (live or automated not stated), 95% confidence, ±2.5 pp, TSE BR-08251/2026, field 15-19 Oct. Found via the English Wikipedia edit of 21 Oct 00:13 Brasília time."
  }
 ]
