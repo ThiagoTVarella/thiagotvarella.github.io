@@ -127,6 +127,8 @@ def refs_in(cell, idx):
             out.append({"url": re.sub(r"[?&]utm_source=chatgpt\.com", "", u.group(1)),
                         "title": t.group(1).strip() if t else None,
                         "site": w.group(1).strip() if w else None})
+    for m in re.finditer(r"(?<!\[)\[(https?://[^\s\]]+)[^\]]*\]", re.sub(r"<ref.*?(?:/>|</ref>)", "", cell, flags=re.S)):
+        out.append({"url": m.group(1), "title": None, "site": None})   # bare external link
     return out
 
 
