@@ -402,11 +402,19 @@
   },
   {
    "date": "2026-10-21",
-   "lula_avg": 49.09,
-   "se": 0.182,
+   "lula_avg": 49.11,
+   "se": 0.175,
    "days_left": 4,
-   "polls": 100,
-   "p_lula": 0.2836
+   "polls": 102,
+   "p_lula": 0.2868
+  },
+  {
+   "date": "2026-10-22",
+   "lula_avg": 49.11,
+   "se": 0.175,
+   "days_left": 3,
+   "polls": 102,
+   "p_lula": 0.2846
   }
  ],
  "params": {
