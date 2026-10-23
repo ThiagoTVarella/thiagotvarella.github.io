@@ -65,16 +65,10 @@ def average_on(day, ratings, r1_all):
         p["series"] = "runoff"
     r1 = [p for p in r1_all if p["t"] <= day]
     house = house_effects(polls + r1)
-    cur, _ = A.trend_at(day, polls, house)
-    ws = [p["rating"] * p["w_size"] * p["w_freq"] * 0.5 ** ((day - p["t"]).days / A.HALF_LIFE) for p in polls]
+    cur = A.make_smoother(polls, house)(day)
+    ws = A.gauss_weights(day, polls)
     n_eff = sum(ws) ** 2 / sum(w * w for w in ws)
-    res = []
-    for p in polls:
-        if (day - p["t"]).days <= 21:
-            tr, _ = A.trend_at(p["t"], [q for q in polls if q is not p], house)
-            if tr is not None:
-                res.append(p["y"] - house[p["pollster"]] - tr)
-    sd = math.sqrt(sum(r * r for r in res) / max(1, len(res) - 1))
+    sd = A.poll_noise(day, polls, house)
     return cur, sd / math.sqrt(max(1.0, n_eff)), len(polls)
 
 

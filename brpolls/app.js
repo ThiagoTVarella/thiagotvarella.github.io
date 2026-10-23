@@ -18,15 +18,15 @@ const ELECTION = toDay("2026-10-25");
 const FIRST_ROUND = toDay("2026-10-04");
 
 const DEFAULTS = {
-    halfLife: 2,        // days for a poll's weight to halve
+    halfLife: 8,        // days for a poll's weight to halve (house-effect estimation and the exponential smoother)
     house: true,        // correct pollster house effects
     shrink: 3,          // house effects shrink as if each pollster had this many extra polls at zero
     useR1: true,        // let first-round polls inform house effects
     r1Weight: 0.5,      // ...and how much each of them counts relative to a runoff poll
     window: 15,         // length in days of the simple moving window
-    splineLog: 3.5,     // cubic smoothing spline stiffness, log10(lambda); csaps p = 1 / (1 + lambda)
+    splineDays: 2,      // cubic smoothing spline stiffness as an equivalent width in days: lambda = days^4, csaps p = 1 / (1 + lambda)
     houseStrength: 1,   // how much of each estimated house effect to remove (1 = all of it)
-    smoother: "exp",    // exp: exponential decay, past only · gauss: centred Gaussian · window: simple moving window
+    smoother: "spline", // spline: csaps-style cubic smoothing spline · exp: exponential decay, past only · gauss: centred Gaussian · window: simple moving window
     rating: true,       // weight by pollster rating
     size: true,         // weight by sqrt(sample size), capped at 5,000
     freq: true,         // penalise pollsters publishing many polls close together
@@ -155,7 +155,7 @@ function splineFit(pts, lambda) {
 
 // smoothing width: the half-life (exponential), the spread (Gaussian) or the window length
 const width = opt => opt.smoother === "window" ? opt.window
-    : opt.smoother === "spline" ? Math.min(40, Math.max(1, Math.pow(Math.pow(10, opt.splineLog), 0.25)))
+    : opt.smoother === "spline" ? Math.min(40, Math.max(1, opt.splineDays))
     : opt.halfLife;
 // the spline only draws the trend; house effects, noise and dot weights use its nearest kernel cousin
 const kernelSmoother = opt => opt.smoother === "spline" ? "gauss" : opt.smoother;
@@ -268,7 +268,7 @@ function compute(data, opt) {
 
     let spl = null, splRaw = null;
     if (opt.smoother === "spline") {
-        const lam = Math.pow(10, opt.splineLog);
+        const lam = Math.pow(opt.splineDays, 4);
         spl = splineFit(runoff.map(p => ({x: p.t, y: p.y - opt.houseStrength * (house[p.pollster] || 0), w: p.bw})), lam);
         splRaw = splineFit(runoff.map(p => ({x: p.t, y: p.y, w: p.bw})), lam);
     }
@@ -702,17 +702,17 @@ if (typeof document !== "undefined") (function () {
     /* ---------- controls */
     function syncControls() {
         const win = opt.smoother === "window", sp = opt.smoother === "spline";
-        $("halfLife").min = sp ? 1 : win ? 2 : 1; $("halfLife").max = sp ? 6 : 20; $("halfLife").step = sp ? 0.1 : 1;
-        $("halfLife").value = sp ? opt.splineLog : win ? opt.window : opt.halfLife;
+        $("halfLife").min = win ? 2 : 1; $("halfLife").max = 20; $("halfLife").step = sp ? 0.5 : 1;
+        $("halfLife").value = sp ? opt.splineDays : win ? opt.window : opt.halfLife;
         $("smoother").value = opt.smoother;
-        $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Tamanho da janela", spline: "Rigidez da spline"}[opt.smoother];
+        $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Tamanho da janela", spline: "Rigidez da spline (dias)"}[opt.smoother];
         if (sp) {
-            const lam = Math.pow(10, opt.splineLog), pp = 1 / (1 + lam);
-            $("halfLifeV").textContent = `λ = ${lam >= 100 ? Math.round(lam).toLocaleString("pt-BR") : fmt(lam)} · p = ${pp.toExponential(1).replace(".", ",")} · ~${fmt(width(opt), 0)} dias`;
+            const lam = Math.pow(opt.splineDays, 4), pp = 1 / (1 + lam);
+            $("halfLifeV").textContent = `~${fmt(opt.splineDays, 1)} dias · λ = ${lam >= 100 ? Math.round(lam).toLocaleString("pt-BR") : fmt(lam, 0)} · p = ${pp.toExponential(1).replace(".", ",")}`;
         } else $("halfLifeV").textContent = `${win ? opt.window : opt.halfLife} dias`;
         $("winPresets").style.display = win ? "block" : "none";
         document.querySelectorAll("[data-wlen]").forEach(b => b.classList.toggle("on", +b.dataset.wlen === opt.window));
-        $("smootherV").textContent = {exp: "padrão", gauss: "usa pesquisas dos dois lados", window: "todas pesam igual", spline: "curva suave pelos dois lados"}[opt.smoother];
+        $("smootherV").textContent = {exp: "só olha para trás", gauss: "usa pesquisas dos dois lados", window: "todas pesam igual", spline: "padrão: curva suave tipo csaps"}[opt.smoother];
         $("houseStrength").value = opt.houseStrength; $("houseStrengthV").textContent = `${Math.round(100 * opt.houseStrength)}%`;
         $("r1Weight").value = opt.r1Weight; $("r1WeightV").textContent = `${Math.round(100 * opt.r1Weight)}%`;
         $("shrink").value = opt.shrink; $("shrinkV").textContent = fmt(opt.shrink);
@@ -765,7 +765,7 @@ if (typeof document !== "undefined") (function () {
     function bindControls() {
         const num = (id, k, live) => $(id).addEventListener(live ? "input" : "change", () => { opt[k] = parseFloat($(id).value); recompute(); });
         $("halfLife").addEventListener("input", () => {
-            opt[{window: "window", spline: "splineLog"}[opt.smoother] || "halfLife"] = parseFloat($("halfLife").value); recompute();
+            opt[{window: "window", spline: "splineDays"}[opt.smoother] || "halfLife"] = parseFloat($("halfLife").value); recompute();
         });
         document.querySelectorAll("[data-wlen]").forEach(b => b.onclick = () => { opt.window = +b.dataset.wlen; recompute(); });
         num("shrink", "shrink", true); num("errSd", "errSd", true); num("shift", "shift", true);

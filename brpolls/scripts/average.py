@@ -18,6 +18,8 @@ import csv
 import datetime as dt
 import json
 import math
+
+import numpy as np
 import os
 import sys
 from collections import defaultdict
@@ -27,10 +29,12 @@ from ratings import canon  # noqa: E402  (shared pollster name canonicalisation)
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
 R1_END = dt.date(2026, 10, 3)   # last day of first-round fieldwork
-HALF_LIFE = 2.0        # days; a poll's weight halves every 2 days (the page lets readers change it)
+HALF_LIFE = 8.0        # days; recency half-life used to estimate house effects (and by the exponential smoother)
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
 R1_WEIGHT = 0.5        # first-round polls count half when estimating house effects
+SMOOTHER = "spline"    # trend line: cubic smoothing spline (csaps-style); the page also offers exponential, Gaussian and window
+SPLINE_DAYS = 2.0      # stiffness as an equivalent width in days: lambda = SPLINE_DAYS ** 4, csaps p = 1 / (1 + lambda)
 PRIOR_POLLS = 2.0      # first-round bias shrinks as if each pollster had 2 extra polls with no miss
 START = dt.date(2026, 8, 14)
 
@@ -113,6 +117,96 @@ def trend_at(day, polls, house):
     return (num / den if den else None), den
 
 
+def spline_fit(pts, lam):
+    """Weighted cubic smoothing spline (what csaps fits): minimise sum w (y - f)^2 + lam * integral f''^2.
+
+    pts = [(x, y, w)]; polls on the same day are merged. Reinsch algorithm as in Green & Silverman (1994),
+    the same code as splineFit() in app.js. Held flat outside the data instead of extrapolating."""
+    by = {}
+    for x, y, w in pts:
+        sw, swy = by.get(x, (0.0, 0.0))
+        by[x] = (sw + w, swy + w * y)
+    xs = sorted(by)
+    n = len(xs)
+    if n == 0:
+        return lambda t: None
+    x = np.array(xs, float)
+    w = np.array([by[k][0] for k in xs])
+    y = np.array([by[k][1] / by[k][0] for k in xs])
+    w = w / w.mean()
+    if n < 3:
+        m = float((w * y).sum() / w.sum())
+        return lambda t: m
+    h = np.diff(x)
+    m = n - 2
+    Q = np.zeros((n, m))
+    R = np.zeros((m, m))
+    for j in range(m):
+        Q[j, j] = 1 / h[j]
+        Q[j + 1, j] = -1 / h[j] - 1 / h[j + 1]
+        Q[j + 2, j] = 1 / h[j + 1]
+        R[j, j] = (h[j] + h[j + 1]) / 3
+        if j + 1 < m:
+            R[j, j + 1] = R[j + 1, j] = h[j + 1] / 6
+    gam_in = np.linalg.solve(R + lam * Q.T @ (Q / w[:, None]), Q.T @ y)
+    gam = np.concatenate([[0.0], gam_in, [0.0]])
+    g = y - lam * (Q @ gam_in) / w
+
+    def f(t):
+        if t <= x[0]:
+            return float(g[0])
+        if t >= x[-1]:
+            return float(g[-1])
+        i = int(np.searchsorted(x, t, side="right")) - 1
+        hi, a_, b_ = h[i], t - x[i], x[i + 1] - t
+        return float((a_ * g[i + 1] + b_ * g[i]) / hi
+                     - a_ * b_ / 6 * ((1 + a_ / hi) * gam[i + 1] + (1 + b_ / hi) * gam[i]))
+    return f
+
+
+def width_days():
+    return min(40.0, max(1.0, SPLINE_DAYS))
+
+
+def gauss_weights(day, polls):
+    """Poll weights with a two-sided Gaussian recency kernel (width = the spline's equivalent days)."""
+    return [p["rating"] * p["w_size"] * p["w_freq"] * math.exp(-0.5 * (((day - p["t"]).days) / width_days()) ** 2)
+            for p in polls]
+
+
+def gauss_trend(day, polls, house, skip=None):
+    """Two-sided Gaussian-kernel average, used for the uncertainty of the spline trend (as in app.js)."""
+    num = den = den2 = 0.0
+    for p, w in zip(polls, gauss_weights(day, polls)):
+        if p is skip:
+            continue
+        num += w * (p["y"] - house[p["pollster"]])
+        den += w
+        den2 += w * w
+    return (num / den if den else None), den, (den * den / den2 if den2 else 0.0)
+
+
+def make_smoother(polls, house):
+    """Return f(day) -> the published trend value for the default smoother."""
+    if SMOOTHER == "spline":
+        f = spline_fit([(p["t"].toordinal(), p["y"] - house[p["pollster"]],
+                         p["rating"] * p["w_size"] * p["w_freq"]) for p in polls], SPLINE_DAYS ** 4)
+        return lambda day: f(day.toordinal())
+    return lambda day: trend_at(day, polls, house)[0]
+
+
+def poll_noise(as_of, polls, house):
+    """Residual spread of recent polls around the trend as it stood without them, and effective poll count."""
+    res = []
+    for p in polls:
+        if (as_of - p["t"]).days <= 21:
+            tr, _, _ = gauss_trend(p["t"], polls, house, skip=p)
+            if tr is not None:
+                res.append(p["y"] - house[p["pollster"]] - tr)
+    sd = math.sqrt(sum(r * r for r in res) / max(1, len(res) - 1))
+    return sd
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--as-of", default=min(dt.date.today(), dt.date(2026, 10, 25)).isoformat())
@@ -171,24 +265,17 @@ def main():
                "expected_runoff_bias": {k: round(v, 2) for k, v in sorted(expected.items(), key=lambda kv: kv[1])}}
 
     days = [START + dt.timedelta(i) for i in range((as_of - START).days + 1)]
+    smooth = make_smoother(polls, house)
     series = []
     for day in days:
-        tr, den = trend_at(day, polls, house)
+        tr, den, _ = gauss_trend(day, polls, house)
         if tr is not None:
-            series.append({"date": day.isoformat(), "lula": round(tr, 2), "weight": round(den, 2)})
+            series.append({"date": day.isoformat(), "lula": round(smooth(day), 2), "weight": round(den, 2)})
 
-    cur_trend, _ = trend_at(as_of, polls, house)
-    ws = [p["rating"] * p["w_size"] * p["w_freq"] * 0.5 ** ((as_of - p["t"]).days / HALF_LIFE)
-          for p in polls]
+    cur_trend = smooth(as_of)
+    ws = gauss_weights(as_of, polls)
     n_eff = sum(ws) ** 2 / sum(w * w for w in ws)
-    # residual spread of recent polls around the trend as it stood the day before
-    res = []
-    for p in polls:
-        if (as_of - p["t"]).days <= 21:
-            tr, _ = trend_at(p["t"], [q for q in polls if q is not p], house)
-            if tr is not None:
-                res.append(p["y"] - house[p["pollster"]] - tr)
-    sd = math.sqrt(sum(r * r for r in res) / max(1, len(res) - 1))
+    sd = poll_noise(as_of, polls, house)
     se = sd / math.sqrt(max(1.0, n_eff))
     if adj is not None:
         shift = -sum(w * adj["expected_runoff_bias"].get(p["pollster"], 0.0)
