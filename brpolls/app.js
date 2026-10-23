@@ -18,7 +18,7 @@ const ELECTION = toDay("2026-10-25");
 const FIRST_ROUND = toDay("2026-10-04");
 
 const DEFAULTS = {
-    halfLife: 8,        // days for a poll's weight to halve
+    halfLife: 2,        // days for a poll's weight to halve
     house: true,        // correct pollster house effects
     shrink: 3,          // house effects shrink as if each pollster had this many extra polls at zero
     useR1: true,        // let first-round polls inform house effects
@@ -398,26 +398,26 @@ if (typeof document !== "undefined") (function () {
 
     function renderKpis() {
         const c = R.current;
-        $("kLula").textContent = pct(c.v + opt.shift);
-        $("kFlavio").textContent = pct(100 - c.v - opt.shift);
-        $("kPL").textContent = pct(100 * c.p, 0);
-        $("kPF").textContent = pct(100 * (1 - c.p), 0);
+        $("kLula").textContent = pct(c.v + opt.shift, 2);
+        $("kFlavio").textContent = pct(100 - c.v - opt.shift, 2);
+        $("kPL").textContent = pct(100 * c.p, 2);
+        $("kPF").textContent = pct(100 * (1 - c.p), 2);
         const lw = c.v + opt.shift;
-        $("avgBar").innerHTML = `<div style="width:${lw}%;background:${LULA}">Lula ${pct(lw)}</div><div style="width:${100 - lw}%;background:${FLAVIO}">Flávio ${pct(100 - lw)}</div>`;
-        $("pBar").innerHTML = `<div style="width:${100 * c.p}%;background:${LULA}">${pct(100 * c.p, 0)}</div><div style="width:${100 - 100 * c.p}%;background:${FLAVIO}">${pct(100 - 100 * c.p, 0)}</div>`;
+        $("avgBar").innerHTML = `<div style="width:${lw}%;background:${LULA}">Lula ${pct(lw, 2)}</div><div style="width:${100 - lw}%;background:${FLAVIO}">Flávio ${pct(100 - lw, 2)}</div>`;
+        $("pBar").innerHTML = `<div style="width:${100 * c.p}%;background:${LULA}">${pct(100 * c.p, 2)}</div><div style="width:${100 - 100 * c.p}%;background:${FLAVIO}">${pct(100 - 100 * c.p, 2)}</div>`;
         $("asofLine").textContent = `Pesquisas até ${fdl(R.asOf)} · ${R.runoff.length} pesquisas de 2º turno · faltam ${R.daysLeft} dias para a eleição (25/10/2026)`;
         const gap = 50 - (c.v + opt.shift);
         const fr = R.series.length ? R.series[R.series.length - 1].fr : 0;
-        $("probExplain").textContent = `Como calculo: a média deixa o Lula ${fmt(Math.abs(gap))} ponto ${gap >= 0 ? "abaixo" : "acima"} de 50%` +
+        $("probExplain").textContent = `Como calculo: a média deixa o Lula ${fmt(Math.abs(gap), 2)} ponto ${gap >= 0 ? "abaixo" : "acima"} de 50%` +
             (Math.abs(fr) >= 0.005 ? ` (a previsão parte de ${fmt(c.v + fr + opt.shift, 2)}%, já com um pequeno ajuste pelo erro de cada instituto no 1º turno)` : "") + `. ` +
             `Somo a ela um erro que todas as pesquisas podem cometer juntas (${fmt(opt.errSd)} pontos, com caudas largas), a oscilação até a eleição ` +
             `e o ruído da própria média, e conto em que fração dos cenários o Lula passa de 50%.`;
-        $("kNote").textContent = `±${fmt(1.96 * c.se)} ponto só pelo ruído das pesquisas; a previsão ainda soma um erro comum de ${fmt(opt.errSd)} pontos.`;
+        $("kNote").textContent = `±${fmt(1.96 * c.se, 2)} ponto só pelo ruído das pesquisas; a previsão ainda soma um erro comum de ${fmt(opt.errSd)} pontos.`;
         const changed = !isDefault();
         $("custom").style.display = changed ? "block" : "none";
         if (changed) {
-            $("custom").innerHTML = `Você está vendo <b>os seus próprios ajustes</b>. No modelo que eu publiquei, o Lula tem ${pct(OFFICIAL.current.lula)} da média e ` +
-                `${pct(100 * FC.base.p_lula, 0)} de chance. <a href="#" id="resetLink">Voltar ao original</a>`;
+            $("custom").innerHTML = `Você está vendo <b>os seus próprios ajustes</b>. No modelo que eu publiquei, o Lula tem ${pct(OFFICIAL.current.lula, 2)} da média e ` +
+                `${pct(100 * FC.base.p_lula, 2)} de chance. <a href="#" id="resetLink">Voltar ao original</a>`;
             $("resetLink").onclick = e => { e.preventDefault(); resetAll(); };
         }
     }
@@ -474,7 +474,7 @@ if (typeof document !== "undefined") (function () {
             const rs = R.raw.filter(p => p.d >= w0 && p.d <= w1);
             s += `<polyline fill="none" stroke="#7a7a7a" stroke-width="2" stroke-dasharray="2 3" points="${rs.map(p => `${x(p.d)},${y(metricVal(p.v + opt.shift))}`).join(" ")}"/>`;
             const lr = rs[rs.length - 1];
-            if (lr) s += `<text x="${x(lr.d) - 4}" y="${y(metricVal(lr.v + opt.shift)) - 6}" text-anchor="end" style="fill:#555">sem correção ${fmt(lr.v + opt.shift)}</text>`;
+            if (lr) s += `<text x="${x(lr.d) - 4}" y="${y(metricVal(lr.v + opt.shift)) - 6}" text-anchor="end" style="fill:#555">sem correção ${fmt(lr.v + opt.shift, 2)}</text>`;
         }
         if (!isDefault() && OFFICIAL.series) {
             const os = OFFICIAL.series.filter(p => toDay(p.date) >= w0 && toDay(p.date) <= w1);
@@ -553,7 +553,7 @@ if (typeof document !== "undefined") (function () {
                     const prev = hover && hover.kind === "x" && hover.d === d;
                     hover = {kind: "x", d};
                     if (!prev) renderChartKeepTip();
-                    showTip(e, `<b>${fdl(d)}</b><br>Média: Lula ${pct(pt.v + opt.shift)} · Flávio ${pct(100 - pt.v - opt.shift)}<br>Chance do Lula: ${pct(100 * pt.p, 0)}`);
+                    showTip(e, `<b>${fdl(d)}</b><br>Média: Lula ${pct(pt.v + opt.shift, 2)} · Flávio ${pct(100 - pt.v - opt.shift, 2)}<br>Chance do Lula: ${pct(100 * pt.p, 2)}`);
                 } else hideTip();
             }
         });
@@ -625,8 +625,8 @@ if (typeof document !== "undefined") (function () {
         s += `<polyline fill="none" stroke="${FLAVIO}" stroke-width="2.2" points="${ser.map(p => `${x(p.d)},${y(1 - p.p)}`).join(" ")}"/>`;
         s += `<polyline fill="none" stroke="${LULA}" stroke-width="2.2" points="${ser.map(p => `${x(p.d)},${y(p.p)}`).join(" ")}"/>`;
         const lp = ser[ser.length - 1];
-        s += `<text x="${x(lp.d) - 4}" y="${y(lp.p) - 5}" text-anchor="end" style="fill:${LULA};font-weight:bold">Lula ${pct(100 * lp.p, 0)}</text>` +
-            `<text x="${x(lp.d) - 4}" y="${y(1 - lp.p) + 13}" text-anchor="end" style="fill:${FLAVIO};font-weight:bold">Flávio ${pct(100 - 100 * lp.p, 0)}</text></svg>`;
+        s += `<text x="${x(lp.d) - 4}" y="${y(lp.p) - 5}" text-anchor="end" style="fill:${LULA};font-weight:bold">Lula ${pct(100 * lp.p, 2)}</text>` +
+            `<text x="${x(lp.d) - 4}" y="${y(1 - lp.p) + 13}" text-anchor="end" style="fill:${FLAVIO};font-weight:bold">Flávio ${pct(100 - 100 * lp.p, 2)}</text></svg>`;
         box.innerHTML = s;
     }
 
@@ -702,7 +702,7 @@ if (typeof document !== "undefined") (function () {
     /* ---------- controls */
     function syncControls() {
         const win = opt.smoother === "window", sp = opt.smoother === "spline";
-        $("halfLife").min = sp ? 1 : win ? 3 : 2; $("halfLife").max = sp ? 6 : win ? 45 : 30; $("halfLife").step = sp ? 0.1 : 1;
+        $("halfLife").min = sp ? 1 : win ? 2 : 1; $("halfLife").max = sp ? 6 : 20; $("halfLife").step = sp ? 0.1 : 1;
         $("halfLife").value = sp ? opt.splineLog : win ? opt.window : opt.halfLife;
         $("smoother").value = opt.smoother;
         $("halfLifeL").textContent = {exp: "Meia-vida", gauss: "Desvio da gaussiana", window: "Tamanho da janela", spline: "Rigidez da spline"}[opt.smoother];

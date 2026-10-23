@@ -27,7 +27,7 @@ from ratings import canon  # noqa: E402  (shared pollster name canonicalisation)
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
 R1_END = dt.date(2026, 10, 3)   # last day of first-round fieldwork
-HALF_LIFE = 8.0        # days; weight halves every 8 days
+HALF_LIFE = 2.0        # days; a poll's weight halves every 2 days (the page lets readers change it)
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
 R1_WEIGHT = 0.5        # first-round polls count half when estimating house effects

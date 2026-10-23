@@ -2,366 +2,366 @@
  "as_of": "2026-10-23",
  "quantity": "Lula share of the two-candidate vote (%), total-vote basis",
  "current": {
-  "lula": 49.12,
-  "flavio": 50.88,
-  "se": 0.17,
+  "lula": 49.26,
+  "flavio": 50.74,
+  "se": 0.27,
   "ci95": [
-   48.79,
-   49.45
+   48.72,
+   49.79
   ],
-  "n_eff": 42.8,
-  "poll_sd": 1.1
+  "n_eff": 15.3,
+  "poll_sd": 1.07
  },
  "series": [
   {
    "date": "2026-08-15",
-   "lula": 51.17,
+   "lula": 51.22,
    "weight": 1.04
   },
   {
    "date": "2026-08-16",
-   "lula": 51.17,
-   "weight": 0.96
+   "lula": 51.22,
+   "weight": 0.74
   },
   {
    "date": "2026-08-17",
-   "lula": 51.17,
-   "weight": 0.88
+   "lula": 51.22,
+   "weight": 0.52
   },
   {
    "date": "2026-08-18",
-   "lula": 51.26,
-   "weight": 1.93
+   "lula": 51.25,
+   "weight": 1.49
   },
   {
    "date": "2026-08-19",
-   "lula": 51.26,
-   "weight": 1.77
+   "lula": 51.25,
+   "weight": 1.06
   },
   {
    "date": "2026-08-20",
-   "lula": 51.26,
-   "weight": 1.62
+   "lula": 51.25,
+   "weight": 0.75
   },
   {
    "date": "2026-08-21",
-   "lula": 51.62,
-   "weight": 2.44
+   "lula": 51.92,
+   "weight": 1.48
   },
   {
    "date": "2026-08-22",
-   "lula": 51.19,
-   "weight": 3.09
+   "lula": 51.11,
+   "weight": 1.9
   },
   {
    "date": "2026-08-23",
-   "lula": 50.7,
-   "weight": 3.87
+   "lula": 50.33,
+   "weight": 2.38
   },
   {
    "date": "2026-08-24",
-   "lula": 50.71,
-   "weight": 4.55
+   "lula": 50.47,
+   "weight": 2.68
   },
   {
    "date": "2026-08-25",
-   "lula": 50.71,
-   "weight": 4.17
+   "lula": 50.47,
+   "weight": 1.89
   },
   {
    "date": "2026-08-26",
-   "lula": 50.36,
-   "weight": 4.97
+   "lula": 49.88,
+   "weight": 2.49
   },
   {
    "date": "2026-08-27",
-   "lula": 50.82,
-   "weight": 6.3
+   "lula": 50.93,
+   "weight": 3.5
   },
   {
    "date": "2026-08-28",
-   "lula": 50.82,
-   "weight": 5.78
+   "lula": 50.93,
+   "weight": 2.48
   },
   {
    "date": "2026-08-29",
-   "lula": 50.63,
-   "weight": 8.3
+   "lula": 50.56,
+   "weight": 4.75
   },
   {
    "date": "2026-08-30",
-   "lula": 50.63,
-   "weight": 7.61
+   "lula": 50.56,
+   "weight": 3.36
   },
   {
    "date": "2026-08-31",
-   "lula": 50.46,
-   "weight": 8.95
+   "lula": 50.24,
+   "weight": 4.34
   },
   {
    "date": "2026-09-01",
-   "lula": 50.43,
-   "weight": 9.31
+   "lula": 50.21,
+   "weight": 4.18
   },
   {
    "date": "2026-09-02",
-   "lula": 50.12,
-   "weight": 9.97
+   "lula": 49.6,
+   "weight": 4.38
   },
   {
    "date": "2026-09-03",
-   "lula": 50.12,
-   "weight": 9.14
+   "lula": 49.6,
+   "weight": 3.1
   },
   {
    "date": "2026-09-04",
-   "lula": 50.06,
-   "weight": 9.25
+   "lula": 49.57,
+   "weight": 3.06
   },
   {
    "date": "2026-09-05",
-   "lula": 49.77,
-   "weight": 12.97
+   "lula": 49.31,
+   "weight": 6.65
   },
   {
    "date": "2026-09-06",
-   "lula": 49.73,
-   "weight": 13.31
+   "lula": 49.33,
+   "weight": 6.12
   },
   {
    "date": "2026-09-07",
-   "lula": 49.74,
-   "weight": 14.16
+   "lula": 49.47,
+   "weight": 6.29
   },
   {
    "date": "2026-09-08",
-   "lula": 49.74,
-   "weight": 12.99
+   "lula": 49.47,
+   "weight": 4.45
   },
   {
    "date": "2026-09-09",
-   "lula": 49.77,
-   "weight": 12.82
+   "lula": 49.62,
+   "weight": 4.05
   },
   {
    "date": "2026-09-10",
-   "lula": 49.77,
-   "weight": 11.75
+   "lula": 49.62,
+   "weight": 2.86
   },
   {
    "date": "2026-09-11",
-   "lula": 49.87,
-   "weight": 13.58
+   "lula": 50.02,
+   "weight": 4.82
   },
   {
    "date": "2026-09-12",
-   "lula": 49.88,
-   "weight": 13.3
+   "lula": 50.03,
+   "weight": 4.26
   },
   {
    "date": "2026-09-13",
-   "lula": 49.7,
-   "weight": 15.81
+   "lula": 49.52,
+   "weight": 6.62
   },
   {
    "date": "2026-09-14",
-   "lula": 49.67,
-   "weight": 15.4
+   "lula": 49.44,
+   "weight": 5.59
   },
   {
    "date": "2026-09-15",
-   "lula": 49.58,
-   "weight": 15.16
+   "lula": 49.22,
+   "weight": 4.99
   },
   {
    "date": "2026-09-16",
-   "lula": 49.52,
-   "weight": 16.29
+   "lula": 49.18,
+   "weight": 5.91
   },
   {
    "date": "2026-09-17",
-   "lula": 49.53,
-   "weight": 15.89
+   "lula": 49.24,
+   "weight": 5.13
   },
   {
    "date": "2026-09-18",
-   "lula": 49.49,
-   "weight": 15.43
+   "lula": 49.17,
+   "weight": 4.5
   },
   {
    "date": "2026-09-19",
-   "lula": 49.53,
-   "weight": 16.24
+   "lula": 49.44,
+   "weight": 5.26
   },
   {
    "date": "2026-09-20",
-   "lula": 49.54,
-   "weight": 15.81
+   "lula": 49.48,
+   "weight": 4.64
   },
   {
    "date": "2026-09-21",
-   "lula": 49.38,
-   "weight": 18.59
+   "lula": 49.13,
+   "weight": 7.38
   },
   {
    "date": "2026-09-22",
-   "lula": 49.42,
-   "weight": 17.84
+   "lula": 49.26,
+   "weight": 6.0
   },
   {
    "date": "2026-09-23",
-   "lula": 49.42,
-   "weight": 16.36
+   "lula": 49.26,
+   "weight": 4.24
   },
   {
    "date": "2026-09-24",
-   "lula": 49.42,
-   "weight": 15.0
+   "lula": 49.26,
+   "weight": 3.0
   },
   {
    "date": "2026-09-25",
-   "lula": 49.45,
-   "weight": 17.13
+   "lula": 49.42,
+   "weight": 5.5
   },
   {
    "date": "2026-09-26",
-   "lula": 49.49,
-   "weight": 18.7
+   "lula": 49.55,
+   "weight": 6.88
   },
   {
    "date": "2026-09-27",
-   "lula": 49.38,
-   "weight": 19.13
+   "lula": 49.22,
+   "weight": 6.85
   },
   {
    "date": "2026-09-28",
-   "lula": 49.39,
-   "weight": 19.36
+   "lula": 49.33,
+   "weight": 6.66
   },
   {
    "date": "2026-09-29",
-   "lula": 49.41,
-   "weight": 18.98
+   "lula": 49.39,
+   "weight": 5.93
   },
   {
    "date": "2026-09-30",
-   "lula": 49.43,
-   "weight": 20.29
+   "lula": 49.45,
+   "weight": 7.08
   },
   {
    "date": "2026-10-01",
    "lula": 49.43,
-   "weight": 22.62
+   "weight": 9.02
   },
   {
    "date": "2026-10-02",
-   "lula": 49.37,
-   "weight": 24.08
+   "lula": 49.28,
+   "weight": 9.72
   },
   {
    "date": "2026-10-03",
-   "lula": 49.37,
-   "weight": 22.08
+   "lula": 49.28,
+   "weight": 6.87
   },
   {
    "date": "2026-10-04",
-   "lula": 49.37,
-   "weight": 20.25
+   "lula": 49.28,
+   "weight": 4.86
   },
   {
    "date": "2026-10-05",
-   "lula": 49.2,
-   "weight": 19.8
+   "lula": 48.6,
+   "weight": 4.67
   },
   {
    "date": "2026-10-06",
-   "lula": 49.09,
-   "weight": 20.64
+   "lula": 48.44,
+   "weight": 5.78
   },
   {
    "date": "2026-10-07",
-   "lula": 49.03,
-   "weight": 19.63
+   "lula": 48.29,
+   "weight": 4.8
   },
   {
    "date": "2026-10-08",
-   "lula": 48.91,
-   "weight": 20.05
+   "lula": 48.13,
+   "weight": 5.44
   },
   {
    "date": "2026-10-09",
-   "lula": 48.91,
-   "weight": 18.39
+   "lula": 48.13,
+   "weight": 3.85
   },
   {
    "date": "2026-10-10",
-   "lula": 48.85,
-   "weight": 17.59
+   "lula": 47.99,
+   "weight": 3.45
   },
   {
    "date": "2026-10-11",
-   "lula": 48.89,
-   "weight": 20.2
+   "lula": 48.65,
+   "weight": 6.5
   },
   {
    "date": "2026-10-12",
-   "lula": 48.89,
-   "weight": 18.52
+   "lula": 48.65,
+   "weight": 4.6
   },
   {
    "date": "2026-10-13",
-   "lula": 48.81,
-   "weight": 18.95
+   "lula": 48.44,
+   "weight": 5.22
   },
   {
    "date": "2026-10-14",
-   "lula": 48.96,
-   "weight": 22.31
+   "lula": 49.04,
+   "weight": 8.62
   },
   {
    "date": "2026-10-15",
-   "lula": 48.93,
-   "weight": 23.05
+   "lula": 48.95,
+   "weight": 8.69
   },
   {
    "date": "2026-10-16",
-   "lula": 49.03,
-   "weight": 24.12
+   "lula": 49.2,
+   "weight": 9.13
   },
   {
    "date": "2026-10-17",
-   "lula": 49.04,
-   "weight": 28.15
+   "lula": 49.16,
+   "weight": 12.49
   },
   {
    "date": "2026-10-18",
-   "lula": 49.02,
-   "weight": 28.23
+   "lula": 49.09,
+   "weight": 11.24
   },
   {
    "date": "2026-10-19",
-   "lula": 49.08,
-   "weight": 28.74
+   "lula": 49.23,
+   "weight": 10.8
   },
   {
    "date": "2026-10-20",
-   "lula": 49.1,
-   "weight": 29.06
+   "lula": 49.25,
+   "weight": 10.35
   },
   {
    "date": "2026-10-21",
-   "lula": 49.12,
-   "weight": 29.05
+   "lula": 49.26,
+   "weight": 9.71
   },
   {
    "date": "2026-10-22",
-   "lula": 49.12,
-   "weight": 26.64
+   "lula": 49.26,
+   "weight": 6.87
   },
   {
    "date": "2026-10-23",
-   "lula": 49.12,
-   "weight": 24.43
+   "lula": 49.26,
+   "weight": 4.86
   }
  ],
  "first_round_informed": {
@@ -386,32 +386,32 @@
    "Indexa": 0.24
   },
   "shift": 0.03,
-  "lula": 49.15,
-  "flavio": 50.85
+  "lula": 49.28,
+  "flavio": 50.72
  },
  "house_effects": {
   "Gerp": {
-   "effect": -2.17,
+   "effect": -2.13,
    "polls": 8,
    "first_round_polls": 6
   },
   "Veritá": {
-   "effect": -1.22,
+   "effect": -1.26,
    "polls": 3,
    "first_round_polls": 6
   },
   "Palver": {
-   "effect": -0.79,
+   "effect": -0.7,
    "polls": 7,
    "first_round_polls": 6
   },
   "Futura": {
-   "effect": -0.62,
+   "effect": -0.63,
    "polls": 10,
    "first_round_polls": 6
   },
   "DataTrends": {
-   "effect": -0.23,
+   "effect": -0.22,
    "polls": 3,
    "first_round_polls": 2
   },
@@ -421,67 +421,67 @@
    "first_round_polls": 0
   },
   "PoderData": {
-   "effect": -0.16,
+   "effect": -0.14,
    "polls": 11,
    "first_round_polls": 6
   },
   "Ideia": {
-   "effect": 0.12,
+   "effect": 0.11,
    "polls": 3,
    "first_round_polls": 2
   },
   "Real Time Big Data": {
-   "effect": 0.3,
+   "effect": 0.2,
    "polls": 4,
    "first_round_polls": 3
   },
-  "American Analytics": {
-   "effect": 0.41,
-   "polls": 1,
-   "first_round_polls": 1
-  },
   "Alfa Inteligência": {
-   "effect": 0.44,
+   "effect": 0.36,
    "polls": 2,
    "first_round_polls": 1
   },
+  "Instituto França (IFP)": {
+   "effect": 0.42,
+   "polls": 2,
+   "first_round_polls": 1
+  },
+  "Nexus": {
+   "effect": 0.43,
+   "polls": 9,
+   "first_round_polls": 8
+  },
+  "American Analytics": {
+   "effect": 0.47,
+   "polls": 1,
+   "first_round_polls": 1
+  },
   "Vox Brasil": {
-   "effect": 0.45,
+   "effect": 0.47,
    "polls": 6,
    "first_round_polls": 3
   },
   "AtlasIntel": {
-   "effect": 0.47,
+   "effect": 0.51,
    "polls": 8,
    "first_round_polls": 6
   },
-  "Nexus": {
-   "effect": 0.48,
-   "polls": 9,
-   "first_round_polls": 8
-  },
-  "Instituto França (IFP)": {
-   "effect": 0.49,
-   "polls": 2,
-   "first_round_polls": 1
-  },
   "Quaest": {
-   "effect": 0.56,
+   "effect": 0.51,
    "polls": 8,
    "first_round_polls": 8
   },
   "Indexa": {
-   "effect": 0.69,
+   "effect": 0.59,
    "polls": 5,
    "first_round_polls": 3
   },
   "Datafolha": {
-   "effect": 0.9,
+   "effect": 0.97,
    "polls": 10,
    "first_round_polls": 9
   },
   "MDA": {
-   "effect": 1.82,
+   "effect": 1.79,
    "polls": 3,
    "first_round_polls": 2
   }
@@ -505,8 +505,8 @@
    "lula_valid": 50.6,
    "flavio_valid": 49.4,
    "lula_two_party": 50.61,
-   "adjusted": 50.17,
-   "weight": 0.0396,
+   "adjusted": 50.14,
+   "weight": 0.1185,
    "mode": null,
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -530,8 +530,8 @@
    "lula_valid": 50,
    "flavio_valid": 50,
    "lula_two_party": 49.46,
-   "adjusted": 48.57,
-   "weight": 0.0429,
+   "adjusted": 48.5,
+   "weight": 0.1282,
    "mode": null,
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -555,8 +555,8 @@
    "lula_valid": 49,
    "flavio_valid": 51,
    "lula_two_party": 49.48,
-   "adjusted": 49.64,
-   "weight": 0.0287,
+   "adjusted": 49.62,
+   "weight": 0.0662,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -580,8 +580,8 @@
    "lula_valid": 49.4,
    "flavio_valid": 50.6,
    "lula_two_party": 49.38,
-   "adjusted": 48.7,
-   "weight": 0.0301,
+   "adjusted": 48.8,
+   "weight": 0.0694,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -605,8 +605,8 @@
    "lula_valid": 47,
    "flavio_valid": 53,
    "lula_two_party": 47.37,
-   "adjusted": 49.54,
-   "weight": 0.0267,
+   "adjusted": 49.5,
+   "weight": 0.0617,
    "mode": "phone",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -630,8 +630,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.44,
-   "adjusted": 48.88,
-   "weight": 0.0292,
+   "adjusted": 48.93,
+   "weight": 0.04,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -655,8 +655,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.98,
-   "adjusted": 49.77,
-   "weight": 0.0524,
+   "adjusted": 49.68,
+   "weight": 0.0931,
    "mode": "online-panel",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -680,8 +680,8 @@
    "lula_valid": 49.19,
    "flavio_valid": 50.81,
    "lula_two_party": 49.19,
-   "adjusted": 48.7,
-   "weight": 0.0349,
+   "adjusted": 48.77,
+   "weight": 0.0478,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -705,8 +705,8 @@
    "lula_valid": 48.9,
    "flavio_valid": 51.1,
    "lula_two_party": 48.9,
-   "adjusted": 49.52,
-   "weight": 0.0303,
+   "adjusted": 49.53,
+   "weight": 0.0539,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -730,8 +730,8 @@
    "lula_valid": 49.3,
    "flavio_valid": 50.7,
    "lula_two_party": 49.23,
-   "adjusted": 50.45,
-   "weight": 0.0397,
+   "adjusted": 50.49,
+   "weight": 0.042,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -755,8 +755,8 @@
    "lula_valid": 48,
    "flavio_valid": 52,
    "lula_two_party": 48.39,
-   "adjusted": 48.09,
-   "weight": 0.0209,
+   "adjusted": 48.19,
+   "weight": 0.0221,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -780,8 +780,8 @@
    "lula_valid": 48.9,
    "flavio_valid": 51.1,
    "lula_two_party": 48.94,
-   "adjusted": 48.81,
-   "weight": 0.0192,
+   "adjusted": 48.82,
+   "weight": 0.0203,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -805,8 +805,8 @@
    "lula_valid": 48.5,
    "flavio_valid": 51.5,
    "lula_two_party": 48.47,
-   "adjusted": 48.02,
-   "weight": 0.0224,
+   "adjusted": 48.11,
+   "weight": 0.0237,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -830,8 +830,8 @@
    "lula_valid": 48,
    "flavio_valid": 52,
    "lula_two_party": 48.42,
-   "adjusted": 48.58,
-   "weight": 0.0192,
+   "adjusted": 48.56,
+   "weight": 0.0203,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -855,8 +855,8 @@
    "lula_valid": 49.7,
    "flavio_valid": 50.3,
    "lula_two_party": 49.68,
-   "adjusted": 49.19,
-   "weight": 0.0254,
+   "adjusted": 49.24,
+   "weight": 0.0269,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -880,8 +880,8 @@
    "lula_valid": 48.9,
    "flavio_valid": 51.1,
    "lula_two_party": 48.87,
-   "adjusted": 48.4,
-   "weight": 0.0357,
+   "adjusted": 48.37,
+   "weight": 0.0224,
    "mode": "online-rdd",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -905,8 +905,8 @@
    "lula_valid": 51,
    "flavio_valid": 49,
    "lula_two_party": 50.99,
-   "adjusted": 50.54,
-   "weight": 0.021,
+   "adjusted": 50.52,
+   "weight": 0.0171,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -930,8 +930,8 @@
    "lula_valid": 49.6,
    "flavio_valid": 50.4,
    "lula_two_party": 49.58,
-   "adjusted": 50.2,
-   "weight": 0.0202,
+   "adjusted": 50.21,
+   "weight": 0.0165,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -955,8 +955,8 @@
    "lula_valid": 48.5,
    "flavio_valid": 51.5,
    "lula_two_party": 48.42,
-   "adjusted": 48.66,
-   "weight": 0.0255,
+   "adjusted": 48.64,
+   "weight": 0.0208,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "unverified",
@@ -980,8 +980,8 @@
    "lula_valid": 48.9,
    "flavio_valid": 51.1,
    "lula_two_party": 48.97,
-   "adjusted": 50.19,
-   "weight": 0.0306,
+   "adjusted": 50.23,
+   "weight": 0.0148,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1005,8 +1005,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.37,
-   "adjusted": 49.54,
-   "weight": 0.0173,
+   "adjusted": 49.5,
+   "weight": 0.0109,
    "mode": "unknown",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1030,8 +1030,8 @@
    "lula_valid": 50,
    "flavio_valid": 50,
    "lula_two_party": 50.0,
-   "adjusted": 50.16,
-   "weight": 0.0132,
+   "adjusted": 50.14,
+   "weight": 0.0064,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1055,8 +1055,8 @@
    "lula_valid": 49.5,
    "flavio_valid": 50.5,
    "lula_two_party": 49.51,
-   "adjusted": 47.7,
-   "weight": 0.0184,
+   "adjusted": 47.73,
+   "weight": 0.0089,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1080,8 +1080,8 @@
    "lula_valid": 48.8,
    "flavio_valid": 51.2,
    "lula_two_party": 48.94,
-   "adjusted": 49.1,
-   "weight": 0.0133,
+   "adjusted": 49.11,
+   "weight": 0.0065,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1105,8 +1105,8 @@
    "lula_valid": 49.2,
    "flavio_valid": 50.8,
    "lula_two_party": 49.22,
-   "adjusted": 49.84,
-   "weight": 0.017,
+   "adjusted": 49.85,
+   "weight": 0.0082,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1130,8 +1130,8 @@
    "lula_valid": 49,
    "flavio_valid": 51,
    "lula_two_party": 48.84,
-   "adjusted": 48.15,
-   "weight": 0.0164,
+   "adjusted": 48.25,
+   "weight": 0.0061,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1155,8 +1155,8 @@
    "lula_valid": 49,
    "flavio_valid": 51,
    "lula_two_party": 48.91,
-   "adjusted": 48.02,
-   "weight": 0.0175,
+   "adjusted": 47.95,
+   "weight": 0.0065,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1180,8 +1180,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.89,
-   "adjusted": 48.33,
-   "weight": 0.013,
+   "adjusted": 48.38,
+   "weight": 0.0029,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1205,8 +1205,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.49,
-   "adjusted": 50.29,
-   "weight": 0.0214,
+   "adjusted": 50.19,
+   "weight": 0.0048,
    "mode": "online-panel",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1230,8 +1230,8 @@
    "lula_valid": 49,
    "flavio_valid": 51,
    "lula_two_party": 48.94,
-   "adjusted": 49.09,
-   "weight": 0.0093,
+   "adjusted": 49.07,
+   "weight": 0.0021,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1255,8 +1255,8 @@
    "lula_valid": 48,
    "flavio_valid": 52,
    "lula_two_party": 48.39,
-   "adjusted": 47.91,
-   "weight": 0.0151,
+   "adjusted": 47.95,
+   "weight": 0.0034,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1280,8 +1280,8 @@
    "lula_valid": 45,
    "flavio_valid": 55,
    "lula_two_party": 45.36,
-   "adjusted": 47.53,
-   "weight": 0.0097,
+   "adjusted": 47.49,
+   "weight": 0.0017,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1305,8 +1305,8 @@
    "lula_valid": 48.2,
    "flavio_valid": 51.8,
    "lula_two_party": 48.24,
-   "adjusted": 48.86,
-   "weight": 0.0101,
+   "adjusted": 48.87,
+   "weight": 0.001,
    "mode": "phone-live",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1330,8 +1330,8 @@
    "lula_valid": 46.9,
    "flavio_valid": 53.1,
    "lula_two_party": 46.81,
-   "adjusted": 47.04,
-   "weight": 0.0127,
+   "adjusted": 47.03,
+   "weight": 0.0013,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1356,7 +1356,7 @@
    "flavio_valid": 52.7,
    "lula_two_party": 47.31,
    "adjusted": 47.48,
-   "weight": 0.0073,
+   "weight": 0.0006,
    "mode": "online-rdd",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1380,8 +1380,8 @@
    "lula_valid": 47.2,
    "flavio_valid": 52.8,
    "lula_two_party": 47.21,
-   "adjusted": 46.74,
-   "weight": 0.0106,
+   "adjusted": 46.71,
+   "weight": 0.0005,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1405,8 +1405,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.86,
-   "adjusted": 50.42,
-   "weight": 0.0076,
+   "adjusted": 50.39,
+   "weight": 0.0005,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-secondary",
@@ -1430,8 +1430,8 @@
    "lula_valid": 47,
    "flavio_valid": 53,
    "lula_two_party": 47.31,
-   "adjusted": 47.47,
-   "weight": 0.0074,
+   "adjusted": 47.45,
+   "weight": 0.0004,
    "mode": "phone-ivr",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1455,8 +1455,8 @@
    "lula_valid": 48,
    "flavio_valid": 52,
    "lula_two_party": 47.87,
-   "adjusted": 46.98,
-   "weight": 0.0083,
+   "adjusted": 46.91,
+   "weight": 0.0005,
    "mode": "face-to-face",
    "phase": "post_first_round",
    "verification": "verified-primary",
@@ -1480,8 +1480,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.84,
-   "adjusted": 48.28,
-   "weight": 0.0078,
+   "adjusted": 48.33,
+   "weight": 0.0002,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1505,8 +1505,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.31,
-   "adjusted": 48.11,
-   "weight": 0.0078,
+   "adjusted": 48.01,
+   "weight": 0.0001,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1530,8 +1530,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.44,
-   "adjusted": 49.06,
-   "weight": 0.0069,
+   "adjusted": 49.07,
+   "weight": 0.0001,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1555,8 +1555,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.54,
-   "adjusted": 49.64,
-   "weight": 0.0074,
+   "adjusted": 49.57,
+   "weight": 0.0002,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1580,8 +1580,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 50.16,
-   "weight": 0.0055,
+   "adjusted": 50.14,
+   "weight": 0.0001,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1605,8 +1605,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 52.32,
-   "adjusted": 50.5,
-   "weight": 0.006,
+   "adjusted": 50.54,
+   "weight": 0.0001,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1630,8 +1630,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.48,
-   "adjusted": 49.98,
-   "weight": 0.006,
+   "adjusted": 50.05,
+   "weight": 0.0001,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1655,8 +1655,8 @@
    "lula_valid": 47,
    "flavio_valid": 53,
    "lula_two_party": 47.31,
-   "adjusted": 49.49,
-   "weight": 0.0052,
+   "adjusted": 49.44,
+   "weight": 0.0001,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1680,8 +1680,8 @@
    "lula_valid": 50.1,
    "flavio_valid": 49.9,
    "lula_two_party": 50.11,
-   "adjusted": 49.63,
-   "weight": 0.0063,
+   "adjusted": 49.6,
+   "weight": 0.0001,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1705,8 +1705,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.39,
-   "adjusted": 47.95,
-   "weight": 0.0052,
+   "adjusted": 47.92,
+   "weight": 0.0001,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1730,8 +1730,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.61,
-   "adjusted": 50.72,
-   "weight": 0.0049,
+   "adjusted": 50.65,
+   "weight": 0.0001,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1755,8 +1755,8 @@
    "lula_valid": 49,
    "flavio_valid": 51,
    "lula_two_party": 49.45,
-   "adjusted": 49.15,
-   "weight": 0.004,
+   "adjusted": 49.25,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1780,8 +1780,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.59,
-   "adjusted": 49.9,
-   "weight": 0.0045,
+   "adjusted": 50.0,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1805,8 +1805,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.03,
-   "adjusted": 47.65,
-   "weight": 0.0045,
+   "adjusted": 47.66,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -1830,8 +1830,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.72,
-   "adjusted": 49.27,
-   "weight": 0.004,
+   "adjusted": 49.25,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1855,8 +1855,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.26,
-   "adjusted": 50.14,
-   "weight": 0.0036,
+   "adjusted": 50.15,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1880,8 +1880,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 46.24,
-   "adjusted": 48.41,
-   "weight": 0.0041,
+   "adjusted": 48.37,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1905,8 +1905,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.95,
-   "adjusted": 49.47,
-   "weight": 0.0045,
+   "adjusted": 49.44,
+   "weight": 0.0,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1930,8 +1930,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.44,
-   "weight": 0.0031,
+   "adjusted": 49.49,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1955,8 +1955,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.91,
-   "adjusted": 49.71,
-   "weight": 0.0046,
+   "adjusted": 49.61,
+   "weight": 0.0,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -1980,8 +1980,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.11,
-   "adjusted": 50.63,
-   "weight": 0.0041,
+   "adjusted": 50.68,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2005,8 +2005,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.44,
-   "adjusted": 49.14,
-   "weight": 0.0022,
+   "adjusted": 49.24,
+   "weight": 0.0,
    "mode": "mixed",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2030,8 +2030,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.45,
-   "adjusted": 49.61,
-   "weight": 0.0023,
+   "adjusted": 49.59,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2055,8 +2055,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.39,
-   "adjusted": 49.18,
-   "weight": 0.0033,
+   "adjusted": 49.09,
+   "weight": 0.0,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2080,8 +2080,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 46.94,
-   "adjusted": 47.56,
-   "weight": 0.0027,
+   "adjusted": 47.57,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2105,8 +2105,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.09,
-   "adjusted": 50.19,
-   "weight": 0.0022,
+   "adjusted": 50.12,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2130,8 +2130,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.56,
-   "weight": 0.0022,
+   "adjusted": 49.64,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2155,8 +2155,8 @@
    "lula_valid": 50.2,
    "flavio_valid": 49.8,
    "lula_two_party": 50.16,
-   "adjusted": 49.69,
-   "weight": 0.0027,
+   "adjusted": 49.65,
+   "weight": 0.0,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2180,8 +2180,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.4,
-   "adjusted": 48.84,
-   "weight": 0.0017,
+   "adjusted": 48.89,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2205,8 +2205,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.55,
-   "adjusted": 50.07,
-   "weight": 0.0018,
+   "adjusted": 50.12,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2230,8 +2230,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.59,
-   "weight": 0.0017,
+   "adjusted": 49.53,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2255,8 +2255,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.78,
-   "adjusted": 48.57,
-   "weight": 0.0025,
+   "adjusted": 48.48,
+   "weight": 0.0,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2280,8 +2280,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.11,
-   "adjusted": 50.21,
-   "weight": 0.0015,
+   "adjusted": 50.15,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2305,8 +2305,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.89,
-   "adjusted": 49.04,
-   "weight": 0.0013,
+   "adjusted": 49.02,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2330,8 +2330,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 46.24,
-   "adjusted": 48.41,
-   "weight": 0.0016,
+   "adjusted": 48.37,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2355,8 +2355,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.79,
-   "adjusted": 49.31,
-   "weight": 0.0018,
+   "adjusted": 49.28,
+   "weight": 0.0,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2380,8 +2380,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.6,
-   "adjusted": 48.22,
-   "weight": 0.0013,
+   "adjusted": 48.23,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2405,8 +2405,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.44,
-   "adjusted": 49.67,
-   "weight": 0.0015,
+   "adjusted": 49.66,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "unverified",
@@ -2430,8 +2430,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.78,
-   "adjusted": 48.22,
-   "weight": 0.0009,
+   "adjusted": 48.27,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2455,8 +2455,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.54,
-   "adjusted": 50.06,
-   "weight": 0.001,
+   "adjusted": 50.1,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2480,8 +2480,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 54.18,
-   "adjusted": 52.36,
-   "weight": 0.0011,
+   "adjusted": 52.39,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2505,8 +2505,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.59,
-   "adjusted": 49.9,
-   "weight": 0.001,
+   "adjusted": 50.0,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2530,8 +2530,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.78,
-   "adjusted": 50.4,
-   "weight": 0.0008,
+   "adjusted": 50.41,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2555,8 +2555,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.11,
-   "adjusted": 50.21,
-   "weight": 0.0008,
+   "adjusted": 50.15,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2580,8 +2580,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.91,
-   "adjusted": 49.07,
-   "weight": 0.0007,
+   "adjusted": 49.05,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2605,8 +2605,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.89,
-   "adjusted": 49.42,
-   "weight": 0.001,
+   "adjusted": 49.39,
+   "weight": 0.0,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2630,8 +2630,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 45.98,
-   "adjusted": 48.15,
-   "weight": 0.0007,
+   "adjusted": 48.11,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2655,8 +2655,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 48.89,
-   "adjusted": 49.68,
-   "weight": 0.0012,
+   "adjusted": 49.59,
+   "weight": 0.0,
    "mode": "online-panel",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2680,8 +2680,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.45,
-   "adjusted": 48.97,
-   "weight": 0.0005,
+   "adjusted": 49.02,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2705,8 +2705,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.88,
-   "weight": 0.0005,
+   "adjusted": 49.89,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2730,8 +2730,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.44,
-   "weight": 0.0005,
+   "adjusted": 49.49,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2755,8 +2755,8 @@
    "lula_valid": 47.0,
    "flavio_valid": 53.0,
    "lula_two_party": 47.05,
-   "adjusted": 48.27,
-   "weight": 0.0007,
+   "adjusted": 48.31,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2780,8 +2780,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.44,
-   "adjusted": 49.59,
-   "weight": 0.0004,
+   "adjusted": 49.57,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2805,8 +2805,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.11,
-   "adjusted": 50.21,
-   "weight": 0.0005,
+   "adjusted": 50.15,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2830,8 +2830,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.6,
-   "adjusted": 50.04,
-   "weight": 0.0004,
+   "adjusted": 50.1,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2855,8 +2855,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.22,
-   "adjusted": 50.84,
-   "weight": 0.0004,
+   "adjusted": 50.85,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2880,8 +2880,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.0,
-   "adjusted": 49.7,
-   "weight": 0.0003,
+   "adjusted": 49.8,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2905,8 +2905,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.55,
-   "adjusted": 50.07,
-   "weight": 0.0003,
+   "adjusted": 50.12,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -2930,8 +2930,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 52.51,
-   "adjusted": 52.04,
-   "weight": 0.0005,
+   "adjusted": 52.0,
+   "weight": 0.0,
    "mode": "online-rdd",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2955,8 +2955,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 49.67,
-   "adjusted": 49.22,
-   "weight": 0.0003,
+   "adjusted": 49.19,
+   "weight": 0.0,
    "mode": "unknown",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -2980,8 +2980,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.56,
-   "adjusted": 50.72,
-   "weight": 0.0002,
+   "adjusted": 50.7,
+   "weight": 0.0,
    "mode": "phone-ivr",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -3005,8 +3005,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 47.19,
-   "adjusted": 49.36,
-   "weight": 0.0002,
+   "adjusted": 49.32,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-secondary",
@@ -3030,8 +3030,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 50.55,
-   "adjusted": 50.07,
-   "weight": 0.0002,
+   "adjusted": 50.12,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -3055,8 +3055,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 52.87,
-   "adjusted": 52.19,
-   "weight": 0.0002,
+   "adjusted": 52.29,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -3080,8 +3080,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 52.22,
-   "adjusted": 51.33,
-   "weight": 0.0002,
+   "adjusted": 51.26,
+   "weight": 0.0,
    "mode": "face-to-face",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -3105,8 +3105,8 @@
    "lula_valid": null,
    "flavio_valid": null,
    "lula_two_party": 51.65,
-   "adjusted": 51.17,
-   "weight": 0.0001,
+   "adjusted": 51.22,
+   "weight": 0.0,
    "mode": "phone-live",
    "phase": "pre_first_round",
    "verification": "verified-primary",
@@ -3750,7 +3750,7 @@
  "params": {
   "start": "2026-08-14",
   "r1_weight": 0.5,
-  "half_life_days": 8.0,
+  "half_life_days": 2.0,
   "freq_window_days": 10,
   "shrink_k": 3.0,
   "ratings_used": true,

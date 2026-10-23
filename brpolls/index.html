@@ -188,12 +188,12 @@
                     <option value="spline">Spline cúbica de suavização (tipo csaps)</option>
                 </select><span class="v" id="smootherV"></span></div>
             <p class="help exp">Define como as pesquisas viram uma linha. A exponencial usa só o passado, como quem acompanha a campanha dia a dia; as outras olham para os dois lados de cada data e servem para olhar para trás.</p>
-            <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="2" max="30" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
+            <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="1" max="20" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
             <div id="winPresets" style="display:none; margin:-2px 0 6px">
                 <span class="sub">Atalhos:</span>
-                <button class="chip" data-wlen="7">7 dias</button><button class="chip" data-wlen="15">15 dias</button><button class="chip" data-wlen="30">30 dias</button>
+                <button class="chip" data-wlen="3">3 dias</button><button class="chip" data-wlen="7">7 dias</button><button class="chip" data-wlen="15">15 dias</button>
             </div>
-            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Com meia-vida de 8 dias, uma pesquisa de 8 dias atrás pesa metade de uma de hoje.</p>
+            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Com meia-vida de 2 dias, uma pesquisa de 2 dias atrás pesa metade de uma de hoje, e uma de 6 dias atrás pesa um oitavo.</p>
 
             <div class="group">Viés dos institutos</div>
             <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
@@ -249,7 +249,7 @@
             <p class="help exp">Fica fora da previsão publicada: de 2010 a 2022, o erro das pesquisas do 1º turno não se repetiu no 2º.</p>
             <div class="exp">
                 <div class="slider"><span>Erro comum das pesquisas</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Erro comum das pesquisas"><span class="v" id="errSdV"></span></div>
-                <p class="help">Tamanho do erro que todas as pesquisas podem cometer juntas. Nos quatro segundos turnos de 2010 a 2022 a média errou cerca de 1 ponto; uso 2 por cautela.</p>
+                <p class="help">Tamanho do erro que todas as pesquisas podem cometer juntas. Nos quatro segundos turnos de 2010 a 2022, a mesma média errou cerca de 1,5 ponto (1,0 com meia-vida de 8 dias); uso 2 por cautela.</p>
             </div>
 
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
