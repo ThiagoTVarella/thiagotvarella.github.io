@@ -182,18 +182,18 @@
             <div class="group">Suavização</div>
             <div class="slider"><span>Tipo de suavização</span>
                 <select id="smoother" aria-label="Tipo de suavização">
+                    <option value="spline">Spline cúbica de suavização (tipo csaps)</option>
                     <option value="exp">Exponencial (só olha para trás)</option>
                     <option value="gauss">Gaussiana (centrada no dia)</option>
                     <option value="window">Janela móvel (média simples dos últimos dias)</option>
-                    <option value="spline">Spline cúbica de suavização (tipo csaps)</option>
                 </select><span class="v" id="smootherV"></span></div>
-            <p class="help exp">Define como as pesquisas viram uma linha. A exponencial usa só o passado, como quem acompanha a campanha dia a dia; as outras olham para os dois lados de cada data e servem para olhar para trás.</p>
+            <p class="help exp">Define como as pesquisas viram uma linha. O padrão é uma spline cúbica de suavização, como a do csaps: uma curva que passa perto das pesquisas sem ficar serrilhada. A exponencial usa só o passado, como quem acompanha a campanha dia a dia.</p>
             <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="1" max="20" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
             <div id="winPresets" style="display:none; margin:-2px 0 6px">
                 <span class="sub">Atalhos:</span>
                 <button class="chip" data-wlen="3">3 dias</button><button class="chip" data-wlen="7">7 dias</button><button class="chip" data-wlen="15">15 dias</button>
             </div>
-            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Com meia-vida de 2 dias, uma pesquisa de 2 dias atrás pesa metade de uma de hoje, e uma de 6 dias atrás pesa um oitavo.</p>
+            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Na spline, o número é uma largura equivalente em dias (a rigidez λ é esse número elevado a 4; o p do csaps é 1/(1+λ)). Com 2 dias a curva segue de perto as últimas pesquisas. Na exponencial, com meia-vida de 8 dias, uma pesquisa de 8 dias atrás pesa metade de uma de hoje.</p>
 
             <div class="group">Viés dos institutos</div>
             <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>
@@ -223,8 +223,8 @@
             <label class="tg"><input type="checkbox" id="pre">Incluir pesquisas de antes do 1º turno</label>
             <p class="help exp">Antes de 4 de outubro, o confronto Lula x Flávio era um cenário hipotético. Essas pesquisas pesam pouco hoje porque são antigas.</p>
             <div class="exp">
-                <label class="tg"><input type="checkbox" id="unverified">Incluir as 2 pesquisas que não consegui confirmar</label>
-                <p class="help">São duas pesquisas da DataTrends que só encontrei num blog e em trechos de busca.</p>
+                <label class="tg"><input type="checkbox" id="unverified"><span id="unvLabel">Incluir as pesquisas que não consegui confirmar</span></label>
+                <p class="help" id="unvHelp"></p>
                 <div class="sub" style="margin-top:6px">Métodos de pesquisa usados (toque para tirar):</div>
                 <div id="modes"></div>
                 <p class="help">Tire um método para ver se ele puxa a média para algum lado.</p>
@@ -249,7 +249,7 @@
             <p class="help exp">Fica fora da previsão publicada: de 2010 a 2022, o erro das pesquisas do 1º turno não se repetiu no 2º.</p>
             <div class="exp">
                 <div class="slider"><span>Erro comum das pesquisas</span><input type="range" id="errSd" min="0.5" max="5" step="0.1" aria-label="Erro comum das pesquisas"><span class="v" id="errSdV"></span></div>
-                <p class="help">Tamanho do erro que todas as pesquisas podem cometer juntas. Nos quatro segundos turnos de 2010 a 2022, a mesma média errou cerca de 1,5 ponto (1,0 com meia-vida de 8 dias); uso 2 por cautela.</p>
+                <p class="help">Tamanho do erro que todas as pesquisas podem cometer juntas. Nos quatro segundos turnos de 2010 a 2022, a mesma média errou cerca de 1,5 ponto; uso 2 por cautela.</p>
             </div>
 
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
@@ -269,7 +269,7 @@
 
         <div class="card">
             <h4>Todas as pesquisas</h4>
-            <p class="sub"><span id="pollFilter"></span>Toque numa linha para achar a pesquisa no gráfico.</p>
+            <p class="sub"><span id="pollFilter"></span>Toque numa linha para achar a pesquisa no gráfico. Um asterisco (*) marca as pesquisas em que só foram publicados votos válidos.</p>
             <div class="scroll"><table class="t" id="pollTbl"></table></div>
         </div>
 
@@ -286,7 +286,7 @@
             <details><summary>Os dados</summary>
                 <p>Juntei todas as pesquisas nacionais de Lula x Flávio com campo a partir de 14 de agosto de 2026. Cada uma foi conferida no
                     material do próprio instituto ou num veículo grande, e casada com o número de registro no TSE. Comecei pela lista da
-                    Wikipédia e achei as que faltavam olhando o registro do TSE. Duas eu ainda não consegui confirmar numa fonte (dá para tirá-las nos ajustes da visão completa).</p></details>
+                    Wikipédia e achei as que faltavam olhando o registro do TSE. Algumas eu não consegui confirmar numa fonte sólida (a visão completa permite tirá-las). Para as que só publicaram votos válidos, a tabela mostra esses valores com um asterisco: dão a mesma fatia do Lula entre os dois candidatos.</p></details>
             <details><summary>A média</summary>
                 <p>O peso de cada pesquisa é: nota do instituto × raiz do tamanho da amostra (com teto de 5.000) × quão recente ela é
                     (o peso cai pela metade a cada <i>meia-vida</i>) × uma penalidade para quem publica muitas pesquisas em sequência.

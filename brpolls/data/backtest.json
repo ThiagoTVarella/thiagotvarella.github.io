@@ -7,10 +7,10 @@
    "pt_candidate": "DILMA",
    "opponent": "JOSÉ SERRA",
    "polls_used": 11,
-   "average_pt_share": 56.97,
+   "average_pt_share": 57.65,
    "actual_pt_share": 56.05,
-   "error": 0.92,
-   "p_pt_win": 0.996,
+   "error": 1.6,
+   "p_pt_win": 0.997,
    "pt_won": true
   },
   {
@@ -18,10 +18,10 @@
    "pt_candidate": "DILMA",
    "opponent": "AÉCIO NEVES",
    "polls_used": 9,
-   "average_pt_share": 51.58,
+   "average_pt_share": 52.12,
    "actual_pt_share": 51.64,
-   "error": -0.05,
-   "p_pt_win": 0.838,
+   "error": 0.48,
+   "p_pt_win": 0.897,
    "pt_won": true
   },
   {
@@ -29,10 +29,10 @@
    "pt_candidate": "FERNANDO HADDAD",
    "opponent": "JAIR BOLSONARO",
    "polls_used": 71,
-   "average_pt_share": 42.29,
+   "average_pt_share": 43.08,
    "actual_pt_share": 44.87,
-   "error": -2.58,
-   "p_pt_win": 0.003,
+   "error": -1.79,
+   "p_pt_win": 0.004,
    "pt_won": false
   },
   {
@@ -40,13 +40,13 @@
    "pt_candidate": "LULA",
    "opponent": "JAIR BOLSONARO",
    "polls_used": 176,
-   "average_pt_share": 52.02,
+   "average_pt_share": 52.3,
    "actual_pt_share": 50.9,
-   "error": 1.11,
-   "p_pt_win": 0.887,
+   "error": 1.4,
+   "p_pt_win": 0.911,
    "pt_won": true
   }
  ],
- "rmse_share": 1.48,
- "brier": 0.01
+ "rmse_share": 1.41,
+ "brier": 0.005
 }

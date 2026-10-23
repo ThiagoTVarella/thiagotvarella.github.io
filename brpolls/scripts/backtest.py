@@ -16,6 +16,7 @@ import sys
 from collections import defaultdict
 
 sys.path.insert(0, os.path.dirname(__file__))
+import average as A  # noqa: E402
 from average import FREQ_WINDOW, SHRINK_K, trend_at  # noqa: E402
 from ratings import ELECTION, canon, load_results, tokens  # noqa: E402
 from forecast import DF, t_draw  # noqa: E402
@@ -77,8 +78,7 @@ def average(polls, as_of):
         tot = sum(len(v) for v in resid.values())
         m = sum(new[k] * len(resid[k]) for k in new) / tot
         house = defaultdict(float, {k: v - m for k, v in new.items()})
-    tr, _ = trend_at(as_of, polls, house)
-    return tr, len(polls)
+    return A.make_smoother(polls, house)(as_of), len(polls)
 
 
 def prob(center, n=100_000, seed=7):
