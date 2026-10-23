@@ -2,427 +2,427 @@
  "series": [
   {
    "date": "2026-09-01",
-   "lula_avg": 50.26,
-   "se": 0.64,
+   "lula_avg": 50.3,
+   "se": 0.898,
    "days_left": 54,
-   "polls": 12,
-   "p_lula": 0.5431
+   "polls": 13,
+   "p_lula": 0.5497
   },
   {
    "date": "2026-09-02",
-   "lula_avg": 50.22,
-   "se": 0.559,
+   "lula_avg": 50.1,
+   "se": 0.745,
    "days_left": 53,
-   "polls": 14,
-   "p_lula": 0.537
+   "polls": 15,
+   "p_lula": 0.5161
   },
   {
    "date": "2026-09-03",
-   "lula_avg": 50.22,
-   "se": 0.618,
+   "lula_avg": 50.1,
+   "se": 0.824,
    "days_left": 52,
-   "polls": 14,
-   "p_lula": 0.5362
+   "polls": 15,
+   "p_lula": 0.5163
   },
   {
    "date": "2026-09-04",
-   "lula_avg": 49.18,
-   "se": 0.741,
+   "lula_avg": 49.35,
+   "se": 0.875,
    "days_left": 51,
-   "polls": 15,
-   "p_lula": 0.3593
-  },
-  {
-   "date": "2026-09-05",
-   "lula_avg": 49.1,
-   "se": 0.779,
-   "days_left": 50,
-   "polls": 15,
-   "p_lula": 0.3466
-  },
-  {
-   "date": "2026-09-06",
-   "lula_avg": 48.95,
-   "se": 0.825,
-   "days_left": 49,
    "polls": 16,
-   "p_lula": 0.3216
-  },
-  {
-   "date": "2026-09-07",
-   "lula_avg": 49.39,
-   "se": 0.544,
-   "days_left": 48,
-   "polls": 19,
    "p_lula": 0.3916
   },
   {
-   "date": "2026-09-08",
-   "lula_avg": 49.0,
-   "se": 0.479,
-   "days_left": 47,
+   "date": "2026-09-05",
+   "lula_avg": 49.28,
+   "se": 0.934,
+   "days_left": 50,
+   "polls": 16,
+   "p_lula": 0.3801
+  },
+  {
+   "date": "2026-09-06",
+   "lula_avg": 49.08,
+   "se": 0.96,
+   "days_left": 49,
+   "polls": 17,
+   "p_lula": 0.3481
+  },
+  {
+   "date": "2026-09-07",
+   "lula_avg": 49.4,
+   "se": 0.637,
+   "days_left": 48,
    "polls": 20,
-   "p_lula": 0.3204
+   "p_lula": 0.3938
+  },
+  {
+   "date": "2026-09-08",
+   "lula_avg": 48.98,
+   "se": 0.562,
+   "days_left": 47,
+   "polls": 21,
+   "p_lula": 0.3196
   },
   {
    "date": "2026-09-09",
-   "lula_avg": 48.96,
-   "se": 0.472,
+   "lula_avg": 48.89,
+   "se": 0.462,
    "days_left": 46,
-   "polls": 22,
-   "p_lula": 0.3136
+   "polls": 23,
+   "p_lula": 0.3024
   },
   {
    "date": "2026-09-10",
-   "lula_avg": 49.81,
-   "se": 0.491,
+   "lula_avg": 49.65,
+   "se": 0.48,
    "days_left": 45,
-   "polls": 24,
-   "p_lula": 0.4627
+   "polls": 25,
+   "p_lula": 0.4345
   },
   {
    "date": "2026-09-11",
-   "lula_avg": 49.84,
-   "se": 0.609,
+   "lula_avg": 49.67,
+   "se": 0.597,
    "days_left": 44,
-   "polls": 24,
-   "p_lula": 0.4682
+   "polls": 25,
+   "p_lula": 0.4399
   },
   {
    "date": "2026-09-12",
-   "lula_avg": 49.84,
-   "se": 0.633,
+   "lula_avg": 49.68,
+   "se": 0.602,
    "days_left": 43,
-   "polls": 24,
-   "p_lula": 0.4698
+   "polls": 25,
+   "p_lula": 0.4402
   },
   {
    "date": "2026-09-13",
-   "lula_avg": 50.48,
-   "se": 0.537,
+   "lula_avg": 50.38,
+   "se": 0.529,
    "days_left": 42,
-   "polls": 28,
-   "p_lula": 0.5868
+   "polls": 29,
+   "p_lula": 0.5706
   },
   {
    "date": "2026-09-14",
-   "lula_avg": 50.07,
-   "se": 0.512,
+   "lula_avg": 50.02,
+   "se": 0.506,
    "days_left": 41,
-   "polls": 29,
-   "p_lula": 0.51
+   "polls": 30,
+   "p_lula": 0.503
   },
   {
    "date": "2026-09-15",
-   "lula_avg": 49.28,
-   "se": 0.561,
+   "lula_avg": 49.25,
+   "se": 0.555,
    "days_left": 40,
-   "polls": 30,
-   "p_lula": 0.3674
+   "polls": 31,
+   "p_lula": 0.3612
   },
   {
    "date": "2026-09-16",
-   "lula_avg": 48.57,
-   "se": 0.447,
+   "lula_avg": 48.54,
+   "se": 0.442,
    "days_left": 39,
-   "polls": 33,
-   "p_lula": 0.2487
+   "polls": 34,
+   "p_lula": 0.2437
   },
   {
    "date": "2026-09-17",
-   "lula_avg": 49.19,
-   "se": 0.506,
+   "lula_avg": 49.1,
+   "se": 0.498,
    "days_left": 38,
-   "polls": 34,
-   "p_lula": 0.3482
+   "polls": 35,
+   "p_lula": 0.3326
   },
   {
    "date": "2026-09-18",
-   "lula_avg": 48.91,
-   "se": 0.549,
+   "lula_avg": 48.86,
+   "se": 0.537,
    "days_left": 37,
-   "polls": 35,
-   "p_lula": 0.2973
+   "polls": 36,
+   "p_lula": 0.2899
   },
   {
    "date": "2026-09-19",
-   "lula_avg": 48.91,
-   "se": 0.596,
+   "lula_avg": 48.87,
+   "se": 0.583,
    "days_left": 36,
-   "polls": 35,
-   "p_lula": 0.2988
+   "polls": 36,
+   "p_lula": 0.2909
   },
   {
    "date": "2026-09-20",
-   "lula_avg": 49.53,
-   "se": 0.52,
+   "lula_avg": 49.48,
+   "se": 0.509,
    "days_left": 35,
-   "polls": 38,
-   "p_lula": 0.4095
+   "polls": 39,
+   "p_lula": 0.4004
   },
   {
    "date": "2026-09-21",
-   "lula_avg": 49.51,
-   "se": 0.592,
+   "lula_avg": 49.46,
+   "se": 0.58,
    "days_left": 34,
-   "polls": 38,
-   "p_lula": 0.4074
+   "polls": 39,
+   "p_lula": 0.3972
   },
   {
    "date": "2026-09-22",
-   "lula_avg": 49.48,
-   "se": 0.61,
+   "lula_avg": 49.44,
+   "se": 0.599,
    "days_left": 33,
-   "polls": 39,
-   "p_lula": 0.4014
+   "polls": 40,
+   "p_lula": 0.3932
   },
   {
    "date": "2026-09-23",
-   "lula_avg": 49.28,
-   "se": 0.4,
+   "lula_avg": 49.24,
+   "se": 0.394,
    "days_left": 32,
-   "polls": 45,
-   "p_lula": 0.3583
+   "polls": 46,
+   "p_lula": 0.3509
   },
   {
    "date": "2026-09-24",
-   "lula_avg": 49.28,
-   "se": 0.426,
+   "lula_avg": 49.24,
+   "se": 0.423,
    "days_left": 31,
-   "polls": 45,
-   "p_lula": 0.3578
+   "polls": 46,
+   "p_lula": 0.3499
   },
   {
    "date": "2026-09-25",
-   "lula_avg": 49.29,
-   "se": 0.456,
+   "lula_avg": 49.25,
+   "se": 0.454,
    "days_left": 30,
-   "polls": 45,
-   "p_lula": 0.3604
+   "polls": 46,
+   "p_lula": 0.3523
   },
   {
    "date": "2026-09-26",
-   "lula_avg": 49.28,
-   "se": 0.497,
+   "lula_avg": 49.24,
+   "se": 0.495,
    "days_left": 29,
-   "polls": 45,
-   "p_lula": 0.3586
+   "polls": 46,
+   "p_lula": 0.3508
   },
   {
    "date": "2026-09-27",
-   "lula_avg": 50.02,
-   "se": 0.557,
+   "lula_avg": 49.98,
+   "se": 0.55,
    "days_left": 28,
-   "polls": 48,
-   "p_lula": 0.5018
+   "polls": 49,
+   "p_lula": 0.4963
   },
   {
    "date": "2026-09-28",
-   "lula_avg": 49.72,
-   "se": 0.385,
+   "lula_avg": 49.69,
+   "se": 0.382,
    "days_left": 27,
-   "polls": 52,
-   "p_lula": 0.442
+   "polls": 53,
+   "p_lula": 0.4351
   },
   {
    "date": "2026-09-29",
-   "lula_avg": 49.32,
-   "se": 0.384,
+   "lula_avg": 49.27,
+   "se": 0.38,
    "days_left": 26,
-   "polls": 54,
-   "p_lula": 0.3617
+   "polls": 55,
+   "p_lula": 0.3513
   },
   {
    "date": "2026-09-30",
-   "lula_avg": 49.28,
-   "se": 0.391,
+   "lula_avg": 49.23,
+   "se": 0.387,
    "days_left": 25,
-   "polls": 55,
-   "p_lula": 0.3521
+   "polls": 56,
+   "p_lula": 0.3437
   },
   {
    "date": "2026-10-01",
-   "lula_avg": 49.46,
-   "se": 0.485,
+   "lula_avg": 49.4,
+   "se": 0.48,
    "days_left": 24,
-   "polls": 57,
-   "p_lula": 0.3887
+   "polls": 58,
+   "p_lula": 0.3753
   },
   {
    "date": "2026-10-02",
-   "lula_avg": 49.88,
-   "se": 0.331,
+   "lula_avg": 49.85,
+   "se": 0.327,
    "days_left": 23,
-   "polls": 62,
-   "p_lula": 0.4731
+   "polls": 63,
+   "p_lula": 0.4669
   },
   {
    "date": "2026-10-03",
-   "lula_avg": 49.24,
-   "se": 0.257,
+   "lula_avg": 49.22,
+   "se": 0.253,
    "days_left": 22,
-   "polls": 66,
-   "p_lula": 0.3399
+   "polls": 67,
+   "p_lula": 0.3352
   },
   {
    "date": "2026-10-04",
-   "lula_avg": 49.24,
-   "se": 0.281,
+   "lula_avg": 49.22,
+   "se": 0.276,
    "days_left": 21,
-   "polls": 66,
-   "p_lula": 0.3388
+   "polls": 67,
+   "p_lula": 0.3342
   },
   {
    "date": "2026-10-05",
-   "lula_avg": 49.24,
-   "se": 0.309,
+   "lula_avg": 49.22,
+   "se": 0.304,
    "days_left": 20,
-   "polls": 66,
-   "p_lula": 0.3382
+   "polls": 67,
+   "p_lula": 0.3329
   },
   {
    "date": "2026-10-06",
-   "lula_avg": 49.24,
-   "se": 0.336,
+   "lula_avg": 49.22,
+   "se": 0.331,
    "days_left": 19,
-   "polls": 66,
-   "p_lula": 0.3384
+   "polls": 67,
+   "p_lula": 0.3332
   },
   {
    "date": "2026-10-07",
-   "lula_avg": 48.43,
-   "se": 0.554,
+   "lula_avg": 48.39,
+   "se": 0.551,
    "days_left": 18,
-   "polls": 69,
-   "p_lula": 0.2049
+   "polls": 70,
+   "p_lula": 0.1994
   },
   {
    "date": "2026-10-08",
-   "lula_avg": 47.66,
-   "se": 0.458,
+   "lula_avg": 47.63,
+   "se": 0.454,
    "days_left": 17,
-   "polls": 71,
-   "p_lula": 0.1143
+   "polls": 72,
+   "p_lula": 0.1119
   },
   {
    "date": "2026-10-09",
-   "lula_avg": 47.21,
-   "se": 0.492,
+   "lula_avg": 47.2,
+   "se": 0.488,
    "days_left": 16,
-   "polls": 72,
-   "p_lula": 0.0808
+   "polls": 73,
+   "p_lula": 0.0799
   },
   {
    "date": "2026-10-10",
-   "lula_avg": 47.82,
-   "se": 0.535,
+   "lula_avg": 47.81,
+   "se": 0.53,
    "days_left": 15,
-   "polls": 73,
-   "p_lula": 0.1308
+   "polls": 74,
+   "p_lula": 0.1298
   },
   {
    "date": "2026-10-11",
-   "lula_avg": 47.82,
-   "se": 0.6,
+   "lula_avg": 47.81,
+   "se": 0.596,
    "days_left": 14,
-   "polls": 73,
-   "p_lula": 0.1316
+   "polls": 74,
+   "p_lula": 0.1303
   },
   {
    "date": "2026-10-12",
-   "lula_avg": 48.12,
-   "se": 0.548,
+   "lula_avg": 48.08,
+   "se": 0.545,
    "days_left": 13,
-   "polls": 76,
-   "p_lula": 0.157
+   "polls": 77,
+   "p_lula": 0.1537
   },
   {
    "date": "2026-10-13",
-   "lula_avg": 48.82,
-   "se": 0.525,
+   "lula_avg": 48.8,
+   "se": 0.523,
    "days_left": 12,
-   "polls": 78,
-   "p_lula": 0.2536
+   "polls": 79,
+   "p_lula": 0.2511
   },
   {
    "date": "2026-10-14",
-   "lula_avg": 48.54,
+   "lula_avg": 48.48,
    "se": 0.491,
    "days_left": 11,
-   "polls": 80,
-   "p_lula": 0.2092
+   "polls": 81,
+   "p_lula": 0.2015
   },
   {
    "date": "2026-10-15",
-   "lula_avg": 49.04,
+   "lula_avg": 49.01,
    "se": 0.422,
    "days_left": 10,
-   "polls": 84,
-   "p_lula": 0.2882
+   "polls": 85,
+   "p_lula": 0.2828
   },
   {
    "date": "2026-10-16",
-   "lula_avg": 49.59,
-   "se": 0.411,
+   "lula_avg": 49.68,
+   "se": 0.388,
    "days_left": 9,
-   "polls": 86,
-   "p_lula": 0.4012
+   "polls": 88,
+   "p_lula": 0.4226
   },
   {
    "date": "2026-10-17",
-   "lula_avg": 49.83,
-   "se": 0.406,
+   "lula_avg": 49.89,
+   "se": 0.382,
    "days_left": 8,
-   "polls": 89,
-   "p_lula": 0.4607
+   "polls": 91,
+   "p_lula": 0.4726
   },
   {
    "date": "2026-10-18",
-   "lula_avg": 49.45,
-   "se": 0.382,
+   "lula_avg": 49.49,
+   "se": 0.366,
    "days_left": 7,
-   "polls": 92,
-   "p_lula": 0.3683
+   "polls": 94,
+   "p_lula": 0.3757
   },
   {
    "date": "2026-10-19",
-   "lula_avg": 49.29,
-   "se": 0.352,
-   "days_left": 6,
-   "polls": 96,
-   "p_lula": 0.331
-  },
-  {
-   "date": "2026-10-20",
    "lula_avg": 49.37,
-   "se": 0.377,
-   "days_left": 5,
-   "polls": 100,
+   "se": 0.348,
+   "days_left": 6,
+   "polls": 98,
    "p_lula": 0.3478
   },
   {
+   "date": "2026-10-20",
+   "lula_avg": 49.4,
+   "se": 0.378,
+   "days_left": 5,
+   "polls": 102,
+   "p_lula": 0.3554
+  },
+  {
    "date": "2026-10-21",
-   "lula_avg": 49.35,
-   "se": 0.358,
+   "lula_avg": 49.33,
+   "se": 0.362,
    "days_left": 4,
-   "polls": 103,
-   "p_lula": 0.3422
+   "polls": 105,
+   "p_lula": 0.3372
   },
   {
    "date": "2026-10-22",
-   "lula_avg": 49.37,
-   "se": 0.371,
+   "lula_avg": 49.3,
+   "se": 0.318,
    "days_left": 3,
-   "polls": 105,
-   "p_lula": 0.3457
+   "polls": 110,
+   "p_lula": 0.3283
   },
   {
    "date": "2026-10-23",
-   "lula_avg": 49.37,
-   "se": 0.42,
+   "lula_avg": 48.7,
+   "se": 0.377,
    "days_left": 2,
-   "polls": 105,
-   "p_lula": 0.3463
+   "polls": 111,
+   "p_lula": 0.2153
   }
  ],
  "params": {

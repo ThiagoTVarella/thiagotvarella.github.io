@@ -223,8 +223,8 @@
             <label class="tg"><input type="checkbox" id="pre">Incluir pesquisas de antes do 1º turno</label>
             <p class="help exp">Antes de 4 de outubro, o confronto Lula x Flávio era um cenário hipotético. Essas pesquisas pesam pouco hoje porque são antigas.</p>
             <div class="exp">
-                <label class="tg"><input type="checkbox" id="unverified">Incluir as 2 pesquisas que não consegui confirmar</label>
-                <p class="help">São duas pesquisas da DataTrends que só encontrei num blog e em trechos de busca.</p>
+                <label class="tg"><input type="checkbox" id="unverified"><span id="unvLabel">Incluir as pesquisas que não consegui confirmar</span></label>
+                <p class="help" id="unvHelp"></p>
                 <div class="sub" style="margin-top:6px">Métodos de pesquisa usados (toque para tirar):</div>
                 <div id="modes"></div>
                 <p class="help">Tire um método para ver se ele puxa a média para algum lado.</p>
@@ -269,7 +269,7 @@
 
         <div class="card">
             <h4>Todas as pesquisas</h4>
-            <p class="sub"><span id="pollFilter"></span>Toque numa linha para achar a pesquisa no gráfico.</p>
+            <p class="sub"><span id="pollFilter"></span>Toque numa linha para achar a pesquisa no gráfico. Um asterisco (*) marca as pesquisas em que só foram publicados votos válidos.</p>
             <div class="scroll"><table class="t" id="pollTbl"></table></div>
         </div>
 
@@ -286,7 +286,7 @@
             <details><summary>Os dados</summary>
                 <p>Juntei todas as pesquisas nacionais de Lula x Flávio com campo a partir de 14 de agosto de 2026. Cada uma foi conferida no
                     material do próprio instituto ou num veículo grande, e casada com o número de registro no TSE. Comecei pela lista da
-                    Wikipédia e achei as que faltavam olhando o registro do TSE. Duas eu ainda não consegui confirmar numa fonte (dá para tirá-las nos ajustes da visão completa).</p></details>
+                    Wikipédia e achei as que faltavam olhando o registro do TSE. Algumas eu não consegui confirmar numa fonte sólida (a visão completa permite tirá-las). Para as que só publicaram votos válidos, a tabela mostra esses valores com um asterisco: dão a mesma fatia do Lula entre os dois candidatos.</p></details>
             <details><summary>A média</summary>
                 <p>O peso de cada pesquisa é: nota do instituto × raiz do tamanho da amostra (com teto de 5.000) × quão recente ela é
                     (o peso cai pela metade a cada <i>meia-vida</i>) × uma penalidade para quem publica muitas pesquisas em sequência.

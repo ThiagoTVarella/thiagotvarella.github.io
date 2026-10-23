@@ -46,8 +46,13 @@ def d(s):
 def load(as_of, ratings):
     polls = []
     for p in json.load(open(os.path.join(DATA, "polls_runoff_lula_flavio.json"), encoding="utf-8")):
+        # most polls publish total votes; a few only the valid-vote split, which gives the same
+        # Lula-versus-Flávio share (blank, null and undecided drop out either way)
+        p["basis"] = "total"
         if not (p["lula_total"] and p["flavio_total"]):
-            continue
+            if not (p.get("lula_valid") and p.get("flavio_valid")):
+                continue
+            p["lula_total"], p["flavio_total"], p["basis"] = p["lula_valid"], p["flavio_valid"], "valid"
         a, b = d(p["field_start"]), d(p["field_end"])
         if b > as_of:
             continue
@@ -301,7 +306,7 @@ def main():
                    "start": p["field_start"], "end": p["field_end"], "release": p.get("release_date"),
                    "n": p["sample_size"], "moe": p.get("margin_of_error"),
                    "tse": p.get("tse_registration"), "rating": p["rating"],
-                   "lula": p["lula_total"], "flavio": p["flavio_total"],
+                   "lula": p["lula_total"], "flavio": p["flavio_total"], "basis": p["basis"],
                    "blank": p.get("blank_null_total"), "undecided": p.get("undecided_total"),
                    "lula_valid": p.get("lula_valid"), "flavio_valid": p.get("flavio_valid"),
                    "lula_two_party": round(p["y"], 2),

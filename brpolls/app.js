@@ -595,7 +595,7 @@ if (typeof document !== "undefined") (function () {
                 <div><span class="sub">Campo</span><br>${fdl(p.a)} a ${fdl(p.b)}</div>
                 <div><span class="sub">Amostra</span><br>${p.n ? p.n.toLocaleString("pt-BR") : "–"}${p.moe ? ` (±${fmt(p.moe)})` : ""}</div>
                 <div><span class="sub">Método</span><br>${MODE_LABEL[p.mode] || p.mode}</div>
-                <div><span class="sub">Votos totais</span><br><span style="color:${LULA}">Lula ${fmt(p.lula)}</span> · <span style="color:${FLAVIO}">Flávio ${fmt(p.flavio)}</span><br><span class="sub">${other}</span></div>
+                <div><span class="sub">${p.basis === "valid" ? "Votos válidos (só estes foram publicados)" : "Votos totais"}</span><br><span style="color:${LULA}">Lula ${fmt(p.lula)}</span> · <span style="color:${FLAVIO}">Flávio ${fmt(p.flavio)}</span><br><span class="sub">${other}</span></div>
                 <div><span class="sub">Fatia entre os dois</span><br>Lula ${fmt(p.y)}% → ${fmt(p.adj)}% depois de corrigir o viés</div>
                 <div><span class="sub">Peso hoje</span><br>${pct(100 * p.wn)} da média</div>
                 <div><span class="sub">Fase</span><br>${p.phase === "post_first_round" ? "Depois do 1º turno" : "Antes do 1º turno (cenário hipotético)"}</div>
@@ -682,7 +682,7 @@ if (typeof document !== "undefined") (function () {
         for (const r of rows) {
             const p = r.p;
             h += `<tr data-id="${esc(p.id)}" class="${sel.poll && sel.poll.id === p.id ? "on" : ""} ${r.live ? "" : "off"}"><td>${esc(p.pollster)}</td><td>${fd(p.a)} a ${fd(p.b)}</td>` +
-                `<td>${p.n ? p.n.toLocaleString("pt-BR") : "–"}</td><td>${fmt(p.lula)}</td><td>${fmt(p.flavio)}</td><td style="color:${r.lead >= 0 ? LULA : FLAVIO}">${sign(r.lead)}</td>` +
+                `<td>${p.n ? p.n.toLocaleString("pt-BR") : "–"}</td><td>${fmt(p.lula)}${p.basis === "valid" ? "*" : ""}</td><td>${fmt(p.flavio)}${p.basis === "valid" ? "*" : ""}</td><td style="color:${r.lead >= 0 ? LULA : FLAVIO}">${sign(r.lead)}</td>` +
                 `<td>${r.live ? pct(100 * r.w) : "fora"}</td><td>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${verif(p.verification)}</a>` : verif(p.verification)}</td></tr>`;
         }
         $("pollTbl").innerHTML = h;
@@ -739,6 +739,9 @@ if (typeof document !== "undefined") (function () {
         }[view.mode] || "";
         $("minGrade").value = opt.minGrade; $("keepUnrated").checked = opt.keepUnrated; $("keepUnrated").disabled = !opt.minGrade;
         const kept = DATA.pollsters.filter(n => gradeOk(n, DATA, opt) && !opt.exclude.includes(n)).length;
+        const nUnv = DATA.runoff.filter(p => p.verification === "unverified").length;
+        $("unvLabel").textContent = `Incluir as ${nUnv} pesquisas que não consegui confirmar`;
+        $("unvHelp").textContent = `São ${nUnv} pesquisas lidas só num blog, num veículo pequeno ou em trechos de busca, sem o relatório do instituto: ${[...new Set(DATA.runoff.filter(p => p.verification === "unverified").map(p => p.pollster))].join(", ")}.`;
         $("minGradeV").textContent = `${kept} de ${DATA.pollsters.length} institutos`;
         document.querySelectorAll("[data-metric]").forEach(b => b.classList.toggle("on", b.dataset.metric === view.metric));
         document.querySelectorAll("[data-win]").forEach(b => b.classList.toggle("on", b.dataset.win === currentWin()));
