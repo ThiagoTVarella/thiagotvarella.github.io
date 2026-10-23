@@ -26,7 +26,7 @@ DATA = os.path.join(os.path.dirname(__file__), "..", "data")
 ELECTION_DAY = "2026-10-25"
 N = 200_000
 DF = 4
-FLOOR_SD = 2.0   # points of two-party share; backtest.py gives ~1.0 rms over four runoffs, and 2.0 is about the upper 90% bound for n=4
+FLOOR_SD = 2.0   # points of two-party share; backtest.py gives ~1.5 rms over four runoffs (1.0 with an 8-day half-life), and 2.0 stays cautious for n=4
 DRIFT_PER_SQRT_DAY = 0.2
 
 
