@@ -59,27 +59,16 @@ function votes(u) {
     if (hist.length && hist[hist.length - 1].t === pt.t) hist.pop();
     hist.push(pt);
     fs.writeFileSync(HIST, JSON.stringify(hist));
-    // trajetória prevista da contagem: o que falta entra na ordem em que cada município apurou em 2022
+    // trajetória prevista da contagem: sem saber a ordem, o que falta entra misturado na proporção em que vai terminar
     const units = M.buildUnits(BL, S), R2 = M.project(units, {prior: fc.poll_average_lula, draws: 400});
-    const RD = path.join(ROOT, "data/count/replay2022");
-    const snaps = fs.readdirSync(RD).filter(f => f.startsWith("snap_")).map(f => JSON.parse(fs.readFileSync(path.join(RD, f)))).sort((a, b) => a.pct - b.pct);
-    const ufFrac = c => { const o = {}; for (const [uf, v] of Object.entries(c.states)) o[uf] = v[0] ? v[1] / v[0] : 0; return o; };
+    let Lc = 0, Fc = 0, Lr = 0, Nr = 0;
+    units.forEach((u, i) => {
+        const rem = R2.rem[i], nv = u.l + u.f, sh = R2.unitMean[i];
+        const remShare = rem > 0 ? Math.min(1, Math.max(0, (sh * (nv + rem) - u.l) / rem)) : 0;
+        Lc += u.l; Fc += u.f; Lr += rem * remShare; Nr += rem;
+    });
     const traj = [];
-    for (const c of snaps) {
-        const sf = ufFrac(c);
-        let L = 0, F = 0, K = 0, k = 0;
-        units.forEach((u, i) => {
-            const v = c.units[u.key], f22 = v ? (v[0] ? v[1] / v[0] : 1) : (sf[u.uf] != null ? sf[u.uf] : c.pct / 100);
-            const cur = u.K ? u.k / u.K : 0, fr = Math.max(cur, f22);
-            const rem = R2.rem[i], nv = u.l + u.f, sh = R2.unitMean[i];
-            const remShare = rem > 0 ? Math.min(1, Math.max(0, (sh * (nv + rem) - u.l) / rem)) : 0;
-            const add = cur < 1 ? rem * (fr - cur) / (1 - cur) : 0;
-            L += u.l + add * remShare; F += u.f + add * (1 - remShare); K += u.K; k += u.K * fr;
-        });
-        const p = 100 * k / K;
-        if (p > pct + 0.2 && (!traj.length || p > traj[traj.length - 1][0] + 0.2)) traj.push([r2(p), r2(100 * L / (L + F))]);
-    }
-    if (!traj.length || traj[traj.length - 1][0] < 100) traj.push([100, r2(R.nat.mean)]);
+    for (let j = 1; j <= 20; j++) { const a = j / 20; traj.push([r2(pct + a * (100 - pct)), r2(100 * (Lc + a * Lr) / (Lc + Fc + a * Nr))]); }
     const states = {};
     for (const [uf, s] of Object.entries(R.states)) states[uf] = {l: s.l, f: s.f, exp: r2(s.l + s.f ? 100 * s.exp / (s.l + s.f) : null), mean: r2(s.mean), lo: r2(s.p05), hi: r2(s.p95), k: s.k, K: s.K};
     fs.writeFileSync(LATEST, JSON.stringify({point: pt, states, traj, generated: new Date().toISOString()}));
