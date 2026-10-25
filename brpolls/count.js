@@ -396,14 +396,17 @@
     /* versão simples: a página só lê os retratos publicados (a cada 5 min ou quando pedem) */
     function renderSnap(L) {
         const q = L.point;
-        $("cStatus").innerHTML = `Boletim do TSE de <b>${q.t}</b>: <b>${fmt(q.pct)}%</b> das seções apuradas. Contagem: Lula ${fmt(q.raw)}%, Flávio ${fmt(100 - q.raw)}%.`;
+        const gen = new Date(L.generated), ago = Math.max(0, Math.round((Date.now() - gen) / 60000));
+        const hm = gen.toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit"});
+        $("cStatus").innerHTML = `<span style="font-size:14px;color:#333"><b>Última atualização: ${hm}</b> (há ${ago} min, horário de Brasília)</span><br>` +
+            `Boletim do TSE das ${q.t.slice(11, 16)}: <b>${fmt(q.pct)}%</b> das seções apuradas. Contagem: Lula ${fmt(q.raw)}%, Flávio ${fmt(100 - q.raw)}%. Atualizo a cada 5 minutos.`;
         $("cLula").textContent = "Lula " + fmt(q.mean) + "%"; $("cFlavio").textContent = "Flávio " + fmt(100 - q.mean) + "%";
         $("cRange").textContent = `Em 90% dos cenários, o Lula termina entre ${fmt(q.lo)}% e ${fmt(q.hi)}%.`;
         const pl = 100 * q.p; $("cPL").textContent = "Lula " + fmt(pl, 1) + "%"; $("cPF").textContent = "Flávio " + fmt(100 - pl, 1) + "%";
         $("cBar").innerHTML = `<div style="width:${pl}%;background:#c0392b">${pl >= 12 ? fmt(pl, 0) + "%" : ""}</div><div style="width:${100 - pl}%;background:#1f5fa8">${pl <= 88 ? fmt(100 - pl, 0) + "%" : ""}</div>`;
         const d = q.raw - q.exp;
         $("cExplain").innerHTML = `<p>Nos municípios já apurados, o 1º turno indicava Lula com ${fmt(q.exp)}%; ele tem ${fmt(q.raw)}% (${sign(d)}). Faltam cerca de ${mi(q.rem)} de votos válidos.</p>`;
-        $("cFetch").textContent = `Retrato gerado às ${new Date(L.generated).toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit"})}. A página relê sozinha a cada minuto.`;
+        $("cFetch").textContent = "";
         const rows = Object.entries(L.states).map(([uf, s]) => ({uf, s, p: 100 * s.k / Math.max(1, s.K), sh: s.l + s.f ? 100 * s.l / (s.l + s.f) : null})).sort((a, b) => b.s.K - a.s.K);
         let t = `<tr><th>Estado</th><th>Apurado</th><th>Lula na contagem</th><th>Esperado</th><th>Diferença</th><th>Projeção do Lula</th><th>Faixa de 90%</th></tr>`;
         for (const r of rows) { const dd = r.sh == null ? null : r.sh - r.s.exp;
