@@ -349,12 +349,12 @@
         const h = loadHist(); if (h.length && h[h.length - 1].t === pt.t) h.pop(); h.push(pt);
         try { localStorage.setItem(HKEY, JSON.stringify(h.slice(-400))); } catch (e) {}
     }
-    function history() {   // histórico guardado no site (a cada 5 min) + o que este navegador viu
+    function allHist() {   // histórico guardado no site (a cada 5 min) + o que este navegador viu
         const by = {}; for (const p of SERVER.concat(loadHist())) if (p.pct > 0) by[p.t] = p;
         return Object.values(by).sort((a, b) => a.pct - b.pct);
     }
     function drawChart() {
-        const h = history(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), small = W < 600,
+        const h = allHist(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), small = W < 600,
             H = small ? 240 : 300, m = {l: 34, r: small ? 10 : 70, t: 12, b: 28};
         if (!h.length) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
         const vals = h.flatMap(p => [p.lo, p.hi, p.raw, 100 - p.lo, 100 - p.hi, 100 - p.raw].filter(v => v != null));
