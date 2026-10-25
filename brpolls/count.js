@@ -390,6 +390,7 @@
         const end = path[path.length - 1];
         s += `<text x="${X(100) + 8}" y="${Y(end[1]) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(end[1], 1)}</text>`;
         s += `<text x="${X(100) + 8}" y="${Y(100 - end[1]) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - end[1], 1)}</text>`;
+        for (const p of h) if (p.raw != null) s += `<circle cx="${X(p.pct).toFixed(1)}" cy="${Y(p.raw).toFixed(1)}" r="2.6" fill="#c0392b"/><circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 - p.raw).toFixed(1)}" r="2.6" fill="#1f5fa8"/>`;
         for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.raw)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção final: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)})</title></circle>`;
         s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como eu acho que a contagem vai andar daqui até o fim (supondo que cada município termine de apurar na mesma ordem de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final</div>`;
         box.innerHTML = s;
