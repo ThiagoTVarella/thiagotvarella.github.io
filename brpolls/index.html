@@ -93,6 +93,12 @@
             .seg button { padding:6px 8px; }
             label.tg { white-space:normal; }
         }
+        .tabs { display:flex; gap:0; border-bottom:2px solid #333; margin:4px 0 12px; }
+        .tabs button { border:0; background:#eee; padding:8px 14px; font-size:14px; cursor:pointer; font-family:inherit; border-radius:6px 6px 0 0; margin-right:4px; }
+        .tabs button.on { background:#333; color:#fff; }
+        .btn { border:1px solid #ccc; background:#fff; border-radius:6px; padding:5px 10px; font-size:12px; cursor:pointer; font-family:inherit; min-height:32px; }
+        #cChart svg { display:block; width:100%; }
+        table.t td.pos { color:#c0392b; } table.t td.neg { color:#1f5fa8; }
     </style>
 </head>
 <body>
@@ -101,6 +107,10 @@
     <div class="col-lg-1"></div>
     <div class="col-lg-10 col-md-12 wrap">
         <h3>Segundo turno de 2026: Lula x Flávio Bolsonaro</h3>
+        <div class="tabs" role="tablist">
+            <button data-tab="count">Apuração ao vivo</button><button data-tab="polls">Pesquisas</button>
+        </div>
+        <div id="tabPolls">
         <p class="sub" id="asofLine">Carregando…</p>
         <div class="modebar">
             <div class="seg" role="group" aria-label="Tipo de visualização">
@@ -331,9 +341,53 @@
             <p class="sub" style="margin-top:10px">Código e dados: pasta <code>brpolls/</code> no repositório deste site. Qualquer erro é meu; se achar algum, me avise.</p>
             </details>
         </div>
+        </div><!-- /tabPolls -->
+
+        <div id="tabCount" hidden>
+            <p class="sub" id="cStatus">Carregando o boletim do TSE…</p>
+            <div class="card">
+                <div class="kpis">
+                    <div class="kpi">
+                        <div class="sub">Projeção do resultado final (votos válidos)</div>
+                        <div class="row2"><div class="n lula" id="cLula">–</div><div class="n flavio" id="cFlavio">–</div></div>
+                        <div class="sub" id="cRange"></div>
+                    </div>
+                    <div class="kpi">
+                        <div class="sub">Chance de vitória, pela projeção</div>
+                        <div class="row2"><div class="n lula" id="cPL">–</div><div class="n flavio" id="cPF">–</div></div>
+                        <div class="bar" id="cBar"></div>
+                    </div>
+                </div>
+                <div id="cExplain" style="font-size:13px;margin-top:8px"></div>
+                <div class="toolbar" style="margin-top:10px">
+                    <button class="btn" id="cRefresh">Atualizar agora</button>
+                    <label class="sub"><input type="checkbox" id="cAuto" checked> atualizar sozinho a cada minuto</label>
+                    <span class="sub" id="cFetch"></span>
+                </div>
+            </div>
+            <div class="card">
+                <h4>Como a projeção mudou ao longo da apuração</h4>
+                <p class="sub">Eixo horizontal: % das seções apuradas. Linha cheia: projeção (faixa = 90% dos cenários). Tracejada: a contagem bruta. Fica salvo só neste navegador, a partir de quando você abriu a página.</p>
+                <div id="cChart"></div>
+            </div>
+            <div class="card">
+                <h4>Por estado</h4>
+                <p class="sub">"Esperado" é quanto o Lula teria, nos mesmos municípios já apurados, se o país inteiro repetisse o 1º turno ajustado para a média das pesquisas. Diferença positiva = o Lula está indo melhor que o esperado ali.</p>
+                <div class="scroll"><table class="t" id="cTbl"></table></div>
+            </div>
+            <div class="card">
+                <details><summary>Como funciona <span>(toque para abrir)</span></summary>
+                <p>A contagem bruta engana no começo, porque a ordem da apuração não é aleatória: em 2022 o Bolsonaro liderou até cerca de dois terços das urnas, e o Lula virou quando chegaram as do Nordeste. Por isso eu não olho o total, e sim cada município contra o que se esperava dele.</p>
+                <p>O ponto de partida de cada município é a fatia do Lula entre os dois no 1º turno de 2026, empurrada por igual (na escala logit) até o país inteiro bater a média final das pesquisas. Quando um município começa a apurar, comparo o que veio com esse ponto de partida. A diferença se divide em três partes: uma nacional, uma do estado e uma só daquele município. As partes nacional e estadual valem para os lugares que ainda não apuraram. Um município com poucas seções apuradas pesa pouco, e quanto mais diferentes forem as seções dele no 1º turno, menos peso ele tem.</p>
+                <p>O comparecimento do que falta sai do 1º turno, corrigido pelo que já se viu no 2º em cada estado. A faixa vem de mil sorteios e inclui uma folga para o caso de o que falta apurar votar diferente do que já veio. A chance de vitória é a fração desses sorteios em que o Lula passa de 50%.</p>
+                <p>Os dados vêm direto do boletim do TSE (resultados.tse.jus.br), lido pelo seu navegador. Os municípios grandes são lidos um a um; os que mudaram mas ainda não li entram como um bloco por estado. Ainda estou calibrando os parâmetros com a apuração de 2022 refeita seção a seção, então trate a faixa como provisória. Isso aqui é uma estimativa minha, não um resultado oficial: o resultado é o do TSE.</p>
+                </details>
+            </div>
+        </div>
     </div>
 </div>
 <div id="footer"></div>
 <script src="app.js"></script>
+<script src="count.js"></script>
 </body>
 </html>

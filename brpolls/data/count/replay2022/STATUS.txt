@@ -1,0 +1,8 @@
+2022 runoff replay -- all deliverables written.
+Inputs: TSE bweb_2t_<UF>_311020221535.zip (27 UFs + ZZ, all available) and votacao_secao_2022_BR.zip (R1, Presidente).
+R2 sections (BUs) 472,028, all with DT_BU_RECEBIDO; R1 sections 472,028; 5,710 municipalities incl. 140 abroad (zz).
+Totals check: R1 Lula 57,259,504 / Bolsonaro 51,072,345 / others 9,897,870; R2 Lula 60,345,999 / Bolsonaro 58,206,354 (50.902%).
+Files: baseline.json, snap_<pct>.json (pct with '.' -> '_', e.g. snap_0_5.json, snap_7_5.json), truth.json, params_2022.json.
+Snapshot rule: sections sorted by DT_BU_RECEBIDO (BRT); checkpoint time = receipt time of the ceil(pct*N)-th section; snapshot includes all sections received <= that time.
+Note: abroad (zz) BUs arrive before 17:00 BRT (Asia/Europe), so they are already in the earliest snapshots.
+Builder: python3 -I brpolls/scripts/count/build_replay_2022.py --zips DIR --r1zip ZIP --cache DIR
