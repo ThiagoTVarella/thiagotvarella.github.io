@@ -224,6 +224,10 @@
             l = Math.max(0, l); f = Math.max(0, f);
             let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0;
             for (const p of mem) { L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += p.a.ts || p.m.sec; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += p.m.lsize * p.m.v1; }
+            if (st && st.st) {   // seções do bloco pela mesma fonte dos votos (total do estado − municípios lidos), senão o comparecimento infla
+                let kInd = 0; for (const u of units) if (u.uf === uf) kInd += u.k;
+                k = Math.min(K, Math.max(0, st.st - kInd));
+            }
             const x = lg((L1 + 1) / (L1 + F1 + 2));
             let between = 0; for (const p of mem) between += p.m.v1 * (p.m.x - x) ** 2;
             between = Math.sqrt(between / V);
@@ -367,7 +371,7 @@
     let LATEST = null;
     function drawChart() {
         const h = allHist(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), small = W < 600,
-            H = small ? 250 : 320, m = {l: 34, r: small ? 14 : 84, t: 12, b: 30};
+            H = small ? 260 : 330, m = {l: 34, r: small ? 14 : 84, t: 12, b: 36};
         if (!h.length) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
         const last = h[h.length - 1], tr = (LATEST && LATEST.traj) || [];
         const path = [[last.pct, last.raw]].concat(tr.filter(t => t[0] > last.pct));
@@ -379,8 +383,19 @@
         const step = y1 - y0 > 16 ? 4 : y1 - y0 > 8 ? 2 : 1;
         let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
         for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 50 ? "#999" : "#eee"}"/><text x="${m.l - 4}" y="${Y(v) + 4}" font-size="10" text-anchor="end" fill="#777">${v}%</text>`;
-        for (let p = 0; p <= 100; p += 20) s += `<text x="${X(p)}" y="${H - 14}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
-        s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">seções apuradas</text>`;
+        // horário em cada marca: o observado (boletins do TSE) e, depois do último, o previsto (~)
+        const toMin = c => { const [hh, mm] = c.split(":").map(Number); return hh * 60 + mm; };
+        const obsT = h.map(p => [p.pct, toMin(p.t.slice(11, 16))]), preT = tr.filter(t => t[2]).map(t => [t[0], toMin(t[2])]);
+        const interp = (pts, x) => { for (let j = 1; j < pts.length; j++) if (x <= pts[j][0]) { const [a0, b0] = pts[j - 1], [a1, b1] = pts[j]; return b0 + (b1 - b0) * (x - a0) / Math.max(1e-9, a1 - a0); } return null; };
+        const hm = v => String(Math.floor(v / 60) % 24).padStart(2, "0") + ":" + String(Math.round(v) % 60).padStart(2, "0");
+        const tickTime = x => { if (x <= last.pct) { const v = interp(obsT, x); return v == null ? "" : hm(v); }
+            const v = interp([[last.pct, obsT[obsT.length - 1][1]]].concat(preT), x); return v == null ? "" : "~" + hm(v); };
+        const ticks = [0, 20, 40, 60, 80, 100].filter(p => Math.abs(p - last.pct) > 6).concat([last.pct]).sort((a, b) => a - b);
+        for (const p of ticks) {
+            const now = p === last.pct, tt = p === 0 ? "19:00" : tickTime(p);
+            s += `<text x="${X(p)}" y="${H - 18}" font-size="10" text-anchor="middle" fill="${now ? "#333" : "#777"}" ${now ? 'font-weight="bold"' : ""}>${now ? fmt(p, 1) : p}%</text>`;
+            s += `<text x="${X(p)}" y="${H - 6}" font-size="9" text-anchor="middle" fill="${now ? "#333" : "#999"}">${tt}</text>`;
+        }
         s += `<line x1="${X(last.pct)}" x2="${X(last.pct)}" y1="${m.t}" y2="${H - m.b}" stroke="#ddd" stroke-dasharray="2 3"/>`;
         // faixa de 90% do resultado final, em 100%
         s += `<rect x="${X(100) - 5}" y="${Y(last.hi)}" width="10" height="${Y(last.lo) - Y(last.hi)}" fill="#c0392b" opacity=".18"/>`;
@@ -392,7 +407,7 @@
         s += `<text x="${X(100) + 8}" y="${Y(100 - end[1]) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - end[1], 1)}</text>`;
         for (const p of h) if (p.raw != null) s += `<circle cx="${X(p.pct).toFixed(1)}" cy="${Y(p.raw).toFixed(1)}" r="2.6" fill="#c0392b"/><circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 - p.raw).toFixed(1)}" r="2.6" fill="#1f5fa8"/>`;
         for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.raw)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção final: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)})</title></circle>`;
-        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como acho que a contagem vai andar até o fim (cada estado no seu ritmo de hoje, com a curva de velocidade de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final</div>`;
+        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como acho que a contagem vai andar até o fim (cada estado no seu ritmo de hoje, com a curva de velocidade de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final &nbsp; embaixo de cada marca: horário de Brasília (com ~ = previsto)</div>`;
         box.innerHTML = s;
     }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});

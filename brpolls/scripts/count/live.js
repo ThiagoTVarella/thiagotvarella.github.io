@@ -89,10 +89,11 @@ function votes(u) {
             L += g.l + a * g.Lr; Fv += g.f + a * (g.Nr - g.Lr); K += g.K; k += g.K * fr;
         }
         const p = 100 * k / K;
-        if (p > pct + 0.3 && (!traj.length || p > traj[traj.length - 1][0] + 0.8)) traj.push([r2(p), r2(100 * L / (L + Fv))]);
+        const clock = (() => { const m = Math.round(19 * 60 + t); return String(Math.floor(m / 60) % 24).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); })();
+        if (p > pct + 0.3 && (!traj.length || p > traj[traj.length - 1][0] + 0.8)) traj.push([r2(p), r2(100 * L / (L + Fv)), clock]);
         if (p > 99.9) break;
     }
-    traj.push([100, r2(100 * (Lc + Lr) / (Lc + Fc + Nr))]);
+    traj.push([100, r2(100 * (Lc + Lr) / (Lc + Fc + Nr)), traj.length ? traj[traj.length - 1][2] : null]);
     const states = {};
     for (const [uf, s] of Object.entries(R.states)) states[uf] = {l: s.l, f: s.f, exp: r2(s.l + s.f ? 100 * s.exp / (s.l + s.f) : null), mean: r2(s.mean), lo: r2(s.p05), hi: r2(s.p95), k: s.k, K: s.K};
     fs.writeFileSync(LATEST, JSON.stringify({point: pt, states, traj, generated: new Date().toISOString()}));
