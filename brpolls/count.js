@@ -358,7 +358,7 @@
         try { localStorage.setItem(HKEY, JSON.stringify(h.slice(-400))); } catch (e) {}
     }
     function allHist() {   // histórico guardado no site (a cada 5 min) + o que este navegador viu
-        const by = {}; for (const p of SERVER.concat(loadHist())) if (p.pct > 0) by[p.t] = p;
+        const by = {}; for (const p of SERVER) if (p.pct > 0) by[p.t] = p;
         return Object.values(by).sort((a, b) => a.pct - b.pct);
     }
     function drawChart() {
@@ -390,15 +390,32 @@
     }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
 
-    async function start() {
-        if (started) return; started = true;
+    /* versão simples: a página só lê os retratos publicados (a cada 5 min ou quando pedem) */
+    function renderSnap(L) {
+        const q = L.point;
+        $("cStatus").innerHTML = `Boletim do TSE de <b>${q.t}</b>: <b>${fmt(q.pct)}%</b> das seções apuradas. Contagem: Lula ${fmt(q.raw)}%, Flávio ${fmt(100 - q.raw)}%.`;
+        $("cLula").textContent = "Lula " + fmt(q.mean) + "%"; $("cFlavio").textContent = "Flávio " + fmt(100 - q.mean) + "%";
+        $("cRange").textContent = `Em 90% dos cenários, o Lula termina entre ${fmt(q.lo)}% e ${fmt(q.hi)}%.`;
+        const pl = 100 * q.p; $("cPL").textContent = "Lula " + fmt(pl, 1) + "%"; $("cPF").textContent = "Flávio " + fmt(100 - pl, 1) + "%";
+        $("cBar").innerHTML = `<div style="width:${pl}%;background:#c0392b">${pl >= 12 ? fmt(pl, 0) + "%" : ""}</div><div style="width:${100 - pl}%;background:#1f5fa8">${pl <= 88 ? fmt(100 - pl, 0) + "%" : ""}</div>`;
+        const d = q.raw - q.exp;
+        $("cExplain").innerHTML = `<p>Nos municípios já apurados, o 1º turno indicava Lula com ${fmt(q.exp)}%; ele tem ${fmt(q.raw)}% (${sign(d)}). Faltam cerca de ${mi(q.rem)} de votos válidos.</p>`;
+        $("cFetch").textContent = `Retrato gerado às ${new Date(L.generated).toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit"})}. A página relê sozinha a cada minuto.`;
+        const rows = Object.entries(L.states).map(([uf, s]) => ({uf, s, p: 100 * s.k / Math.max(1, s.K), sh: s.l + s.f ? 100 * s.l / (s.l + s.f) : null})).sort((a, b) => b.s.K - a.s.K);
+        let t = `<tr><th>Estado</th><th>Apurado</th><th>Lula na contagem</th><th>Esperado</th><th>Diferença</th><th>Projeção do Lula</th><th>Faixa de 90%</th></tr>`;
+        for (const r of rows) { const dd = r.sh == null ? null : r.sh - r.s.exp;
+            t += `<tr><td>${r.uf === "zz" ? "Exterior" : r.uf.toUpperCase()}</td><td>${fmt(r.p, 1)}%</td><td>${r.sh == null ? "–" : fmt(r.sh) + "%"}</td><td>${r.s.exp == null ? "–" : fmt(r.s.exp) + "%"}</td><td class="${dd > 0 ? "pos" : dd < 0 ? "neg" : ""}">${sign(dd)}</td><td>${fmt(r.s.mean)}%</td><td>${fmt(r.s.lo)}–${fmt(r.s.hi)}</td></tr>`; }
+        $("cTbl").innerHTML = t;
+    }
+    async function refresh() {
         try {
-            const [bl, fc] = await Promise.all([getJ("data/count/baseline_2026.json"), getJ("data/forecast.json").catch(() => null)]);
-            BL = M.prepBaseline(bl); prior = fc && fc.poll_average_lula ? fc.poll_average_lula : M.DEF.prior;
-        } catch (e) { $("cStatus").textContent = "Não consegui carregar a base do 1º turno: " + e.message; return; }
-        await loadServer(); drawChart();
-        await cycle();
-        timer = setInterval(() => { if ($("cAuto").checked && !document.hidden && !$("tabCount").hidden) loadServer().then(cycle); }, 60000);
+            const [h, L] = await Promise.all([getJ("data/count/live_history.json?" + Date.now()), getJ("data/count/live_latest.json?" + Date.now())]);
+            SERVER = h || []; renderSnap(L); drawChart();
+        } catch (e) { $("cStatus").textContent = "Ainda não há retrato publicado (" + e.message + ")."; }
+    }
+    function start() {
+        if (started) return; started = true;
+        refresh(); timer = setInterval(() => { if (!document.hidden) refresh(); }, 60000);
     }
     function show(tab) {
         $("tabCount").hidden = tab !== "count"; $("tabPolls").hidden = tab === "count";
@@ -407,7 +424,6 @@
         else { if (location.hash === "#apuracao") history.replaceState(null, "", location.pathname); window.dispatchEvent(new Event("resize")); }
     }
     document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => show(b.dataset.tab));
-    $("cRefresh").onclick = () => cycle();
     window.addEventListener("resize", () => { if (!$("tabCount").hidden) drawChart(); });
     // abre na apuração se o link pedir, ou se o endereço não tiver nenhum ajuste da aba de pesquisas
     const h = location.hash;
