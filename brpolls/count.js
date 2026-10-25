@@ -2,28 +2,48 @@
    se esperava daquele lugar (1º turno + média das pesquisas) e projeta o resultado final.
 
    Modelo, na escala logit da fatia do Lula entre os dois:
-     fatia final do município i  θ_i = x_i + X_i·β + γ_uf + ε_i
+     fatia final do município i  θ_i = x_i + X_i·β + η_região + γ_uf + ε_i
        x_i   ponto de partida: fatia do Lula entre Lula e Flávio no 1º turno naquele município
-       β     deslocamento nacional (β0, ajustado para a média das pesquisas) e, opcionalmente, efeitos por tipo de município
-       γ_uf  deslocamento próprio de cada estado
-       ε_i   o que sobra de cada município
-     contagem parcial: z_i ~ N(θ_i, τ_i²/k·(1−k/K) + ordem²·(1−k/K) + binomial), com k de K seções apuradas
-   Tudo é normal, então a posteriori sai em fórmula fechada e a projeção sai de sorteios. */
+       β     deslocamento nacional (β0, ajustado para a média das pesquisas) e efeitos por tipo de município
+             (tamanho e inclinação no 1º turno, centrados)
+       η, γ  deslocamentos próprios de cada região e de cada estado
+       ε_i   o que sobra de cada município (caudas pesadas: t, por repesagem)
+     contagem parcial: z_i = θ_i + (1−k/K)·(b0 + b1·inclinação_i) + ruído τ_i²/k·(1−k/K) + ordem²·(1−k/K) + binomial,
+       com k de K seções apuradas; o viés b das primeiras seções é estimado ao vivo (parciais x completos)
+   Tudo é normal dado os pesos, então a posteriori sai em fórmula fechada e a projeção sai de sorteios. */
 (function (root) {
     "use strict";
     const DEF = {
         prior: 49.20,       // média das pesquisas (fatia do Lula entre os dois, %)
         priorSd: 1.9,       // erro típico dessa média, em pontos
-        sdState: 0.03,      // desvio dos deslocamentos estaduais (logit); 2022: 0,023
+        sdState: 0.03,      // desvio dos deslocamentos estaduais (logit) quando não há efeito de região; 2022: 0,023
+        sdRegion: 0.015,    // deslocamento por região (N, NE, CO, SE, S); 0 = desligado. 2022: ~0,015
+        sdStateR: 0.025,    // desvio do estado dentro da região (com sdRegion > 0)
         sdAbroad: 0.25,     // exterior
         eps0: 0.028,        // resíduo municipal: sqrt(eps0² + eps1²·1000/votos), ajustado em 2022
         eps1: 0.071,
+        tdf: 4,             // caudas pesadas: resíduos t com tdf graus de liberdade (repesagem EM); 0 = normal
+        tIter: 3,
         tauDefault: 0.25,   // heterogeneidade entre seções quando não sei
-        orderSd: 0.15,      // seções apuradas primeiro não são típicas do município (2022: puxam para o Bolsonaro)
-        sdCov: 0,           // prior dos efeitos por tipo de município (0 = desligado)
-        sdBias: 0.15,       // viés das contagens parciais (estimado ao vivo: parciais x municípios completos)
-        sdRemain: 0.07,     // choque comum no que falta apurar: o resto do país pode votar diferente do que já veio
-        sdRemainState: 0.04,// idem, por estado
+        orderSd: 0.16,      // seções apuradas primeiro não são típicas do município (2022: puxam para o Bolsonaro)
+        orderF: 2,          // a variância da ordem cai com (1−f)^orderF (era 1)
+        orderK: 50,         // … e com (orderK/k)^orderKPow quando já há mais de orderK seções (0 = desligado)
+        orderKPow: 0.7,
+        // efeitos por tipo de município no voto de verdade (centrados na média ponderada por votos)
+        sdCov: 0,           // atalho antigo: liga sdOth e sdSize com o mesmo desvio
+        sdOth: null,        // fatia dos outros candidatos no 1º turno (desvio da média); testado, não ajudou
+        sdSize: 0.05,       // tamanho (log10 dos votos): em 2026 o Lula cresce mais nas cidades grandes; 2022: ~0
+        sizeCap: 0.7,       // teto do tamanho (log10 votos − 4; 0,7 ≈ 50 mil): ao vivo o gradiente para por volta de 20–50 mil
+        sdLean: 0.05,       // inclinação no 1º turno (logit − média), regressão à média; 2022: −0,03
+        // viés das contagens parciais: só na observação, proporcional ao que falta apurar (1 − f)
+        sdBias: 0.15,       // viés comum (estimado ao vivo: parciais x municípios completos)
+        biasShape: "lin",   // "lin" = 1−f, "hump" = 4f(1−f) (testado, pior)
+        sdBiasSize: 0,      // viés que varia com o tamanho (testado, não ajudou com sdSize ligado)
+        sdBiasLean: 0.05,   // viés que varia com a inclinação: as primeiras seções de um município forte de um lado
+                            // tendem a ser menos fortes (2022); sem isso a inclinação fica enviesada no começo
+        sdBiasState: 0,     // viés próprio de cada estado (testado, não ajudou)
+        sdRemain: 0.05,     // choque comum no que falta apurar: o resto do país pode votar diferente do que já veio
+        sdRemainState: 0.03,// idem, por estado (2022, com ordens de apuração trocadas: faixas de 90% antigas ~5× o erro)
         rho0: 0.97,         // votos em Lula+Flávio no 2º turno ÷ votos válidos no 1º
         draws: 1000,
         seed: 20261025
@@ -79,15 +99,43 @@
         return x;
     }
 
+    /* regiões (o exterior fica fora): N, NE, CO, SE, S */
+    const REGION = {ac: 0, am: 0, ap: 0, pa: 0, ro: 0, rr: 0, to: 0, al: 1, ba: 1, ce: 1, ma: 1, pb: 1, pe: 1, pi: 1, rn: 1, se: 1,
+        df: 2, go: 2, ms: 2, mt: 2, es: 3, mg: 3, rj: 3, sp: 3, pr: 4, rs: 4, sc: 4};
+
     /* units: [{x, v1, sec, sd, oth, lsize, uf, K, k, l, f}] — K/k seções totais/apuradas, l/f votos apurados.
-       Unidades agrupadas (vários municípios de uma vez) funcionam igual, com sd maior. */
+       Unidades agrupadas (vários municípios de uma vez) funcionam igual, com sd maior.
+       Todos os efeitos (nacional, covariáveis, viés da contagem parcial, região, estado) formam um único vetor gaussiano;
+       o resíduo de cada município é integrado analiticamente e depois sorteado condicionado aos efeitos e à contagem. */
     function project(units, o) {
         o = Object.assign({}, DEF, o || {});
-        const n = units.length, PT = o.sdCov > 0 ? 3 : 1, BIAS = o.sdBias > 0, P = PT + (BIAS ? 1 : 0);
-        const featT = u => PT === 1 ? [1] : [1, u.oth, u.lsize];                     // afetam o voto de verdade
-        const feat = u => BIAS ? featT(u).concat([Math.max(0, 1 - u.k / u.K)]) : featT(u);   // + viés só na observação
+        const n = units.length;
         const sdE = u => Math.sqrt(o.eps0 * o.eps0 + o.eps1 * o.eps1 * 1000 / Math.max(u.v1 * o.rho0, 50));
-        const sdG = uf => uf === "zz" ? o.sdAbroad : o.sdState;
+        const frac = u => u.K > 0 ? Math.min(1, u.k / u.K) : 0;
+
+        // covariáveis centradas na média ponderada por votos, para β0 continuar sendo o deslocamento nacional
+        let V = 0, mO = 0, mS = 0, mX = 0;
+        const sz = u => Math.min(u.lsize || 0, o.sizeCap);   // tamanho com teto: o efeito some acima de ~500 mil votos
+        for (const u of units) { V += u.v1; mO += u.v1 * (u.oth || 0); mS += u.v1 * sz(u); mX += u.v1 * u.x; }
+        mO /= V; mS /= V; mX /= V;
+        const sdOth = o.sdOth != null ? o.sdOth : o.sdCov, sdSize = o.sdSize != null ? o.sdSize : o.sdCov;
+        const covs = [];   // afetam o voto de verdade
+        if (sdOth > 0) covs.push({f: u => (u.oth || 0) - mO, sd: sdOth});
+        if (sdSize > 0) covs.push({f: u => sz(u) - mS, sd: sdSize});
+        if (o.sdLean > 0) covs.push({f: u => u.x - mX, sd: o.sdLean});
+        const PT = 1 + covs.length;
+        // viés da contagem parcial: só na observação, com forma g(fração apurada)
+        const shape = f => o.biasShape === "hump" ? 4 * f * (1 - f) : 1 - f;
+        const bfs = [];
+        if (o.sdBias > 0) bfs.push({f: () => 1, sd: o.sdBias});
+        if (o.sdBiasSize > 0) bfs.push({f: u => sz(u) - mS, sd: o.sdBiasSize});
+        if (o.sdBiasLean > 0) bfs.push({f: u => u.x - mX, sd: o.sdBiasLean});
+        const PB = bfs.length;
+        // efeitos aleatórios: região, estado e (opcional) viés por estado
+        const ufs = [...new Set(units.map(u => u.uf))], ufIx = Object.fromEntries(ufs.map((u, j) => [u, j]));
+        const useReg = o.sdRegion > 0, iReg = PT + PB, NR = useReg ? 5 : 0, iSt = iReg + NR, NS = ufs.length;
+        const useBS = o.sdBiasState > 0 && PB > 0, iBS = iSt + NS, Q = iBS + (useBS ? NS : 0);
+        const sdSt = uf => uf === "zz" ? o.sdAbroad : (useReg ? o.sdStateR : o.sdState);
 
         // deslocamento nacional a priori: aquele que leva o total esperado à média das pesquisas
         const target = o.prior / 100;
@@ -101,65 +149,91 @@
 
         // comparecimento: votos em Lula+Flávio por voto válido do 1º turno, por estado, encolhido para o nacional
         const T = {};
-        for (const u of units) {
-            const t = T[u.uf] || (T[u.uf] = {A: 0, B: 0, W: 0, R: 0, S: new Array(P).fill(0), obs: []});
-            if (u.k > 0 && u.l + u.f > 0) { t.A += u.l + u.f; t.B += u.v1 * u.k / u.K; }
-        }
+        for (const uf of ufs) T[uf] = {A: 0, B: 0, nobs: 0};
+        for (const u of units) if (u.k > 0 && u.l + u.f > 0) { T[u.uf].A += u.l + u.f; T[u.uf].B += u.v1 * frac(u); }
         let A = 0, B = 0; for (const uf in T) { A += T[uf].A; B += T[uf].B; }
         const rhoN = (A + 2e5 * o.rho0) / (B + 2e5);
         for (const uf in T) T[uf].rho = (T[uf].A + 5e4 * rhoN) / (T[uf].B + 5e4);
+
+        // vetor de efeitos de cada unidade (esparso): idx/val para o voto de verdade e para a observação
+        const featTrue = u => {
+            const idx = [0], val = [1];
+            covs.forEach((c, j) => { idx.push(1 + j); val.push(c.f(u)); });
+            if (useReg && REGION[u.uf] != null) { idx.push(iReg + REGION[u.uf]); val.push(1); }
+            idx.push(iSt + ufIx[u.uf]); val.push(1);
+            return {idx, val};
+        };
+        const featObs = u => {
+            const t = featTrue(u), g = shape(frac(u));
+            bfs.forEach((b, j) => { t.idx.push(PT + j); t.val.push(g * b.f(u)); });
+            if (useBS) { t.idx.push(iBS + ufIx[u.uf]); t.val.push(g); }
+            return t;
+        };
 
         // observações
         const obs = [];
         for (let i = 0; i < n; i++) {
             const u = units[i], nv = u.l + u.f;
             if (!(u.k > 0 && nv > 0)) continue;
-            const p = (u.l + 0.5) / (nv + 1), z = lg(p), rest = Math.max(0, 1 - u.k / u.K);
+            // xo: ponto de partida da parte já apurada (difere de x só nos blocos); z vai para a escala da unidade inteira
+            const p = (u.l + 0.5) / (nv + 1), xo = u.xo != null ? u.xo : u.x, z = lg(p) + u.x - xo, rest = Math.max(0, 1 - frac(u));
             const tau = u.sd != null ? Math.max(u.sd, 0.05) : o.tauDefault;
-            const w = Math.max(tau * tau / u.k * rest + o.orderSd * o.orderSd * rest + 1 / (nv * p * (1 - p)) * rest, 1e-9);
-            const e = sdE(u), v = e * e + w, X = feat(u), r = z - u.x;
-            const t = T[u.uf]; t.W += 1 / v; t.R += r / v; for (let j = 0; j < P; j++) t.S[j] += X[j] / v;
-            obs.push({i, z, w, r, X, e}); t.obs.push(obs.length - 1);
+            // ordem de chegada: o desvio das primeiras seções encolhe com o que falta (1−f)^orderF e com o nº de seções
+            // já apuradas (calibrado em 2022: ~0,15 até 50 seções, ~0,06 com 350, ~0,03 com 1000+)
+            const ordV = o.orderSd * o.orderSd * Math.pow(rest, o.orderF) * (o.orderK > 0 ? Math.min(1, Math.pow(o.orderK / u.k, o.orderKPow)) : 1);
+            const w = Math.max(tau * tau / u.k * rest + ordV + 1 / (nv * p * (1 - p)) * rest, 1e-9);
+            const e = sdE(u), F = featObs(u);
+            obs.push({i, z, w, r: z - u.x, e, v: e * e + w, lam: 1, idx: F.idx, val: F.val});
+            T[u.uf].nobs++;
         }
 
-        // posteriori de β, integrando γ_uf: precisão = prior + Σ_uf (Σ X Xᵀ/v − S Sᵀ/(1/σγ² + W))
-        const prec = Array.from({length: P}, (_, a) => Array.from({length: P}, (_, b) => a === b ? (a === 0 ? 1 / (sdD * sdD) : a < PT ? 1 / (o.sdCov * o.sdCov) : 1 / (o.sdBias * o.sdBias)) : 0));
-        const rhs = new Array(P).fill(0); rhs[0] = d0 / (sdD * sdD);
-        for (const ob of obs) { const v = ob.e * ob.e + ob.w; for (let a = 0; a < P; a++) { rhs[a] += ob.X[a] * ob.r / v; for (let b = 0; b < P; b++) prec[a][b] += ob.X[a] * ob.X[b] / v; } }
-        for (const uf in T) {
-            const t = T[uf]; if (!t.obs.length) continue;
-            const g = 1 / (sdG(uf) ** 2) + t.W;
-            for (let a = 0; a < P; a++) { rhs[a] -= t.S[a] * t.R / g; for (let b = 0; b < P; b++) prec[a][b] -= t.S[a] * t.S[b] / g; }
+        // posteriori gaussiana dos efeitos; com caudas pesadas (t), repesa as observações discrepantes (EM)
+        const prior0 = new Array(Q).fill(0), m0 = new Array(Q).fill(0);
+        prior0[0] = 1 / (sdD * sdD); m0[0] = d0;
+        covs.forEach((c, j) => { prior0[1 + j] = 1 / (c.sd * c.sd); });
+        bfs.forEach((b, j) => { prior0[PT + j] = 1 / (b.sd * b.sd); });
+        for (let r = 0; r < NR; r++) prior0[iReg + r] = 1 / (o.sdRegion * o.sdRegion);
+        ufs.forEach((uf, j) => { prior0[iSt + j] = 1 / (sdSt(uf) ** 2); if (useBS) prior0[iBS + j] = 1 / (o.sdBiasState * o.sdBiasState); });
+        let Lc, mB;
+        const iters = o.tdf > 0 ? 1 + o.tIter : 1;
+        for (let it = 0; it < iters; it++) {
+            if (it > 0) for (const ob of obs) {
+                let pr = 0; for (let a = 0; a < ob.idx.length; a++) pr += ob.val[a] * mB[ob.idx[a]];
+                const res = ob.r - pr; ob.lam = (o.tdf + 1) / (o.tdf + res * res / ob.v);
+            }
+            const prec = Array.from({length: Q}, (_, a) => { const row = new Array(Q).fill(0); row[a] = prior0[a]; return row; });
+            const rhs = prior0.map((p, a) => p * m0[a]);
+            for (const ob of obs) {
+                const iv = ob.lam / ob.v, I = ob.idx, Vv = ob.val, L = I.length;
+                for (let a = 0; a < L; a++) { rhs[I[a]] += Vv[a] * ob.r * iv; for (let b = 0; b < L; b++) prec[I[a]][I[b]] += Vv[a] * Vv[b] * iv; }
+            }
+            Lc = chol(prec); mB = cholSolve(Lc, rhs);
         }
-        const Lc = chol(prec), mB = cholSolve(Lc, rhs);
 
         // sorteios
-        const rand = rng(o.seed), D = o.draws, ufs = Object.keys(T), ufIx = Object.fromEntries(ufs.map((u, j) => [u, j]));
+        const rand = rng(o.seed), D = o.draws;
         const natL = new Float64Array(D), natF = new Float64Array(D), stL = ufs.map(() => new Float64Array(D)), stF = ufs.map(() => new Float64Array(D));
         const unitMean = new Float64Array(n);   // fatia final esperada por unidade (média dos sorteios)
         const obsOf = new Int32Array(n).fill(-1); obs.forEach((ob, j) => { obsOf[ob.i] = j; });
-        const remOf = units.map(u => (T[u.uf].rho) * u.v1 * Math.max(0, 1 - u.k / u.K));
-        const featOf = units.map(featT), sdEOf = units.map(sdE);
+        const remOf = units.map(u => T[u.uf].rho * u.v1 * Math.max(0, 1 - frac(u)));
+        const ftOf = units.map(featTrue), sdEOf = units.map(sdE), ujOf = units.map(u => ufIx[u.uf]);
+        const nBiasIdx = obs.map(ob => ob.idx.length - (featTrue(units[ob.i]).idx.length));
+        const zz = new Array(Q);
         for (let d = 0; d < D; d++) {
-            const zz = new Array(P); for (let a = 0; a < P; a++) zz[a] = rand.normal();
-            const dz = cholInvT(Lc, zz), beta = mB.map((m, a) => m + dz[a]);
-            const gam = new Float64Array(ufs.length);
-            for (let j = 0; j < ufs.length; j++) {
-                const t = T[ufs[j]], g = 1 / (sdG(ufs[j]) ** 2) + t.W;
-                let m = t.R; for (let a = 0; a < P; a++) m -= t.S[a] * beta[a];
-                gam[j] = m / g + rand.normal() / Math.sqrt(g);
-            }
+            for (let a = 0; a < Q; a++) zz[a] = rand.normal();
+            const dz = cholInvT(Lc, zz), th0 = mB.map((m, a) => m + dz[a]);
             const shockN = o.sdRemain * rand.normal(), shockS = ufs.map(() => o.sdRemainState * rand.normal());
             let L = 0, F = 0;
             for (let i = 0; i < n; i++) {
-                const u = units[i], X = featOf[i], j = ufIx[u.uf];
-                let mu = u.x + gam[j]; for (let a = 0; a < PT; a++) mu += X[a] * beta[a];
+                const u = units[i], ft = ftOf[i], j = ujOf[i];
+                let mu = u.x; for (let a = 0; a < ft.idx.length; a++) mu += ft.val[a] * th0[ft.idx[a]];
                 const e = sdEOf[i], k = obsOf[i];
                 let th;
                 if (k >= 0) {
-                    const ob = obs[k], pr = 1 / (e * e) + 1 / ob.w;
-                    const zb = BIAS ? ob.z - beta[PT] * ob.X[PT] : ob.z;
-                    th = mu + ((zb - mu) / ob.w) / pr + rand.normal() / Math.sqrt(pr);
+                    const ob = obs[k], L0 = ob.idx.length, nb = nBiasIdx[k];
+                    let zb = ob.z; for (let a = L0 - nb; a < L0; a++) zb -= ob.val[a] * th0[ob.idx[a]];
+                    const pr = 1 / (e * e) + 1 / ob.w;
+                    th = mu + ((zb - mu) / ob.w) / pr + rand.normal() / Math.sqrt(pr * ob.lam);
                 } else th = mu + e * rand.normal();
                 const rem = remOf[i], nv = u.l + u.f;
                 if (rem > 0) th += (shockN + shockS[j]) * rem / (rem + nv);
@@ -186,15 +260,22 @@
         const states = {};
         units.forEach((u, i) => {
             const s = states[u.uf] || (states[u.uf] = {l: 0, f: 0, exp: 0, K: 0, k: 0, rem: 0, v1: 0});
-            const nv = u.l + u.f, e0 = il(u.x + d0);
+            const nv = u.l + u.f, e0 = il((u.xo != null ? u.xo : u.x) + d0);
             cl += u.l; cf += u.f; exp += nv * e0; rem += remOf[i];
             s.l += u.l; s.f += u.f; s.exp += nv * e0; s.K += u.K; s.k += u.k; s.rem += remOf[i]; s.v1 += u.v1;
         });
-        for (const uf of ufs) Object.assign(states[uf], summ(stL[ufIx[uf]], stF[ufIx[uf]]), {gamma: T[uf].obs.length ? (T[uf].R - T[uf].S[0] * mB[0]) / (1 / (sdG(uf) ** 2) + T[uf].W) : 0});
+        for (const uf of ufs) {
+            const j = ufIx[uf], g = mB[iSt + j] + (useReg && REGION[uf] != null ? mB[iReg + REGION[uf]] : 0);
+            Object.assign(states[uf], summ(stL[j], stF[j]), {gamma: g, rho: T[uf].rho});
+        }
         const nat = summ(natL, natF);
         const total = cl + cf + rem;
+        const coef = {};
+        covs.forEach((c, j) => { coef["cov" + j] = mB[1 + j]; });
+        bfs.forEach((b, j) => { coef["bias" + j] = mB[PT + j]; });
+        if (useReg) ["N", "NE", "CO", "SE", "S"].forEach((r, j) => { coef["reg" + r] = mB[iReg + j]; });
         return {
-            nat, states, d0, beta: mB, rhoN, bias: BIAS ? 100 * mB[PT] / 4 : 0,
+            nat, states, d0, beta: mB.slice(0, PT + PB), coef, rhoN, bias: PB ? 100 * mB[PT] / 4 : 0,
             counted: {l: cl, f: cf, share: cl + cf ? 100 * cl / (cl + cf) : null, expected: cl + cf ? 100 * exp / (cl + cf) : null},
             remaining: rem, totalExpected: total,
             needLula: rem > 0 ? 100 * (total / 2 - cl) / rem : null,   // % do que falta que o Lula precisa
@@ -222,17 +303,25 @@
                 for (const u of units) if (u.uf === uf) { l -= u.l; f -= u.f; }
             } else for (const p of mem) if (p.have) { l += p.have.l; f += p.have.f; }
             l = Math.max(0, l); f = Math.max(0, f);
-            let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0;
-            for (const p of mem) { L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += p.a.ts || p.m.sec; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += p.m.lsize * p.m.v1; }
+            // o bloco inteiro (para projetar) e a parte já apurada (para comparar): cada membro pesa pela fração que já
+            // apurou. Antes o apurado era comparado com o 1º turno do bloco inteiro — em SP, dominado pela capital, que
+            // ainda nem tinha começado — e o "esperado" do apurado saía errado.
+            let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0, Lo = 0, Fo = 0, Wo = 0, sd2 = 0;
+            for (const p of mem) {
+                const Km = p.a.ts || p.m.sec, fr = Km ? Math.min(1, p.a.st / Km) : 0;
+                L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += Km; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += Math.min(p.m.lsize, DEF.sizeCap) * p.m.v1;
+                Lo += fr * p.m.l1; Fo += fr * p.m.f1; Wo += fr * p.m.v1; sd2 += fr * p.m.v1 * (p.m.sd != null ? p.m.sd : 0.3) ** 2;
+            }
             if (st && st.st) {   // seções do bloco pela mesma fonte dos votos (total do estado − municípios lidos), senão o comparecimento infla
                 let kInd = 0; for (const u of units) if (u.uf === uf) kInd += u.k;
                 k = Math.min(K, Math.max(0, st.st - kInd));
             }
-            const x = lg((L1 + 1) / (L1 + F1 + 2));
+            const x = lg((L1 + 1) / (L1 + F1 + 2)), xo = lg((Lo + 1) / (Lo + Fo + 2));
             let between = 0; for (const p of mem) between += p.m.v1 * (p.m.x - x) ** 2;
             between = Math.sqrt(between / V);
-            const tau = Math.sqrt(between * between * sec / mem.length + 0.09);
-            units.push({key: uf + "_bloco", uf, nm: "bloco", x, v1: V, sec, K, k, l, f, sd: tau, oth: oth / V, lsize: ls / V, pooled: mem.length});
+            // composição do apurado conhecida: sobra a heterogeneidade entre seções dentro dos membros e um pouco entre eles
+            const tau = Math.sqrt((Wo > 0 ? sd2 / Wo : 0.09) + between * between + 0.01);
+            units.push({key: uf + "_bloco", uf, nm: "bloco", x, xo, v1: V, sec, K, k, l, f, sd: tau, oth: oth / V, lsize: ls / V, pooled: mem.length});
         }
         return units;
     }
