@@ -182,18 +182,18 @@
             <div class="group">Suavização</div>
             <div class="slider"><span>Tipo de suavização</span>
                 <select id="smoother" aria-label="Tipo de suavização">
+                    <option value="gauss">Gaussiana (centrada no dia)</option>
                     <option value="spline">Spline cúbica de suavização (tipo csaps)</option>
                     <option value="exp">Exponencial (só olha para trás)</option>
-                    <option value="gauss">Gaussiana (centrada no dia)</option>
                     <option value="window">Janela móvel (média simples dos últimos dias)</option>
                 </select><span class="v" id="smootherV"></span></div>
-            <p class="help exp">Define como as pesquisas viram uma linha. O padrão é uma spline cúbica de suavização, como a do csaps: uma curva que passa perto das pesquisas sem ficar serrilhada. A exponencial usa só o passado, como quem acompanha a campanha dia a dia.</p>
+            <p class="help exp">Define como as pesquisas viram uma linha. O padrão é uma média gaussiana: cada dia é a média das pesquisas ao redor, com peso que cai em forma de sino (o desvio, 2 dias por padrão, diz o quanto). A spline cúbica de suavização, como a do csaps, desenha uma curva que passa perto das pesquisas sem ficar serrilhada. A exponencial usa só o passado, como quem acompanha a campanha dia a dia.</p>
             <div class="slider"><span id="halfLifeL">Suavização (meia-vida)</span><input type="range" id="halfLife" min="1" max="20" step="1" aria-label="Largura da suavização em dias"><span class="v" id="halfLifeV"></span></div>
             <div id="winPresets" style="display:none; margin:-2px 0 6px">
                 <span class="sub">Atalhos:</span>
                 <button class="chip" data-wlen="3">3 dias</button><button class="chip" data-wlen="7">7 dias</button><button class="chip" data-wlen="15">15 dias</button>
             </div>
-            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Na spline, o número é uma largura equivalente em dias (a rigidez λ é esse número elevado a 4; o p do csaps é 1/(1+λ)). Com 2 dias a curva segue de perto as últimas pesquisas. Na exponencial, com meia-vida de 8 dias, uma pesquisa de 8 dias atrás pesa metade de uma de hoje.</p>
+            <p class="help exp">Quanto maior, mais suave a linha e mais devagar ela reage a pesquisas novas. Na gaussiana, o número é o desvio do sino: com 2 dias, uma pesquisa a 2 dias do dia em questão pesa 60% de uma do próprio dia, e uma a 4 dias pesa 14%. Na spline, é uma largura equivalente em dias (a rigidez λ é esse número elevado a 4; o p do csaps é 1/(1+λ)). Na exponencial, com meia-vida de 8 dias, uma pesquisa de 8 dias atrás pesa metade de uma de hoje.</p>
 
             <div class="group">Viés dos institutos</div>
             <label class="tg"><input type="checkbox" id="house">Corrigir o viés de cada instituto</label>

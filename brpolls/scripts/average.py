@@ -33,7 +33,8 @@ HALF_LIFE = 8.0        # days; recency half-life used to estimate house effects 
 FREQ_WINDOW = 10       # days either side when counting a pollster's recent output
 SHRINK_K = 3.0         # house effects shrink as if each pollster had 3 polls at zero
 R1_WEIGHT = 0.5        # first-round polls count half when estimating house effects
-SMOOTHER = "spline"    # trend line: cubic smoothing spline (csaps-style); the page also offers exponential, Gaussian and window
+SMOOTHER = "gauss"     # trend line: two-sided Gaussian kernel; the page also offers a csaps-style spline, exponential and window
+GAUSS_DAYS = 2.0       # standard deviation of the Gaussian kernel, in days
 SPLINE_DAYS = 2.0      # stiffness as an equivalent width in days: lambda = SPLINE_DAYS ** 4, csaps p = 1 / (1 + lambda)
 PRIOR_POLLS = 2.0      # first-round bias shrinks as if each pollster had 2 extra polls with no miss
 START = dt.date(2026, 8, 14)
@@ -170,7 +171,7 @@ def spline_fit(pts, lam):
 
 
 def width_days():
-    return min(40.0, max(1.0, SPLINE_DAYS))
+    return max(0.5, GAUSS_DAYS) if SMOOTHER == "gauss" else min(40.0, max(1.0, SPLINE_DAYS))
 
 
 def gauss_weights(day, polls):
@@ -193,6 +194,8 @@ def gauss_trend(day, polls, house, skip=None):
 
 def make_smoother(polls, house):
     """Return f(day) -> the published trend value for the default smoother."""
+    if SMOOTHER == "gauss":
+        return lambda day: gauss_trend(day, polls, house)[0]
     if SMOOTHER == "spline":
         f = spline_fit([(p["t"].toordinal(), p["y"] - house[p["pollster"]],
                          p["rating"] * p["w_size"] * p["w_freq"]) for p in polls], SPLINE_DAYS ** 4)
