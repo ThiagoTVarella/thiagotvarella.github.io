@@ -200,7 +200,37 @@
         };
     }
 
-    const api = {DEF, prepBaseline, project, lg, il, rng};
+    /* junta o que se sabe do boletim em unidades para o modelo: municípios lidos + um bloco por estado com os que
+       já andaram mas ainda não li. S = {munAb: {chave: {ts, st}}, mun: {chave: {ts, st, l, f}}, stU: {uf: {l, f}}} */
+    function buildUnits(BL, S) {
+        const units = [], poolBy = {};
+        for (const m of BL.mun) {
+            const a = S.munAb[m.key], have = S.mun[m.key];
+            const K = a ? a.ts || m.sec : m.sec;
+            if (have && (!a || have.st >= a.st)) { units.push(Object.assign({}, m, {K: have.ts || K, k: have.st, l: have.l, f: have.f})); continue; }
+            if (!a || a.st === 0) { units.push(Object.assign({}, m, {K, k: 0, l: 0, f: 0})); continue; }
+            (poolBy[m.uf] || (poolBy[m.uf] = [])).push({m, a, have});
+        }
+        for (const uf in poolBy) {
+            const mem = poolBy[uf], st = S.stU[uf];
+            let l = 0, f = 0;
+            if (st) {   // votos do bloco = total do estado − municípios que entraram sozinhos
+                l = st.l; f = st.f;
+                for (const u of units) if (u.uf === uf) { l -= u.l; f -= u.f; }
+            } else for (const p of mem) if (p.have) { l += p.have.l; f += p.have.f; }
+            l = Math.max(0, l); f = Math.max(0, f);
+            let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0;
+            for (const p of mem) { L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += p.a.ts || p.m.sec; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += p.m.lsize * p.m.v1; }
+            const x = lg((L1 + 1) / (L1 + F1 + 2));
+            let between = 0; for (const p of mem) between += p.m.v1 * (p.m.x - x) ** 2;
+            between = Math.sqrt(between / V);
+            const tau = Math.sqrt(between * between * sec / mem.length + 0.09);
+            units.push({key: uf + "_bloco", uf, nm: "bloco", x, v1: V, sec, K, k, l, f, sd: tau, oth: oth / V, lsize: ls / V, pooled: mem.length});
+        }
+        return units;
+    }
+
+    const api = {DEF, prepBaseline, project, buildUnits, lg, il, rng};
     if (typeof module !== "undefined" && module.exports) module.exports = api;
     else root.CountModel = api;
 })(typeof window !== "undefined" ? window : this);
@@ -273,37 +303,8 @@
         busy = false;
     }
 
-    /* junta o que se sabe em unidades para o modelo: municípios lidos + um bloco por estado com os que mudaram e ainda não li */
-    function buildUnits() {
-        const units = [], poolBy = {};
-        for (const m of BL.mun) {
-            const a = S.munAb[m.key], have = S.mun[m.key];
-            const K = a ? a.ts || m.sec : m.sec;
-            if (have && (!a || have.st >= a.st)) { units.push(Object.assign({}, m, {K: have.ts || K, k: have.st, l: have.l, f: have.f})); continue; }
-            if (!a || a.st === 0) { units.push(Object.assign({}, m, {K, k: 0, l: 0, f: 0})); continue; }
-            (poolBy[m.uf] || (poolBy[m.uf] = [])).push({m, a, have});
-        }
-        for (const uf in poolBy) {
-            const mem = poolBy[uf], st = S.stU[uf];
-            let l = 0, f = 0;
-            if (st) {   // votos do bloco = total do estado − municípios que entraram sozinhos
-                l = st.l; f = st.f;
-                for (const u of units) if (u.uf === uf) { l -= u.l; f -= u.f; }
-            } else for (const p of mem) if (p.have) { l += p.have.l; f += p.have.f; }
-            l = Math.max(0, l); f = Math.max(0, f);
-            let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0;
-            for (const p of mem) { L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += p.a.ts || p.m.sec; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += p.m.lsize * p.m.v1; }
-            const x = M.lg((L1 + 1) / (L1 + F1 + 2));
-            let between = 0; for (const p of mem) between += p.m.v1 * (p.m.x - x) ** 2;
-            between = Math.sqrt(between / V);
-            const tau = Math.sqrt(between * between * sec / mem.length + 0.09);
-            units.push({key: uf + "_bloco", uf, nm: "bloco", x, v1: V, sec, K, k, l, f, sd: tau, oth: oth / V, lsize: ls / V, pooled: mem.length});
-        }
-        return units;
-    }
-
     function run() {
-        const units = buildUnits();
+        const units = M.buildUnits(BL, S);
         const R = M.project(units, {prior: prior, draws: 600});
         const st = S.br, pst = st.ts ? 100 * st.st / st.ts : 0;
         render(R, pst);
@@ -342,28 +343,44 @@
         $("cTbl").innerHTML = t;
     }
 
+    let SERVER = [];
     function loadHist() { try { return JSON.parse(localStorage.getItem(HKEY)) || []; } catch (e) { return []; } }
     function saveHist(pt) {
         const h = loadHist(); if (h.length && h[h.length - 1].t === pt.t) h.pop(); h.push(pt);
         try { localStorage.setItem(HKEY, JSON.stringify(h.slice(-400))); } catch (e) {}
     }
+    function history() {   // histórico guardado no site (a cada 5 min) + o que este navegador viu
+        const by = {}; for (const p of SERVER.concat(loadHist())) if (p.pct > 0) by[p.t] = p;
+        return Object.values(by).sort((a, b) => a.pct - b.pct);
+    }
     function drawChart() {
-        const h = loadHist(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), H = 220, m = {l: 40, r: 10, t: 10, b: 26};
-        if (h.length < 1) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
-        const vals = h.flatMap(p => [p.lo, p.hi, p.raw].filter(v => v != null)).concat([50]);
-        const y0 = Math.floor(Math.min(...vals) - 0.5), y1 = Math.ceil(Math.max(...vals) + 0.5);
-        const X = p => m.l + (W - m.l - m.r) * p / 100, Y = v => m.t + (H - m.t - m.b) * (y1 - v) / (y1 - y0);
+        const h = history(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), small = W < 600,
+            H = small ? 240 : 300, m = {l: 34, r: small ? 10 : 70, t: 12, b: 28};
+        if (!h.length) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
+        const vals = h.flatMap(p => [p.lo, p.hi, p.raw, 100 - p.lo, 100 - p.hi, 100 - p.raw].filter(v => v != null));
+        const y0 = Math.max(0, Math.floor(Math.min(...vals) - 1)), y1 = Math.min(100, Math.ceil(Math.max(...vals) + 1));
+        const xmax = Math.min(100, Math.max(10, Math.ceil(h[h.length - 1].pct / 10) * 10));
+        const X = p => m.l + (W - m.l - m.r) * p / xmax, Y = v => m.t + (H - m.t - m.b) * (y1 - v) / (y1 - y0);
+        const line = (f, col, dash, w = 2) => `<polyline points="${h.filter(p => f(p) != null).map(p => `${X(p.pct).toFixed(1)},${Y(f(p)).toFixed(1)}`).join(" ")}" fill="none" stroke="${col}" stroke-width="${w}" ${dash ? `stroke-dasharray="6 4"` : ""}/>`;
+        const step = y1 - y0 > 16 ? 4 : y1 - y0 > 8 ? 2 : 1;
         let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
-        for (let v = y0; v <= y1; v += (y1 - y0 > 8 ? 2 : 1)) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 50 ? "#999" : "#eee"}"/><text x="${m.l - 4}" y="${Y(v) + 4}" font-size="10" text-anchor="end" fill="#777">${v}</text>`;
-        for (const p of [0, 25, 50, 75, 100]) s += `<text x="${X(p)}" y="${H - 8}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
-        const band = h.map(p => `${X(p.pct)},${Y(p.hi)}`).join(" ") + " " + h.slice().reverse().map(p => `${X(p.pct)},${Y(p.lo)}`).join(" ");
-        s += `<polygon points="${band}" fill="#c0392b" opacity=".15"/>`;
-        s += `<polyline points="${h.map(p => `${X(p.pct)},${Y(p.mean)}`).join(" ")}" fill="none" stroke="#c0392b" stroke-width="2"/>`;
-        s += `<polyline points="${h.filter(p => p.raw != null).map(p => `${X(p.pct)},${Y(p.raw)}`).join(" ")}" fill="none" stroke="#555" stroke-dasharray="4 3"/>`;
-        for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.mean)}" r="2.5" fill="#c0392b"><title>${p.t}: ${fmt(p.pct)}% apurado, projeção ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)}), bruto ${fmt(p.raw)}%</title></circle>`;
-        s += `<text x="${W - m.r}" y="${Y(50) - 4}" font-size="10" text-anchor="end" fill="#777">50%</text></svg>`;
+        for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 50 ? "#999" : "#eee"}"/><text x="${m.l - 4}" y="${Y(v) + 4}" font-size="10" text-anchor="end" fill="#777">${v}%</text>`;
+        for (let p = 0; p <= xmax; p += xmax > 50 ? 20 : 10) s += `<text x="${X(p)}" y="${H - 10}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
+        s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 0}" font-size="10" text-anchor="middle" fill="#999">seções apuradas</text>`;
+        const band = (lo, hi, col) => `<polygon points="${h.map(p => `${X(p.pct).toFixed(1)},${Y(hi(p)).toFixed(1)}`).join(" ")} ${h.slice().reverse().map(p => `${X(p.pct).toFixed(1)},${Y(lo(p)).toFixed(1)}`).join(" ")}" fill="${col}" opacity=".10"/>`;
+        s += band(p => p.lo, p => p.hi, "#c0392b") + band(p => 100 - p.hi, p => 100 - p.lo, "#1f5fa8");
+        s += line(p => p.raw, "#c0392b", false) + line(p => p.raw == null ? null : 100 - p.raw, "#1f5fa8", false);
+        s += line(p => p.mean, "#c0392b", true) + line(p => 100 - p.mean, "#1f5fa8", true);
+        const last = h[h.length - 1];
+        if (!small) {
+            s += `<text x="${X(last.pct) + 6}" y="${Y(last.mean) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(last.mean, 1)}</text>`;
+            s += `<text x="${X(last.pct) + 6}" y="${Y(100 - last.mean) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - last.mean, 1)}</text>`;
+        }
+        for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.mean)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)}), chance ${fmt(100 * p.p, 0)}%</title></circle>`;
+        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE até ali &nbsp; tracejada: minha projeção do resultado final naquele momento (faixa: 90% dos cenários)</div>`;
         box.innerHTML = s;
     }
+    const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
 
     async function start() {
         if (started) return; started = true;
@@ -371,9 +388,9 @@
             const [bl, fc] = await Promise.all([getJ("data/count/baseline_2026.json"), getJ("data/forecast.json").catch(() => null)]);
             BL = M.prepBaseline(bl); prior = fc && fc.poll_average_lula ? fc.poll_average_lula : M.DEF.prior;
         } catch (e) { $("cStatus").textContent = "Não consegui carregar a base do 1º turno: " + e.message; return; }
-        drawChart();
+        await loadServer(); drawChart();
         await cycle();
-        timer = setInterval(() => { if ($("cAuto").checked && !document.hidden && !$("tabCount").hidden) cycle(); }, 60000);
+        timer = setInterval(() => { if ($("cAuto").checked && !document.hidden && !$("tabCount").hidden) loadServer().then(cycle); }, 60000);
     }
     function show(tab) {
         $("tabCount").hidden = tab !== "count"; $("tabPolls").hidden = tab === "count";
