@@ -299,6 +299,14 @@
             run();
         } catch (e) {
             $("cFetch").textContent = "Não consegui ler o TSE agora (" + e.message + "). Tento de novo em um minuto.";
+            const q = SERVER[SERVER.length - 1];
+            if (q && $("cLula").textContent === "–") {   // sem acesso ao TSE: mostra o último retrato guardado no site
+                $("cStatus").innerHTML = `Último retrato guardado no site: boletim de <b>${q.t}</b>, ${fmt(q.pct)}% das seções apuradas. Contagem: Lula ${fmt(q.raw)}%.`;
+                $("cLula").textContent = "Lula " + fmt(q.mean) + "%"; $("cFlavio").textContent = "Flávio " + fmt(100 - q.mean) + "%";
+                $("cRange").textContent = `Em 90% dos cenários, o Lula termina entre ${fmt(q.lo)}% e ${fmt(q.hi)}%.`;
+                const pl = 100 * q.p; $("cPL").textContent = "Lula " + fmt(pl, 1) + "%"; $("cPF").textContent = "Flávio " + fmt(100 - pl, 1) + "%";
+                $("cBar").innerHTML = `<div style="width:${pl}%;background:#c0392b"></div><div style="width:${100 - pl}%;background:#1f5fa8"></div>`;
+            }
         }
         busy = false;
     }
