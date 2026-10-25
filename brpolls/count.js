@@ -25,11 +25,15 @@
         tdf: 4,             // caudas pesadas: resíduos t com tdf graus de liberdade (repesagem EM); 0 = normal
         tIter: 3,
         tauDefault: 0.25,   // heterogeneidade entre seções quando não sei
-        orderSd: 0.15,      // seções apuradas primeiro não são típicas do município (2022: puxam para o Bolsonaro)
+        orderSd: 0.16,      // seções apuradas primeiro não são típicas do município (2022: puxam para o Bolsonaro)
+        orderF: 2,          // a variância da ordem cai com (1−f)^orderF (era 1)
+        orderK: 50,         // … e com (orderK/k)^orderKPow quando já há mais de orderK seções (0 = desligado)
+        orderKPow: 0.7,
         // efeitos por tipo de município no voto de verdade (centrados na média ponderada por votos)
         sdCov: 0,           // atalho antigo: liga sdOth e sdSize com o mesmo desvio
         sdOth: null,        // fatia dos outros candidatos no 1º turno (desvio da média); testado, não ajudou
         sdSize: 0.05,       // tamanho (log10 dos votos): em 2026 o Lula cresce mais nas cidades grandes; 2022: ~0
+        sizeCap: 0.7,       // teto do tamanho (log10 votos − 4; 0,7 ≈ 50 mil): ao vivo o gradiente para por volta de 20–50 mil
         sdLean: 0.05,       // inclinação no 1º turno (logit − média), regressão à média; 2022: −0,03
         // viés das contagens parciais: só na observação, proporcional ao que falta apurar (1 − f)
         sdBias: 0.15,       // viés comum (estimado ao vivo: parciais x municípios completos)
@@ -111,19 +115,20 @@
 
         // covariáveis centradas na média ponderada por votos, para β0 continuar sendo o deslocamento nacional
         let V = 0, mO = 0, mS = 0, mX = 0;
-        for (const u of units) { V += u.v1; mO += u.v1 * (u.oth || 0); mS += u.v1 * (u.lsize || 0); mX += u.v1 * u.x; }
+        const sz = u => Math.min(u.lsize || 0, o.sizeCap);   // tamanho com teto: o efeito some acima de ~500 mil votos
+        for (const u of units) { V += u.v1; mO += u.v1 * (u.oth || 0); mS += u.v1 * sz(u); mX += u.v1 * u.x; }
         mO /= V; mS /= V; mX /= V;
         const sdOth = o.sdOth != null ? o.sdOth : o.sdCov, sdSize = o.sdSize != null ? o.sdSize : o.sdCov;
         const covs = [];   // afetam o voto de verdade
         if (sdOth > 0) covs.push({f: u => (u.oth || 0) - mO, sd: sdOth});
-        if (sdSize > 0) covs.push({f: u => (u.lsize || 0) - mS, sd: sdSize});
+        if (sdSize > 0) covs.push({f: u => sz(u) - mS, sd: sdSize});
         if (o.sdLean > 0) covs.push({f: u => u.x - mX, sd: o.sdLean});
         const PT = 1 + covs.length;
         // viés da contagem parcial: só na observação, com forma g(fração apurada)
         const shape = f => o.biasShape === "hump" ? 4 * f * (1 - f) : 1 - f;
         const bfs = [];
         if (o.sdBias > 0) bfs.push({f: () => 1, sd: o.sdBias});
-        if (o.sdBiasSize > 0) bfs.push({f: u => (u.lsize || 0) - mS, sd: o.sdBiasSize});
+        if (o.sdBiasSize > 0) bfs.push({f: u => sz(u) - mS, sd: o.sdBiasSize});
         if (o.sdBiasLean > 0) bfs.push({f: u => u.x - mX, sd: o.sdBiasLean});
         const PB = bfs.length;
         // efeitos aleatórios: região, estado e (opcional) viés por estado
@@ -173,7 +178,10 @@
             // xo: ponto de partida da parte já apurada (difere de x só nos blocos); z vai para a escala da unidade inteira
             const p = (u.l + 0.5) / (nv + 1), xo = u.xo != null ? u.xo : u.x, z = lg(p) + u.x - xo, rest = Math.max(0, 1 - frac(u));
             const tau = u.sd != null ? Math.max(u.sd, 0.05) : o.tauDefault;
-            const w = Math.max(tau * tau / u.k * rest + o.orderSd * o.orderSd * rest + 1 / (nv * p * (1 - p)) * rest, 1e-9);
+            // ordem de chegada: o desvio das primeiras seções encolhe com o que falta (1−f)^orderF e com o nº de seções
+            // já apuradas (calibrado em 2022: ~0,15 até 50 seções, ~0,06 com 350, ~0,03 com 1000+)
+            const ordV = o.orderSd * o.orderSd * Math.pow(rest, o.orderF) * (o.orderK > 0 ? Math.min(1, Math.pow(o.orderK / u.k, o.orderKPow)) : 1);
+            const w = Math.max(tau * tau / u.k * rest + ordV + 1 / (nv * p * (1 - p)) * rest, 1e-9);
             const e = sdE(u), F = featObs(u);
             obs.push({i, z, w, r: z - u.x, e, v: e * e + w, lam: 1, idx: F.idx, val: F.val});
             T[u.uf].nobs++;
@@ -301,7 +309,7 @@
             let L1 = 0, F1 = 0, V = 0, K = 0, k = 0, sec = 0, oth = 0, ls = 0, Lo = 0, Fo = 0, Wo = 0, sd2 = 0;
             for (const p of mem) {
                 const Km = p.a.ts || p.m.sec, fr = Km ? Math.min(1, p.a.st / Km) : 0;
-                L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += Km; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += p.m.lsize * p.m.v1;
+                L1 += p.m.l1; F1 += p.m.f1; V += p.m.v1; K += Km; k += p.a.st; sec += p.m.sec; oth += p.m.oth * p.m.v1; ls += Math.min(p.m.lsize, DEF.sizeCap) * p.m.v1;
                 Lo += fr * p.m.l1; Fo += fr * p.m.f1; Wo += fr * p.m.v1; sd2 += fr * p.m.v1 * (p.m.sd != null ? p.m.sd : 0.3) ** 2;
             }
             const x = lg((L1 + 1) / (L1 + F1 + 2)), xo = lg((Lo + 1) / (Lo + Fo + 2));
