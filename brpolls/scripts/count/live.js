@@ -67,8 +67,32 @@ function votes(u) {
         const remShare = rem > 0 ? Math.min(1, Math.max(0, (sh * (nv + rem) - u.l) / rem)) : 0;
         Lc += u.l; Fc += u.f; Lr += rem * remShare; Nr += rem;
     });
+    // ordem: cada estado segue a curva de velocidade da apuração de 2022, esticada para bater o ritmo dele hoje
+    // (estados rápidos terminam cedo, lentos tarde); dentro do estado, o que falta entra misturado
+    const C22 = [[0, 0], [10, .006], [20, .029], [30, .080], [60, .287], [90, .540], [120, .841], [150, .970], [180, .990], [240, .999], [420, 1]];
+    const F = t => { if (t <= 0) return 0; for (let j = 1; j < C22.length; j++) if (t <= C22[j][0]) { const [a0, b0] = C22[j - 1], [a1, b1] = C22[j]; return b0 + (b1 - b0) * (t - a0) / (a1 - a0); } return 1; };
+    const Finv = f => { for (let j = 1; j < C22.length; j++) if (f <= C22[j][1]) { const [a0, b0] = C22[j - 1], [a1, b1] = C22[j]; return a0 + (a1 - a0) * (f - b0) / Math.max(1e-9, b1 - b0); } return 420; };
+    const tNow = (() => { const [hh, mm, ss] = br.hg.split(":").map(Number); return (hh - 19) * 60 + mm + ss / 60; })();
+    const SU = {};
+    units.forEach((u, i) => {
+        const g = SU[u.uf] || (SU[u.uf] = {K: 0, k: 0, l: 0, f: 0, Lr: 0, Nr: 0});
+        const rem = R2.rem[i], nv = u.l + u.f, sh = R2.unitMean[i];
+        const remShare = rem > 0 ? Math.min(1, Math.max(0, (sh * (nv + rem) - u.l) / rem)) : 0;
+        g.K += u.K; g.k += u.k; g.l += u.l; g.f += u.f; g.Lr += rem * remShare; g.Nr += rem;
+    });
+    for (const g of Object.values(SU)) { g.f0 = Math.min(0.999, Math.max(0.0005, g.k / g.K)); g.alpha = Math.min(2, Math.max(0.5, tNow / Math.max(1, Finv(g.f0)))); }
     const traj = [];
-    for (let j = 1; j <= 20; j++) { const a = j / 20; traj.push([r2(pct + a * (100 - pct)), r2(100 * (Lc + a * Lr) / (Lc + Fc + a * Nr))]); }
+    for (let t = tNow + 4; t <= 600; t += 4) {
+        let L = 0, Fv = 0, K = 0, k = 0;
+        for (const g of Object.values(SU)) {
+            const fr = g.k >= g.K ? 1 : Math.max(g.f0, F(t / g.alpha)), a = g.f0 >= 1 ? 0 : (fr - g.f0) / (1 - g.f0);
+            L += g.l + a * g.Lr; Fv += g.f + a * (g.Nr - g.Lr); K += g.K; k += g.K * fr;
+        }
+        const p = 100 * k / K;
+        if (p > pct + 0.3 && (!traj.length || p > traj[traj.length - 1][0] + 0.8)) traj.push([r2(p), r2(100 * L / (L + Fv))]);
+        if (p > 99.9) break;
+    }
+    traj.push([100, r2(100 * (Lc + Lr) / (Lc + Fc + Nr))]);
     const states = {};
     for (const [uf, s] of Object.entries(R.states)) states[uf] = {l: s.l, f: s.f, exp: r2(s.l + s.f ? 100 * s.exp / (s.l + s.f) : null), mean: r2(s.mean), lo: r2(s.p05), hi: r2(s.p95), k: s.k, K: s.K};
     fs.writeFileSync(LATEST, JSON.stringify({point: pt, states, traj, generated: new Date().toISOString()}));

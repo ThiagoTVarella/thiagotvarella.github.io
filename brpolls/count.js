@@ -392,7 +392,7 @@
         s += `<text x="${X(100) + 8}" y="${Y(100 - end[1]) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - end[1], 1)}</text>`;
         for (const p of h) if (p.raw != null) s += `<circle cx="${X(p.pct).toFixed(1)}" cy="${Y(p.raw).toFixed(1)}" r="2.6" fill="#c0392b"/><circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 - p.raw).toFixed(1)}" r="2.6" fill="#1f5fa8"/>`;
         for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.raw)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção final: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)})</title></circle>`;
-        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: para onde a contagem vai daqui até o fim (sem supor ordem: o que falta entra na mistura em que vai terminar) &nbsp; barra em 100%: 90% dos cenários do resultado final</div>`;
+        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como acho que a contagem vai andar até o fim (cada estado no seu ritmo de hoje, com a curva de velocidade de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final</div>`;
         box.innerHTML = s;
     }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
