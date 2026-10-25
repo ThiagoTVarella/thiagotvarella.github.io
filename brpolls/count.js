@@ -21,6 +21,7 @@
         tauDefault: 0.25,   // heterogeneidade entre seções quando não sei
         orderSd: 0.15,      // seções apuradas primeiro não são típicas do município (2022: puxam para o Bolsonaro)
         sdCov: 0,           // prior dos efeitos por tipo de município (0 = desligado)
+        sdBias: 0.15,       // viés das contagens parciais (estimado ao vivo: parciais x municípios completos)
         sdRemain: 0.07,     // choque comum no que falta apurar: o resto do país pode votar diferente do que já veio
         sdRemainState: 0.04,// idem, por estado
         rho0: 0.97,         // votos em Lula+Flávio no 2º turno ÷ votos válidos no 1º
@@ -82,8 +83,9 @@
        Unidades agrupadas (vários municípios de uma vez) funcionam igual, com sd maior. */
     function project(units, o) {
         o = Object.assign({}, DEF, o || {});
-        const n = units.length, P = o.sdCov > 0 ? 3 : 1;
-        const feat = u => P === 1 ? [1] : [1, u.oth, u.lsize];
+        const n = units.length, PT = o.sdCov > 0 ? 3 : 1, BIAS = o.sdBias > 0, P = PT + (BIAS ? 1 : 0);
+        const featT = u => PT === 1 ? [1] : [1, u.oth, u.lsize];                     // afetam o voto de verdade
+        const feat = u => BIAS ? featT(u).concat([Math.max(0, 1 - u.k / u.K)]) : featT(u);   // + viés só na observação
         const sdE = u => Math.sqrt(o.eps0 * o.eps0 + o.eps1 * o.eps1 * 1000 / Math.max(u.v1 * o.rho0, 50));
         const sdG = uf => uf === "zz" ? o.sdAbroad : o.sdState;
 
@@ -121,7 +123,7 @@
         }
 
         // posteriori de β, integrando γ_uf: precisão = prior + Σ_uf (Σ X Xᵀ/v − S Sᵀ/(1/σγ² + W))
-        const prec = Array.from({length: P}, (_, a) => Array.from({length: P}, (_, b) => a === b ? (a === 0 ? 1 / (sdD * sdD) : 1 / (o.sdCov * o.sdCov)) : 0));
+        const prec = Array.from({length: P}, (_, a) => Array.from({length: P}, (_, b) => a === b ? (a === 0 ? 1 / (sdD * sdD) : a < PT ? 1 / (o.sdCov * o.sdCov) : 1 / (o.sdBias * o.sdBias)) : 0));
         const rhs = new Array(P).fill(0); rhs[0] = d0 / (sdD * sdD);
         for (const ob of obs) { const v = ob.e * ob.e + ob.w; for (let a = 0; a < P; a++) { rhs[a] += ob.X[a] * ob.r / v; for (let b = 0; b < P; b++) prec[a][b] += ob.X[a] * ob.X[b] / v; } }
         for (const uf in T) {
@@ -137,7 +139,7 @@
         const unitMean = new Float64Array(n);   // fatia final esperada por unidade (média dos sorteios)
         const obsOf = new Int32Array(n).fill(-1); obs.forEach((ob, j) => { obsOf[ob.i] = j; });
         const remOf = units.map(u => (T[u.uf].rho) * u.v1 * Math.max(0, 1 - u.k / u.K));
-        const featOf = units.map(feat), sdEOf = units.map(sdE);
+        const featOf = units.map(featT), sdEOf = units.map(sdE);
         for (let d = 0; d < D; d++) {
             const zz = new Array(P); for (let a = 0; a < P; a++) zz[a] = rand.normal();
             const dz = cholInvT(Lc, zz), beta = mB.map((m, a) => m + dz[a]);
@@ -151,12 +153,13 @@
             let L = 0, F = 0;
             for (let i = 0; i < n; i++) {
                 const u = units[i], X = featOf[i], j = ufIx[u.uf];
-                let mu = u.x + gam[j]; for (let a = 0; a < P; a++) mu += X[a] * beta[a];
+                let mu = u.x + gam[j]; for (let a = 0; a < PT; a++) mu += X[a] * beta[a];
                 const e = sdEOf[i], k = obsOf[i];
                 let th;
                 if (k >= 0) {
                     const ob = obs[k], pr = 1 / (e * e) + 1 / ob.w;
-                    th = mu + ((ob.z - mu) / ob.w) / pr + rand.normal() / Math.sqrt(pr);
+                    const zb = BIAS ? ob.z - beta[PT] * ob.X[PT] : ob.z;
+                    th = mu + ((zb - mu) / ob.w) / pr + rand.normal() / Math.sqrt(pr);
                 } else th = mu + e * rand.normal();
                 const rem = remOf[i], nv = u.l + u.f;
                 if (rem > 0) th += (shockN + shockS[j]) * rem / (rem + nv);
@@ -191,7 +194,7 @@
         const nat = summ(natL, natF);
         const total = cl + cf + rem;
         return {
-            nat, states, d0, beta: mB, rhoN,
+            nat, states, d0, beta: mB, rhoN, bias: BIAS ? 100 * mB[PT] / 4 : 0,
             counted: {l: cl, f: cf, share: cl + cf ? 100 * cl / (cl + cf) : null, expected: cl + cf ? 100 * exp / (cl + cf) : null},
             remaining: rem, totalExpected: total,
             needLula: rem > 0 ? 100 * (total / 2 - cl) / rem : null,   // % do que falta que o Lula precisa
