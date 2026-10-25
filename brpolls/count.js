@@ -199,7 +199,7 @@
             remaining: rem, totalExpected: total,
             needLula: rem > 0 ? 100 * (total / 2 - cl) / rem : null,   // % do que falta que o Lula precisa
             shift: 100 * (il(lg(target) + (mB[0] - d0)) - target),       // deslocamento nacional em pontos, além das pesquisas
-            unitMean
+            unitMean, rem: remOf
         };
     }
 
@@ -364,31 +364,34 @@
         const by = {}; for (const p of SERVER) if (p.pct > 0) by[p.t] = p;
         return Object.values(by).sort((a, b) => a.pct - b.pct);
     }
+    let LATEST = null;
     function drawChart() {
         const h = allHist(), box = $("cChart"), W = Math.max(300, box.clientWidth || 600), small = W < 600,
-            H = small ? 240 : 300, m = {l: 34, r: small ? 10 : 70, t: 12, b: 28};
+            H = small ? 250 : 320, m = {l: 34, r: small ? 14 : 84, t: 12, b: 30};
         if (!h.length) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
-        const vals = h.flatMap(p => [p.lo, p.hi, p.raw, 100 - p.lo, 100 - p.hi, 100 - p.raw].filter(v => v != null));
-        const y0 = Math.max(0, Math.floor(Math.min(...vals) - 1)), y1 = Math.min(100, Math.ceil(Math.max(...vals) + 1));
-        const xmax = Math.min(100, Math.max(10, Math.ceil(h[h.length - 1].pct / 10) * 10));
-        const X = p => m.l + (W - m.l - m.r) * p / xmax, Y = v => m.t + (H - m.t - m.b) * (y1 - v) / (y1 - y0);
-        const line = (f, col, dash, w = 2) => `<polyline points="${h.filter(p => f(p) != null).map(p => `${X(p.pct).toFixed(1)},${Y(f(p)).toFixed(1)}`).join(" ")}" fill="none" stroke="${col}" stroke-width="${w}" ${dash ? `stroke-dasharray="6 4"` : ""}/>`;
+        const last = h[h.length - 1], tr = (LATEST && LATEST.traj) || [];
+        const path = [[last.pct, last.raw]].concat(tr.filter(t => t[0] > last.pct));
+        const vals = h.map(p => p.raw).concat(path.map(t => t[1]), [last.lo, last.hi]).filter(v => v != null);
+        const lo = Math.min(...vals, ...vals.map(v => 100 - v)), hi = Math.max(...vals, ...vals.map(v => 100 - v));
+        const y0 = Math.max(0, Math.floor(lo - 1)), y1 = Math.min(100, Math.ceil(hi + 1));
+        const X = p => m.l + (W - m.l - m.r) * p / 100, Y = v => m.t + (H - m.t - m.b) * (y1 - v) / (y1 - y0);
+        const pl = (pts, col, dash) => `<polyline points="${pts.map(([x, y]) => `${X(x).toFixed(1)},${Y(y).toFixed(1)}`).join(" ")}" fill="none" stroke="${col}" stroke-width="2" ${dash ? `stroke-dasharray="6 4"` : ""}/>`;
         const step = y1 - y0 > 16 ? 4 : y1 - y0 > 8 ? 2 : 1;
         let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
         for (let v = Math.ceil(y0 / step) * step; v <= y1; v += step) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 50 ? "#999" : "#eee"}"/><text x="${m.l - 4}" y="${Y(v) + 4}" font-size="10" text-anchor="end" fill="#777">${v}%</text>`;
-        for (let p = 0; p <= xmax; p += xmax > 50 ? 20 : 10) s += `<text x="${X(p)}" y="${H - 10}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
-        s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 0}" font-size="10" text-anchor="middle" fill="#999">seções apuradas</text>`;
-        const band = (lo, hi, col) => `<polygon points="${h.map(p => `${X(p.pct).toFixed(1)},${Y(hi(p)).toFixed(1)}`).join(" ")} ${h.slice().reverse().map(p => `${X(p.pct).toFixed(1)},${Y(lo(p)).toFixed(1)}`).join(" ")}" fill="${col}" opacity=".10"/>`;
-        s += band(p => p.lo, p => p.hi, "#c0392b") + band(p => 100 - p.hi, p => 100 - p.lo, "#1f5fa8");
-        s += line(p => p.raw, "#c0392b", false) + line(p => p.raw == null ? null : 100 - p.raw, "#1f5fa8", false);
-        s += line(p => p.mean, "#c0392b", true) + line(p => 100 - p.mean, "#1f5fa8", true);
-        const last = h[h.length - 1];
-        if (!small) {
-            s += `<text x="${X(last.pct) + 6}" y="${Y(last.mean) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(last.mean, 1)}</text>`;
-            s += `<text x="${X(last.pct) + 6}" y="${Y(100 - last.mean) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - last.mean, 1)}</text>`;
-        }
-        for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.mean)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)}), chance ${fmt(100 * p.p, 0)}%</title></circle>`;
-        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE até ali &nbsp; tracejada: minha projeção do resultado final naquele momento (faixa: 90% dos cenários)</div>`;
+        for (let p = 0; p <= 100; p += 20) s += `<text x="${X(p)}" y="${H - 14}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
+        s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 1}" font-size="10" text-anchor="middle" fill="#999">seções apuradas</text>`;
+        s += `<line x1="${X(last.pct)}" x2="${X(last.pct)}" y1="${m.t}" y2="${H - m.b}" stroke="#ddd" stroke-dasharray="2 3"/>`;
+        // faixa de 90% do resultado final, em 100%
+        s += `<rect x="${X(100) - 5}" y="${Y(last.hi)}" width="10" height="${Y(last.lo) - Y(last.hi)}" fill="#c0392b" opacity=".18"/>`;
+        s += `<rect x="${X(100) - 5}" y="${Y(100 - last.lo)}" width="10" height="${Y(100 - last.hi) - Y(100 - last.lo)}" fill="#1f5fa8" opacity=".18"/>`;
+        s += pl(h.filter(p => p.raw != null).map(p => [p.pct, p.raw]), "#c0392b") + pl(h.filter(p => p.raw != null).map(p => [p.pct, 100 - p.raw]), "#1f5fa8");
+        if (path.length > 1) s += pl(path, "#c0392b", true) + pl(path.map(([x, y]) => [x, 100 - y]), "#1f5fa8", true);
+        const end = path[path.length - 1];
+        s += `<text x="${X(100) + 8}" y="${Y(end[1]) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(end[1], 1)}</text>`;
+        s += `<text x="${X(100) + 8}" y="${Y(100 - end[1]) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - end[1], 1)}</text>`;
+        for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.raw)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção final: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)})</title></circle>`;
+        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como eu acho que a contagem vai andar daqui até o fim (supondo que cada município termine de apurar na mesma ordem de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final</div>`;
         box.innerHTML = s;
     }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
@@ -399,7 +402,7 @@
         const gen = new Date(L.generated), ago = Math.max(0, Math.round((Date.now() - gen) / 60000));
         const hm = gen.toLocaleTimeString("pt-BR", {timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit"});
         $("cStatus").innerHTML = `<span style="font-size:14px;color:#333"><b>Última atualização: ${hm}</b> (há ${ago} min, horário de Brasília)</span><br>` +
-            `Boletim do TSE das ${q.t.slice(11, 16)}: <b>${fmt(q.pct)}%</b> das seções apuradas. Contagem: Lula ${fmt(q.raw)}%, Flávio ${fmt(100 - q.raw)}%. Atualizo a cada 5 minutos.`;
+            `Boletim do TSE das ${q.t.slice(11, 16)}: <b>${fmt(q.pct)}%</b> das seções apuradas. Contagem: Lula ${fmt(q.raw)}%, Flávio ${fmt(100 - q.raw)}%. Atualizo quando dá.`;
         $("cLula").textContent = "Lula " + fmt(q.mean) + "%"; $("cFlavio").textContent = "Flávio " + fmt(100 - q.mean) + "%";
         $("cRange").textContent = `Em 90% dos cenários, o Lula termina entre ${fmt(q.lo)}% e ${fmt(q.hi)}%.`;
         const pl = 100 * q.p; $("cPL").textContent = "Lula " + fmt(pl, 1) + "%"; $("cPF").textContent = "Flávio " + fmt(100 - pl, 1) + "%";
@@ -416,7 +419,7 @@
     async function refresh() {
         try {
             const [h, L] = await Promise.all([getJ("data/count/live_history.json?" + Date.now()), getJ("data/count/live_latest.json?" + Date.now())]);
-            SERVER = h || []; renderSnap(L); drawChart();
+            SERVER = h || []; LATEST = L; renderSnap(L); drawChart();
         } catch (e) { $("cStatus").textContent = "Ainda não há retrato publicado (" + e.message + ")."; }
     }
     function start() {
