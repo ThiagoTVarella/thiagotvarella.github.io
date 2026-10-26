@@ -505,6 +505,28 @@
         s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: o resultado final que o modelo esperava naquele momento (faixa clara: 90% dos cenários) &nbsp; pontilhada: caminho previsto da contagem até o fim (some quando a apuração termina) &nbsp; embaixo de cada marca: horário de Brasília (com ~ = previsto)</div>`;
         box.innerHTML = s;
     }
+    function drawProbChart() {
+        const h = allHist().filter(p => p.p != null), box = $("cProbChart"); if (!box) return;
+        if (!h.length) { box.innerHTML = ""; return; }
+        const W = Math.max(300, box.clientWidth || 600), small = W < 600, H = small ? 200 : 240, m = {l: 38, r: small ? 14 : 84, t: 10, b: 36};
+        const X = p => m.l + (W - m.l - m.r) * p / 100, Y = v => m.t + (H - m.t - m.b) * (100 - v) / 100;
+        const pl = (f, col) => `<polyline points="${h.map(p => `${X(p.pct).toFixed(1)},${Y(f(p)).toFixed(1)}`).join(" ")}" fill="none" stroke="${col}" stroke-width="2"/>`;
+        let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
+        for (const v of [0, 25, 50, 75, 100]) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === 50 ? "#999" : "#eee"}"/><text x="${m.l - 4}" y="${Y(v) + 4}" font-size="10" text-anchor="end" fill="#777">${v}%</text>`;
+        const toMin = c => { const [hh, mm] = c.split(":").map(Number); return hh * 60 + mm; }, hm = v => String(Math.floor(v / 60) % 24).padStart(2, "0") + ":" + String(Math.round(v) % 60).padStart(2, "0");
+        const obsT = h.map(p => [p.pct, toMin(p.t.slice(11, 16))]);
+        const at = x => { for (let j = 1; j < obsT.length; j++) if (x <= obsT[j][0]) { const [a0, b0] = obsT[j - 1], [a1, b1] = obsT[j]; return hm(b0 + (b1 - b0) * (x - a0) / Math.max(1e-9, a1 - a0)); } return ""; };
+        for (const p of [0, 20, 40, 60, 80, 100]) {
+            s += `<text x="${X(p)}" y="${H - 18}" font-size="10" text-anchor="middle" fill="#777">${p}%</text>`;
+            s += `<text x="${X(p)}" y="${H - 6}" font-size="9" text-anchor="middle" fill="#999">${p === 0 ? "19:00" : at(p)}</text>`;
+        }
+        s += pl(p => 100 * p.p, "#c0392b") + pl(p => 100 - 100 * p.p, "#1f5fa8");
+        for (const p of h) s += `<circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 * p.p).toFixed(1)}" r="2.4" fill="#c0392b"><title>${p.t}: ${fmt(p.pct)}% apurado, chance do Lula ${fmt(100 * p.p, 1)}%</title></circle><circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 - 100 * p.p).toFixed(1)}" r="2.4" fill="#1f5fa8"/>`;
+        const last = h[h.length - 1];
+        if (!small) { s += `<text x="${X(last.pct) + 8}" y="${Y(100 * last.p) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(100 * last.p, 1)}%</text><text x="${X(last.pct) + 8}" y="${Y(100 - 100 * last.p) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - 100 * last.p, 1)}%</text>`; }
+        s += `</svg><div class="sub" style="margin-top:4px">Chance de vitória pela projeção em cada boletim (fração dos cenários simulados em que cada um passa de 50%). Embaixo: % das seções apuradas e horário de Brasília.</div>`;
+        box.innerHTML = s;
+    }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
 
     /* versão simples: a página só lê os retratos publicados (a cada 5 min ou quando pedem) */
@@ -530,7 +552,7 @@
     async function refresh() {
         try {
             const [h, L] = await Promise.all([getJ("data/count/live_history.json?" + Date.now()), getJ("data/count/live_latest.json?" + Date.now())]);
-            SERVER = h || []; LATEST = L; renderSnap(L); drawChart();
+            SERVER = h || []; LATEST = L; renderSnap(L); drawChart(); drawProbChart();
         } catch (e) { $("cStatus").textContent = "Ainda não há retrato publicado (" + e.message + ")."; }
     }
     function start() {
@@ -544,7 +566,7 @@
         else { if (location.hash === "#apuracao") history.replaceState(null, "", location.pathname); window.dispatchEvent(new Event("resize")); }
     }
     document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => show(b.dataset.tab));
-    window.addEventListener("resize", () => { if (!$("tabCount").hidden) drawChart(); });
+    window.addEventListener("resize", () => { if (!$("tabCount").hidden) { drawChart(); drawProbChart(); } });
     // abre na apuração se o link pedir, ou se o endereço não tiver nenhum ajuste da aba de pesquisas
     const h = location.hash;
     show(h === "#apuracao" || h === "" ? "count" : "polls");
