@@ -464,7 +464,7 @@
         if (!h.length) { box.innerHTML = `<p class="sub">O gráfico aparece quando a apuração andar.</p>`; return; }
         const last = h[h.length - 1], tr = (LATEST && LATEST.traj) || [];
         const path = [[last.pct, last.raw]].concat(tr.filter(t => t[0] > last.pct));
-        const vals = h.map(p => p.raw).concat(path.map(t => t[1]), [last.lo, last.hi]).filter(v => v != null);
+        const vals = h.map(p => p.raw).concat(path.map(t => t[1]), h.map(p => p.mean), h.map(p => p.lo), h.map(p => p.hi)).filter(v => v != null);
         const lo = Math.min(...vals, ...vals.map(v => 100 - v)), hi = Math.max(...vals, ...vals.map(v => 100 - v));
         const y0 = Math.max(0, Math.floor(lo - 1)), y1 = Math.min(100, Math.ceil(hi + 1));
         const X = p => m.l + (W - m.l - m.r) * p / 100, Y = v => m.t + (H - m.t - m.b) * (y1 - v) / (y1 - y0);
@@ -490,13 +490,19 @@
         s += `<rect x="${X(100) - 5}" y="${Y(last.hi)}" width="10" height="${Y(last.lo) - Y(last.hi)}" fill="#c0392b" opacity=".18"/>`;
         s += `<rect x="${X(100) - 5}" y="${Y(100 - last.lo)}" width="10" height="${Y(100 - last.hi) - Y(100 - last.lo)}" fill="#1f5fa8" opacity=".18"/>`;
         s += pl(h.filter(p => p.raw != null).map(p => [p.pct, p.raw]), "#c0392b") + pl(h.filter(p => p.raw != null).map(p => [p.pct, 100 - p.raw]), "#1f5fa8");
-        if (path.length > 1) s += pl(path, "#c0392b", true) + pl(path.map(([x, y]) => [x, 100 - y]), "#1f5fa8", true);
-        const end = path[path.length - 1];
+        // tracejada: o que o modelo esperava do resultado final em cada momento (faixa clara: 90% dos cenários)
+        const hp = h.filter(p => p.mean != null);
+        const bandP = (lo, hi, col) => `<polygon points="${hp.map(p => `${X(p.pct).toFixed(1)},${Y(hi(p)).toFixed(1)}`).join(" ")} ${hp.slice().reverse().map(p => `${X(p.pct).toFixed(1)},${Y(lo(p)).toFixed(1)}`).join(" ")}" fill="${col}" opacity=".08"/>`;
+        s += bandP(p => p.lo, p => p.hi, "#c0392b") + bandP(p => 100 - p.hi, p => 100 - p.lo, "#1f5fa8");
+        s += pl(hp.map(p => [p.pct, p.mean]), "#c0392b", true) + pl(hp.map(p => [p.pct, 100 - p.mean]), "#1f5fa8", true);
+        // enquanto a apuração anda: caminho previsto da contagem até o fim, pontilhado e mais claro
+        if (path.length > 1 && last.pct < 99) s += `<g opacity=".45">` + pl(path, "#c0392b", false).replace('stroke-width="2"', 'stroke-width="1.5" stroke-dasharray="1 3"') + pl(path.map(([x, y]) => [x, 100 - y]), "#1f5fa8", false).replace('stroke-width="2"', 'stroke-width="1.5" stroke-dasharray="1 3"') + `</g>`;
+        const end = last.pct >= 99 ? [100, last.mean] : path[path.length - 1];
         s += `<text x="${X(100) + 8}" y="${Y(end[1]) + 4}" font-size="11" fill="#c0392b">Lula ${fmt(end[1], 1)}</text>`;
         s += `<text x="${X(100) + 8}" y="${Y(100 - end[1]) + 4}" font-size="11" fill="#1f5fa8">Flávio ${fmt(100 - end[1], 1)}</text>`;
         for (const p of h) if (p.raw != null) s += `<circle cx="${X(p.pct).toFixed(1)}" cy="${Y(p.raw).toFixed(1)}" r="2.6" fill="#c0392b"/><circle cx="${X(p.pct).toFixed(1)}" cy="${Y(100 - p.raw).toFixed(1)}" r="2.6" fill="#1f5fa8"/>`;
         for (const p of h) s += `<circle cx="${X(p.pct)}" cy="${Y(p.raw)}" r="6" fill="transparent"><title>${p.t}: ${fmt(p.pct)}% apurado. Contagem: Lula ${fmt(p.raw)}%. Projeção final: Lula ${fmt(p.mean)}% (${fmt(p.lo)}–${fmt(p.hi)})</title></circle>`;
-        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: como acho que a contagem vai andar até o fim (cada estado no seu ritmo de hoje, com a curva de velocidade de 2022) &nbsp; barra em 100%: 90% dos cenários do resultado final &nbsp; embaixo de cada marca: horário de Brasília (com ~ = previsto)</div>`;
+        s += `</svg><div class="sub" style="margin-top:4px"><span style="color:#c0392b">━ Lula</span> &nbsp; <span style="color:#1f5fa8">━ Flávio</span> &nbsp; linha cheia: contagem do TSE &nbsp; tracejada: o resultado final que o modelo esperava naquele momento (faixa clara: 90% dos cenários) &nbsp; pontilhada: caminho previsto da contagem até o fim (some quando a apuração termina) &nbsp; embaixo de cada marca: horário de Brasília (com ~ = previsto)</div>`;
         box.innerHTML = s;
     }
     const loadServer = () => getJ("data/count/live_history.json?" + Date.now()).then(j => { SERVER = j || []; }).catch(() => {});
