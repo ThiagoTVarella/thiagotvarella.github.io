@@ -559,15 +559,19 @@
         if (started) return; started = true;
         refresh(); timer = setInterval(() => { if (!document.hidden) refresh(); }, 60000);
     }
+    const HASH = { count: "#apuracao", soil: "#solo" };
     function show(tab) {
-        $("tabCount").hidden = tab !== "count"; $("tabPolls").hidden = tab === "count";
+        $("tabCount").hidden = tab !== "count"; $("tabPolls").hidden = tab !== "polls"; $("tabSoil").hidden = tab !== "soil";
         document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
-        if (tab === "count") { if (location.hash !== "#apuracao") history.replaceState(null, "", "#apuracao"); start(); }
-        else { if (location.hash === "#apuracao") history.replaceState(null, "", location.pathname); window.dispatchEvent(new Event("resize")); }
+        if (HASH[tab]) { if (location.hash !== HASH[tab]) history.replaceState(null, "", HASH[tab]); }
+        else if (Object.values(HASH).includes(location.hash)) history.replaceState(null, "", location.pathname);
+        if (tab === "count") start();
+        else if (tab === "soil") window.SoilTab && window.SoilTab.show();
+        else window.dispatchEvent(new Event("resize"));
     }
     document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => show(b.dataset.tab));
     window.addEventListener("resize", () => { if (!$("tabCount").hidden) { drawChart(); drawProbChart(); } });
     // abre na apuração se o link pedir, ou se o endereço não tiver nenhum ajuste da aba de pesquisas
     const h = location.hash;
-    show(h === "#apuracao" || h === "" ? "count" : "polls");
+    show(h === "#solo" ? "soil" : h === "#apuracao" || h === "" ? "count" : "polls");
 })();

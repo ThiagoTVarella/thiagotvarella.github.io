@@ -99,6 +99,22 @@
         .btn { border:1px solid #ccc; background:#fff; border-radius:6px; padding:5px 10px; font-size:12px; cursor:pointer; font-family:inherit; min-height:32px; }
         #cChart svg { display:block; width:100%; }
         table.t td.pos { color:#c0392b; } table.t td.neg { color:#1f5fa8; }
+        #sGrid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:18px 20px; }
+        .sPanel { min-width:0; }
+        .sHead { font-weight:bold; font-size:16px; margin-bottom:2px; }
+        .sNum { display:inline-block; width:22px; height:22px; line-height:22px; border-radius:11px; background:#333; color:#fff; text-align:center; font-size:12px; margin-right:6px; }
+        .sTxt { font-size:12.5px; color:#555; min-height:3.2em; margin-bottom:4px; }
+        .sMap { position:relative; }
+        .sMap canvas { display:block; }
+        .sMap canvas.ov { position:absolute; left:0; top:0; cursor:crosshair; }
+        .sLeg { font-size:11.5px; color:#444; margin-top:4px; line-height:1.7; }
+        .sw { display:inline-block; width:12px; height:12px; border:1px solid #ccc; border-radius:2px; vertical-align:-2px; margin:0 3px 0 6px; }
+        .sw:first-child { margin-left:0; } .nw { white-space:nowrap; } .nw .sw { margin-left:4px; }
+        .sStrip svg { display:block; width:100%; max-width:340px; }
+        #sTip { position:fixed; z-index:50; background:#fff; border:1px solid #ccc; border-radius:6px; box-shadow:0 4px 14px rgba(0,0,0,.15); padding:8px 10px; font-size:12.5px; pointer-events:none; max-width:300px; }
+        #sTip table td { padding:1px 8px 1px 0; vertical-align:top; } #sTip table td:first-child { color:#777; }
+        ul.sList li, ol.sList li { margin-bottom:8px; font-size:14px; }
+        @media (max-width: 600px) { #sGrid { grid-template-columns: 1fr; gap:26px; } .sTxt { min-height:0; } }
     </style>
 </head>
 <body>
@@ -108,7 +124,7 @@
     <div class="col-lg-10 col-md-12 wrap">
         <h3>Segundo turno de 2026: Lula x Flávio Bolsonaro</h3>
         <div class="tabs" role="tablist">
-            <button data-tab="count">Apuração ao vivo</button><button data-tab="polls">Pesquisas</button>
+            <button data-tab="count">Apuração ao vivo</button><button data-tab="polls">Pesquisas</button><button data-tab="soil">Solo e voto</button>
         </div>
         <div id="tabPolls">
         <p class="sub" id="asofLine">Carregando…</p>
@@ -384,10 +400,90 @@
                 </details>
             </div>
         </div>
+
+        <div id="tabSoil" hidden>
+            <h3 style="margin-top:6px">Como um solo velho e ácido ajuda a explicar o mapa do 2º turno</h3>
+            <p style="font-size:14px">Depois da eleição circulou um mapa comparando o voto com a soja. Ele me lembrou uma figura sobre o Alabama (do Starkey Comics), em que um litoral de 100 milhões de anos atrás explica o voto de hoje, passando pelo solo, pelas fazendas e pela escravidão. Quis ver se dava para contar uma história parecida para o Brasil, só com dados públicos, e medir cada elo em vez de só pôr os mapas lado a lado. Spoiler: a cadeia existe, mas é mais fraca do que os mapas sugerem, e o elo que mais pesa é quem chegou, não o que se planta.</p>
+            <p class="sub" id="sStatus">Carregando os mapas…</p>
+            <div class="card">
+                <div class="toolbar" style="margin-bottom:8px">
+                    <label class="sub" for="sFind">Procure um município:</label>
+                    <input id="sFind" list="sList" placeholder="ex.: Sorriso (MT)" style="min-width:220px;padding:4px 8px;font-size:14px;border:1px solid #ccc;border-radius:6px">
+                    <datalist id="sList"></datalist>
+                    <span class="sub">ou passe o mouse (ou toque) em qualquer mapa: o município acende nos seis.</span>
+                </div>
+                <div id="sGrid"></div>
+            </div>
+            <div id="sTip" hidden></div>
+
+            <div class="card">
+                <h4>O que os números dizem</h4>
+                <ul class="sList">
+                    <li><b>Solo sozinho explica pouco.</b> A correlação entre a fatia do município em Latossolos e o voto no Flávio é de só 0,20, e com o Cerrado, 0,15. Boa parte do Cerrado e dos Latossolos fica no Maranhão, no Piauí e no Tocantins, onde o Lula ganhou com folga.</li>
+                    <li><b>Dentro do Cerrado, a soja faz diferença.</b> Nos 184 municípios do Cerrado com 15% ou mais da área em soja, o Flávio teve 59,4%. Nos 381 do Cerrado quase sem soja (menos de 1%), teve 43,6%.</li>
+                    <li><b>Mas o que mais pesa é quem chegou.</b> Fora do Sul, onde há soja forte e pelo menos 5% de nascidos no Sul, o Flávio teve 65,5% (96 municípios). Onde há soja forte mas quase nenhum sulista, 53,8% (100 municípios). E onde há sulistas sem soja (muito da Amazônia e de Rondônia), 62,9%. Onde não há nem um nem outro, 39,1%.</li>
+                    <li><b>O teste mais limpo é o Matopiba.</b> No Maranhão, no Piauí e na Bahia, os 23 municípios com 15% ou mais em soja deram 41,3% ao Flávio, contra 28,0% no resto desses estados. Mesma região, mesmo sertão em volta, 13 pontos de diferença. Mas só um deles deu maioria ao Flávio: Luís Eduardo Magalhães (BA), com 61,6%, justamente o que mais recebeu gente do Sul (10,5% dos moradores em 2010). Barreiras ficou em 43,3%, São Desidério em 35,4% e Uruçuí (PI) em 34,7%.</li>
+                    <li><b>O mapa mais parecido com o do voto é o do Bolsa Família</b> (correlação de −0,74). Sozinho, ele explica 54% da variação do voto entre municípios. Soja e nascidos no Sul juntos explicam 21%, e os três juntos, 58%. Na média nacional são 27,6 famílias no programa por 100 domicílios; nos municípios de soja com sulistas, 16; nos sem soja e sem sulistas, 39,5.</li>
+                    <li><b>Os casos de manual:</b> Sorriso (MT) tem 65% da área em soja, 34% dos moradores nascidos no Sul e 11 famílias no Bolsa Família por 100 casas; o Flávio teve 75,7%. Lucas do Rio Verde, 75,2%. Sinop, 77,7%. Sinop fica, pela linha do IBGE, já no bioma Amazônia, mas em cima do mesmo Latossolo plano (95% da área).</li>
+                </ul>
+                <p class="sub">Todas as médias de voto são pesadas pelos votos válidos de cada município. "Soja forte" = 15% ou mais da área do município plantada com soja em 2024.</p>
+            </div>
+
+            <div class="card">
+                <h4>A cadeia, elo por elo</h4>
+                <ol class="sList">
+                    <li><b>Planalto velho, solo velho.</b> O Planalto Central é feito de superfícies muito antigas e aplainadas, as chapadas. Sob chuva e calor por muito tempo, a rocha virou Latossolo: um solo fundo, poroso, plano e fácil de mecanizar, mas pobre, ácido e com alumínio que envenena a raiz. A vegetação que cresce nisso é o Cerrado.</li>
+                    <li><b>A química resolveu o solo.</b> Nos anos 70, a Embrapa (criada em 1973; a unidade do Cerrado, em Planaltina, em 1975) mostrou que calcário para corrigir a acidez, fósforo e, depois, gesso para levar cálcio fundo deixavam esses solos produtivos. Sem correção, a soja dava algo como cinco sacas por hectare. Vieram também as variedades de soja adaptadas a dias mais curtos, perto do equador.</li>
+                    <li><b>O governo abriu a fronteira.</b> O Polocentro (1975) e o Prodecer (1979, com o Japão) deram crédito barato para ocupar o Cerrado. Colonizadoras privadas venderam lotes: Sinop nasceu em 1974 de uma colonizadora de Maringá (PR). Em Lucas do Rio Verde, o Incra assentou em 1981 duzentas famílias de sem-terra do acampamento de Encruzilhada Natalino (RS).</li>
+                    <li><b>Quem veio foi o Sul.</b> No Sul a terra era cara e as propriedades já estavam divididas entre herdeiros; no Cerrado, a terra era barata e plana. Famílias do Paraná, de Santa Catarina e do Rio Grande do Sul venderam pouca terra lá e compraram muita aqui, trazendo cooperativas, CTGs e, segundo os estudos de caso, uma identidade "gaúcha" que se mantém até hoje.</li>
+                    <li><b>A soja trouxe renda, e menos dependência de transferência.</b> Os municípios de soja têm PIB por habitante alto e muito menos famílias no Bolsa Família.</li>
+                    <li><b>E o voto acompanha.</b> Há boa evidência de que o Bolsa Família ajuda quem está no governo (Zucco, 2013), e o agronegócio virou base da direita desde 2018. Num estudo de Mato Grosso em 2018, a variável que mais andava junto com o voto no Bolsonaro era a fatia de brancos, que lá é em boa parte o rastro da migração do Sul (Makino).</li>
+                </ol>
+            </div>
+
+            <div class="card">
+                <h4>Onde a história não explica</h4>
+                <ul class="sList">
+                    <li><b>O próprio Sul</b> não tem Cerrado nem fronteira de soja nova e deu 62,6% ao Flávio. A cadeia acima explica por que o Centro-Oeste se parece com o Sul, não por que o Sul vota como vota.</li>
+                    <li><b>A Amazônia</b> (Rondônia, Acre, Roraima, norte de MT e sul do PA) dá muito voto ao Flávio sem soja: 69,3% em RO, AC e RR juntos, e 61,7% em Porto Velho, que tem 1% da área em soja. Lá a fronteira foi do gado e da colonização dos anos 70, também com muita gente do Sul.</li>
+                    <li><b>O Cerrado do Norte e do Nordeste</b> é Cerrado e é Latossolo, mas, onde a soja não chegou ou chegou sem os sulistas, o voto é do Lula. Teresina fica no Cerrado e deu 68% ao Lula.</li>
+                    <li><b>Município não é eleitor.</b> Tudo aqui é comparação entre lugares. Não dá para concluir daqui que quem planta soja votou no Flávio, nem que um migrante vota diferente de um nativo. Os números mostram onde as coisas andam juntas, não por quê. As variáveis também se misturam: soja, migração, renda e Bolsa Família vêm no mesmo pacote, e separar o efeito de cada uma exigiria outro tipo de estudo.</li>
+                    <li><b>Os dados têm idades diferentes.</b> A migração é do Censo 2010 (o de 2022 publica lugar de nascimento por município, mas não consegui baixar a tabela). A soja é de 2024, o PIB de 2021, o Bolsa Família de agosto de 2026. Municípios criados depois de 2010 ficam sem dado de migração.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <details><summary>Fontes e como fiz <span>(toque para abrir)</span></summary>
+                <p><b>Dados</b></p>
+                <ul class="sList">
+                    <li>Malha municipal 2024, IBGE: <a href="https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2024/Brasil/">geoftp.ibge.gov.br</a>, simplificada com o mapshaper.</li>
+                    <li>Biomas do Brasil 1:5.000.000, IBGE: <a href="https://geoftp.ibge.gov.br/informacoes_ambientais/estudos_ambientais/biomas/vetores/">Biomas_5000mil</a>.</li>
+                    <li>Mapa de Solos do Brasil 1:5.000.000, IBGE/Embrapa: <a href="https://geoftp.ibge.gov.br/informacoes_ambientais/pedologia/vetores/brasil_5000_mil/">Solos_5000mil</a> (componente principal da unidade de mapeamento começando por "Latossolo").</li>
+                    <li>Soja: área plantada em 2024, Produção Agrícola Municipal, IBGE, <a href="https://sidra.ibge.gov.br/tabela/5457">SIDRA 5457</a>; dividida pela área territorial do Censo 2022 (<a href="https://sidra.ibge.gov.br/tabela/4714">SIDRA 4714</a>).</li>
+                    <li>Nascidos no Sul: microdados da amostra do Censo 2010, IBGE (<a href="https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_Gerais_da_Amostra/Microdados/">ftp.ibge.gov.br</a>), com o peso amostral. Conta quem nasceu no PR, SC ou RS, incluindo quem nasceu no próprio estado, para municípios do Sul.</li>
+                    <li>Bolsa Família: pagamentos de agosto de 2026, <a href="https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia">Portal da Transparência</a> (18,78 milhões de famílias), divididos pelos domicílios ocupados do Censo 2022 (<a href="https://sidra.ibge.gov.br/tabela/4712">SIDRA 4712</a>). Pode passar de 100 porque uma casa pode ter mais de uma família; aí aparece como 100+.</li>
+                    <li>PIB municipal 2021, IBGE, <a href="https://sidra.ibge.gov.br/tabela/5938">SIDRA 5938</a>.</li>
+                    <li>Voto: boletins do 2º turno de 2026 por município, <a href="https://resultados.tse.jus.br/">TSE</a>. Correspondência de códigos TSE x IBGE: <a href="https://github.com/betafcc/Municipios-Brasileiros-TSE">betafcc/Municipios-Brasileiros-TSE</a>; SIAFI x IBGE: <a href="https://github.com/kelvins/municipios-brasileiros">kelvins/municipios-brasileiros</a>.</li>
+                </ul>
+                <p><b>Leituras</b></p>
+                <ul class="sList">
+                    <li>Embrapa Cerrados, sobre calagem e correção de solos ácidos: <a href="https://www.infoteca.cnptia.embrapa.br/infoteca/bitstream/doc/548059/1/comtec38.pdf">comunicado técnico 38</a> e <a href="https://www.alice.cnptia.embrapa.br/alice/bitstream/doc/874735/1/1374.pdf">doc. 1374</a>; e a reportagem <a href="https://www.canalrural.com.br/agricultura/agronegocio/embrapa-a-ciencia-que-proporciona-economia-bilionaria-ao-agro-brasileiro/">Embrapa 50 anos</a> (Canal Rural).</li>
+                    <li>Polocentro e Prodecer: <a href="https://openjicareport.jica.go.jp/pdf/11685989_02.PDF">relatório da JICA</a>; <a href="https://periodicos.unespar.edu.br/nupem/article/download/5413/3441/14558">migrantes do Sul como elite rural em MS</a> (Revista NUPEM).</li>
+                    <li>Sinop, Sorriso e Lucas do Rio Verde: <a href="https://www.periodicos.univag.com.br/index.php/caderno/article/download/229/470/927">Cadernos UNIVAG</a>; <a href="https://biblioteca.ibge.gov.br/visualizacao/dtb/matogrosso/lucasdorioverde.pdf">histórico de Lucas do Rio Verde</a> (IBGE); <a href="https://tede.ufrrj.br/jspui/handle/tede/618">identidade gaúcha em Lucas do Rio Verde</a> (dissertação, UFRRJ).</li>
+                    <li>Zucco, C. (2013). <a href="https://ideas.repec.org/a/wly/amposc/v57y2013i4p810-822.html">When Payouts Pay Off: Conditional Cash Transfers and Voting Behavior in Brazil 2002–10</a>. American Journal of Political Science 57(4).</li>
+                    <li>Makino, R., sobre voto no Bolsonaro em Mato Grosso (2018): <a href="https://periodicos.unemat.br/index.php/geoambes/article/download/4253/3400/15015">Revista Geoambes</a>.</li>
+                    <li>A figura do Alabama: "How a coastline 100 million years ago influences modern election results in Alabama", Starkey Comics. O mapa da soja: Geo na Real, com dados do Agro Mapas e do TSE.</li>
+                </ul>
+                <p class="sub">Código: <code>brpolls/scripts/soil/build_soil.py</code> e <code>brpolls/soil.js</code>. Qualquer erro é meu; se achar algum, me avise.</p>
+                </details>
+            </div>
+        </div>
     </div>
 </div>
 <div id="footer"></div>
 <script src="app.js"></script>
-<script src="count.js?v=8"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script src="soil.js?v=1"></script>
+<script src="count.js?v=9"></script>
 </body>
 </html>
